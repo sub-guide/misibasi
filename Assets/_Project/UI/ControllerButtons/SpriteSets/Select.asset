@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bea79b760da71dc4ba2e38ee753ccb61, type: 3}
+  m_Name: Select
+  m_EditorClassIdentifier: 
+  displayName: Select
+  idle: {fileID: 21300000, guid: 506ecd532247b0f4aa895dbb95323c27, type: 3}
+  highlighted: {fileID: 21300000, guid: df05f6ba5a778774db595a61cc8d9853, type: 3}
+  pressFrames:
+  - {fileID: 458815193, guid: 8046aa8e945a71b4099e0208563c40f6, type: 3}
+  - {fileID: 1375325724, guid: 8046aa8e945a71b4099e0208563c40f6, type: 3}
+  - {fileID: -872815515, guid: 8046aa8e945a71b4099e0208563c40f6, type: 3}
+  - {fileID: 786796591, guid: 8046aa8e945a71b4099e0208563c40f6, type: 3}
+  held: {fileID: 21300000, guid: 1ae516b3654eb2b4f829077a3daa259d, type: 3}

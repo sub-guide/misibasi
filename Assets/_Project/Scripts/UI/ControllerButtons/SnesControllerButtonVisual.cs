@@ -1,0 +1,393 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace MiniParty.UI.ControllerButtons
+{
+    /// <summary>
+    /// SNES Face·D-Pad 팔 시각: Idle / Highlighted / Pressing / Held / Releasing.
+    /// Color: *Press 시트 4프레임 애니. 빠른 탭 시 눌림 전구간→해제 재생.
+    /// 2D(무애니): 홀드 중 즉시 Idle↔Held — <see cref="instantHoldVisual"/> 또는 <c>pressFrames</c> 없음.
+    /// </summary>
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(Image))]
+    public sealed class SnesControllerButtonVisual : MonoBehaviour
+    {
+        enum VisualPhase
+        {
+            Idle,
+            Highlighted,
+            Pressing,
+            Held,
+            Releasing
+        }
+
+        [SerializeField] SnesButtonSpriteSet spriteSet;
+        [SerializeField] Image icon;
+
+        [Header("애니 타이밍")]
+        [Tooltip("Press/Release 스프라이트 1장당 표시 시간(초). 빌드·에디터 동일. 기본 0.1.")]
+        [SerializeField] [Min(0.001f)] float secondsPerSprite = 0.1f;
+
+        [Tooltip("Press 시트에서 눌림에 쓰는 프레임 수(앞에서부터). -1 = 자동(절반).")]
+        [SerializeField] int pressFrameCount = -1;
+
+        [Tooltip("Held 상태 localScale 배율. 시트에 눌림이 그려져 있으면 1 권장.")]
+        [SerializeField] float heldScale = 1f;
+
+        [Header("2D (무애니)")]
+        [Tooltip("true면 Press/Release 코루틴 없이 Idle↔Held 즉시. pressFrames 없으면 자동 true.")]
+        [SerializeField] bool instantHoldVisual;
+
+        public float SecondsPerSprite => secondsPerSprite;
+        public int PressFrameCount => pressFrameCount;
+        public float HeldScale => heldScale;
+        public bool InstantHoldVisual => instantHoldVisual;
+
+        /// <summary>에디터·부모 드라이버에서 타이밍·2D 무애니 일괄 적용.</summary>
+        public void ApplyAnimationSettings(
+            float secondsPerSpriteValue,
+            int pressFrameCountValue,
+            float heldScaleValue,
+            bool instantHoldVisualValue = false)
+        {
+            this.secondsPerSprite = Mathf.Max(0.001f, secondsPerSpriteValue);
+            this.pressFrameCount = pressFrameCountValue;
+            this.heldScale = heldScaleValue;
+            this.instantHoldVisual = instantHoldVisualValue;
+
+            if (Application.isPlaying && UsesInstantHold())
+            {
+                StopTransition();
+                ApplyImmediateVisual();
+            }
+        }
+
+        bool UsesInstantHold() =>
+            instantHoldVisual || spriteSet == null || !spriteSet.HasPressAnimation;
+
+        VisualPhase _phase = VisualPhase.Idle;
+        bool _wantHighlight;
+        bool _wantHeld;
+        Vector3 _restScale = Vector3.one;
+        Coroutine _transition;
+
+        public bool IsHighlighted => _wantHighlight;
+        public bool IsHeld => _wantHeld;
+        public SnesButtonSpriteSet SpriteSet => spriteSet;
+
+        void Awake()
+        {
+            if (icon == null)
+                icon = GetComponent<Image>();
+
+            _restScale = icon != null ? icon.rectTransform.localScale : Vector3.one;
+            ApplyImmediateVisual();
+        }
+
+        void OnDisable()
+        {
+            StopTransition();
+            _phase = _wantHeld
+                ? VisualPhase.Held
+                : (_wantHighlight ? VisualPhase.Highlighted : VisualPhase.Idle);
+            ApplyImmediateVisual();
+        }
+
+#if UNITY_EDITOR
+        void OnValidate()
+        {
+            if (icon == null)
+                icon = GetComponent<Image>();
+
+            if (!Application.isPlaying && icon != null && spriteSet != null && spriteSet.HasIdle)
+                icon.sprite = spriteSet.Idle;
+        }
+#endif
+
+        public void SetHighlighted(bool value)
+        {
+            if (_wantHighlight == value)
+                return;
+
+            _wantHighlight = value;
+            if (_wantHeld || _phase is VisualPhase.Pressing or VisualPhase.Releasing)
+                return;
+
+            GoToRestVisual();
+        }
+
+        public void SetHeld(bool value)
+        {
+            if (_wantHeld == value)
+                return;
+
+            _wantHeld = value;
+
+            if (UsesInstantHold())
+            {
+                StopTransition();
+                _phase = value
+                    ? VisualPhase.Held
+                    : (_wantHighlight ? VisualPhase.Highlighted : VisualPhase.Idle);
+                ApplyImmediateVisual();
+                return;
+            }
+
+            if (value)
+            {
+                BeginPress();
+                return;
+            }
+
+            // 해제: 눌림 중이면 코루틴이 끝까지 재생 후 해제(CoPressThenMaybeRelease). 이미 Held면 해제만.
+            if (_phase == VisualPhase.Pressing)
+                return;
+
+            if (_phase == VisualPhase.Releasing)
+                return;
+
+            if (_phase == VisualPhase.Held)
+            {
+                BeginRelease();
+                return;
+            }
+
+            // 같은 프레임·극단적 탭: press 코루틴이 아직 Pressing에 못 들어간 경우
+            PlayPressPulse();
+        }
+
+        public void PlayPressPulse()
+        {
+            if (UsesInstantHold())
+                return;
+
+            StopTransition();
+            _wantHeld = false;
+            _transition = StartCoroutine(CoPressPulse());
+        }
+
+        /// <summary>눌림 프레임 전부 재생 후, 아직 누르고 있지 않으면 해제 프레임 재생.</summary>
+        IEnumerator CoPressThenMaybeRelease()
+        {
+            _phase = VisualPhase.Pressing;
+            Sprite[] frames = GetFrames();
+            GetSheetRanges(frames, out int pressCount, out int releaseStart, out int releaseEnd);
+            yield return PlayFrameRange(frames, 0, pressCount - 1, 1f);
+
+            if (_wantHeld)
+            {
+                _transition = null;
+                _phase = VisualPhase.Held;
+                Sprite heldSprite = spriteSet != null ? spriteSet.Held : null;
+                if (heldSprite == null)
+                    heldSprite = FrameAt(frames, pressCount - 1);
+                ApplyFrame(heldSprite, heldScale);
+                yield break;
+            }
+
+            _phase = VisualPhase.Releasing;
+            yield return PlayFrameRange(frames, releaseStart, releaseEnd, 1f);
+
+            _transition = null;
+            _phase = _wantHighlight ? VisualPhase.Highlighted : VisualPhase.Idle;
+            ApplyImmediateVisual();
+        }
+
+        public void SetSpriteSet(SnesButtonSpriteSet set)
+        {
+            spriteSet = set;
+            ApplyImmediateVisual();
+        }
+
+        void BeginPress()
+        {
+            StopTransition();
+            _transition = StartCoroutine(CoPressThenMaybeRelease());
+        }
+
+        void BeginRelease()
+        {
+            StopTransition();
+            _transition = StartCoroutine(CoReleaseOnly());
+        }
+
+        void GoToRestVisual()
+        {
+            StopTransition();
+            _phase = _wantHighlight ? VisualPhase.Highlighted : VisualPhase.Idle;
+            ApplyImmediateVisual();
+        }
+
+        IEnumerator CoReleaseOnly()
+        {
+            _phase = VisualPhase.Releasing;
+            Sprite[] frames = GetFrames();
+            GetSheetRanges(frames, out _, out int releaseStart, out int releaseEnd);
+            yield return PlayFrameRange(frames, releaseStart, releaseEnd, 1f);
+
+            _transition = null;
+            if (_wantHeld)
+            {
+                BeginPress();
+                yield break;
+            }
+
+            _phase = _wantHighlight ? VisualPhase.Highlighted : VisualPhase.Idle;
+            ApplyImmediateVisual();
+        }
+
+        IEnumerator CoPressPulse()
+        {
+            _phase = VisualPhase.Pressing;
+            Sprite[] frames = GetFrames();
+            GetSheetRanges(frames, out int pressCount, out int releaseStart, out int releaseEnd);
+            yield return PlayFrameRange(frames, 0, pressCount - 1, 1f);
+
+            _phase = VisualPhase.Releasing;
+            yield return PlayFrameRange(frames, releaseStart, releaseEnd, 1f);
+
+            _transition = null;
+            _phase = _wantHighlight ? VisualPhase.Highlighted : VisualPhase.Idle;
+            ApplyImmediateVisual();
+        }
+
+        Sprite[] GetFrames() =>
+            spriteSet != null ? spriteSet.GetPressFrames() : null;
+
+        /// <summary>
+        /// 4프레임 시트: press [0..pressCount), release [pressCount..end].
+        /// pressFrameCount &lt; 0 이면 Length/2.
+        /// </summary>
+        void GetSheetRanges(
+            Sprite[] frames,
+            out int pressCount,
+            out int releaseStart,
+            out int releaseEnd)
+        {
+            if (frames == null || frames.Length == 0)
+            {
+                pressCount = 0;
+                releaseStart = 0;
+                releaseEnd = 0;
+                return;
+            }
+
+            if (frames.Length == 1)
+            {
+                pressCount = 1;
+                releaseStart = 0;
+                releaseEnd = 0;
+                return;
+            }
+
+            int autoHalf = frames.Length / 2;
+            pressCount = pressFrameCount >= 0
+                ? Mathf.Clamp(pressFrameCount, 1, frames.Length)
+                : Mathf.Max(1, autoHalf);
+
+            if (pressCount >= frames.Length)
+            {
+                releaseStart = frames.Length - 1;
+                releaseEnd = frames.Length - 1;
+                return;
+            }
+
+            releaseStart = pressCount;
+            releaseEnd = frames.Length - 1;
+        }
+
+        IEnumerator PlayFrameRange(Sprite[] frames, int fromInclusive, int toInclusive, float scaleMul)
+        {
+            if (frames == null || frames.Length == 0)
+            {
+                if (spriteSet != null)
+                    ApplyFrame(fromInclusive <= toInclusive ? spriteSet.Held : spriteSet.Idle, scaleMul);
+                yield break;
+            }
+
+            fromInclusive = Mathf.Clamp(fromInclusive, 0, frames.Length - 1);
+            toInclusive = Mathf.Clamp(toInclusive, 0, frames.Length - 1);
+
+            int step = fromInclusive <= toInclusive ? 1 : -1;
+            for (int i = fromInclusive; ; i += step)
+            {
+                ApplyFrame(frames[i], scaleMul);
+                yield return WaitSpriteHold();
+
+                if (i == toInclusive)
+                    break;
+            }
+        }
+
+        IEnumerator WaitSpriteHold()
+        {
+            float duration = Mathf.Max(0.001f, secondsPerSprite);
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+        }
+
+        static Sprite FrameAt(Sprite[] frames, int index)
+        {
+            if (frames == null || frames.Length == 0)
+                return null;
+            return frames[Mathf.Clamp(index, 0, frames.Length - 1)];
+        }
+
+        void ApplyImmediateVisual()
+        {
+            if (spriteSet == null || icon == null)
+                return;
+
+            if (_wantHeld || _phase == VisualPhase.Held)
+            {
+                ApplyFrame(spriteSet.Held, heldScale);
+                return;
+            }
+
+            if (_phase == VisualPhase.Pressing || _phase == VisualPhase.Releasing)
+            {
+                Sprite[] frames = GetFrames();
+                if (frames.Length > 0)
+                {
+                    GetSheetRanges(frames, out int pressCount, out int releaseStart, out int releaseEnd);
+                    int idx = _phase == VisualPhase.Pressing
+                        ? pressCount - 1
+                        : releaseEnd;
+                    ApplyFrame(frames[Mathf.Clamp(idx, 0, frames.Length - 1)], 1f);
+                    return;
+                }
+            }
+
+            Sprite s = _wantHighlight || _phase == VisualPhase.Highlighted
+                ? spriteSet.Highlighted
+                : spriteSet.Idle;
+            ApplyFrame(s, 1f);
+        }
+
+        void ApplyFrame(Sprite sprite, float scaleMul)
+        {
+            if (icon == null)
+                return;
+
+            if (sprite != null)
+                icon.sprite = sprite;
+
+            float mul = Mathf.Approximately(scaleMul, 1f) ? 1f : scaleMul;
+            icon.rectTransform.localScale = _restScale * mul;
+        }
+
+        void StopTransition()
+        {
+            if (_transition == null)
+                return;
+
+            StopCoroutine(_transition);
+            _transition = null;
+        }
+    }
+}

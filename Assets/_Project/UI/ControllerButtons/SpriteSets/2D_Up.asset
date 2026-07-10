@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bea79b760da71dc4ba2e38ee753ccb61, type: 3}
+  m_Name: 2D_Up
+  m_EditorClassIdentifier: 
+  displayName: 2D_Up
+  idle: {fileID: -38963113, guid: b17174677b19cb44f8c9fe93b2f1261c, type: 3}
+  highlighted: {fileID: 1661023944, guid: 1a2ce9ca2cf6ba6459de05a482afd535, type: 3}
+  pressFrames: []
+  held: {fileID: -76568561, guid: 10b70fd8e3a0bef43b8cb282683f2945, type: 3}
