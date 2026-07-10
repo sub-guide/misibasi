@@ -1,13 +1,47 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-06-28 — 셔플 이펙트 Inspector 확대 속도·크기
+> **갱신**: 2026-07-11 — 디제잉 레이브 개편 **1단계** (UI 바인딩·데이터 구조만). 아래 §1~§18 본문은 아직 **레거시 `oiiaiooiiiai` 루프** 기준. 개편 진행은 §0·`02_개발_진행_일지.md`.
+
+---
+
+## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
+
+> **상태**: 1단계 C# 바인딩 완료 · 게임플레이·씬 Hierarchy **미완**. 레거시 필드·로직은 삭제하지 않음.
+
+### 목표 컨셉 (기획)
+
+- 고정 문자 패턴·게이지 → **시간 기반 글로벌 티어** + SNES **10키** 디제잉 박스.
+- 상시 **활성 타겟 3개** (`SnesControllerButtonVisual.SetHighlighted`). 순서 무관 성공 → 해당 키 끄고 비활성 중 1개 즉시 보충.
+- 60초 글로벌 티어로 전 슬롯 배경(크로마키→우주→클럽)·BGM 동기화. **30콤보** 시 3초 피버(전 버튼 정답).
+
+### 1단계 바인딩 (코드)
+
+| 심볼 | 위치 | 역할 |
+|------|------|------|
+| `OiiaDjPadButtonId` · `DjPadButtonCount`(10) | `Types.cs` · `Constants.cs` | A…Right 인덱스 |
+| `DjBoxRoot` · `DjFaceButtons` · `DjDpadButtons` · `DjShoulderButtons` · `DjPadButtons[]` | `SlotUiBindings` / `OiiaSlotPanelBindings` | SNES Prefab 재활용 |
+| `HudScoreText` · `HudComboText` · `HudFeverText` | 동일 | 소형 가변 디스플레이 |
+| `SubPatternGuideText` | 동일 | 가사/패턴 흐름 |
+| `StageScreenRoot` · `StageBackgroundChromaKey/Space/Club` | 동일 | 전광판 배경 (`Graphic`) |
+
+Hierarchy 권장 자식명: `DjBox`(또는 `DjingBox`), `HudDisplay`, `SubPatternGuide`, `StageScreen`, `Bg_ChromaKey` / `Bg_Space` / `Bg_Club`. AutoWire는 `EnsureDjPadButtonsArray`로 드라이버→`DjPadButtons[10]` 채움.
+
+### 레거시 → 교체 대상 (삭제 시점 = 개편 완료 후)
+
+| 레거시 필드 | 개편 대체 |
+|-------------|-----------|
+| `GaugeSlider` | 미사용(숨김/제거 예정) |
+| `SequenceText` | `SubPatternGuideText` |
+| `ControllerGuide*` · `GuideButtonY/X/A/B` | `DjPadButtons` + SNES Prefab |
+| `ScoreText` | `HudScoreText` (폴백 가능) |
+| `ShuffleEffect` | 재검토 |
 
 ---
 
 ## 1. 한 줄 요약
 
-4명이 각자 패드로 **O · I · I · A** 글자 순서를 맞추며, 실수하지 않고 오래 버티면 점수와 난이도가 올라가는 리듬·서스테인(누르고 유지) 미니게임이다.
+4명이 각자 패드로 **O · I · I · A** 글자 순서를 맞추며, 실수하지 않고 오래 버티면 점수와 난이도가 올라가는 리듬·서스테인(누르고 유지) 미니게임이다. (**§0 디제잉 레이브로 개편 중.**)
 
 ---
 
