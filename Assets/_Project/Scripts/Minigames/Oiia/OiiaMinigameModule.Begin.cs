@@ -1,5 +1,6 @@
 using MiniParty.Core;
 using MiniParty.Minigames;
+using MiniParty.UI.ControllerButtons;
 using UnityEngine;
 
 namespace MiniParty.Minigames.Oiia
@@ -25,8 +26,7 @@ namespace MiniParty.Minigames.Oiia
             }
 
             ForEachSlot(ResetSlotAtBegin);
-            ForEachSlot(ApplySlotChromeAndSequenceLayout);
-            ResetAllGuideFeedback();
+            ForEachSlot(ApplySlotChrome);
 
             if (!_ctx.IsPractice)
             {
@@ -38,7 +38,6 @@ namespace MiniParty.Minigames.Oiia
             StopTierBgm();
 
             UpdateMainTimerUi();
-            ValidatePatternSfxSetup();
             ForEachSlot(FlushUi);
         }
 
@@ -48,26 +47,16 @@ namespace MiniParty.Minigames.Oiia
 
             _aliveMask[i] = play;
             ref SlotRuntime sr = ref _slots[i];
-            sr.Gauge01 = play ? 1f : 0f;
-            sr.Cursor = 0;
-            sr.ConsecutiveLoopSuccesses = 0;
             sr.ScoreSum = 0;
+            sr.Combo = 0;
             sr.InputLockTimer = 0f;
             sr.FailFlashTimer = 0f;
-            sr.InTypoState = false;
-            sr.ShuffleEffectTimer = 0f;
             sr.TierBumpBlurRemaining = 0f;
-            sr.BurstPool = new BurstTextFx[BurstTextPoolSize];
-            AssignDefaultButtonMapping(ref sr);
+            sr.ConsecutiveLoopSuccesses = 0;
             _practiceReady[i] = false;
 
             if (TryGetBinding(i, out SlotUiBindings b))
             {
-                if (b.SequenceText != null)
-                    _sequenceTextBaseFontSize[i] = b.SequenceText.fontSize;
-                else
-                    _sequenceTextBaseFontSize[i] = -1f;
-
                 if (b.SlotPanelBackgroundImage != null)
                     _slotPanelBgRestColor[i] = b.SlotPanelBackgroundImage.color;
                 else
@@ -79,13 +68,24 @@ namespace MiniParty.Minigames.Oiia
                 if (b.WaitingText != null)
                     b.WaitingText.gameObject.SetActive(IsSlotEmptyForUi(i));
 
-                InitializeShuffleEffectVisual(i, b);
-                InitializeBurstTextPool(i);
+                ClearDjPadHighlights(b);
             }
             else
             {
-                _sequenceTextBaseFontSize[i] = -1f;
                 _slotPanelBgRestColor[i] = new Color(1f, 1f, 1f, 1f);
+            }
+        }
+
+        static void ClearDjPadHighlights(SlotUiBindings b)
+        {
+            if (b.DjPadButtons == null)
+                return;
+
+            for (var k = 0; k < b.DjPadButtons.Length; k++)
+            {
+                SnesControllerButtonVisual visual = b.DjPadButtons[k];
+                if (visual != null)
+                    visual.SetHighlighted(false);
             }
         }
     }

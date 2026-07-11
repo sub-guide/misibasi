@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MiniParty.Minigames.Oiia
 {
@@ -77,14 +75,12 @@ namespace MiniParty.Minigames.Oiia
             if (!TryGetBinding(i, out SlotUiBindings b))
                 return;
 
-            var list = new List<UiShakeTarget>(12);
-            TryAddUiShakeTarget(list, b.SequenceText);
-            TryAddUiShakeTarget(list, b.GaugeSlider);
-            TryAddUiShakeTarget(list, b.ScoreText);
-
-            Image[] guideButtons = GuideButtonsArray(b);
-            for (var g = 0; g < guideButtons.Length; g++)
-                TryAddUiShakeTarget(list, guideButtons[g]);
+            var list = new List<UiShakeTarget>(8);
+            TryAddUiShakeTarget(list, b.HudScoreText);
+            TryAddUiShakeTarget(list, b.HudComboText);
+            TryAddUiShakeTarget(list, b.HudFeverText);
+            TryAddUiShakeTarget(list, b.SubPatternGuideText);
+            TryAddUiShakeTarget(list, b.DjBoxRoot);
 
             _uiShakeTargets[i] = list.ToArray();
             _uiShakeTargetsCaptured[i] = true;

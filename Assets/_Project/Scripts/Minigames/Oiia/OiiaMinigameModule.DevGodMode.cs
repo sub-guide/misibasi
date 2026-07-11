@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 namespace MiniParty.Minigames.Oiia
 {
@@ -11,8 +10,8 @@ namespace MiniParty.Minigames.Oiia
 #endif
 
         /// <summary>
-        /// 개발자 무적 모드: 1P 슬롯만 <see cref="OiiaPhysicalButton.A"/> 입력을 항상 정답 처리.
-        /// Editor·Development Build 에서만 <c>Backspace</c> 토글.
+        /// Dev God Mode: 본게임 타이머 정지. 1.5단계에서는 입력 자동 정답 없음(2단계 이후 재정의).
+        /// Editor·Development Build 에서만 Backspace 토글.
         /// </summary>
         bool IsDevGodModeSlot(int slotIndex)
         {
@@ -40,7 +39,7 @@ namespace MiniParty.Minigames.Oiia
 
             _devGodModeEnabled = !_devGodModeEnabled;
             Debug.Log(
-                $"[OiiaMinigameModule] Dev God Mode (1P A=always correct, other inputs ignored, main timer paused): " +
+                $"[OiiaMinigameModule] Dev God Mode (main timer paused; pad auto-correct deferred to Phase 2): " +
                 $"{(_devGodModeEnabled ? "ON" : "OFF")}",
                 this);
 #endif
@@ -52,51 +51,6 @@ namespace MiniParty.Minigames.Oiia
                 return true;
 
             return UnityEngine.Input.GetKeyDown(KeyCode.Backspace);
-        }
-
-        void TickGameplayDevGodMode1P(int slotIndex, Joystick pad)
-        {
-            UpdateGuideHoldFeedbackDevGodMode1P(slotIndex, pad);
-
-            if (!WasPhysicalPressed(slotIndex, pad, OiiaPhysicalButton.A))
-                return;
-
-            OnCorrectInput(slotIndex);
-        }
-
-        void UpdateGuideHoldFeedbackDevGodMode1P(int slotIndex, Joystick pad)
-        {
-            if (!TryGetBinding(slotIndex, out SlotUiBindings b) || b.ControllerGuideRoot == null)
-                return;
-
-            if (!_aliveMask[slotIndex] || IsSlotEmptyForUi(slotIndex))
-                return;
-
-            EnsureGuideNeonCaptured(slotIndex, b);
-
-            Image[] buttons = GuideButtonsArray(b);
-            int aIndex = GuideButtonIndexForPhysical(OiiaPhysicalButton.A);
-
-            for (var k = 0; k < GuideButtonsPerSlot; k++)
-            {
-                Image btn = buttons[k];
-                if (btn == null)
-                    continue;
-
-                bool held = k == aIndex && IsPhysicalHeld(slotIndex, pad, OiiaPhysicalButton.A);
-                Vector3 restScale = _guideButtonRestScale[slotIndex][k];
-
-                if (held)
-                {
-                    btn.rectTransform.localScale = restScale * GuideButtonHoldScale;
-                    ApplyGuideButtonBrightness(btn, GuideButtonHoldBrightness);
-                }
-                else
-                {
-                    btn.rectTransform.localScale = restScale;
-                    ApplyGuideButtonBrightness(btn, GuideButtonIdleBrightness);
-                }
-            }
         }
     }
 }

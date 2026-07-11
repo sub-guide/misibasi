@@ -44,7 +44,6 @@ namespace MiniParty.Minigames.Oiia
                 {
                     UpdateCatAnimationMode(i);
                     UpdateCatMovement(i);
-                    UpdateSlotUiShake(i);
                 }
 
                 FlushUi(i);

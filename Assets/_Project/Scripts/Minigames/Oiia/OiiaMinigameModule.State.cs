@@ -7,8 +7,6 @@ namespace MiniParty.Minigames.Oiia
 {
     public sealed partial class OiiaMinigameModule
     {
-        readonly string _patternLower = "oiiaiooiiiai";
-
         MinigameContext _ctx;
 
         SlotUiBindings[] bindings;
@@ -24,10 +22,6 @@ namespace MiniParty.Minigames.Oiia
 
         readonly Color[] _slotPanelBgRestColor = new Color[SlotCount];
 
-        readonly SequenceTextMainLayoutSnapshot[] _sequenceTextMainLayout = new SequenceTextMainLayoutSnapshot[SlotCount];
-
-        readonly bool[] _sequenceTextMainLayoutCaptured = new bool[SlotCount];
-
         readonly int[] _blurRestSiblingIndex = { -1, -1, -1, -1 };
 
         readonly OperatorInputService _operatorInput = new();
@@ -35,9 +29,5 @@ namespace MiniParty.Minigames.Oiia
         AudioSource _tierBgmRuntime;
 
         bool _warnedTimerMissing;
-
-        bool _loggedPatternSfxArrayWarning;
-
-        readonly bool[] _burstTextSortCanvasAdded = new bool[SlotCount];
     }
 }

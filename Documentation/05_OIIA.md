@@ -7,7 +7,7 @@
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: 1단계 C# 바인딩 완료 · 게임플레이·씬 Hierarchy **미완**. 레거시 필드·로직은 삭제하지 않음.
+> **상태**: 1단계 바인딩 + **1.5단계 레거시 제거·에디터 정리·Play 검증 완료** (2026-07-12). 다음 = **2단계(10키 판정)**.  
 
 ### 목표 컨셉 (기획)
 
@@ -15,33 +15,34 @@
 - 상시 **활성 타겟 3개** (`SnesControllerButtonVisual.SetHighlighted`). 순서 무관 성공 → 해당 키 끄고 비활성 중 1개 즉시 보충.
 - 60초 글로벌 티어로 전 슬롯 배경(크로마키→우주→클럽)·BGM 동기화. **30콤보** 시 3초 피버(전 버튼 정답).
 
-### 1단계 바인딩 (코드)
+### 1단계 바인딩 (유지)
 
 | 심볼 | 위치 | 역할 |
 |------|------|------|
 | `OiiaDjPadButtonId` · `DjPadButtonCount`(10) | `Types.cs` · `Constants.cs` | A…Right 인덱스 |
-| `DjBoxRoot` · `DjFaceButtons` · `DjDpadButtons` · `DjShoulderButtons` · `DjPadButtons[]` | `SlotUiBindings` / `OiiaSlotPanelBindings` | SNES Prefab 재활용 |
-| `HudScoreText` · `HudComboText` · `HudFeverText` | 동일 | 소형 가변 디스플레이 |
-| `SubPatternGuideText` | 동일 | 가사/패턴 흐름 |
-| `StageScreenRoot` · `StageBackgroundChromaKey/Space/Club` | 동일 | 전광판 배경 (`Graphic`) |
+| `DjBoxRoot` · `DjFaceButtons` · `DjDpadButtons` · `DjShoulderButtons` · `DjPadButtons[]` | `SlotUiBindings` / `OiiaSlotPanelBindings` | SNES Prefab |
+| `HudScoreText` · `HudComboText` · `HudFeverText` | 동일 | Hud (Combo는 선택) |
+| `SubPatternGuideText` | 동일 | 가사 흐름 |
+| `StageScreenRoot` · `StageBackgroundChromaKey/Space/Club` | 동일 | 전광판 |
 
-Hierarchy 권장 자식명: `DjBox`(또는 `DjingBox`), `HudDisplay`, `SubPatternGuide`, `StageScreen`, `Bg_ChromaKey` / `Bg_Space` / `Bg_Club`. AutoWire는 `EnsureDjPadButtonsArray`로 드라이버→`DjPadButtons[10]` 채움.
+### 1.5단계에서 코드 제거한 레거시
 
-### 레거시 → 교체 대상 (삭제 시점 = 개편 완료 후)
+| 제거 | 비고 |
+|------|------|
+| `BurstText` partial · 풀 바인딩 | NRE 원인. Hierarchy `BurstText*` 는 에디터에서 삭제/비활성 |
+| `ShuffleEffect` · `ButtonShuffle` | O/I/A 매핑 셔플 |
+| `GuideFeedback` · Y/X/A/B 가이드 바인딩 | SNES 10키로 대체 |
+| `GaugeSlider` · 게이지 드레인 | 룰 폐기 |
+| `SequenceText` 커서 UI · `_patternLower` 입력 루프 | `TickGameplay` 스텁 |
+| `OiiaPhysicalButton` MapO/I/A | 삭제 |
 
-| 레거시 필드 | 개편 대체 |
-|-------------|-----------|
-| `GaugeSlider` | 미사용(숨김/제거 예정) |
-| `SequenceText` | `SubPatternGuideText` |
-| `ControllerGuide*` · `GuideButtonY/X/A/B` | `DjPadButtons` + SNES Prefab |
-| `ScoreText` | `HudScoreText` (폴백 가능) |
-| `ShuffleEffect` | 재검토 |
+**유지(골격)**: Begin/Tick/Exit · Practice READY · Timer · Cat/Blur/Waiting · TierBgm·CatMovement(티어 연동은 후속 개조) · Dj 바인딩.
 
 ---
 
 ## 1. 한 줄 요약
 
-4명이 각자 패드로 **O · I · I · A** 글자 순서를 맞추며, 실수하지 않고 오래 버티면 점수와 난이도가 올라가는 리듬·서스테인(누르고 유지) 미니게임이다. (**§0 디제잉 레이브로 개편 중.**)
+~~4명이 각자 패드로 **O · I · I · A** 글자 순서를 맞추며…~~ → **개편 중**: SNES 10키 디제잉 레이브(§0). 아래 §2~는 레거시 서술이며 1.5단계 이후 코드와 불일치할 수 있음.
 
 ---
 

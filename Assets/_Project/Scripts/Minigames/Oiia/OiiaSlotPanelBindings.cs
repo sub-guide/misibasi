@@ -12,30 +12,12 @@ namespace MiniParty.Minigames.Oiia
     [DisallowMultipleComponent]
     public sealed class OiiaSlotPanelBindings : MonoBehaviour
     {
-        [Header("레거시 — 문자 패턴·게이지")]
-        public TMP_Text SequenceText;
-        public Slider GaugeSlider;
+        [Header("공통")]
         public Image Blur;
-        public TMP_Text ScoreText;
         public TMP_Text PracticeReadyText;
         public Animator CatAnimator;
         public Image SlotPanelBackgroundImage;
         public TMP_Text WaitingText;
-
-        [Header("레거시 — 컨트롤러 가이드 (Y/X/A/B)")]
-        public GameObject ControllerGuideRoot;
-        public Image ControllerBodyImage;
-        public Image GuideButtonY;
-        public Image GuideButtonX;
-        public Image GuideButtonA;
-        public Image GuideButtonB;
-
-        [Header("레거시 — 셔플 이펙트")]
-        public Image ShuffleEffect;
-
-        [Header("코믹스 BurstText 풀")]
-        public TMP_Text[] BurstTextPool;
-        public RectTransform BurstTextContainer;
 
         [Header("디제잉 박스 (Rave)")]
         public RectTransform DjBoxRoot;
@@ -64,23 +46,11 @@ namespace MiniParty.Minigames.Oiia
 
             return new()
             {
-                SequenceText = SequenceText,
-                GaugeSlider = GaugeSlider,
                 Blur = Blur,
-                ScoreText = ScoreText,
                 PracticeReadyText = PracticeReadyText,
                 CatAnimator = CatAnimator,
                 SlotPanelBackgroundImage = SlotPanelBackgroundImage,
                 WaitingText = WaitingText,
-                ControllerGuideRoot = ControllerGuideRoot,
-                ControllerBodyImage = ControllerBodyImage,
-                GuideButtonY = GuideButtonY,
-                GuideButtonX = GuideButtonX,
-                GuideButtonA = GuideButtonA,
-                GuideButtonB = GuideButtonB,
-                ShuffleEffect = ShuffleEffect,
-                BurstTextPool = BurstTextPool,
-                BurstTextContainer = BurstTextContainer,
                 DjBoxRoot = DjBoxRoot,
                 DjFaceButtons = DjFaceButtons,
                 DjDpadButtons = DjDpadButtons,
@@ -97,11 +67,7 @@ namespace MiniParty.Minigames.Oiia
             };
         }
 
-        void Awake()
-        {
-            AutoWireFromHierarchy();
-            HideIdleBurstTextPoolInHierarchy();
-        }
+        void Awake() => AutoWireFromHierarchy();
 
         void OnValidate() => AutoWireFromHierarchy();
 
@@ -109,38 +75,13 @@ namespace MiniParty.Minigames.Oiia
         {
             Transform root = transform;
 
-            SequenceText = GetDirectChildComponent<TMP_Text>(root, "Sequence");
-            GaugeSlider = GetDirectChildComponent<Slider>(root, "Gauge");
-            ScoreText = GetDirectChildComponent<TMP_Text>(root, "Score");
             Blur = GetDirectChildComponent<Image>(root, "Blur");
             PracticeReadyText = GetDirectChildComponent<TMP_Text>(root, "Ready");
-            CatAnimator = GetDirectChildComponent<Animator>(root, "Cat");
             WaitingText = GetDirectChildComponent<TMP_Text>(root, "Waiting");
             SlotPanelBackgroundImage = GetComponent<Image>();
 
-            Transform guideRoot = root.Find("ControllerGuide");
-            if (guideRoot != null)
-            {
-                ControllerGuideRoot = guideRoot.gameObject;
-                ControllerBodyImage = GetDirectChildComponent<Image>(guideRoot, "Body");
-                GuideButtonY = GetDirectChildComponent<Image>(guideRoot, "BtnY");
-                GuideButtonX = GetDirectChildComponent<Image>(guideRoot, "BtnX");
-                GuideButtonA = GetDirectChildComponent<Image>(guideRoot, "BtnA");
-                GuideButtonB = GetDirectChildComponent<Image>(guideRoot, "BtnB");
-            }
-
-            Transform shuffleEffect = root.Find("ShuffleEffect");
-            if (shuffleEffect == null)
-                shuffleEffect = root.Find("ShuffleMapOverlay");
-
-            if (shuffleEffect != null)
-                ShuffleEffect = shuffleEffect.GetComponent<Image>();
-
-            Transform burstContainer = root.Find("BurstTextContainer");
-            BurstTextContainer = burstContainer != null ? burstContainer as RectTransform : null;
-
-            if (BurstTextPool == null || BurstTextPool.Length == 0)
-                CollectBurstTextPool(root);
+            if (CatAnimator == null)
+                CatAnimator = GetDirectChildComponent<Animator>(root, "Cat");
 
             AutoWireDjBox(root);
             AutoWireStageScreen(root);
@@ -187,15 +128,8 @@ namespace MiniParty.Minigames.Oiia
                     HudFeverText = FindTmp(djBox, "Fever", "HudFever");
             }
 
-            if (HudScoreText == null && ScoreText != null)
-                HudScoreText = ScoreText;
-
             if (SubPatternGuideText == null)
-            {
                 SubPatternGuideText = FindTmp(djBox, "SubPatternGuide", "SubPattern", "LyricsGuide");
-                if (SubPatternGuideText == null && SequenceText != null)
-                    SubPatternGuideText = SequenceText;
-            }
         }
 
         void AutoWireStageScreen(Transform root)
@@ -226,10 +160,6 @@ namespace MiniParty.Minigames.Oiia
             }
         }
 
-        /// <summary>
-        /// Face/D-Pad/Shoulder 드라이버에서 길이 10 <see cref="DjPadButtons"/> 를 채운다.
-        /// 인덱스 = <see cref="OiiaMinigameModule.OiiaDjPadButtonId"/>.
-        /// </summary>
         public void EnsureDjPadButtonsArray()
         {
             if (DjPadButtons == null || DjPadButtons.Length != OiiaMinigameModule.DjPadButtonCount)
@@ -266,47 +196,6 @@ namespace MiniParty.Minigames.Oiia
 
             if (DjPadButtons[i] == null && visual != null)
                 DjPadButtons[i] = visual;
-        }
-
-        void HideIdleBurstTextPoolInHierarchy()
-        {
-            if (BurstTextPool == null || BurstTextPool.Length == 0)
-                CollectBurstTextPool(transform);
-
-            if (BurstTextPool == null)
-                return;
-
-            for (var i = 0; i < BurstTextPool.Length; i++)
-            {
-                TMP_Text tmp = BurstTextPool[i];
-                if (tmp == null)
-                    continue;
-
-                tmp.gameObject.SetActive(false);
-                tmp.text = string.Empty;
-            }
-        }
-
-        void CollectBurstTextPool(Transform root)
-        {
-            var list = new System.Collections.Generic.List<TMP_Text>(OiiaMinigameModule.BurstTextPoolSize);
-            CollectBurstTextRecursive(BurstTextContainer != null ? BurstTextContainer : root, list);
-
-            if (list.Count > 0)
-                BurstTextPool = list.ToArray();
-        }
-
-        static void CollectBurstTextRecursive(Transform node, System.Collections.Generic.List<TMP_Text> list)
-        {
-            if (node.name.StartsWith("BurstText"))
-            {
-                TMP_Text tmp = node.GetComponent<TMP_Text>();
-                if (tmp != null && !list.Contains(tmp))
-                    list.Add(tmp);
-            }
-
-            for (var c = 0; c < node.childCount; c++)
-                CollectBurstTextRecursive(node.GetChild(c), list);
         }
 
         static T GetDirectChildComponent<T>(Transform root, string childName) where T : Component

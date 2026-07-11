@@ -11,7 +11,7 @@
 
 # Project Master Context — Mini Party (바이블 코딩)
 
-> **갱신 기준일**: 2026-07-11  
+> **갱신 기준일**: 2026-07-12  
 > **상세 기술 문서**: `Documentation/` 폴더 (본 파일은 AI·협업 **행동 규칙 + 진행 로그** 전용)
 
 ---
@@ -189,8 +189,9 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 **OIIA 디제잉 레이브 개편**
 
-- [x] **1단계: UI 바인딩·데이터 구조** — `OiiaDjPadButtonId` · `DjPadButtons[10]` · Hud Score/Combo/Fever · SubPatternGuide · StageScreen 배경 3레이어 · 레거시 필드 유지 (2026-07-11, **에디터 배치·Play 미검증**)
-- [ ] **2단계**: 활성 타겟 3개 `SetHighlighted` + 10키 입력 판정 (게임플레이)
+- [x] **1단계: UI 바인딩·데이터 구조** — `OiiaDjPadButtonId` · `DjPadButtons[10]` · Hud · SubPatternGuide · StageScreen (2026-07-11)
+- [x] **1.5단계: 레거시 제거** — Burst/Shuffle/Guide/ButtonShuffle 삭제 · 게이지·문자패턴·가이드 바인딩 제거 · `TickGameplay` 스텁 · **에디터 정리·Play 검증 완료** (사용자, 2026-07-12)
+- [ ] **2단계**: 활성 타겟 3개 `SetHighlighted` + 10키 입력 판정
 - [ ] **3단계+**: 글로벌 티어(60s)·피버·전광판 연출·BGM 믹스
 
 **OIIA 후속 (레거시 루프)**
@@ -249,4 +250,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-07-11 — OIIA 디제잉 레이브 1단계 바인딩*
+*마스터 파일 갱신: 2026-07-12 — OIIA 1.5단계 레거시 제거*

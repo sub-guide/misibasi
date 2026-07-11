@@ -35,7 +35,6 @@ namespace MiniParty.Minigames.Oiia
             {
                 OiiaSlotPanelBindings panel = panels[i];
                 bindings[i] = panel != null ? panel.ToSlotUiBindings() : new SlotUiBindings();
-                PrepareBurstTextPoolVisual(bindings[i]);
             }
         }
 
