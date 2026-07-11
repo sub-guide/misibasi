@@ -198,9 +198,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 664720836}
     m_Modifications:
+    - target: {fileID: 254248843747970244, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: playerIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3339117925776300398, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: playerIndex
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6805284570553592105, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
       propertyPath: m_Name
       value: SlotPanel_3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7038786937723631674, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: playerIndex
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7603874647277726591, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -410,9 +422,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 664720836}
     m_Modifications:
+    - target: {fileID: 254248843747970244, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: playerIndex
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3339117925776300398, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: playerIndex
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6805284570553592105, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
       propertyPath: m_Name
       value: SlotPanel_4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7038786937723631674, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: playerIndex
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7603874647277726591, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -883,9 +907,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 664720836}
     m_Modifications:
+    - target: {fileID: 254248843747970244, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: playerIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3339117925776300398, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: playerIndex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6805284570553592105, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
       propertyPath: m_Name
       value: SlotPanel_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7038786937723631674, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: playerIndex
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7603874647277726591, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
       propertyPath: m_AnchorMax.x
