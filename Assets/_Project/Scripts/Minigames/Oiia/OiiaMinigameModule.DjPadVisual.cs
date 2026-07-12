@@ -1,7 +1,6 @@
 using MiniParty.UI.ControllerButtons;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 namespace MiniParty.Minigames.Oiia
 {
@@ -18,10 +17,19 @@ namespace MiniParty.Minigames.Oiia
         [FormerlySerializedAs("oiiaLrForceWhiteIconColor")]
         [SerializeField] bool oiiaLrWhiteIconColorOnlyWhenHighlighted = true;
 
+        [Header("OIIA ABXY Unpressed 명도 (이 미니게임만)")]
+        [Tooltip("OIIA DjBox A/B/X/Y Idle(Unpressed)에만 명도 적용. L/R·D-Pad·다른 씬에는 영향 없음.")]
+        [SerializeField] bool oiiaDjPadDimUnpressed = true;
+
+        [Tooltip("ABXY Unpressed RGB 명도(0~255).")]
+        [SerializeField] [Range(0, 255)] int oiiaDjPadUnpressedBrightness = 100;
+
         void ApplyOiiaLrDjBoxVisualOverrides(SlotUiBindings b)
         {
             if (b?.DjPadButtons == null)
                 return;
+
+            ApplyOiiaFaceUnpressedBrightness(b);
 
             ConfigureOiiaShoulderVisual(
                 b.DjPadButtons[(int)OiiaDjPadButtonId.L],
@@ -32,6 +40,24 @@ namespace MiniParty.Minigames.Oiia
                 oiiaRHighlightedBlack);
         }
 
+        void ApplyOiiaFaceUnpressedBrightness(SlotUiBindings b)
+        {
+            ConfigureOiiaUnpressedBrightness(b.DjPadButtons[(int)OiiaDjPadButtonId.A]);
+            ConfigureOiiaUnpressedBrightness(b.DjPadButtons[(int)OiiaDjPadButtonId.B]);
+            ConfigureOiiaUnpressedBrightness(b.DjPadButtons[(int)OiiaDjPadButtonId.X]);
+            ConfigureOiiaUnpressedBrightness(b.DjPadButtons[(int)OiiaDjPadButtonId.Y]);
+        }
+
+        void ConfigureOiiaUnpressedBrightness(SnesControllerButtonVisual visual)
+        {
+            if (visual == null)
+                return;
+
+            visual.ConfigureUnpressedBrightness(
+                oiiaDjPadDimUnpressed,
+                oiiaDjPadUnpressedBrightness);
+        }
+
         void ConfigureOiiaShoulderVisual(SnesControllerButtonVisual visual, Sprite highlightedBlack)
         {
             if (visual == null)
@@ -40,19 +66,8 @@ namespace MiniParty.Minigames.Oiia
             if (highlightedBlack != null)
                 visual.SetHighlightedSpriteOverride(highlightedBlack);
 
-            Color rest = ReadIconColorOrWhite(visual);
             visual.ConfigureWhiteIconOnlyWhenShowingHighlighted(
-                oiiaLrWhiteIconColorOnlyWhenHighlighted,
-                rest);
-        }
-
-        static Color ReadIconColorOrWhite(SnesControllerButtonVisual visual)
-        {
-            if (visual == null)
-                return Color.white;
-
-            Image icon = visual.GetComponent<Image>();
-            return icon != null ? icon.color : Color.white;
+                oiiaLrWhiteIconColorOnlyWhenHighlighted);
         }
     }
 }

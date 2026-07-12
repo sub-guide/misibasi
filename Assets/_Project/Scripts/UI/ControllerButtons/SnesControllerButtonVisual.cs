@@ -77,23 +77,43 @@ namespace MiniParty.UI.ControllerButtons
 
         /// <summary>
         /// Highlighted 스프라이트를 그릴 때만 Image를 흰색으로.
-        /// Press/Held/Idle 등 다른 스프라이트는 <paramref name="restIconColor"/> 틴트 유지.
+        /// 그 외(Pressed/Held/Idle)는 에디터 Image 색. Idle 명도 오버라이드는 <see cref="ConfigureUnpressedBrightness"/>.
         /// </summary>
-        public void ConfigureWhiteIconOnlyWhenShowingHighlighted(bool enabled, Color restIconColor)
+        public void ConfigureWhiteIconOnlyWhenShowingHighlighted(bool enabled)
         {
             _whiteIconOnlyWhenShowingHighlighted = enabled;
-            _iconRestColor = restIconColor;
             SyncIconColorToDisplayedSprite(icon != null ? icon.sprite : null);
         }
 
-        /// <summary>Image 틴트(직접 지정). ConfigureWhiteIcon… 사용 중이면 매 프레임 덮어쓸 수 있음.</summary>
+        /// <summary>하위 호환. restIconColor는 에디터 기준색으로 저장.</summary>
+        public void ConfigureWhiteIconOnlyWhenShowingHighlighted(bool enabled, Color restIconColor)
+        {
+            _editorIconColor = restIconColor;
+            ConfigureWhiteIconOnlyWhenShowingHighlighted(enabled);
+        }
+
+        /// <summary>
+        /// Idle(Unpressed)일 때만 RGB 명도(0~255) 적용. 기본 OFF(프로젝트 공통 영향 없음).
+        /// 미니게임(예: OIIA)에서만 켜서 사용.
+        /// </summary>
+        public void ConfigureUnpressedBrightness(bool enabled, int brightness0To255 = 100)
+        {
+            _unpressedBrightnessEnabled = enabled;
+            _unpressedBrightness = Mathf.Clamp(brightness0To255, 0, 255);
+            SyncIconColorToDisplayedSprite(icon != null ? icon.sprite : null);
+        }
+
+        /// <summary>Image 틴트(직접 지정). Idle 명도·Highlight 흰색 로직이 덮어쓸 수 있음.</summary>
         public void SetIconColor(Color color)
         {
             if (icon == null)
                 icon = GetComponent<Image>();
 
             if (icon != null)
+            {
                 icon.color = color;
+                _editorIconColor = color;
+            }
         }
 
         Sprite ResolveHighlightedSprite()
@@ -106,7 +126,7 @@ namespace MiniParty.UI.ControllerButtons
 
         void SyncIconColorToDisplayedSprite(Sprite displayed)
         {
-            if (!_whiteIconOnlyWhenShowingHighlighted)
+            if (!_unpressedBrightnessEnabled && !_whiteIconOnlyWhenShowingHighlighted)
                 return;
 
             if (icon == null)
@@ -115,13 +135,32 @@ namespace MiniParty.UI.ControllerButtons
             if (icon == null)
                 return;
 
-            Sprite highlighted = ResolveHighlightedSprite();
-            bool showingHighlighted =
+            Sprite idle = spriteSet != null ? spriteSet.Idle : null;
+            bool showingIdle =
                 displayed != null &&
-                highlighted != null &&
-                ReferenceEquals(displayed, highlighted);
+                idle != null &&
+                ReferenceEquals(displayed, idle);
 
-            icon.color = showingHighlighted ? Color.white : _iconRestColor;
+            if (_unpressedBrightnessEnabled && showingIdle)
+            {
+                float b = _unpressedBrightness / 255f;
+                icon.color = new Color(b, b, b, _editorIconColor.a);
+                return;
+            }
+
+            if (_whiteIconOnlyWhenShowingHighlighted)
+            {
+                Sprite highlighted = ResolveHighlightedSprite();
+                bool showingHighlighted =
+                    displayed != null &&
+                    highlighted != null &&
+                    ReferenceEquals(displayed, highlighted);
+
+                icon.color = showingHighlighted ? Color.white : _editorIconColor;
+                return;
+            }
+
+            icon.color = _editorIconColor;
         }
 
         bool UsesInstantHold() =>
@@ -133,7 +172,9 @@ namespace MiniParty.UI.ControllerButtons
         Vector3 _restScale = Vector3.one;
         Coroutine _transition;
         bool _whiteIconOnlyWhenShowingHighlighted;
-        Color _iconRestColor = Color.white;
+        bool _unpressedBrightnessEnabled;
+        int _unpressedBrightness = 100;
+        Color _editorIconColor = Color.white;
 
         public bool IsHighlighted => _wantHighlight;
         public bool IsHeld => _wantHeld;
@@ -145,6 +186,9 @@ namespace MiniParty.UI.ControllerButtons
                 icon = GetComponent<Image>();
 
             _restScale = icon != null ? icon.rectTransform.localScale : Vector3.one;
+            if (icon != null)
+                _editorIconColor = icon.color;
+
             ApplyImmediateVisual();
         }
 
