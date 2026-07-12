@@ -70,6 +70,7 @@ namespace MiniParty.Minigames.Oiia
                 ResetSpotlightAtBegin(i);
                 ResetStageBackgroundAtBegin(i);
                 ResetSpeakersAtBegin(i);
+                ResetCrowdAtBegin(i);
 
                 if (play)
                 {

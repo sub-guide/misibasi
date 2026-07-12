@@ -7,7 +7,7 @@
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: 스피커 시스템(TMP 템플릿·티어·대소문자 랜덤) **Play 검증 완료** (2026-07-12).  
+> **상태**: 관중 이펙트(피버·에디터 Rest) **Play 검증 완료** (2026-07-13).  
 
 ### 원작 밈 연출 (코드 · 2026-07-12)
 
@@ -23,6 +23,7 @@
 | UI 흔들림 | `UiShake` — 글로벌 **T2+** 정답 시 HUD·DjBox 흔들림 · **T3 진폭 ×2** · `CatMovement` **삭제** |
 | SubPatternGuide | 고정 `oiiaiooiiiai` · 12완성→피버 · **피버 중 자동 연속재생** · 종료/미스→초기화 · 게이지=`matched/12` |
 | 스피커 | DjBox 위 L/R · 안쪽·위 · `speakerTier1/2/3` · `speakerLetterTemplate` · 분출 글자 **대소문자 랜덤** |
+| 관중 | `Crowd`/`CrowdPeople` · 피버 시 상승·진동·페이드아웃 · `crowdShakeAmplitude` Inspector |
 
 ### 3-C 전광판 · BGM (코드)
 

@@ -57,6 +57,7 @@ namespace MiniParty.Minigames.Oiia
             // 완성문에서 곧바로 1글자부터 루프 재생
             sr.SubPatternMatched = 0;
             ActivateAllDjTargets(slotIndex);
+            BeginCrowdFever(slotIndex);
         }
 
         void EndFever(int slotIndex)
@@ -64,6 +65,7 @@ namespace MiniParty.Minigames.Oiia
             ref SlotRuntime sr = ref _slots[slotIndex];
             sr.FeverRemaining = 0f;
             ResetSubPatternProgress(ref sr);
+            EndCrowdFever(slotIndex);
 
             if (IsDevGodModeSlot(slotIndex))
             {

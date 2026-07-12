@@ -105,6 +105,11 @@ namespace MiniParty.Minigames.Oiia
             public Graphic StageBackgroundSpace;
             public Graphic StageBackgroundClub;
 
+            [Header("관중 이펙트 (피버)")]
+            [Tooltip("DjBox 뒤·위. Image+RectTransform. 이름 Crowd / CrowdPeople.")]
+            public RectTransform CrowdRoot;
+            public Image CrowdImage;
+
             [Header("스포트라이트 (L/R · Fixture+Beam)")]
             public RectTransform SpotlightLRoot;
             public Image SpotlightLFixture;

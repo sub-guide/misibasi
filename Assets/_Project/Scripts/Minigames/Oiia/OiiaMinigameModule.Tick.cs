@@ -49,6 +49,7 @@ namespace MiniParty.Minigames.Oiia
                 TickSpotlight(i);
                 TickStageBackground(i);
                 TickSpeakers(i);
+                TickCrowd(i);
                 FlushUi(i);
             });
 

@@ -55,6 +55,10 @@ namespace MiniParty.Minigames.Oiia
         public Graphic StageBackgroundSpace;
         public Graphic StageBackgroundClub;
 
+        [Header("관중 이펙트 (피버)")]
+        public RectTransform CrowdRoot;
+        public Image CrowdImage;
+
         [Header("스포트라이트 (L/R · Fixture+Beam)")]
         public RectTransform SpotlightLRoot;
         public Image SpotlightLFixture;
@@ -96,6 +100,8 @@ namespace MiniParty.Minigames.Oiia
                 StageBackgroundChromaKey = StageBackgroundChromaKey,
                 StageBackgroundSpace = StageBackgroundSpace,
                 StageBackgroundClub = StageBackgroundClub,
+                CrowdRoot = CrowdRoot,
+                CrowdImage = CrowdImage,
                 SpotlightLRoot = SpotlightLRoot,
                 SpotlightLFixture = SpotlightLFixture,
                 SpotlightLBeam = SpotlightLBeam,
@@ -206,6 +212,11 @@ namespace MiniParty.Minigames.Oiia
             if (SpeakerRRoot == null)
                 AutoWireSpeaker(root, "SpeakerR", "Speaker_R", "SpeakerRight",
                     ref SpeakerRRoot, ref SpeakerRBody, ref SpeakerRWooferTop, ref SpeakerRWooferBottom);
+
+            if (CrowdRoot == null)
+                AutoWireCrowd(djBox);
+            if (CrowdRoot == null)
+                AutoWireCrowd(root);
         }
 
         static void AutoWireSpeaker(
@@ -295,6 +306,31 @@ namespace MiniParty.Minigames.Oiia
             if (SpotlightRRoot == null)
                 AutoWireSpotlight(root, "SpotlightR", "SpotR", "Light_R",
                     ref SpotlightRRoot, ref SpotlightRFixture, ref SpotlightRBeam);
+
+            AutoWireCrowd(stage);
+            if (CrowdRoot == null)
+                AutoWireCrowd(root);
+        }
+
+        void AutoWireCrowd(Transform parent)
+        {
+            if (parent == null || CrowdRoot != null)
+                return;
+
+            Transform crowd = parent.Find("Crowd");
+            if (crowd == null)
+                crowd = parent.Find("CrowdPeople");
+            if (crowd == null)
+                crowd = parent.Find("Audience");
+
+            if (crowd == null)
+                return;
+
+            CrowdRoot = crowd as RectTransform;
+            if (CrowdImage == null)
+                CrowdImage = crowd.GetComponent<Image>();
+            if (CrowdImage == null)
+                CrowdImage = FindImage(crowd, "Crowd", "CrowdPeople", "Image");
         }
 
         static void AutoWireSpotlight(
