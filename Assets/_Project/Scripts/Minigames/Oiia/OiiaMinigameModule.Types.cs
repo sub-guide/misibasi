@@ -32,6 +32,9 @@ namespace MiniParty.Minigames.Oiia
             public int Combo;
             public float InputLockTimer;
 
+            /// <summary>피버 남은 시간(초). &gt;0 이면 전 버튼 정답.</summary>
+            public float FeverRemaining;
+
             /// <summary>레거시 루프 티어 호환(Cat/BGM). 글로벌 티어 도입 전 0 유지.</summary>
             public int ConsecutiveLoopSuccesses;
 
@@ -64,10 +67,12 @@ namespace MiniParty.Minigames.Oiia
             [Tooltip("길이 10. 인덱스 = OiiaDjPadButtonId.")]
             public SnesControllerButtonVisual[] DjPadButtons;
 
-            [Header("소형 가변 디스플레이")]
+            [Header("소형 가변 디스플레이 (Score ↔ FEVER 상호 배타)")]
             public TMP_Text HudScoreText;
-            public TMP_Text HudComboText;
             public TMP_Text HudFeverText;
+
+            [Header("콤보 (HudDisplay 밖 · 독립)")]
+            public TMP_Text HudComboText;
 
             [Header("서브 패턴 가이드")]
             public TMP_Text SubPatternGuideText;

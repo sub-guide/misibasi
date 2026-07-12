@@ -50,6 +50,7 @@ namespace MiniParty.Minigames.Oiia
             sr.ScoreSum = 0;
             sr.Combo = 0;
             sr.InputLockTimer = 0f;
+            sr.FeverRemaining = 0f;
             sr.ConsecutiveLoopSuccesses = 0;
             _practiceReady[i] = false;
 
@@ -70,7 +71,7 @@ namespace MiniParty.Minigames.Oiia
                 if (play)
                 {
                     if (IsDevGodModeSlot(i))
-                        ActivateAllDjTargetsForGodMode(i);
+                        ActivateAllDjTargets(i);
                     else
                         SeedDjActiveTargets(i);
                 }

@@ -15,11 +15,13 @@ namespace MiniParty.Minigames.Oiia
 
             if (sr.InputLockTimer > 0f)
                 sr.InputLockTimer -= Time.deltaTime;
+
+            TickFever(i);
         }
 
         /// <summary>
-        /// 2단계: 상시 활성 타겟 3개. 순서 무관 정답 → 끄고 비활성 중 1개 즉시 보충.
-        /// 피버·글로벌 티어는 3단계+.
+        /// 상시 활성 타겟 3개. 피버(30콤보/3초) 중에는 전 키 정답.
+        /// 스포트라이트·글로벌 티어는 후속.
         /// </summary>
         void TickGameplay(int i)
         {
@@ -38,9 +40,9 @@ namespace MiniParty.Minigames.Oiia
 
             EnsureDjActiveArray(ref sr);
 
-            if (IsDevGodModeSlot(i))
+            if (IsAllKeysCorrectMode(i))
             {
-                TickGameplayDevGodModeDj(i, pad);
+                TickGameplayAllKeysCorrectDj(i, pad);
                 return;
             }
 
@@ -78,7 +80,7 @@ namespace MiniParty.Minigames.Oiia
                 OnDjHit(i, firstCorrect);
         }
 
-        void TickGameplayDevGodModeDj(int slotIndex, Joystick pad)
+        void TickGameplayAllKeysCorrectDj(int slotIndex, Joystick pad)
         {
             if (!CollectDjPadPressedThisFrame(slotIndex, pad, _djPressedScratch))
                 return;
@@ -107,12 +109,12 @@ namespace MiniParty.Minigames.Oiia
             ref SlotRuntime sr = ref _slots[i];
             EnsureDjActiveArray(ref sr);
 
-            bool god = IsDevGodModeSlot(i);
+            bool allKeys = IsAllKeysCorrectMode(i);
 
-            if (!god && !sr.DjActive[buttonIndex])
+            if (!allKeys && !sr.DjActive[buttonIndex])
                 return;
 
-            if (!god)
+            if (!allKeys)
             {
                 sr.DjActive[buttonIndex] = false;
                 ReplenishOneDjActive(ref sr);
@@ -120,14 +122,15 @@ namespace MiniParty.Minigames.Oiia
             }
             else if (!sr.DjActive[buttonIndex])
             {
-                // 무적 중에도 전부 Highlight 유지
-                ActivateAllDjTargetsForGodMode(i);
+                ActivateAllDjTargets(i);
             }
 
             sr.Combo++;
 
             if (!_ctx.IsPractice)
                 sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, DjHitScore);
+
+            TryBeginFeverOnCombo(i);
 
             if (!_ctx.IsPractice)
             {
@@ -144,6 +147,10 @@ namespace MiniParty.Minigames.Oiia
             ref SlotRuntime sr = ref _slots[i];
             sr.Combo = 0;
             sr.InputLockTimer = InputLockAfterMissSeconds;
+
+            if (sr.FeverRemaining > 0f)
+                EndFever(i);
+
             PlayBuzz();
         }
 

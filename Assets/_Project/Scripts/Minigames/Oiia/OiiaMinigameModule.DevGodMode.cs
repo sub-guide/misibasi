@@ -42,8 +42,8 @@ namespace MiniParty.Minigames.Oiia
             if (_aliveMask[0] && _slots != null)
             {
                 if (_devGodModeEnabled)
-                    ActivateAllDjTargetsForGodMode(0);
-                else
+                    ActivateAllDjTargets(0);
+                else if (!IsFeverActive(0))
                     SeedDjActiveTargets(0);
             }
 
@@ -62,7 +62,7 @@ namespace MiniParty.Minigames.Oiia
             return UnityEngine.Input.GetKeyDown(KeyCode.Backspace);
         }
 
-        void ActivateAllDjTargetsForGodMode(int slotIndex)
+        void ActivateAllDjTargets(int slotIndex)
         {
             ref SlotRuntime sr = ref _slots[slotIndex];
             EnsureDjActiveArray(ref sr);

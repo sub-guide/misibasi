@@ -25,10 +25,12 @@ namespace MiniParty.Minigames.Oiia
         public SnesPlayerShoulderButtons DjShoulderButtons;
         public SnesControllerButtonVisual[] DjPadButtons;
 
-        [Header("소형 가변 디스플레이")]
+        [Header("소형 가변 디스플레이 (Score ↔ FEVER 상호 배타)")]
         public TMP_Text HudScoreText;
-        public TMP_Text HudComboText;
         public TMP_Text HudFeverText;
+
+        [Header("콤보 (HudDisplay 밖 · 독립)")]
+        public TMP_Text HudComboText;
 
         [Header("서브 패턴 가이드")]
         public TMP_Text SubPatternGuideText;
@@ -105,6 +107,7 @@ namespace MiniParty.Minigames.Oiia
             if (DjShoulderButtons == null)
                 DjShoulderButtons = djBox.GetComponentInChildren<SnesPlayerShoulderButtons>(true);
 
+            // HudDisplay: Score / Fever만 (한 화면 · 상호 배타).
             Transform hud = djBox.Find("HudDisplay");
             if (hud == null)
                 hud = djBox.Find("Hud");
@@ -112,18 +115,20 @@ namespace MiniParty.Minigames.Oiia
             if (hud != null)
             {
                 HudScoreText = FindTmp(hud, "Score", "HudScore");
-                HudComboText = FindTmp(hud, "Combo", "HudCombo");
                 HudFeverText = FindTmp(hud, "Fever", "HudFever");
             }
             else
             {
                 if (HudScoreText == null)
                     HudScoreText = FindTmp(djBox, "Score", "HudScore");
-                if (HudComboText == null)
-                    HudComboText = FindTmp(djBox, "Combo", "HudCombo");
                 if (HudFeverText == null)
                     HudFeverText = FindTmp(djBox, "Fever", "HudFever");
             }
+
+            // Combo: HudDisplay 밖. DjBox 직속 `Combo` 권장.
+            HudComboText = FindTmp(djBox, "Combo", "HudCombo");
+            if (HudComboText == null)
+                HudComboText = FindTmp(root, "Combo", "HudCombo");
 
             if (SubPatternGuideText == null)
                 SubPatternGuideText = FindTmp(djBox, "SubPatternGuide", "SubPattern", "LyricsGuide");

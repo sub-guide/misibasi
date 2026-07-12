@@ -1,19 +1,30 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-07-12 — 디제잉 레이브 **2단계 Play 검증 완료**. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
+> **갱신**: 2026-07-12 — 디제잉 레이브 **3-A 피버 Play 검증 완료**. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
 
 ---
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: 1~2단계 **완료·Play 검증**. **Blur 제거·Play 검증 완료** (2026-07-12). 다음 = **3단계+** (스포트라이트·피버·글로벌 티어·전광판·BGM).  
+> **상태**: 1~2단계·Blur 제거·**3-A 피버** **검증 완료** (2026-07-12). 다음 = 스포트라이트·글로벌 티어·BGM.  
 
 ### 목표 컨셉 (기획)
 
 - 고정 문자 패턴·게이지 → **시간 기반 글로벌 티어** + SNES **10키** 디제잉 박스.
 - 상시 **활성 타겟 3개** (`SnesControllerButtonVisual.SetHighlighted`). 순서 무관 성공 → 해당 키 끄고 비활성 중 1개 즉시 보충.
 - 60초 글로벌 티어로 전 슬롯 배경(크로마키→우주→클럽)·BGM 동기화. **30콤보** 시 3초 피버(전 버튼 정답).
+
+### 3-A 피버 (코드)
+
+| 항목 | 값 |
+|------|-----|
+| 진입 | Combo == `FeverComboThreshold`(30) |
+| 지속 | `FeverDurationSeconds` = 3 |
+| 효과 | 10키 전부 Highlight · 아무 키 정답 · 타겟 유지 |
+| UI | 소형 디스플레이 `HudDisplay`: **Score ↔ `FEVER!` 상호 배타** (한 종류만). 마지막 1초 펄스 |
+| 콤보 UI | `HudComboText` — **HudDisplay 밖** · `{n}` + `<size=55%> COMBO</size>` (숫자 강조) |
+| 종료 | 타이머 0 → 랜덤 3타겟 (Dev God면 전부 유지) |
 
 ### 2단계 게임플레이 (코드 · 검증 완료)
 
@@ -34,7 +45,8 @@
 |------|------|------|
 | `OiiaDjPadButtonId` · `DjPadButtonCount`(10) | `Types.cs` · `Constants.cs` | A…Right 인덱스 |
 | `DjBoxRoot` · `DjFaceButtons` · `DjDpadButtons` · `DjShoulderButtons` · `DjPadButtons[]` | `SlotUiBindings` / `OiiaSlotPanelBindings` | SNES Prefab |
-| `HudScoreText` · `HudComboText` · `HudFeverText` | 동일 | Hud (Combo는 선택) |
+| `HudScoreText` · `HudFeverText` | `HudDisplay` | 소형 가변 디스플레이 (상호 배타) |
+| `HudComboText` | `DjBox/Combo` (Hud 밖) | 콤보 독립 UI |
 | `SubPatternGuideText` | 동일 | 가사 흐름 |
 | `StageScreenRoot` · `StageBackgroundChromaKey/Space/Club` | 동일 | 전광판 |
 

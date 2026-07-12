@@ -1,9 +1,22 @@
+using TMPro;
 using UnityEngine;
 
 namespace MiniParty.Minigames.Oiia
 {
     public sealed partial class OiiaMinigameModule
     {
+        /// <summary>이 시간(초) 이하로 남으면 FEVER! 펄스.</summary>
+        const float FeverEndPulseWindowSeconds = 1f;
+
+        const float FeverPulseSpeed = 14f;
+
+        const float FeverPulseAlphaMin = 0.35f;
+
+        const float FeverPulseScaleMax = 1.12f;
+
+        /// <summary>콤보 라벨(`COMBO`) 상대 크기(%). 숫자는 기본 fontSize.</summary>
+        const float ComboLabelRelativeSizePercent = 55f;
+
         void ApplySlotChrome(int i)
         {
             if (!TryGetBinding(i, out SlotUiBindings b))
@@ -34,14 +47,10 @@ namespace MiniParty.Minigames.Oiia
 
         void FlushHudUi(int i, SlotUiBindings ui, ref SlotRuntime sr)
         {
-            if (ui.HudScoreText != null)
-                ui.HudScoreText.text = _ctx.IsPractice ? "-" : $"{sr.ScoreSum}";
-
-            if (ui.HudComboText != null)
-                ui.HudComboText.text = $"{sr.Combo}";
-
-            if (ui.HudFeverText != null && string.IsNullOrEmpty(ui.HudFeverText.text))
-                ui.HudFeverText.gameObject.SetActive(false);
+            // 소형 디스플레이: Score ↔ FEVER! 상호 배타 (한 종류만).
+            bool fever = sr.FeverRemaining > 0f;
+            FlushHudDisplayExclusive(ui, ref sr, fever);
+            FlushComboHud(ui, ref sr);
 
             if (ui.PracticeReadyText == null)
                 return;
@@ -50,6 +59,76 @@ namespace MiniParty.Minigames.Oiia
             ui.PracticeReadyText.gameObject.SetActive(show);
             if (show)
                 ui.PracticeReadyText.text = "READY";
+        }
+
+        /// <summary>
+        /// HudDisplay — 피버 중 FEVER!만, 아니면 Score만.
+        /// </summary>
+        void FlushHudDisplayExclusive(SlotUiBindings ui, ref SlotRuntime sr, bool fever)
+        {
+            if (ui.HudScoreText != null)
+            {
+                ui.HudScoreText.gameObject.SetActive(!fever);
+                if (!fever)
+                    ui.HudScoreText.text = _ctx.IsPractice ? "-" : $"{sr.ScoreSum}";
+            }
+
+            if (ui.HudFeverText == null)
+                return;
+
+            ui.HudFeverText.gameObject.SetActive(fever);
+            if (!fever)
+            {
+                ResetFeverHudVisual(ui.HudFeverText);
+                return;
+            }
+
+            ui.HudFeverText.text = "FEVER!";
+
+            bool pulse = sr.FeverRemaining <= FeverEndPulseWindowSeconds;
+            if (!pulse)
+            {
+                ResetFeverHudVisual(ui.HudFeverText);
+                return;
+            }
+
+            float t = Mathf.Abs(Mathf.Sin(Time.unscaledTime * FeverPulseSpeed));
+            float alpha = Mathf.Lerp(FeverPulseAlphaMin, 1f, t);
+            Color c = ui.HudFeverText.color;
+            c.a = alpha;
+            ui.HudFeverText.color = c;
+
+            float scale = Mathf.Lerp(1f, FeverPulseScaleMax, t);
+            ui.HudFeverText.rectTransform.localScale = new Vector3(scale, scale, 1f);
+        }
+
+        /// <summary>
+        /// Combo는 HudDisplay와 독립. 콤보 0 초과일 때만 숫자 강조 + 작은 `COMBO`.
+        /// </summary>
+        static void FlushComboHud(SlotUiBindings ui, ref SlotRuntime sr)
+        {
+            if (ui.HudComboText == null)
+                return;
+
+            bool showCombo = sr.Combo > 0;
+            ui.HudComboText.gameObject.SetActive(showCombo);
+            if (!showCombo)
+                return;
+
+            ui.HudComboText.richText = true;
+            ui.HudComboText.text =
+                $"{sr.Combo}<size={ComboLabelRelativeSizePercent}%> COMBO</size>";
+        }
+
+        static void ResetFeverHudVisual(TMP_Text fever)
+        {
+            if (fever == null)
+                return;
+
+            Color c = fever.color;
+            c.a = 1f;
+            fever.color = c;
+            fever.rectTransform.localScale = Vector3.one;
         }
 
         void FlushWaitingUi(int i, SlotUiBindings ui)
