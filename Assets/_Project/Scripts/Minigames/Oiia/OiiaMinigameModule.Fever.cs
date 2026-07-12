@@ -36,13 +36,13 @@ namespace MiniParty.Minigames.Oiia
             EndFever(slotIndex);
         }
 
-        void TryBeginFeverOnCombo(int slotIndex)
+        void TryBeginFeverOnCharge(int slotIndex)
         {
             ref SlotRuntime sr = ref _slots[slotIndex];
             if (sr.FeverRemaining > 0f)
                 return;
 
-            if (sr.Combo != FeverComboThreshold)
+            if (sr.FeverCharge < FeverComboThreshold)
                 return;
 
             BeginFever(slotIndex);
@@ -51,6 +51,7 @@ namespace MiniParty.Minigames.Oiia
         void BeginFever(int slotIndex)
         {
             ref SlotRuntime sr = ref _slots[slotIndex];
+            sr.FeverCharge = FeverComboThreshold;
             sr.FeverRemaining = FeverDurationSeconds;
             ActivateAllDjTargets(slotIndex);
         }
@@ -59,6 +60,7 @@ namespace MiniParty.Minigames.Oiia
         {
             ref SlotRuntime sr = ref _slots[slotIndex];
             sr.FeverRemaining = 0f;
+            sr.FeverCharge = 0;
 
             if (IsDevGodModeSlot(slotIndex))
             {

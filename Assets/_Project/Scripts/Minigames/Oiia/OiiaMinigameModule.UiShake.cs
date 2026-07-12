@@ -79,6 +79,8 @@ namespace MiniParty.Minigames.Oiia
             TryAddUiShakeTarget(list, b.HudScoreText);
             TryAddUiShakeTarget(list, b.HudComboText);
             TryAddUiShakeTarget(list, b.HudFeverText);
+            TryAddUiShakeTarget(list, b.FeverGaugeImage);
+            TryAddUiShakeTarget(list, b.FeverGaugeImageB);
             TryAddUiShakeTarget(list, b.SubPatternGuideText);
             TryAddUiShakeTarget(list, b.DjBoxRoot);
 

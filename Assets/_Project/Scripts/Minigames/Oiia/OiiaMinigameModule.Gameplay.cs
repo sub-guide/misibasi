@@ -127,10 +127,15 @@ namespace MiniParty.Minigames.Oiia
 
             sr.Combo++;
 
+            if (sr.FeverRemaining <= 0f)
+            {
+                if (sr.FeverCharge < FeverComboThreshold)
+                    sr.FeverCharge++;
+                TryBeginFeverOnCharge(i);
+            }
+
             if (!_ctx.IsPractice)
                 sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, DjHitScore);
-
-            TryBeginFeverOnCombo(i);
 
             if (!_ctx.IsPractice)
             {
@@ -146,6 +151,7 @@ namespace MiniParty.Minigames.Oiia
         {
             ref SlotRuntime sr = ref _slots[i];
             sr.Combo = 0;
+            sr.FeverCharge = 0;
             sr.InputLockTimer = InputLockAfterMissSeconds;
 
             if (sr.FeverRemaining > 0f)

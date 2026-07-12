@@ -35,6 +35,9 @@ namespace MiniParty.Minigames.Oiia
             /// <summary>피버 남은 시간(초). &gt;0 이면 전 버튼 정답.</summary>
             public float FeverRemaining;
 
+            /// <summary>피버 게이지 충전(0~FeverComboThreshold). 피버 중에는 증가하지 않음.</summary>
+            public int FeverCharge;
+
             /// <summary>레거시 루프 티어 호환(Cat/BGM). 글로벌 티어 도입 전 0 유지.</summary>
             public int ConsecutiveLoopSuccesses;
 
@@ -73,6 +76,10 @@ namespace MiniParty.Minigames.Oiia
 
             [Header("콤보 (HudDisplay 밖 · 독립)")]
             public TMP_Text HudComboText;
+
+            [Header("피버 게이지 (DjBox 독립 · Filled Image ×2)")]
+            public Image FeverGaugeImage;
+            public Image FeverGaugeImageB;
 
             [Header("서브 패턴 가이드")]
             public TMP_Text SubPatternGuideText;

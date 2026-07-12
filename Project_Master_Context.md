@@ -193,7 +193,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - [x] **1.5단계: 레거시 제거** — Burst/Shuffle/Guide/ButtonShuffle 삭제 · 게이지·문자패턴·가이드 바인딩 제거 · `TickGameplay` 스텁 · **에디터 정리·Play 검증 완료** (사용자, 2026-07-12)
 - [x] **2단계: 활성 타겟 3개 + 10키 판정** — `DjActive` · `OnDjHit`/`OnDjMiss` · L/R black Highlight(Displayed 스프라이트만 흰색) · Dev God 전버튼 Highlight · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **Blur 제거** — `BlurFx`·바인딩 삭제 · WAITING만 유지 · 스포트라이트 대체 예정 · **에디터·Play 검증 완료** (사용자, 2026-07-12)
-- [x] **3-A: 피버** — 30콤보 / 3초 · Score↔`FEVER!` 상호 배타 · Combo Hud 밖·숫자 강조 · **Play 검증 완료** (사용자, 2026-07-12)
+- [x] **3-A: 피버** — `FeverCharge` · 게이지×2 · Score↔`FEVER!` · Combo 독립 · **Play 검증 완료** (사용자, 2026-07-12)
 - [ ] **3-B+**: 스포트라이트 · 글로벌 티어(60s)·전광판 연출·BGM 믹스
 
 **OIIA 후속 (레거시 루프)**
@@ -250,4 +250,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-07-12 — OIIA 3-A 피버 Play 검증 완료*
+*마스터 파일 갱신: 2026-07-12 — OIIA FeverCharge·듀얼 게이지 Play 검증 완료*

@@ -1,13 +1,13 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-07-12 — 디제잉 레이브 **3-A 피버 Play 검증 완료**. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
+> **갱신**: 2026-07-12 — 디제잉 레이브 **FeverCharge·게이지×2 Play 검증 완료**. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
 
 ---
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: 1~2단계·Blur 제거·**3-A 피버** **검증 완료** (2026-07-12). 다음 = 스포트라이트·글로벌 티어·BGM.  
+> **상태**: 1~2단계·Blur 제거·**3-A 피버**(`FeverCharge`·게이지×2) **검증 완료** (2026-07-12). 다음 = 스포트라이트·글로벌 티어·BGM.  
 
 ### 목표 컨셉 (기획)
 
@@ -19,12 +19,13 @@
 
 | 항목 | 값 |
 |------|-----|
-| 진입 | Combo == `FeverComboThreshold`(30) |
+| 진입 | 비피버 정답 시 `FeverCharge++` → `FeverCharge >= 30` |
 | 지속 | `FeverDurationSeconds` = 3 |
 | 효과 | 10키 전부 Highlight · 아무 키 정답 · 타겟 유지 |
 | UI | 소형 디스플레이 `HudDisplay`: **Score ↔ `FEVER!` 상호 배타** (한 종류만). 마지막 1초 펄스 |
+| 게이지 | `FeverGauge` + `FeverGaugeB` (`FeverGaugeImage`/`B`) — 비피버: `FeverCharge/30` · 피버: 시간 소모 · **종료·미스 시 0** (피버 중 Combo는 게이지에 영향 없음) |
 | 콤보 UI | `HudComboText` — **HudDisplay 밖** · `{n}` + `<size=55%> COMBO</size>` (숫자 강조) |
-| 종료 | 타이머 0 → 랜덤 3타겟 (Dev God면 전부 유지) |
+| 종료 | 타이머 0 → `FeverCharge=0` · 랜덤 3타겟 (Dev God면 전부 유지) |
 
 ### 2단계 게임플레이 (코드 · 검증 완료)
 
@@ -47,6 +48,7 @@
 | `DjBoxRoot` · `DjFaceButtons` · `DjDpadButtons` · `DjShoulderButtons` · `DjPadButtons[]` | `SlotUiBindings` / `OiiaSlotPanelBindings` | SNES Prefab |
 | `HudScoreText` · `HudFeverText` | `HudDisplay` | 소형 가변 디스플레이 (상호 배타) |
 | `HudComboText` | `DjBox/Combo` (Hud 밖) | 콤보 독립 UI |
+| `FeverGaugeImage` · `FeverGaugeImageB` | `DjBox/FeverGauge` · `FeverGaugeB` | 피버 충전·소모 Filled ×2 |
 | `SubPatternGuideText` | 동일 | 가사 흐름 |
 | `StageScreenRoot` · `StageBackgroundChromaKey/Space/Club` | 동일 | 전광판 |
 

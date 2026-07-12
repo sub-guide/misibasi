@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MiniParty.Minigames.Oiia
 {
@@ -51,6 +52,7 @@ namespace MiniParty.Minigames.Oiia
             bool fever = sr.FeverRemaining > 0f;
             FlushHudDisplayExclusive(ui, ref sr, fever);
             FlushComboHud(ui, ref sr);
+            FlushFeverGauge(ui, ref sr);
 
             if (ui.PracticeReadyText == null)
                 return;
@@ -118,6 +120,28 @@ namespace MiniParty.Minigames.Oiia
             ui.HudComboText.richText = true;
             ui.HudComboText.text =
                 $"{sr.Combo}<size={ComboLabelRelativeSizePercent}%> COMBO</size>";
+        }
+
+        /// <summary>
+        /// DjBox 독립 피버 게이지 ×2. 비피버: FeverCharge 충전 · 피버: 남은 시간 소모 · 종료 시 0.
+        /// </summary>
+        static void FlushFeverGauge(SlotUiBindings ui, ref SlotRuntime sr)
+        {
+            float fill;
+            if (sr.FeverRemaining > 0f)
+                fill = sr.FeverRemaining / FeverDurationSeconds;
+            else
+                fill = sr.FeverCharge / (float)FeverComboThreshold;
+
+            fill = Mathf.Clamp01(fill);
+            SetFeverGaugeFill(ui.FeverGaugeImage, fill);
+            SetFeverGaugeFill(ui.FeverGaugeImageB, fill);
+        }
+
+        static void SetFeverGaugeFill(Image gauge, float fill)
+        {
+            if (gauge != null)
+                gauge.fillAmount = fill;
         }
 
         static void ResetFeverHudVisual(TMP_Text fever)

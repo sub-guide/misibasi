@@ -51,6 +51,7 @@ namespace MiniParty.Minigames.Oiia
             sr.Combo = 0;
             sr.InputLockTimer = 0f;
             sr.FeverRemaining = 0f;
+            sr.FeverCharge = 0;
             sr.ConsecutiveLoopSuccesses = 0;
             _practiceReady[i] = false;
 

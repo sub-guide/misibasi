@@ -32,6 +32,10 @@ namespace MiniParty.Minigames.Oiia
         [Header("콤보 (HudDisplay 밖 · 독립)")]
         public TMP_Text HudComboText;
 
+        [Header("피버 게이지 (DjBox 독립 · Filled Image ×2)")]
+        public Image FeverGaugeImage;
+        public Image FeverGaugeImageB;
+
         [Header("서브 패턴 가이드")]
         public TMP_Text SubPatternGuideText;
 
@@ -59,6 +63,8 @@ namespace MiniParty.Minigames.Oiia
                 HudScoreText = HudScoreText,
                 HudComboText = HudComboText,
                 HudFeverText = HudFeverText,
+                FeverGaugeImage = FeverGaugeImage,
+                FeverGaugeImageB = FeverGaugeImageB,
                 SubPatternGuideText = SubPatternGuideText,
                 StageScreenRoot = StageScreenRoot,
                 StageBackgroundChromaKey = StageBackgroundChromaKey,
@@ -129,6 +135,17 @@ namespace MiniParty.Minigames.Oiia
             HudComboText = FindTmp(djBox, "Combo", "HudCombo");
             if (HudComboText == null)
                 HudComboText = FindTmp(root, "Combo", "HudCombo");
+
+            // FeverGauge ×2: Hud/Combo와 독립. DjBox 직속 `FeverGauge` / `FeverGaugeB` 권장.
+            if (FeverGaugeImage == null)
+                FeverGaugeImage = FindImage(djBox, "FeverGauge", "FeverBar");
+            if (FeverGaugeImage == null)
+                FeverGaugeImage = FindImage(root, "FeverGauge", "FeverBar");
+
+            if (FeverGaugeImageB == null)
+                FeverGaugeImageB = FindImage(djBox, "FeverGaugeB", "FeverGauge2", "FeverBarB");
+            if (FeverGaugeImageB == null)
+                FeverGaugeImageB = FindImage(root, "FeverGaugeB", "FeverGauge2", "FeverBarB");
 
             if (SubPatternGuideText == null)
                 SubPatternGuideText = FindTmp(djBox, "SubPatternGuide", "SubPattern", "LyricsGuide");
@@ -233,6 +250,22 @@ namespace MiniParty.Minigames.Oiia
                 Graphic g = t.GetComponent<Graphic>();
                 if (g != null)
                     return g;
+            }
+
+            return null;
+        }
+
+        static Image FindImage(Transform parent, params string[] names)
+        {
+            for (var i = 0; i < names.Length; i++)
+            {
+                Transform t = parent.Find(names[i]);
+                if (t == null)
+                    continue;
+
+                Image img = t.GetComponent<Image>();
+                if (img != null)
+                    return img;
             }
 
             return null;
