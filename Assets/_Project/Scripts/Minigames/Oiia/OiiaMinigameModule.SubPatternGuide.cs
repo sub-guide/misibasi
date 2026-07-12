@@ -34,7 +34,12 @@ namespace MiniParty.Minigames.Oiia
             if (sr.SubPatternMatched >= len)
             {
                 sr.SubPatternMatched = len;
+                NotifySubPatternStepFromMatched(slotIndex, ref sr);
                 TryBeginFeverOnPatternComplete(slotIndex);
+            }
+            else
+            {
+                NotifySubPatternStepFromMatched(slotIndex, ref sr);
             }
         }
 
@@ -61,15 +66,17 @@ namespace MiniParty.Minigames.Oiia
             while (sr.FeverSubPatternStepTimer >= step)
             {
                 sr.FeverSubPatternStepTimer -= step;
-                AdvanceFeverSubPatternStep(ref sr, len);
+                AdvanceFeverSubPatternStep(slotIndex, ref sr, len);
             }
         }
 
-        void AdvanceFeverSubPatternStep(ref SlotRuntime sr, int len)
+        void AdvanceFeverSubPatternStep(int slotIndex, ref SlotRuntime sr, int len)
         {
             sr.SubPatternMatched++;
             if (sr.SubPatternMatched > len)
                 sr.SubPatternMatched = 1;
+
+            NotifySubPatternStepFromMatched(slotIndex, ref sr);
 
             if (patternStepSfx != null && patternStepSfx.Length > 0)
                 PlayPatternStepSfx((sr.SubPatternMatched - 1) % patternStepSfx.Length);

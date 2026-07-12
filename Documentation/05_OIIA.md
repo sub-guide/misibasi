@@ -7,7 +7,7 @@
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: 피버 중 패턴 연속재생 · 피버↔패턴 혼합 · UiShake · 원작 밈 **Play 검증 완료** (2026-07-12).  
+> **상태**: 스피커 시스템(TMP 템플릿·티어·대소문자 랜덤) **Play 검증 완료** (2026-07-12).  
 
 ### 원작 밈 연출 (코드 · 2026-07-12)
 
@@ -22,6 +22,7 @@
 | 고양이 | 글로벌 **T3**에서 미스·무입력에도 `SpinLoop` 상시 |
 | UI 흔들림 | `UiShake` — 글로벌 **T2+** 정답 시 HUD·DjBox 흔들림 · **T3 진폭 ×2** · `CatMovement` **삭제** |
 | SubPatternGuide | 고정 `oiiaiooiiiai` · 12완성→피버 · **피버 중 자동 연속재생** · 종료/미스→초기화 · 게이지=`matched/12` |
+| 스피커 | DjBox 위 L/R · 안쪽·위 · `speakerTier1/2/3` · `speakerLetterTemplate` · 분출 글자 **대소문자 랜덤** |
 
 ### 3-C 전광판 · BGM (코드)
 
@@ -86,6 +87,7 @@
 | `FeverGaugeImage` · `FeverGaugeImageB` | `DjBox/FeverGauge` · `FeverGaugeB` | 피버 충전·소모 Filled ×2 |
 | `SpotlightL/R Root·Fixture·Beam` | `StageScreen/SpotlightL|R` | 스포트라이트 |
 | `SubPatternGuideText` | 동일 | 고정 `oiiaiooiiiai` 진행 접두(대문자). 크기·색·다음글자 없음 |
+| `SpeakerL` / `SpeakerR` | DjBox 위 | `Body` · `WooferTop` · `WooferBottom` — 패턴 스텝 펄스·글자 분출 |
 | `StageScreenRoot` · `StageBackgroundChromaKey/Space/Club` | 동일 | 전광판 |
 
 ### 1.5단계에서 코드 제거한 레거시
@@ -574,6 +576,7 @@ CompleteSession()
 | `OiiaMinigameModule.CatAnimator.cs` | 고양이 Animator (SpinOnce/SpinLoop) |
 | `OiiaMinigameModule.UiShake.cs` | 글로벌 T2+ 정답 시 슬롯 HUD·DjBox anchoredPosition 흔들림 (`CatMovement` 삭제) |
 | `OiiaMinigameModule.SubPatternGuide.cs` | 고정 `oiiaiooiiiai` 정답 접두 대문자 표시 (크기·색·미리보기 없음) |
+| `OiiaMinigameModule.Speakers.cs` | L/R 스피커 우퍼 펄스 + 패턴 글자(O/I/A) 만화 분출 |
 | `OiiaMinigameModule.ExitSequence.cs` | 종료·Report 생성 |
 | `OiiaSlotPanelBindings.cs` | 프리팹 UI 자동 연결 |
 | `OiiaVideoEffectController.cs` | MP4 재생·Vertex Color 틴트·종료 시 Destroy |

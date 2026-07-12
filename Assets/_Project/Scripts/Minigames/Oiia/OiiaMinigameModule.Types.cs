@@ -89,6 +89,16 @@ namespace MiniParty.Minigames.Oiia
             [Header("서브 패턴 가이드")]
             public TMP_Text SubPatternGuideText;
 
+            [Header("스피커 (DjBox 위 L/R · Body+WooferTop+WooferBottom)")]
+            public RectTransform SpeakerLRoot;
+            public RectTransform SpeakerLBody;
+            public RectTransform SpeakerLWooferTop;
+            public RectTransform SpeakerLWooferBottom;
+            public RectTransform SpeakerRRoot;
+            public RectTransform SpeakerRBody;
+            public RectTransform SpeakerRWooferTop;
+            public RectTransform SpeakerRWooferBottom;
+
             [Header("전광판 스크린")]
             public RectTransform StageScreenRoot;
             public Graphic StageBackgroundChromaKey;

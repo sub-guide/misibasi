@@ -69,6 +69,7 @@ namespace MiniParty.Minigames.Oiia
                 ApplyOiiaLrDjBoxVisualOverrides(b);
                 ResetSpotlightAtBegin(i);
                 ResetStageBackgroundAtBegin(i);
+                ResetSpeakersAtBegin(i);
 
                 if (play)
                 {

@@ -39,6 +39,16 @@ namespace MiniParty.Minigames.Oiia
         [Header("서브 패턴 가이드")]
         public TMP_Text SubPatternGuideText;
 
+        [Header("스피커 (DjBox 위 L/R)")]
+        public RectTransform SpeakerLRoot;
+        public RectTransform SpeakerLBody;
+        public RectTransform SpeakerLWooferTop;
+        public RectTransform SpeakerLWooferBottom;
+        public RectTransform SpeakerRRoot;
+        public RectTransform SpeakerRBody;
+        public RectTransform SpeakerRWooferTop;
+        public RectTransform SpeakerRWooferBottom;
+
         [Header("전광판 스크린")]
         public RectTransform StageScreenRoot;
         public Graphic StageBackgroundChromaKey;
@@ -74,6 +84,14 @@ namespace MiniParty.Minigames.Oiia
                 FeverGaugeImage = FeverGaugeImage,
                 FeverGaugeImageB = FeverGaugeImageB,
                 SubPatternGuideText = SubPatternGuideText,
+                SpeakerLRoot = SpeakerLRoot,
+                SpeakerLBody = SpeakerLBody,
+                SpeakerLWooferTop = SpeakerLWooferTop,
+                SpeakerLWooferBottom = SpeakerLWooferBottom,
+                SpeakerRRoot = SpeakerRRoot,
+                SpeakerRBody = SpeakerRBody,
+                SpeakerRWooferTop = SpeakerRWooferTop,
+                SpeakerRWooferBottom = SpeakerRWooferBottom,
                 StageScreenRoot = StageScreenRoot,
                 StageBackgroundChromaKey = StageBackgroundChromaKey,
                 StageBackgroundSpace = StageBackgroundSpace,
@@ -163,6 +181,79 @@ namespace MiniParty.Minigames.Oiia
 
             if (SubPatternGuideText == null)
                 SubPatternGuideText = FindTmp(djBox, "SubPatternGuide", "SubPattern", "LyricsGuide");
+
+            AutoWireSpeaker(djBox, "SpeakerL", "Speaker_L", "SpeakerLeft",
+                ref SpeakerLRoot, ref SpeakerLBody, ref SpeakerLWooferTop, ref SpeakerLWooferBottom);
+            AutoWireSpeaker(djBox, "SpeakerR", "Speaker_R", "SpeakerRight",
+                ref SpeakerRRoot, ref SpeakerRBody, ref SpeakerRWooferTop, ref SpeakerRWooferBottom);
+
+            Transform speakersFolder = djBox.Find("Speakers");
+            if (speakersFolder != null)
+            {
+                if (SpeakerLRoot == null)
+                    AutoWireSpeaker(speakersFolder, "SpeakerL", "Speaker_L", "SpeakerLeft",
+                        ref SpeakerLRoot, ref SpeakerLBody, ref SpeakerLWooferTop, ref SpeakerLWooferBottom);
+
+                if (SpeakerRRoot == null)
+                    AutoWireSpeaker(speakersFolder, "SpeakerR", "Speaker_R", "SpeakerRight",
+                        ref SpeakerRRoot, ref SpeakerRBody, ref SpeakerRWooferTop, ref SpeakerRWooferBottom);
+            }
+
+            if (SpeakerLRoot == null)
+                AutoWireSpeaker(root, "SpeakerL", "Speaker_L", "SpeakerLeft",
+                    ref SpeakerLRoot, ref SpeakerLBody, ref SpeakerLWooferTop, ref SpeakerLWooferBottom);
+
+            if (SpeakerRRoot == null)
+                AutoWireSpeaker(root, "SpeakerR", "Speaker_R", "SpeakerRight",
+                    ref SpeakerRRoot, ref SpeakerRBody, ref SpeakerRWooferTop, ref SpeakerRWooferBottom);
+        }
+
+        static void AutoWireSpeaker(
+            Transform parent,
+            string nameA,
+            string nameB,
+            string nameC,
+            ref RectTransform rootRt,
+            ref RectTransform body,
+            ref RectTransform wooferTop,
+            ref RectTransform wooferBottom)
+        {
+            Transform speaker = parent.Find(nameA);
+            if (speaker == null)
+                speaker = parent.Find(nameB);
+            if (speaker == null)
+                speaker = parent.Find(nameC);
+
+            if (speaker == null)
+                return;
+
+            if (rootRt == null)
+                rootRt = speaker as RectTransform;
+
+            if (body == null)
+                body = FindRect(speaker, "Body", "SpeakerBody", "Cabinet");
+
+            if (wooferTop == null)
+                wooferTop = FindRect(speaker, "WooferTop", "Woofer_Top", "WooferUp");
+
+            if (wooferBottom == null)
+                wooferBottom = FindRect(speaker, "WooferBottom", "Woofer_Bottom", "WooferDown");
+        }
+
+        static RectTransform FindRect(Transform parent, params string[] names)
+        {
+            for (var i = 0; i < names.Length; i++)
+            {
+                Transform t = parent.Find(names[i]);
+                if (t == null)
+                    continue;
+
+                RectTransform rt = t as RectTransform;
+                if (rt != null)
+                    return rt;
+            }
+
+            return null;
         }
 
         void AutoWireStageScreen(Transform root)
