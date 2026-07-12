@@ -68,6 +68,8 @@ namespace MiniParty.Minigames.Oiia
                 SyncDjPadPlayerIndices(i, b);
                 ClearDjPadHighlights(b);
                 ApplyOiiaLrDjBoxVisualOverrides(b);
+                ResetSpotlightAtBegin(i);
+                ResetStageBackgroundAtBegin(i);
 
                 if (play)
                 {

@@ -157,6 +157,7 @@ namespace MiniParty.Minigames.Oiia
             if (sr.FeverRemaining > 0f)
                 EndFever(i);
 
+            TriggerSpotlightMissFlash(i);
             PlayBuzz();
         }
 

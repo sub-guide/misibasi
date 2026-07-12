@@ -1,13 +1,45 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-07-12 — 디제잉 레이브 **FeverCharge·게이지×2 Play 검증 완료**. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
+> **갱신**: 2026-07-12 — 원작 밈 맞춤: 단일 BGM · 티어 27/33.5 · Beam 예고 스트로보 · 회전 제거. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
 
 ---
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: 1~2단계·Blur 제거·**3-A 피버**(`FeverCharge`·게이지×2) **검증 완료** (2026-07-12). 다음 = 스포트라이트·글로벌 티어·BGM.  
+> **상태**: 원작 밈 연출 · Beam 클립 · T3 고양이 상시회전 · 피버 스트로보 **Play 검증 완료** (2026-07-12).  
+
+### 원작 밈 연출 (코드 · 2026-07-12)
+
+| 항목 | 값 |
+|------|-----|
+| BGM | 본게임 시작부터 `mainBgmClip` 단일 루프 (티어별 사운드 **폐기**). 권장: `W&W - OIIA OIIA (Spinning Cat)` |
+| T1 | 0–**27**s · ChromaKey · Beam OFF |
+| T2 | 27–**33.5**s · Space · Beam 상시 OFF |
+| T3 | 33.5–60s · Club · Beam ON(네온) |
+| Beam 예고 | **15–27**s · **32–33.5**s 흰색 Beam 초고속 점멸 |
+| 스포트라이트 | **회전 없음** · Fixture ON · Beam은 T3/예고/피버 · **슬롯 RectMask2D 클립** |
+| 고양이 | 글로벌 **T3**에서 미스·무입력에도 `SpinLoop` 상시 |
+
+### 3-C 전광판 · BGM (코드)
+
+| 항목 | 값 |
+|------|-----|
+| 시계 | `ResolveGlobalTier()` (스포트라이트와 동일) |
+| 배경 | T1 Chroma · T2 Space · T3 Club (`stageBgCrossfadeSeconds`) |
+| BGM | → 위 **원작 밈** `mainBgmClip` (티어별 클립 정책 폐기) |
+| 피버 | 배경/BGM 변경 없음 |
+
+### 3-B 스포트라이트 (코드)
+
+| 항목 | 값 |
+|------|-----|
+| 구조 | 슬롯당 `SpotlightL`/`R` · 각 `Fixture`+`Beam` · **회전 없음** |
+| 글로벌 티어 | T1: Beam OFF(+15s 예고) · T2: Beam OFF(+32s 예고) · T3: Beam ON · 에디터 rest 고정 |
+| 피버 | Beam 스트로보 = 티어예고와 동일 0.05s · Fixture 유지 |
+| Beam 클립 | `StageScreen`(+스포트라이트 부모) `RectMask2D` · Override Sorting 해제 |
+| 오답 | 빨강 플래시 0.35s(운동 유지) · 꺼져 있으면 잠깐 ON |
+| Beam 알파 | Inspector `spotlightBeamAlpha` (0–1, 기본 15/255) |
 
 ### 목표 컨셉 (기획)
 
@@ -35,7 +67,7 @@
 | 런타임 | `SlotRuntime.DjActive[10]` |
 | 입력 | `OiiaMinigameModule.DjPadInput.cs` → `BoothUsbSlotInput` |
 | 정답 | `OnDjHit` — Combo++ · Score+`DjHitScore`(300) · Highlight 갱신 |
-| 오답 | `OnDjMiss` — Combo=0 · `InputLockAfterMissSeconds` 0.35 · buzz (**Blur 없음** — 스포트라이트 예정) |
+| 오답 | `OnDjMiss` — Combo=0 · buzz · **스포트라이트 빨강 플래시** |
 | L/R 강조 | `oiiaL/RHighlightedBlack` · **Displayed가 Highlighted일 때만** Image 흰색 |
 | L/R 애니 | `Buttons_LR` `secondsPerSprite` **0.05** (사용자) |
 | Dev God | Backspace — 1P **10키 전부 Highlight** · 아무 키 정답 · 타겟 유지 · 타이머 정지 |
@@ -49,6 +81,7 @@
 | `HudScoreText` · `HudFeverText` | `HudDisplay` | 소형 가변 디스플레이 (상호 배타) |
 | `HudComboText` | `DjBox/Combo` (Hud 밖) | 콤보 독립 UI |
 | `FeverGaugeImage` · `FeverGaugeImageB` | `DjBox/FeverGauge` · `FeverGaugeB` | 피버 충전·소모 Filled ×2 |
+| `SpotlightL/R Root·Fixture·Beam` | `StageScreen/SpotlightL|R` | 스포트라이트 |
 | `SubPatternGuideText` | 동일 | 가사 흐름 |
 | `StageScreenRoot` · `StageBackgroundChromaKey/Space/Club` | 동일 | 전광판 |
 
@@ -62,7 +95,7 @@
 | `GaugeSlider` · 게이지 드레인 | 룰 폐기 |
 | `SequenceText` 커서 UI · `_patternLower` 입력 루프 | 디제잉 판정으로 대체 |
 | `OiiaPhysicalButton` MapO/I/A | 삭제 |
-| **`Blur` / `BlurFx.cs`** | **2026-07-12 삭제.** 실패·티어·EMPTY 오버레이 → **스포트라이트** 대체 예정. WAITING TMP만 유지 |
+| **`Blur` / `BlurFx.cs`** | **2026-07-12 삭제.** 실패 연출 → **스포트라이트 빨강 플래시**. WAITING TMP만 유지 |
 
 **유지(골격)**: Begin/Tick/Exit · Practice READY · Timer · Cat/Waiting · TierBgm·CatMovement(티어 연동은 후속 개조) · Dj 바인딩.
 

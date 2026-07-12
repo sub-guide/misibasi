@@ -40,53 +40,9 @@ namespace MiniParty.Minigames.Oiia
             s.pitch = 1f;
         }
 
-        bool TryGetMaintainingMaxConsecutiveLoops(out int maxLoops)
-        {
-            maxLoops = 0;
-
-            if (_ctx.IsPractice)
-                return false;
-
-            bool found = false;
-            for (var i = 0; i < SlotCount; i++)
-            {
-                if (!_aliveMask[i])
-                    continue;
-
-                ref SlotRuntime sr = ref _slots[i];
-                if (!MaintainingGameplayGauge(ref sr))
-                    continue;
-
-                found = true;
-                if (sr.ConsecutiveLoopSuccesses > maxLoops)
-                    maxLoops = sr.ConsecutiveLoopSuccesses;
-            }
-
-            return found;
-        }
-
-        AudioClip ResolveTierBgmClip()
-        {
-            if (!TryGetMaintainingMaxConsecutiveLoops(out int maxLoops))
-                return null;
-
-            if (maxLoops >= 3 && tier3BeatLoop != null)
-                return tier3BeatLoop;
-
-            if (tier2DrumLoop != null)
-                return tier2DrumLoop;
-
-            return null;
-        }
-
-        float ResolveTierBgmPitch(int maxLoops, AudioClip clip)
-        {
-            if (clip == tier2DrumLoop && maxLoops >= 2 && maxLoops < 3)
-                return tier2BgmPitchScale;
-
-            return 1f;
-        }
-
+        /// <summary>
+        /// 원작 밈 트랙 단일 BGM. 본게임 시작부터 루프. 티어와 무관.
+        /// </summary>
         void UpdateTierBgm()
         {
             if (!_running || _ctx.IsPractice)
@@ -95,13 +51,7 @@ namespace MiniParty.Minigames.Oiia
                 return;
             }
 
-            if (!TryGetMaintainingMaxConsecutiveLoops(out int maxLoops))
-            {
-                StopTierBgm();
-                return;
-            }
-
-            AudioClip want = ResolveTierBgmClip();
+            AudioClip want = mainBgmClip;
             if (want == null)
             {
                 StopTierBgm();
@@ -113,21 +63,14 @@ namespace MiniParty.Minigames.Oiia
                 return;
 
             _tierBgmRuntime.volume = tierBgmVolume;
-
-            float wantPitch = ResolveTierBgmPitch(maxLoops, want);
+            _tierBgmRuntime.pitch = 1f;
 
             if (_tierBgmRuntime.clip == want && _tierBgmRuntime.isPlaying)
-            {
-                if (!Mathf.Approximately(_tierBgmRuntime.pitch, wantPitch))
-                    _tierBgmRuntime.pitch = wantPitch;
-
                 return;
-            }
 
             _tierBgmRuntime.Stop();
             _tierBgmRuntime.clip = want;
             _tierBgmRuntime.loop = true;
-            _tierBgmRuntime.pitch = wantPitch;
             _tierBgmRuntime.Play();
         }
     }

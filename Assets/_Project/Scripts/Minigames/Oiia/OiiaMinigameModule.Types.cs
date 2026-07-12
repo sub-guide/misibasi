@@ -89,6 +89,14 @@ namespace MiniParty.Minigames.Oiia
             public Graphic StageBackgroundChromaKey;
             public Graphic StageBackgroundSpace;
             public Graphic StageBackgroundClub;
+
+            [Header("스포트라이트 (L/R · Fixture+Beam)")]
+            public RectTransform SpotlightLRoot;
+            public Image SpotlightLFixture;
+            public Image SpotlightLBeam;
+            public RectTransform SpotlightRRoot;
+            public Image SpotlightRFixture;
+            public Image SpotlightRBeam;
         }
     }
 }

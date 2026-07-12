@@ -24,10 +24,8 @@ namespace MiniParty.Minigames.Oiia
             if (!_aliveMask[i])
                 return false;
 
-            if (!MaintainingGameplayGauge(ref sr))
-                return false;
-
-            return ResolveGameplayTier(ref sr) >= 2;
+            // 글로벌 3티어: 미스·입력 잠금과 무관하게 SpinLoop 유지 (원작 밈).
+            return ResolveGlobalTier() >= 3;
         }
 
         static int CatStateHash(string stateName) => Animator.StringToHash(stateName);

@@ -45,6 +45,14 @@ namespace MiniParty.Minigames.Oiia
         public Graphic StageBackgroundSpace;
         public Graphic StageBackgroundClub;
 
+        [Header("스포트라이트 (L/R · Fixture+Beam)")]
+        public RectTransform SpotlightLRoot;
+        public Image SpotlightLFixture;
+        public Image SpotlightLBeam;
+        public RectTransform SpotlightRRoot;
+        public Image SpotlightRFixture;
+        public Image SpotlightRBeam;
+
         public OiiaMinigameModule.SlotUiBindings ToSlotUiBindings()
         {
             EnsureDjPadButtonsArray();
@@ -70,6 +78,12 @@ namespace MiniParty.Minigames.Oiia
                 StageBackgroundChromaKey = StageBackgroundChromaKey,
                 StageBackgroundSpace = StageBackgroundSpace,
                 StageBackgroundClub = StageBackgroundClub,
+                SpotlightLRoot = SpotlightLRoot,
+                SpotlightLFixture = SpotlightLFixture,
+                SpotlightLBeam = SpotlightLBeam,
+                SpotlightRRoot = SpotlightRRoot,
+                SpotlightRFixture = SpotlightRFixture,
+                SpotlightRBeam = SpotlightRBeam,
             };
         }
 
@@ -177,6 +191,51 @@ namespace MiniParty.Minigames.Oiia
                 if (cat != null)
                     CatAnimator = cat.GetComponent<Animator>();
             }
+
+            AutoWireSpotlight(stage, "SpotlightL", "SpotL", "Light_L",
+                ref SpotlightLRoot, ref SpotlightLFixture, ref SpotlightLBeam);
+            AutoWireSpotlight(stage, "SpotlightR", "SpotR", "Light_R",
+                ref SpotlightRRoot, ref SpotlightRFixture, ref SpotlightRBeam);
+
+            if (SpotlightLRoot == null)
+                AutoWireSpotlight(root, "SpotlightL", "SpotL", "Light_L",
+                    ref SpotlightLRoot, ref SpotlightLFixture, ref SpotlightLBeam);
+
+            if (SpotlightRRoot == null)
+                AutoWireSpotlight(root, "SpotlightR", "SpotR", "Light_R",
+                    ref SpotlightRRoot, ref SpotlightRFixture, ref SpotlightRBeam);
+        }
+
+        static void AutoWireSpotlight(
+            Transform parent,
+            string rootNameA,
+            string rootNameB,
+            string rootNameC,
+            ref RectTransform rootRt,
+            ref Image fixture,
+            ref Image beam)
+        {
+            Transform spot = parent.Find(rootNameA);
+            if (spot == null)
+                spot = parent.Find(rootNameB);
+            if (spot == null)
+                spot = parent.Find(rootNameC);
+
+            if (spot == null)
+                return;
+
+            if (rootRt == null)
+                rootRt = spot as RectTransform;
+
+            if (fixture == null)
+            {
+                fixture = FindImage(spot, "Fixture", "Spotlight", "Body");
+                if (fixture == null)
+                    fixture = spot.GetComponent<Image>();
+            }
+
+            if (beam == null)
+                beam = FindImage(spot, "Beam", "Light", "Ray");
         }
 
         public void EnsureDjPadButtonsArray()

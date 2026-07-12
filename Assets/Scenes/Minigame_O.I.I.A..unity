@@ -1207,10 +1207,11 @@ MonoBehaviour:
   sessionEndClip: {fileID: 0}
   sfxSource: {fileID: 2068533488}
   buzzClip: {fileID: 0}
-  tier2DrumLoop: {fileID: 8300000, guid: 7245fb2905cf58442b5dca243a24d705, type: 3}
-  tier3BeatLoop: {fileID: 8300000, guid: 13da41b52e6cc6047a0d19852d5992ac, type: 3}
+  mainBgmClip: {fileID: 8300000, guid: 35c188a391fe5ba4ea6b0fd7ac805fcf, type: 3}
   tierBgmSource: {fileID: 0}
   tierBgmVolume: 0.85
+  tier2DrumLoop: {fileID: 8300000, guid: 7245fb2905cf58442b5dca243a24d705, type: 3}
+  tier3BeatLoop: {fileID: 8300000, guid: 13da41b52e6cc6047a0d19852d5992ac, type: 3}
   tier2BgmPitchScale: 2
   patternStepSfx:
   - {fileID: 8300000, guid: b9a8871b752daa4468be621ce99e0d6e, type: 3}
@@ -1231,6 +1232,8 @@ MonoBehaviour:
   - {fileID: 384121077}
   - {fileID: 875624585}
   slotPanelsContainer: {fileID: 664720836}
+  spotlightBeamAlpha: 0.15
+  stageBgCrossfadeSeconds: 0.4
   mainRoundTimerCentralTop: {fileID: 919785934}
   uiShakeAmplitudeTier2: 10
   uiShakeDuration: 0.25

@@ -46,6 +46,8 @@ namespace MiniParty.Minigames.Oiia
                     UpdateCatMovement(i);
                 }
 
+                TickSpotlight(i);
+                TickStageBackground(i);
                 FlushUi(i);
             });
 
