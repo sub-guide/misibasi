@@ -10,7 +10,7 @@ namespace MiniParty.Minigames.Oiia
 #endif
 
         /// <summary>
-        /// Dev God Mode: 본게임 타이머 정지. 1.5단계에서는 입력 자동 정답 없음(2단계 이후 재정의).
+        /// Dev God Mode: 1P 전 버튼 Highlight + 아무 키나 정답 · 본게임 타이머 정지.
         /// Editor·Development Build 에서만 Backspace 토글.
         /// </summary>
         bool IsDevGodModeSlot(int slotIndex)
@@ -38,8 +38,17 @@ namespace MiniParty.Minigames.Oiia
                 return;
 
             _devGodModeEnabled = !_devGodModeEnabled;
+
+            if (_aliveMask[0] && _slots != null)
+            {
+                if (_devGodModeEnabled)
+                    ActivateAllDjTargetsForGodMode(0);
+                else
+                    SeedDjActiveTargets(0);
+            }
+
             Debug.Log(
-                $"[OiiaMinigameModule] Dev God Mode (main timer paused; pad auto-correct deferred to Phase 2): " +
+                $"[OiiaMinigameModule] Dev God Mode (1P: all buttons highlighted, any key = hit, timer paused): " +
                 $"{(_devGodModeEnabled ? "ON" : "OFF")}",
                 this);
 #endif
@@ -51,6 +60,17 @@ namespace MiniParty.Minigames.Oiia
                 return true;
 
             return UnityEngine.Input.GetKeyDown(KeyCode.Backspace);
+        }
+
+        void ActivateAllDjTargetsForGodMode(int slotIndex)
+        {
+            ref SlotRuntime sr = ref _slots[slotIndex];
+            EnsureDjActiveArray(ref sr);
+
+            for (var k = 0; k < DjPadButtonCount; k++)
+                sr.DjActive[k] = true;
+
+            ApplyDjPadHighlights(slotIndex);
         }
     }
 }

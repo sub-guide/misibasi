@@ -1,7 +1,6 @@
 using MiniParty.UI.ControllerButtons;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace MiniParty.Minigames.Oiia
@@ -26,27 +25,24 @@ namespace MiniParty.Minigames.Oiia
             Right = 9
         }
 
-        /// <summary>1.5단계: 레거시 패턴/게이지 제거 후 슬롯 런타임. 2단계에서 활성 타겟·콤보 확장.</summary>
+        /// <summary>디제잉 레이브 슬롯 런타임.</summary>
         struct SlotRuntime
         {
             public int ScoreSum;
             public int Combo;
             public float InputLockTimer;
-            public float FailFlashTimer;
-            public float TierBumpBlurRemaining;
 
-            /// <summary>레거시 루프 티어 호환(Cat/Blur/BGM). 글로벌 티어 도입 전 0 유지.</summary>
+            /// <summary>레거시 루프 티어 호환(Cat/BGM). 글로벌 티어 도입 전 0 유지.</summary>
             public int ConsecutiveLoopSuccesses;
+
+            /// <summary>길이 <see cref="DjPadButtonCount"/>. true = 활성 타겟(Highlight).</summary>
+            public bool[] DjActive;
         }
 
         [System.Serializable]
         public sealed class SlotUiBindings
         {
             [Header("공통")]
-            [FormerlySerializedAs("FailOverlay")]
-            [Tooltip("실패 플래시·EMPTY 오버레이·티어 경고.")]
-            public Image Blur;
-
             [Tooltip("연습 READY 문구.")]
             public TMP_Text PracticeReadyText;
 

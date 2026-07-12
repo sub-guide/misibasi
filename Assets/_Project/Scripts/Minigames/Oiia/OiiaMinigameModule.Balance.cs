@@ -18,6 +18,9 @@ namespace MiniParty.Minigames.Oiia
 
         const int Tier3ScorePerChar = 800;
 
+        /// <summary>2단계: 글로벌 티어 전 — 정답 1회 점수(1티어 글자 점수와 동일).</summary>
+        const int DjHitScore = Tier1ScorePerChar;
+
         const int Tier1LoopBonus = 1_000;
 
         const int Tier2LoopBonus = 2_000;

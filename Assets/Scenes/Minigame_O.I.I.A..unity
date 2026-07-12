@@ -1186,23 +1186,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dab072b2ecb9eb4fb27ffeeee27f1ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  emptySlotBlurAlpha: 0.9
-  burstTextDuration: 0.7
-  burstTextRandomOffset: 50
-  burstTextSpawnRotationMin: -30
-  burstTextSpawnRotationMax: 30
-  burstTextSwingMin: -5
-  burstTextSwingMax: 5
-  burstTextSwingFrequency: 1
-  burstTextShakeAmplitudeTier1: 16
-  burstTextShakeAmplitudeTier2: 32
-  burstTextShakeAmplitudeTier3: 64
-  burstTextShakeFrequencyTier1: 2
-  burstTextShakeFrequencyTier2: 4
-  burstTextShakeFrequencyTier3: 8
-  burstTextFontSizeTier1: 50
-  burstTextFontSizeTier2: 100
-  burstTextFontSizeTier3: 200
   catAnimatorIdleState: Idle
   catAnimatorSpinOnceState: SpinOnce
   catAnimatorSpinLoopState: SpinLoop
@@ -1215,6 +1198,9 @@ MonoBehaviour:
   catBoundaryCollisionScale: 0.4
   catMovementDrawSortOrderBase: 100
   displayName: OIIA
+  oiiaLHighlightedBlack: {fileID: 21300000, guid: d8072eadcce37f343a6268ef3b047c04, type: 3}
+  oiiaRHighlightedBlack: {fileID: 21300000, guid: 54719b7b6f37ac14a8381b9e4ccf52dc, type: 3}
+  oiiaLrWhiteIconColorOnlyWhenHighlighted: 1
   exitScreenFader: {fileID: 1182976394}
   sessionEndHoldSeconds: 0.35
   exitFadeOutSeconds: 1
@@ -1239,11 +1225,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c48c9c15707ce1146a5b8da809651004, type: 3}
   - {fileID: 8300000, guid: f31d509600441e541a83d00ea0fea0d3, type: 3}
   - {fileID: 8300000, guid: d6ca6f94865bac04eae44136b0daf63d, type: 3}
-  shuffleEffectSprite: {fileID: 21300000, guid: d24a3bd06fdbb4846a306bdfd71c3281, type: 3}
-  shuffleEffectDuration: 0.5
-  shuffleEffectStartScale: 0
-  shuffleEffectEndScale: 2
-  shuffleEffectScaleGrowSpeed: 2
   slotPanels:
   - {fileID: 424509147642288728}
   - {fileID: 1494898964}
@@ -1376,6 +1357,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 664720836}
     m_Modifications:
+    - target: {fileID: 2425927213160713227, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6805284570553592105, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
       propertyPath: m_Name
       value: SlotPanel_1
@@ -1471,6 +1456,14 @@ PrefabInstance:
     - target: {fileID: 7731883047119685750, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441862922369024926, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8688479121465094065, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9037591899103358950, guid: f49c72b5781ce884a9821a49f19e774e, type: 3}
       propertyPath: m_AnchorMax.x

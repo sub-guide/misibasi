@@ -191,15 +191,14 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 - [x] **1단계: UI 바인딩·데이터 구조** — `OiiaDjPadButtonId` · `DjPadButtons[10]` · Hud · SubPatternGuide · StageScreen (2026-07-11)
 - [x] **1.5단계: 레거시 제거** — Burst/Shuffle/Guide/ButtonShuffle 삭제 · 게이지·문자패턴·가이드 바인딩 제거 · `TickGameplay` 스텁 · **에디터 정리·Play 검증 완료** (사용자, 2026-07-12)
-- [ ] **2단계**: 활성 타겟 3개 `SetHighlighted` + 10키 입력 판정
-- [ ] **3단계+**: 글로벌 티어(60s)·피버·전광판 연출·BGM 믹스
+- [x] **2단계: 활성 타겟 3개 + 10키 판정** — `DjActive` · `OnDjHit`/`OnDjMiss` · L/R black Highlight(Displayed 스프라이트만 흰색) · Dev God 전버튼 Highlight · **Play 검증 완료** (사용자, 2026-07-12)
+- [x] **Blur 제거** — `BlurFx`·바인딩 삭제 · WAITING만 유지 · 스포트라이트 대체 예정 · **에디터·Play 검증 완료** (사용자, 2026-07-12)
+- [ ] **3단계+**: 스포트라이트 · 피버(30콤보/3초)·글로벌 티어(60s)·전광판 연출·BGM 믹스
 
 **OIIA 후속 (레거시 루프)**
 
-- [ ] OIIA **2~4P·부스 다패드·4슬롯 동시 셔플** 재검증 (1P·통합 **2026-06-28** 완료) — 개편 후 재정의 가능
-
+- [ ] OIIA **2~4P·부스 다패드** 재검증 (개편 후)
 - [ ] `OiiaResultMinigameFlavor` Result 전용 비주얼 (C-11, 현재 ID 매칭만)
-- [ ] `BlurFx` 연출 상수 Inspector 노출 (C-7)
 - [ ] `buzzClip`, `sessionEndClip` 연결 여부 결정 (현재 의도적 미연결)
 - [ ] Result `rankRevealClip` / `hpHitClip` Inspector 오디오 (선택)
 
@@ -250,4 +249,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-07-12 — OIIA 1.5단계 레거시 제거*
+*마스터 파일 갱신: 2026-07-12 — OIIA Blur 제거 Play 검증 완료*

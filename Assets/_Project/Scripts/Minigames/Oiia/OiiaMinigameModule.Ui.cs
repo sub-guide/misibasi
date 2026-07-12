@@ -28,7 +28,7 @@ namespace MiniParty.Minigames.Oiia
             SlotRuntime sr = _slots[i];
 
             FlushHudUi(i, ui, ref sr);
-            FlushWaitingAndBlurUi(i, ui, ref sr);
+            FlushWaitingUi(i, ui);
             FlushPanelBackgroundUi(i, ui, ref sr);
         }
 
@@ -38,7 +38,7 @@ namespace MiniParty.Minigames.Oiia
                 ui.HudScoreText.text = _ctx.IsPractice ? "-" : $"{sr.ScoreSum}";
 
             if (ui.HudComboText != null)
-                ui.HudComboText.text = _ctx.IsPractice ? string.Empty : $"{sr.Combo}";
+                ui.HudComboText.text = $"{sr.Combo}";
 
             if (ui.HudFeverText != null && string.IsNullOrEmpty(ui.HudFeverText.text))
                 ui.HudFeverText.gameObject.SetActive(false);
@@ -52,34 +52,18 @@ namespace MiniParty.Minigames.Oiia
                 ui.PracticeReadyText.text = "READY";
         }
 
-        void FlushWaitingAndBlurUi(int i, SlotUiBindings ui, ref SlotRuntime sr)
+        void FlushWaitingUi(int i, SlotUiBindings ui)
         {
-            if (ui.WaitingText != null)
-            {
-                bool showWaiting = IsSlotEmptyForUi(i);
-                ui.WaitingText.gameObject.SetActive(showWaiting);
-                if (showWaiting)
-                {
-                    ui.WaitingText.text = "WAITING";
-                    ui.WaitingText.color = WaitingTextPulseColor();
-                }
-            }
-
-            if (ui.Blur == null)
+            if (ui.WaitingText == null)
                 return;
 
-            if (IsSlotEmptyForUi(i))
-                ui.Blur.color = BlurEmptySlotOverlayColor();
-            else if (sr.FailFlashTimer > 0f)
-                ui.Blur.color = BlurFailFlashRed;
-            else if (ShouldBlurTier3ChromaPulse(ref sr, i))
-                ui.Blur.color = BlurTier3ChromaBlinkColor(i);
-            else if (ShouldBlurTierBumpWarning(ref sr, i))
-                ui.Blur.color = BlurTierBumpWhiteBlinkColor();
-            else
-                ui.Blur.color = Color.clear;
+            bool showWaiting = IsSlotEmptyForUi(i);
+            ui.WaitingText.gameObject.SetActive(showWaiting);
+            if (!showWaiting)
+                return;
 
-            ApplyEmptySlotBlurDrawOrder(i, ui);
+            ui.WaitingText.text = "WAITING";
+            ui.WaitingText.color = WaitingTextPulseColor();
         }
 
         void FlushPanelBackgroundUi(int i, SlotUiBindings ui, ref SlotRuntime sr)

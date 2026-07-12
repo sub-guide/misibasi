@@ -90,7 +90,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteSet: {fileID: 11400000, guid: 38571d5647ebf8645aa61aba3fea34ba, type: 2}
   icon: {fileID: 6359511690954627339}
-  secondsPerSprite: 0.1
+  secondsPerSprite: 0.05
   pressFrameCount: -1
   heldScale: 1
   instantHoldVisual: 0
@@ -184,7 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteSet: {fileID: 11400000, guid: fbedabc8d3cbc4d4d97b4dd5d9b79d97, type: 2}
   icon: {fileID: 6247368415510472894}
-  secondsPerSprite: 0.1
+  secondsPerSprite: 0.05
   pressFrameCount: -1
   heldScale: 1
   instantHoldVisual: 0
@@ -243,7 +243,7 @@ MonoBehaviour:
   buttonR: {fileID: 2430613900320403842}
   syncHeldFromPadEveryFrame: 1
   applyAnimationSettingsToChildren: 1
-  secondsPerSprite: 0.1
+  secondsPerSprite: 0.05
   pressFrameCount: -1
   heldScale: 1
   instantHoldVisual: 0

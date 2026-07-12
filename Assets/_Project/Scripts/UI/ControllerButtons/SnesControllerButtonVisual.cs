@@ -39,6 +39,10 @@ namespace MiniParty.UI.ControllerButtons
         [Tooltip("true면 Press/Release 코루틴 없이 Idle↔Held 즉시. pressFrames 없으면 자동 true.")]
         [SerializeField] bool instantHoldVisual;
 
+        [Header("강조 오버라이드 (선택)")]
+        [Tooltip("비우면 SpriteSet.Highlighted. 미니게임별 강조 스프라이트 교체용.")]
+        [SerializeField] Sprite highlightedOverride;
+
         public float SecondsPerSprite => secondsPerSprite;
         public int PressFrameCount => pressFrameCount;
         public float HeldScale => heldScale;
@@ -63,6 +67,63 @@ namespace MiniParty.UI.ControllerButtons
             }
         }
 
+        /// <summary>런타임 강조 스프라이트 교체. null이면 SpriteSet 기본 Highlighted.</summary>
+        public void SetHighlightedSpriteOverride(Sprite sprite)
+        {
+            highlightedOverride = sprite;
+            if (_wantHighlight && !_wantHeld)
+                ApplyImmediateVisual();
+        }
+
+        /// <summary>
+        /// Highlighted 스프라이트를 그릴 때만 Image를 흰색으로.
+        /// Press/Held/Idle 등 다른 스프라이트는 <paramref name="restIconColor"/> 틴트 유지.
+        /// </summary>
+        public void ConfigureWhiteIconOnlyWhenShowingHighlighted(bool enabled, Color restIconColor)
+        {
+            _whiteIconOnlyWhenShowingHighlighted = enabled;
+            _iconRestColor = restIconColor;
+            SyncIconColorToDisplayedSprite(icon != null ? icon.sprite : null);
+        }
+
+        /// <summary>Image 틴트(직접 지정). ConfigureWhiteIcon… 사용 중이면 매 프레임 덮어쓸 수 있음.</summary>
+        public void SetIconColor(Color color)
+        {
+            if (icon == null)
+                icon = GetComponent<Image>();
+
+            if (icon != null)
+                icon.color = color;
+        }
+
+        Sprite ResolveHighlightedSprite()
+        {
+            if (highlightedOverride != null)
+                return highlightedOverride;
+
+            return spriteSet != null ? spriteSet.Highlighted : null;
+        }
+
+        void SyncIconColorToDisplayedSprite(Sprite displayed)
+        {
+            if (!_whiteIconOnlyWhenShowingHighlighted)
+                return;
+
+            if (icon == null)
+                icon = GetComponent<Image>();
+
+            if (icon == null)
+                return;
+
+            Sprite highlighted = ResolveHighlightedSprite();
+            bool showingHighlighted =
+                displayed != null &&
+                highlighted != null &&
+                ReferenceEquals(displayed, highlighted);
+
+            icon.color = showingHighlighted ? Color.white : _iconRestColor;
+        }
+
         bool UsesInstantHold() =>
             instantHoldVisual || spriteSet == null || !spriteSet.HasPressAnimation;
 
@@ -71,6 +132,8 @@ namespace MiniParty.UI.ControllerButtons
         bool _wantHeld;
         Vector3 _restScale = Vector3.one;
         Coroutine _transition;
+        bool _whiteIconOnlyWhenShowingHighlighted;
+        Color _iconRestColor = Color.white;
 
         public bool IsHighlighted => _wantHighlight;
         public bool IsHeld => _wantHeld;
@@ -364,8 +427,8 @@ namespace MiniParty.UI.ControllerButtons
             }
 
             Sprite s = _wantHighlight || _phase == VisualPhase.Highlighted
-                ? spriteSet.Highlighted
-                : spriteSet.Idle;
+                ? ResolveHighlightedSprite()
+                : (spriteSet != null ? spriteSet.Idle : null);
             ApplyFrame(s, 1f);
         }
 
@@ -379,6 +442,7 @@ namespace MiniParty.UI.ControllerButtons
 
             float mul = Mathf.Approximately(scaleMul, 1f) ? 1f : scaleMul;
             icon.rectTransform.localScale = _restScale * mul;
+            SyncIconColorToDisplayedSprite(sprite != null ? sprite : icon.sprite);
         }
 
         void StopTransition()

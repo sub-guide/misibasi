@@ -22,8 +22,6 @@ namespace MiniParty.Minigames.Oiia
 
         readonly Color[] _slotPanelBgRestColor = new Color[SlotCount];
 
-        readonly int[] _blurRestSiblingIndex = { -1, -1, -1, -1 };
-
         readonly OperatorInputService _operatorInput = new();
 
         AudioSource _tierBgmRuntime;

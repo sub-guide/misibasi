@@ -25,13 +25,13 @@ namespace MiniParty.Minigames.Oiia
             UnityEngine.Mathf.Max(0, current + delta);
 
         /// <summary>
-        /// 레거시 게이지 유지 판정 대체. 1.5단계에서는 참가 중이면 유지로 간주(Cat/Blur/BGM 호환).
+        /// 레거시 게이지 유지 판정 대체. 참가 유지로 간주(Cat/BGM 호환).
         /// 글로벌 티어 도입 시 교체.
         /// </summary>
         static bool MaintainingGameplaySustain(ref SlotRuntime sr) =>
             sr.InputLockTimer <= 0f;
 
-        /// <summary>레거시 이름 호환. Cat/Blur/TierBgm이 호출.</summary>
+        /// <summary>레거시 이름 호환. Cat/TierBgm이 호출.</summary>
         static bool MaintainingGameplayGauge(ref SlotRuntime sr) =>
             MaintainingGameplaySustain(ref sr);
     }

@@ -1,19 +1,32 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-07-11 — 디제잉 레이브 개편 **1단계** (UI 바인딩·데이터 구조만). 아래 §1~§18 본문은 아직 **레거시 `oiiaiooiiiai` 루프** 기준. 개편 진행은 §0·`02_개발_진행_일지.md`.
+> **갱신**: 2026-07-12 — 디제잉 레이브 **2단계 Play 검증 완료**. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
 
 ---
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: 1단계 바인딩 + **1.5단계 레거시 제거·에디터 정리·Play 검증 완료** (2026-07-12). 다음 = **2단계(10키 판정)**.  
+> **상태**: 1~2단계 **완료·Play 검증**. **Blur 제거·Play 검증 완료** (2026-07-12). 다음 = **3단계+** (스포트라이트·피버·글로벌 티어·전광판·BGM).  
 
 ### 목표 컨셉 (기획)
 
 - 고정 문자 패턴·게이지 → **시간 기반 글로벌 티어** + SNES **10키** 디제잉 박스.
 - 상시 **활성 타겟 3개** (`SnesControllerButtonVisual.SetHighlighted`). 순서 무관 성공 → 해당 키 끄고 비활성 중 1개 즉시 보충.
 - 60초 글로벌 티어로 전 슬롯 배경(크로마키→우주→클럽)·BGM 동기화. **30콤보** 시 3초 피버(전 버튼 정답).
+
+### 2단계 게임플레이 (코드 · 검증 완료)
+
+| 항목 | 값·경로 |
+|------|---------|
+| 활성 타겟 수 | `DjActiveTargetCount` = 3 |
+| 런타임 | `SlotRuntime.DjActive[10]` |
+| 입력 | `OiiaMinigameModule.DjPadInput.cs` → `BoothUsbSlotInput` |
+| 정답 | `OnDjHit` — Combo++ · Score+`DjHitScore`(300) · Highlight 갱신 |
+| 오답 | `OnDjMiss` — Combo=0 · `InputLockAfterMissSeconds` 0.35 · buzz (**Blur 없음** — 스포트라이트 예정) |
+| L/R 강조 | `oiiaL/RHighlightedBlack` · **Displayed가 Highlighted일 때만** Image 흰색 |
+| L/R 애니 | `Buttons_LR` `secondsPerSprite` **0.05** (사용자) |
+| Dev God | Backspace — 1P **10키 전부 Highlight** · 아무 키 정답 · 타겟 유지 · 타이머 정지 |
 
 ### 1단계 바인딩 (유지)
 
@@ -29,14 +42,15 @@
 
 | 제거 | 비고 |
 |------|------|
-| `BurstText` partial · 풀 바인딩 | NRE 원인. Hierarchy `BurstText*` 는 에디터에서 삭제/비활성 |
+| `BurstText` partial · 풀 바인딩 | NRE 원인. Hierarchy에서 삭제 |
 | `ShuffleEffect` · `ButtonShuffle` | O/I/A 매핑 셔플 |
 | `GuideFeedback` · Y/X/A/B 가이드 바인딩 | SNES 10키로 대체 |
 | `GaugeSlider` · 게이지 드레인 | 룰 폐기 |
-| `SequenceText` 커서 UI · `_patternLower` 입력 루프 | `TickGameplay` 스텁 |
+| `SequenceText` 커서 UI · `_patternLower` 입력 루프 | 디제잉 판정으로 대체 |
 | `OiiaPhysicalButton` MapO/I/A | 삭제 |
+| **`Blur` / `BlurFx.cs`** | **2026-07-12 삭제.** 실패·티어·EMPTY 오버레이 → **스포트라이트** 대체 예정. WAITING TMP만 유지 |
 
-**유지(골격)**: Begin/Tick/Exit · Practice READY · Timer · Cat/Blur/Waiting · TierBgm·CatMovement(티어 연동은 후속 개조) · Dj 바인딩.
+**유지(골격)**: Begin/Tick/Exit · Practice READY · Timer · Cat/Waiting · TierBgm·CatMovement(티어 연동은 후속 개조) · Dj 바인딩.
 
 ---
 

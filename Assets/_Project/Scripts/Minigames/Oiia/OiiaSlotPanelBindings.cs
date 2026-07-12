@@ -13,7 +13,6 @@ namespace MiniParty.Minigames.Oiia
     public sealed class OiiaSlotPanelBindings : MonoBehaviour
     {
         [Header("공통")]
-        public Image Blur;
         public TMP_Text PracticeReadyText;
         public Animator CatAnimator;
         public Image SlotPanelBackgroundImage;
@@ -46,7 +45,6 @@ namespace MiniParty.Minigames.Oiia
 
             return new()
             {
-                Blur = Blur,
                 PracticeReadyText = PracticeReadyText,
                 CatAnimator = CatAnimator,
                 SlotPanelBackgroundImage = SlotPanelBackgroundImage,
@@ -75,7 +73,6 @@ namespace MiniParty.Minigames.Oiia
         {
             Transform root = transform;
 
-            Blur = GetDirectChildComponent<Image>(root, "Blur");
             PracticeReadyText = GetDirectChildComponent<TMP_Text>(root, "Ready");
             WaitingText = GetDirectChildComponent<TMP_Text>(root, "Waiting");
             SlotPanelBackgroundImage = GetComponent<Image>();
