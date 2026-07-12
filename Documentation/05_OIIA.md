@@ -1,13 +1,13 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-07-12 — `CatMovement` 삭제 · `UiShake` 글로벌 티어 계승. 원작 밈·Beam·T3 SpinLoop. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
+> **갱신**: 2026-07-12 — SubPatternGuide 접두 표시 · `CatMovement` 삭제 · `UiShake` 글로벌 티어. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
 
 ---
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: `CatMovement` 삭제 · UiShake 글로벌 티어 · 원작 밈·Beam·T3 SpinLoop **Play 검증 완료** (2026-07-12).  
+> **상태**: 피버 중 패턴 연속재생 · 피버↔패턴 혼합 · UiShake · 원작 밈 **Play 검증 완료** (2026-07-12).  
 
 ### 원작 밈 연출 (코드 · 2026-07-12)
 
@@ -21,6 +21,7 @@
 | 스포트라이트 | **회전 없음** · Fixture ON · Beam은 T3/예고/피버 · **슬롯 RectMask2D 클립** |
 | 고양이 | 글로벌 **T3**에서 미스·무입력에도 `SpinLoop` 상시 |
 | UI 흔들림 | `UiShake` — 글로벌 **T2+** 정답 시 HUD·DjBox 흔들림 · **T3 진폭 ×2** · `CatMovement` **삭제** |
+| SubPatternGuide | 고정 `oiiaiooiiiai` · 12완성→피버 · **피버 중 자동 연속재생** · 종료/미스→초기화 · 게이지=`matched/12` |
 
 ### 3-C 전광판 · BGM (코드)
 
@@ -46,19 +47,20 @@
 
 - 고정 문자 패턴·게이지 → **시간 기반 글로벌 티어** + SNES **10키** 디제잉 박스.
 - 상시 **활성 타겟 3개** (`SnesControllerButtonVisual.SetHighlighted`). 순서 무관 성공 → 해당 키 끄고 비활성 중 1개 즉시 보충.
-- 60초 글로벌 티어로 전 슬롯 배경(크로마키→우주→클럽)·BGM 동기화. **30콤보** 시 3초 피버(전 버튼 정답).
+- 60초 글로벌 티어로 전 슬롯 배경(크로마키→우주→클럽)·BGM 동기화. **패턴 `oiiaiooiiiai` 완성** 시 3초 피버(전 버튼 정답).
 
 ### 3-A 피버 (코드)
 
 | 항목 | 값 |
 |------|-----|
-| 진입 | 비피버 정답 시 `FeverCharge++` → `FeverCharge >= 30` |
+| 진입 | `SubPatternMatched` == 12 (`oiiaiooiiiai` 완성) → `BeginFever` |
 | 지속 | `FeverDurationSeconds` = 3 |
-| 효과 | 10키 전부 Highlight · 아무 키 정답 · 타겟 유지 |
+| 효과 | 10키 전부 Highlight · 아무 키 정답 · 타겟 유지 · **패턴 `oiiaiooiiiai` 자동 연속재생**(문구+스텝 SFX) |
 | UI | 소형 디스플레이 `HudDisplay`: **Score ↔ `FEVER!` 상호 배타** (한 종류만). 마지막 1초 펄스 |
-| 게이지 | `FeverGauge` + `FeverGaugeB` (`FeverGaugeImage`/`B`) — 비피버: `FeverCharge/30` · 피버: 시간 소모 · **종료·미스 시 0** (피버 중 Combo는 게이지에 영향 없음) |
+| 게이지 | `FeverGauge` + `FeverGaugeB` — 비피버: `SubPatternMatched/12` · 피버: 시간 소모 |
 | 콤보 UI | `HudComboText` — **HudDisplay 밖** · `{n}` + `<size=55%> COMBO</size>` (숫자 강조) |
-| 종료 | 타이머 0 → `FeverCharge=0` · 랜덤 3타겟 (Dev God면 전부 유지) |
+| 종료 | 타이머 0 또는 미스 → **패턴 초기화** · 랜덤 3타겟 (Dev God면 전부 유지) |
+| 재생 간격 | Inspector `feverSubPatternStepSeconds` (기본 0.1s) |
 
 ### 2단계 게임플레이 (코드 · 검증 완료)
 
@@ -83,7 +85,7 @@
 | `HudComboText` | `DjBox/Combo` (Hud 밖) | 콤보 독립 UI |
 | `FeverGaugeImage` · `FeverGaugeImageB` | `DjBox/FeverGauge` · `FeverGaugeB` | 피버 충전·소모 Filled ×2 |
 | `SpotlightL/R Root·Fixture·Beam` | `StageScreen/SpotlightL|R` | 스포트라이트 |
-| `SubPatternGuideText` | 동일 | 가사 흐름 |
+| `SubPatternGuideText` | 동일 | 고정 `oiiaiooiiiai` 진행 접두(대문자). 크기·색·다음글자 없음 |
 | `StageScreenRoot` · `StageBackgroundChromaKey/Space/Club` | 동일 | 전광판 |
 
 ### 1.5단계에서 코드 제거한 레거시
@@ -571,6 +573,7 @@ CompleteSession()
 | `OiiaMinigameModule.InputLetterFlashes.cs` | O/I/A 플래시 |
 | `OiiaMinigameModule.CatAnimator.cs` | 고양이 Animator (SpinOnce/SpinLoop) |
 | `OiiaMinigameModule.UiShake.cs` | 글로벌 T2+ 정답 시 슬롯 HUD·DjBox anchoredPosition 흔들림 (`CatMovement` 삭제) |
+| `OiiaMinigameModule.SubPatternGuide.cs` | 고정 `oiiaiooiiiai` 정답 접두 대문자 표시 (크기·색·미리보기 없음) |
 | `OiiaMinigameModule.ExitSequence.cs` | 종료·Report 생성 |
 | `OiiaSlotPanelBindings.cs` | 프리팹 UI 자동 연결 |
 | `OiiaVideoEffectController.cs` | MP4 재생·Vertex Color 틴트·종료 시 Destroy |

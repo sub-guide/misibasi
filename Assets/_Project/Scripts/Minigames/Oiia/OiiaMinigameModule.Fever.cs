@@ -4,9 +4,6 @@ namespace MiniParty.Minigames.Oiia
 {
     public sealed partial class OiiaMinigameModule
     {
-        /// <summary>피버 진입에 필요한 콤보.</summary>
-        public const int FeverComboThreshold = 30;
-
         /// <summary>피버 지속 시간(초). 전 버튼 정답.</summary>
         public const float FeverDurationSeconds = 3f;
 
@@ -28,6 +25,8 @@ namespace MiniParty.Minigames.Oiia
             if (sr.FeverRemaining <= 0f)
                 return;
 
+            TickFeverSubPatternReplay(slotIndex);
+
             sr.FeverRemaining -= Time.deltaTime;
             if (sr.FeverRemaining > 0f)
                 return;
@@ -36,13 +35,15 @@ namespace MiniParty.Minigames.Oiia
             EndFever(slotIndex);
         }
 
-        void TryBeginFeverOnCharge(int slotIndex)
+        /// <summary>패턴 12글자 완성 시 피버 진입. 피버 중 패턴은 자동 연속재생.</summary>
+        void TryBeginFeverOnPatternComplete(int slotIndex)
         {
             ref SlotRuntime sr = ref _slots[slotIndex];
             if (sr.FeverRemaining > 0f)
                 return;
 
-            if (sr.FeverCharge < FeverComboThreshold)
+            int len = SubPatternLower.Length;
+            if (len <= 0 || sr.SubPatternMatched < len)
                 return;
 
             BeginFever(slotIndex);
@@ -51,8 +52,10 @@ namespace MiniParty.Minigames.Oiia
         void BeginFever(int slotIndex)
         {
             ref SlotRuntime sr = ref _slots[slotIndex];
-            sr.FeverCharge = FeverComboThreshold;
             sr.FeverRemaining = FeverDurationSeconds;
+            sr.FeverSubPatternStepTimer = 0f;
+            // 완성문에서 곧바로 1글자부터 루프 재생
+            sr.SubPatternMatched = 0;
             ActivateAllDjTargets(slotIndex);
         }
 
@@ -60,7 +63,7 @@ namespace MiniParty.Minigames.Oiia
         {
             ref SlotRuntime sr = ref _slots[slotIndex];
             sr.FeverRemaining = 0f;
-            sr.FeverCharge = 0;
+            ResetSubPatternProgress(ref sr);
 
             if (IsDevGodModeSlot(slotIndex))
             {

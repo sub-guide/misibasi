@@ -20,7 +20,7 @@ namespace MiniParty.Minigames.Oiia
         }
 
         /// <summary>
-        /// 상시 활성 타겟 3개. 피버(30콤보/3초) 중에는 전 키 정답.
+        /// 상시 활성 타겟 3개. 피버(패턴 완성/3초) 중에는 전 키 정답.
         /// 스포트라이트·글로벌 티어는 후속.
         /// </summary>
         void TickGameplay(int i)
@@ -126,13 +126,7 @@ namespace MiniParty.Minigames.Oiia
             }
 
             sr.Combo++;
-
-            if (sr.FeverRemaining <= 0f)
-            {
-                if (sr.FeverCharge < FeverComboThreshold)
-                    sr.FeverCharge++;
-                TryBeginFeverOnCharge(i);
-            }
+            AdvanceSubPatternOnHit(i, ref sr);
 
             if (!_ctx.IsPractice)
                 sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, DjHitScore);
@@ -143,19 +137,26 @@ namespace MiniParty.Minigames.Oiia
                 TriggerSlotUiShakeOnCorrect(i, ref sr);
             }
 
-            if (patternStepSfx != null && patternStepSfx.Length > 0)
-                PlayPatternStepSfx((sr.Combo - 1) % patternStepSfx.Length);
+            // 피버 중 패턴 SFX는 TickFeverSubPatternReplay가 담당
+            if (sr.FeverRemaining <= 0f &&
+                patternStepSfx != null &&
+                patternStepSfx.Length > 0 &&
+                sr.SubPatternMatched > 0)
+            {
+                PlayPatternStepSfx((sr.SubPatternMatched - 1) % patternStepSfx.Length);
+            }
         }
 
         void OnDjMiss(int i)
         {
             ref SlotRuntime sr = ref _slots[i];
             sr.Combo = 0;
-            sr.FeverCharge = 0;
             sr.InputLockTimer = InputLockAfterMissSeconds;
 
             if (sr.FeverRemaining > 0f)
                 EndFever(i);
+            else
+                ResetSubPatternProgress(ref sr);
 
             TriggerSpotlightMissFlash(i);
             PlayBuzz();

@@ -35,14 +35,19 @@ namespace MiniParty.Minigames.Oiia
             /// <summary>피버 남은 시간(초). &gt;0 이면 전 버튼 정답.</summary>
             public float FeverRemaining;
 
-            /// <summary>피버 게이지 충전(0~FeverComboThreshold). 피버 중에는 증가하지 않음.</summary>
-            public int FeverCharge;
-
             /// <summary>레거시 루프 티어 호환(Cat/BGM). 글로벌 티어 도입 전 0 유지.</summary>
             public int ConsecutiveLoopSuccesses;
 
             /// <summary>길이 <see cref="DjPadButtonCount"/>. true = 활성 타겟(Highlight).</summary>
             public bool[] DjActive;
+
+            /// <summary>
+            /// SubPatternGuide 진행도(0~12). 비피버: 정답마다 +1 · 피버: 자동 연속재생 · 종료/미스 시 0.
+            /// </summary>
+            public int SubPatternMatched;
+
+            /// <summary>피버 중 패턴 연속재생 스텝 타이머.</summary>
+            public float FeverSubPatternStepTimer;
         }
 
         [System.Serializable]

@@ -12,6 +12,9 @@ namespace MiniParty.Minigames.Oiia
         /// <summary>상시 유지하는 활성 타겟 개수.</summary>
         public const int DjActiveTargetCount = 3;
 
+        /// <summary>SubPatternGuide 고정 문구(레거시 Sequence와 동일). 표시는 대문자 접두만.</summary>
+        const string SubPatternLower = "oiiaiooiiiai";
+
         const float InputLockAfterMissSeconds = 0.35f;
 
         const float MainRoundMinSeconds = 1f;

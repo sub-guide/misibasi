@@ -225,10 +225,11 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - [x] **1.5단계: 레거시 제거** — Burst/Shuffle/Guide/ButtonShuffle 삭제 · 게이지·문자패턴·가이드 바인딩 제거 · `TickGameplay` 스텁 · **에디터 정리·Play 검증 완료** (사용자, 2026-07-12)
 - [x] **2단계: 활성 타겟 3개 + 10키 판정** — `DjActive` · `OnDjHit`/`OnDjMiss` · L/R black Highlight(Displayed 스프라이트만 흰색) · Dev God 전버튼 Highlight · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **Blur 제거** — `BlurFx`·바인딩 삭제 · WAITING만 유지 · 스포트라이트 대체 예정 · **에디터·Play 검증 완료** (사용자, 2026-07-12)
-- [x] **3-A: 피버** — `FeverCharge` · 게이지×2 · Score↔`FEVER!` · Combo 독립 · **Play 검증 완료** (사용자, 2026-07-12)
+- [x] **3-A: 피버** — 패턴 12완성 진입 · 게이지=`matched/12` · 피버 중 패턴 **연속재생** · 종료 시 리셋 · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **3-B: 스포트라이트** — 글로벌 티어 · L/R Fixture+Beam · Beam만 색/스트로보 · `spotlightBeamAlpha` Inspector · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **3-C: 전광판·BGM** — Chroma→Space→Club · 단일 `mainBgmClip` · 티어 27/33.5 · Beam 예고·클립 · T3 고양이 상시회전 · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **CatMovement 삭제 · UiShake 계승** — 고양이 바운스 제거 · `ResolveGlobalTier` T2+/T3×2 · Tick `UpdateSlotUiShake` · 패널 배경 투명화 제거 · **Play 검증 완료** (사용자, 2026-07-12)
+- [x] **SubPatternGuide 접두 표시** — `oiiaiooiiiai` · 피버 혼합·연속재생 · **Play 검증 완료** (사용자, 2026-07-12)
 
 **OIIA 후속 (레거시 루프)**
 
@@ -285,4 +286,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-07-12 — CatMovement 삭제 · UiShake 글로벌 티어 계승 · Play 검증 완료*
+*마스터 파일 갱신: 2026-07-12 — 피버 중 패턴 연속재생 Play 검증 완료*

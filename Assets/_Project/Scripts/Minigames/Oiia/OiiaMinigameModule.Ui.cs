@@ -42,6 +42,7 @@ namespace MiniParty.Minigames.Oiia
             SlotRuntime sr = _slots[i];
 
             FlushHudUi(i, ui, ref sr);
+            FlushSubPatternGuideUi(ui, ref sr);
             FlushWaitingUi(i, ui);
             FlushPanelBackgroundUi(i, ui, ref sr);
         }
@@ -123,15 +124,21 @@ namespace MiniParty.Minigames.Oiia
         }
 
         /// <summary>
-        /// DjBox 독립 피버 게이지 ×2. 비피버: FeverCharge 충전 · 피버: 남은 시간 소모 · 종료 시 0.
+        /// DjBox 독립 피버 게이지 ×2.
+        /// 비피버: SubPattern 진행(matched/12) · 피버: 남은 시간 소모 · 종료 시 0.
         /// </summary>
         static void FlushFeverGauge(SlotUiBindings ui, ref SlotRuntime sr)
         {
             float fill;
             if (sr.FeverRemaining > 0f)
+            {
                 fill = sr.FeverRemaining / FeverDurationSeconds;
+            }
             else
-                fill = sr.FeverCharge / (float)FeverComboThreshold;
+            {
+                int len = SubPatternLower.Length;
+                fill = len > 0 ? sr.SubPatternMatched / (float)len : 0f;
+            }
 
             fill = Mathf.Clamp01(fill);
             SetFeverGaugeFill(ui.FeverGaugeImage, fill);
