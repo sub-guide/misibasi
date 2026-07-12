@@ -7,8 +7,8 @@ namespace MiniParty.Minigames.Oiia
     {
         const float UiShakeTier3IntensityMultiplier = 2f;
 
-        [Header("슬롯 UI 흔들림 (2티어 기준)")]
-        [Tooltip("2티어 정답 시 게이지·패턴·점수·가이드 버튼 anchoredPosition 흔들림 진폭(px). 3티어는 2배.")]
+        [Header("슬롯 UI 흔들림 (글로벌 T2 기준)")]
+        [Tooltip("글로벌 T2 정답 시 HUD·DjBox anchoredPosition 흔들림 진폭(px). T3는 2배.")]
         [SerializeField] float uiShakeAmplitudeTier2 = 10f;
 
         [Tooltip("정답 1회당 흔들림 지속 시간(초).")]
@@ -124,7 +124,7 @@ namespace MiniParty.Minigames.Oiia
             if (_ctx.IsPractice)
                 return;
 
-            int tier = ResolveGameplayTier(ref sr);
+            int tier = ResolveGlobalTier();
             if (tier < 2)
                 return;
 

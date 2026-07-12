@@ -196,8 +196,8 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - [x] **문서 체계** — `01` 개요 ↔ `05_OIIA` 역할 분리, RBC 스텁 문서, 일지 규칙 정비 (2026-06-19)
 - [x] **기획 확정(C-1, C-5, C-6, C-9, C-12 등)** — `02_개발_진행_일지.md` 2026-06-19 참조
 - [x] **OIIA 가이드 UI + 크로마키 MP4 성공 이펙트** — 구현·에디터·**검증 완료** (2026-06-19)
-- [x] **OIIA 티어별 고양이 UI 바운스** — `CatMovement.cs` 슬롯/화면 경계·3티어 2배 크기·draw order·Inspector 속도·**검증 완료** (2026-06-20)
-- [x] **OIIA 티어별 슬롯 UI 흔들림** — `UiShake.cs` UI별 독립 진동·**검증 완료** (2026-06-20)
+- [x] **OIIA 티어별 고양이 UI 바운스** — `CatMovement.cs` … **검증 완료** (2026-06-20) → **2026-07-12 삭제** (중앙 고정 · CatAnimator만)
+- [x] **OIIA 티어별 슬롯 UI 흔들림** — `UiShake.cs` … **검증 완료** (2026-06-20) → **2026-07-12 글로벌 티어(`ResolveGlobalTier`) 계승** · Tick `UpdateSlotUiShake` 복구 · **Play 검증 완료**
 - [x] **OIIA 점수·티어·HP 저점수 컷 밸런스** — `Balance.cs` Inspector·**2차 씬 튜닝·검증 완료** (2026-06-20)
 - [x] **OIIA 성공 MP4 O/I/A 틴트** — `VideoEffects.cs` Inspector·씬 색상·**검증 완료** (2026-06-20)
 - [x] **OIIA 가이드 버튼 진동** — `GuideButtonShake.cs` … **2026-06-20 검증** → **2026-06-24 폐지** (`GuideFeedback` 네온 2레이어로 대체)
@@ -228,6 +228,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - [x] **3-A: 피버** — `FeverCharge` · 게이지×2 · Score↔`FEVER!` · Combo 독립 · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **3-B: 스포트라이트** — 글로벌 티어 · L/R Fixture+Beam · Beam만 색/스트로보 · `spotlightBeamAlpha` Inspector · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **3-C: 전광판·BGM** — Chroma→Space→Club · 단일 `mainBgmClip` · 티어 27/33.5 · Beam 예고·클립 · T3 고양이 상시회전 · **Play 검증 완료** (사용자, 2026-07-12)
+- [x] **CatMovement 삭제 · UiShake 계승** — 고양이 바운스 제거 · `ResolveGlobalTier` T2+/T3×2 · Tick `UpdateSlotUiShake` · 패널 배경 투명화 제거 · **Play 검증 완료** (사용자, 2026-07-12)
 
 **OIIA 후속 (레거시 루프)**
 
@@ -284,4 +285,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-07-12 — OIIA 3-C·밈 연출·Beam 클립·T3 SpinLoop Play 검증 완료*
+*마스터 파일 갱신: 2026-07-12 — CatMovement 삭제 · UiShake 글로벌 티어 계승 · Play 검증 완료*

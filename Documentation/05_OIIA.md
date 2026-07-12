@@ -1,13 +1,13 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-07-12 — 원작 밈 맞춤: 단일 BGM · 티어 27/33.5 · Beam 예고 스트로보 · 회전 제거. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
+> **갱신**: 2026-07-12 — `CatMovement` 삭제 · `UiShake` 글로벌 티어 계승. 원작 밈·Beam·T3 SpinLoop. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
 
 ---
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: 원작 밈 연출 · Beam 클립 · T3 고양이 상시회전 · 피버 스트로보 **Play 검증 완료** (2026-07-12).  
+> **상태**: `CatMovement` 삭제 · UiShake 글로벌 티어 · 원작 밈·Beam·T3 SpinLoop **Play 검증 완료** (2026-07-12).  
 
 ### 원작 밈 연출 (코드 · 2026-07-12)
 
@@ -20,6 +20,7 @@
 | Beam 예고 | **15–27**s · **32–33.5**s 흰색 Beam 초고속 점멸 |
 | 스포트라이트 | **회전 없음** · Fixture ON · Beam은 T3/예고/피버 · **슬롯 RectMask2D 클립** |
 | 고양이 | 글로벌 **T3**에서 미스·무입력에도 `SpinLoop` 상시 |
+| UI 흔들림 | `UiShake` — 글로벌 **T2+** 정답 시 HUD·DjBox 흔들림 · **T3 진폭 ×2** · `CatMovement` **삭제** |
 
 ### 3-C 전광판 · BGM (코드)
 
@@ -97,7 +98,7 @@
 | `OiiaPhysicalButton` MapO/I/A | 삭제 |
 | **`Blur` / `BlurFx.cs`** | **2026-07-12 삭제.** 실패 연출 → **스포트라이트 빨강 플래시**. WAITING TMP만 유지 |
 
-**유지(골격)**: Begin/Tick/Exit · Practice READY · Timer · Cat/Waiting · TierBgm·CatMovement(티어 연동은 후속 개조) · Dj 바인딩.
+**유지(골격)**: Begin/Tick/Exit · Practice READY · Timer · CatAnimator · TierBgm · UiShake(글로벌 티어) · Dj 바인딩. **`CatMovement` 삭제**(2026-07-12).
 
 ---
 
@@ -291,12 +292,12 @@ CompleteSession()
 | `Sequence` (SequenceText) | 맞춘 글자(대문자) + 다음 글자(빨간색) 표시 | 해당 슬롯 플레이어·관중 | ○ 중앙 배치 | ○ 원래 위치 | Blur 뒤 숨김 |
 | `Gauge` (GaugeSlider) | 입력 유예 시간. 1=여유, 0=실패. **칸 왼쪽 세로 바** | 플레이어 | 숨김 | ○ | 숨김/무의미 |
 | `Score` (ScoreText) | 누적 점수 | 플레이어·관중 | `-` 고정 | 숫자 표시 | - |
-| `Cat` (CatAnimator) | 1티어: 중앙 정지. 2·3티어: UI 바운스 이동+Z 회전(`CatMovement`). 정답 SpinOnce / 2티어+ SpinLoop | 관중·플레이어 | 숨김 | ○ | 숨김 |
+| `Cat` (CatAnimator) | 슬롯 중앙 고정. 정답 SpinOnce / 글로벌 T3·유지 시 SpinLoop (`CatMovement` 삭제) | 관중·플레이어 | 숨김 | ○ | 숨김 |
 | `O` / `I` / `A` (InputFlash) | 버튼 누를 때 글자 번쩍임 | 플레이어 | ○ | ○ | - |
 | `Ready` (PracticeReadyText) | "READY" 문구 | 플레이어 | READY 시만 | 항상 숨김 | 숨김 |
 | `Waiting` (WaitingText) | "WAITING" 깜빡임 | 관중 | EMPTY일 때 | EMPTY일 때 | ○ |
 | `Blur` (Image) | 실패 빨강, 티어 경고 흰색, 3티어 무지개, EMPTY 검은막 | 모두 | EMPTY 막 | 연출용 | ○ 검은 오버레이 |
-| `SlotPanelBackgroundImage` | 슬롯 흰 배경. 2티어 이상 유지 시 투명 | 시각 연출 | - | 2티어+ 투명 | - |
+| `SlotPanelBackgroundImage` | 슬롯 흰 배경. **항상 rest 색** (티어 투명화 폐기 — CatMovement 삭제와 함께) | 시각 | - | ○ | - |
 | `Timer` (mainRoundTimerCentralTop) | `TIME xx.x` | 모두 | 숨김 | ○ | - |
 | `FadeOverlay` | 종료 시 페이드 아웃 | 모두 | 종료 시 | 종료 시 | - |
 | `ControllerGuide` | 슬롯 하단 반원 바디 + **Y / X / A / B** 버튼. **다음 타겟** 네온·홀드·쇼크웨이브 | 플레이어·관중 | ○ | ○ | 숨김 |
@@ -405,9 +406,9 @@ CompleteSession()
 |------|------|
 | 연속 2·3루프 **진입 직후** (루프 완주 시) | Blur 흰색 깜빡임 **0.5초** (`TierBumpBlurRemaining`) |
 | 연속 3루프+ 플레이 중 (게이지 유지) | Blur 무지개 + 알파 깜빡임, 슬롯 배경 투명 |
-| 2티어+ 게이지 유지 | 고양이 SpinLoop + 슬롯/화면 바운스 (`CatMovement`) |
-| 2·3티어 정답 | `UiShake` — 패턴·게이지·점수·가이드 Y/X/A/B 동기 흔들림 |
-| 3티어 | 바운스·흔들림 진폭 2배 |
+| 2티어+ 게이지 유지 | 고양이 SpinLoop (**바운스 `CatMovement` 삭제** — 중앙 고정) |
+| 글로벌 T2·T3 정답 | `UiShake` — HUD·DjBox anchoredPosition 흔들림 (`ResolveGlobalTier`) |
+| 글로벌 T3 | 흔들림 진폭 2배 |
 | 정답 | 고양이 SpinOnce + **BurstText** (± `burstTextRandomOffset`, **생성축** `burstTextSpawnRotation` + **스윙** `burstTextSwingMin~Max` @ `burstTextSwingFrequency` Hz, **티어별** Perlin 위치 진동 `burstTextShakeAmplitudeTier1~3`·`burstTextShakeFrequencyTier1~3`, **티어별 fontSize** `burstTextFontSizeTier1~3`, P5 아웃라인). Inspector **코믹스 BurstText** |
 | 셔플 이펙트 ~1초 | `ShuffleEffect` — 슬롯 중앙 스프라이트 확대·페이드. 입력·게이지·고양이·UI 흔들림 **정지 없음** |
 | 참가 슬롯 최대 연속 루프 기준 | 티어 BGM (`TierBgm.cs`) |
@@ -471,44 +472,33 @@ CompleteSession()
 
 ### 티어(난이도) 시스템
 
-- `AliveTierTimer`: 실수 없이 게이지를 유지한 시간.
-- 이 시간으로 게이지 감속·유지 보너스·BGM·고양이·Blur·**UI 바운스** 연출이 결정된다.
+- **개편 후**: 본게임 남은 시간 기준 `ResolveGlobalTier()` (T1 0–27s · T2 27–33.5s · T3 33.5–60s) — 배경·BGM·스포트라이트·고양이 SpinLoop·**UiShake** 동기.
+- 레거시 `AliveTierTimer` / 콤보 `ResolveGameplayTier` 서술은 아래 잔존 구간·구버전 참고용.
 
-#### 고양이 UI 바운스 (`OiiaMinigameModule.CatMovement.cs`)
+#### ~~고양이 UI 바운스~~ (`CatMovement.cs` — **2026-07-12 삭제**)
 
-물리 엔진(Rigidbody/Collider) 없이 **`Cat` RectTransform**의 `anchoredPosition`·`localEulerAngles.z`만 갱신한다. 경계는 **`Cat`의 부모(`OiiaSlotPanel` 루트) RectTransform** 크기와 고양이 half-extents(Pivot 0.5)로 계산.
-
-| 티어 | 조건 | 거동 |
-|------|------|------|
-| 1 | `AliveTierTimer` &lt; 4s 또는 게이지 유지 실패 직후 | 중앙 (0,0), 회전 0 |
-| 2 | 4s ~ 8s 미만, 게이지 유지 중 | 진입 시 무작위 360° 직진 + Z 회전. **슬롯 패널** 경계 · 160° 부채꼴 반사 |
-| 3 | 8s+, 게이지 유지 중 | **`catTier3MoveSpeed`·`catTier3RotateSpeed`**(Inspector) · 화면 전체 경계 · **`localScale` 2배** · collision scale 2티어와 동일 |
-
-- 실패(`OnFail`)·`Begin()` 본게임: `ResetCatMovementImmediate` — 이동 상태·좌표·회전·draw order 즉시 초기화.
-- **3티어 화면 전체 이동**: `EnterCatTier3ScreenMode` — `Cat`를 런타임 `CatScreenMovementOverlay`(캔버스 풀스트retch)로 reparent, 경계=화면 전체. 실패·1티어 시 슬롯 패널·원래 scale 복귀.
-- **3티어 크기**: `localScale` × **`CatTier3ScaleMultiplier`(2)**.
-- **2·3티어 draw order**: `SetCatDrawOnTop` — Canvas `overrideSorting`, `sortingOrder = catMovementDrawSortOrderBase + 슬롯 번호`.
-- Inspector: `catTier2MoveSpeed`(씬 **400**), `catTier2RotateSpeed`(씬 **270**), `catTier3MoveSpeed`(씬 **2000**), `catTier3RotateSpeed`(씬 **1080**), `catBoundaryPadding`(씬 **0**), `catBoundaryCollisionScale`(씬 **0.4**), `catMovementDrawSortOrderBase`(씬 **100**).
+슬롯/화면 `anchoredPosition` 바운스·Z 회전·`CatScreenMovementOverlay` reparent·draw order 전부 제거. 고양이는 **CatAnimator만** (중앙 고정 + SpinOnce/SpinLoop).
 
 #### 슬롯 UI 흔들림 (`OiiaMinigameModule.UiShake.cs`)
 
-2·3티어에서 **패턴 한 글자 정답**(`OnCorrectInput`)마다 아래 UI의 `anchoredPosition`을 짧게 진동시킨다. 1티어·연습 모드는 변화 없음.
+글로벌 **T2+**에서 **디제잉 정답**(`OnDjHit` → `TriggerSlotUiShakeOnCorrect`)마다 아래 UI의 `anchoredPosition`을 짧게 진동시킨다. T1·연습 모드는 변화 없음. Tick에서 `UpdateSlotUiShake` 매 프레임 갱신.
 
 | 대상 | 바인딩 |
 |------|--------|
-| 게이지 | `GaugeSlider` |
-| 패턴 텍스트 | `SequenceText` |
-| 점수 | `ScoreText` |
-| 가이드 버튼 | `GuideButtonY` / `GuideButtonX` / `GuideButtonA` |
-| 입력 플래시 | `InputFlashO` / `InputFlashI` / `InputFlashA` |
+| 점수 | `HudScoreText` |
+| 콤보 | `HudComboText` |
+| 피버 문구 | `HudFeverText` |
+| 피버 게이지 | `FeverGaugeImage` / `FeverGaugeImageB` |
+| 서브 가이드 | `SubPatternGuideText` |
+| DJ 박스 | `DjBoxRoot` |
 
-| 티어 | 진폭 |
-|------|------|
+| 글로벌 티어 | 진폭 |
+|-------------|------|
 | 2 | `uiShakeAmplitudeTier2` (코드 기본 10px) |
 | 3 | 위 값 ×2 (`UiShakeTier3IntensityMultiplier`) |
 
-- 실패·`Begin()`: rest 좌표 즉시 복원 (`StopSlotUiShake` / `ResetAllSlotUiShake`).
-- **UI별 독립 진동**: 대상마다 `PhaseX`/`PhaseY` Perlin 위상을 두고, 정답마다 `RerollSlotUiShakeTargetPhases`로 재랜덤 — 같은 프레임에도 요소마다 다른 방향·궤적.
+- `Begin()`: rest 좌표 즉시 복원 (`ResetAllSlotUiShake`).
+- **UI별 독립 진동**: 대상마다 `PhaseX`/`PhaseY` Perlin 위상을 두고, 정답마다 `RerollSlotUiShakeTargetPhases`로 재랜덤.
 - Inspector: `uiShakeAmplitudeTier2`, `uiShakeDuration`(0.25s), `uiShakeFrequency`(28Hz).
 
 ### 상태 흐름 (슬롯 런타임)
@@ -518,15 +508,13 @@ CompleteSession()
 ```
 입력 잠금·실패 플래시·애니메이션 타이머 감소 (TickMeta)
     ↓
-참가 중이면 입력 판정 + 게이지 감소 (TickGameplay)
+참가 중이면 입력 판정 (TickGameplay)
     ↓
 고양이 Animator 모드 갱신 (본게임, CatAnimator)
     ↓
-고양이 UI 바운스·회전 (본게임, CatMovement)
-    ↓
 슬롯 HUD 흔들림 갱신 (본게임, UiShake)
     ↓
-화면 UI 반영 (FlushUi)
+스포트라이트 · 전광판 · FlushUi
 ```
 
 ### 오디오 시스템
@@ -582,8 +570,7 @@ CompleteSession()
 | `OiiaMinigameModule.BlurFx.cs` | Blur·WAITING 연출 |
 | `OiiaMinigameModule.InputLetterFlashes.cs` | O/I/A 플래시 |
 | `OiiaMinigameModule.CatAnimator.cs` | 고양이 Animator (SpinOnce/SpinLoop) |
-| `OiiaMinigameModule.CatMovement.cs` | 티어별 UI 바운스 이동·Z 회전·160° 부채꼴 경계 반사 |
-| `OiiaMinigameModule.UiShake.cs` | 2·3티어 정답 시 슬롯 HUD anchoredPosition 흔들림 |
+| `OiiaMinigameModule.UiShake.cs` | 글로벌 T2+ 정답 시 슬롯 HUD·DjBox anchoredPosition 흔들림 (`CatMovement` 삭제) |
 | `OiiaMinigameModule.ExitSequence.cs` | 종료·Report 생성 |
 | `OiiaSlotPanelBindings.cs` | 프리팹 UI 자동 연결 |
 | `OiiaVideoEffectController.cs` | MP4 재생·Vertex Color 틴트·종료 시 Destroy |
@@ -676,14 +663,7 @@ Minigame_O.I.I.A.
 | `inputLetterBurstDuration` | 0.3 | O/I/A 플래시 시간 |
 | `inputLetterBurstFontGrowth` | 1000 | 플래시 확대량 (씬 값, 코드 기본 36과 다름) |
 | `catAnimatorIdleState` 등 | Idle/SpinOnce/SpinLoop | Animator 상태 이름 불일치 시 애니 안 됨 |
-| `catTier2MoveSpeed` | 120 (코드 기본) | **400** (씬) | 2티어 UI 직선 이동(anchoredPosition 단위/초) |
-| `catTier2RotateSpeed` | 90 (코드 기본) | **270** (씬) | 2티어 Z 회전(도/초) |
-| `catTier3MoveSpeed` | 240 (코드 기본) | **2000** (씬) | 3티어 화면 전체 직선 이동 |
-| `catTier3RotateSpeed` | 180 (코드 기본) | **1080** (씬) | 3티어 Z 회전(도/초) |
-| `catBoundaryPadding` | 8 (코드 기본) | **0** (씬) | 추가 여백(px). **음수**면 범위 확대 |
-| `catBoundaryCollisionScale` | 0.35 (코드 기본) | **0.4** (씬) | **2·3티어** 경계 half-size 배율 |
-| `catMovementDrawSortOrderBase` | 100 (코드 기본) | **100** (씬) | 2·3티어 Cat Canvas.sortingOrder = base + 슬롯 번호 |
-| `uiShakeAmplitudeTier2` | 10 (코드 기본) | **10** (씬) | 2티어 정답 UI 흔들림 진폭(px). 3티어 2배 |
+| `uiShakeAmplitudeTier2` | 10 (코드 기본) | **10** (씬) | 글로벌 T2 정답 UI 흔들림 진폭(px). T3 2배 |
 | `uiShakeDuration` | 0.25 (코드 기본) | **0.25** (씬) | 정답 1회당 흔들림 시간(초) |
 | `uiShakeFrequency` | 28 (코드 기본) | **28** (씬) | 흔들림 진동 Hz |
 | `burstTextDuration` | 0.55 (코드 기본) | — | BurstText 표시·페이드(초) |

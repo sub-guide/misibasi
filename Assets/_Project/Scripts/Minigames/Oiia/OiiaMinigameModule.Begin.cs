@@ -31,7 +31,6 @@ namespace MiniParty.Minigames.Oiia
             if (!_ctx.IsPractice)
             {
                 ResetAllCatAnimatorsToIdle();
-                ResetAllCatMovement();
                 ResetAllSlotUiShake();
             }
 

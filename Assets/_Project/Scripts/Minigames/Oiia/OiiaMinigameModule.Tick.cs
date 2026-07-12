@@ -43,7 +43,7 @@ namespace MiniParty.Minigames.Oiia
                 if (!_ctx.IsPractice)
                 {
                     UpdateCatAnimationMode(i);
-                    UpdateCatMovement(i);
+                    UpdateSlotUiShake(i);
                 }
 
                 TickSpotlight(i);

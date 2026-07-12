@@ -174,16 +174,7 @@ namespace MiniParty.Minigames.Oiia
             if (ui.SlotPanelBackgroundImage == null)
                 return;
 
-            bool tier2BgTransparent =
-                !_ctx.IsPractice &&
-                _aliveMask[i] &&
-                MaintainingGameplaySustain(ref sr) &&
-                ResolveGameplayTier(ref sr) >= 2;
-
-            Color rest = _slotPanelBgRestColor[i];
-            ui.SlotPanelBackgroundImage.color = tier2BgTransparent
-                ? new Color(rest.r, rest.g, rest.b, 0f)
-                : rest;
+            ui.SlotPanelBackgroundImage.color = _slotPanelBgRestColor[i];
         }
     }
 }
