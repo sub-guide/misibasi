@@ -1342,11 +1342,18 @@ MonoBehaviour:
   sessionEndHoldSeconds: 0.35
   exitFadeOutSeconds: 1
   sessionEndClip: {fileID: 0}
+  feverScreamClip: {fileID: 8300000, guid: 1ed6a4c8e5b14364ca3ab6d17ca8e570, type: 3}
+  feverScreamSource: {fileID: 0}
+  feverChantLayerCount: 12
+  feverChantPoolSize: 32
+  feverChantPitchMin: 0.98
+  feverChantPitchMax: 1.02
+  feverChantVolumeMin: 0.5
+  feverChantVolumeMax: 1
+  feverChantMaxStartDelay: 0.15
   sfxSource: {fileID: 2068533488}
   buzzClip: {fileID: 0}
   mainBgmClip: {fileID: 8300000, guid: 35c188a391fe5ba4ea6b0fd7ac805fcf, type: 3}
-  feverScreamClip: {fileID: 8300000, guid: 1ed6a4c8e5b14364ca3ab6d17ca8e570, type: 3}
-  feverScreamSource: {fileID: 0}
   tierBgmSource: {fileID: 0}
   tierBgmVolume: 0.85
   patternStepSfx:
@@ -1404,7 +1411,6 @@ MonoBehaviour:
     LetterScalePeak: 2
   spotlightBeamAlpha: 0.15
   stageBgCrossfadeSeconds: 0.4
-  feverSubPatternStepSeconds: 0.1
   mainRoundTimerCentralTop: {fileID: 919785934}
   uiShakeTier1:
     Amplitude: 0

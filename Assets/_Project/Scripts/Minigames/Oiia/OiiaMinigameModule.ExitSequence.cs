@@ -36,6 +36,7 @@ namespace MiniParty.Minigames.Oiia
 
             StopTierBgm();
             StopFeverScreamAudio();
+            StopFeverChantAudio();
             PlaySessionEndSfx();
             HideMainTimerImmediate();
 

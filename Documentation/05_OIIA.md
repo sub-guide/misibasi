@@ -1,13 +1,13 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-07-18 — T1 패턴 피버·T2 패턴 반복·T3 전체 강제 피버. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
+> **갱신**: 2026-07-18 — 피버 OIIA 패턴 스텝 떼창 변조. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
 
 ---
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: T3 전체 강제 피버 개편 **Play 검증 완료** (2026-07-18).  
+> **상태**: 피버 OIIA 떼창 변조 **Play 검증 완료** (2026-07-18, 씬 튜닝 반영).  
 
 ### 원작 밈 연출 (코드 · 2026-07-12)
 
@@ -61,6 +61,7 @@
 | T3 | `UpdateGlobalTierFeverMode`가 모든 참가 슬롯을 구간 전체 강제 피버 · 타이머 소모 없음 |
 | 피버 효과 | 10키 전부 Highlight · 모든 입력 정답 · 입력마다 `O→I→I→A…` 수동 진행(문구·스피커·스텝 SFX) |
 | 피버 사운드 | `Scream.mp3` · 피버 슬롯이 하나라도 있으면 전용 AudioSource로 루프 · 마지막 피버/세션 종료/재시작 시 정지 |
+| OIIA 떼창 | T1/T3 피버 중 입력 스텝만 원음+분산 레이어 재생 · 피치/볼륨/시작 지연/레이어·풀 수 Inspector |
 | UI | 소형 디스플레이 `HudDisplay`: **Score ↔ `FEVER!` 상호 배타** (한 종류만). 마지막 1초 펄스 |
 | 게이지 | T1 비피버: `matched/12`, 일반 피버: 시간 소모 · T2: 0 · T3: 1 |
 | 콤보 UI | `HudComboText` — **HudDisplay 밖** · `{n}` + `<size=55%> COMBO</size>` (숫자 강조) |
@@ -523,7 +524,7 @@ CompleteSession()
 
 ### 오디오 시스템
 
-- **패턴 SFX**: 정답 시 스텝 인덱스별 `patternStepSfx[]` OneShot
+- **패턴 SFX**: 일반 입력은 스텝 인덱스별 `patternStepSfx[]` OneShot. T1/T3 피버는 `FeverChant.cs` 다중 레이어 떼창.
 - **실패 buzz**: `buzzClip` (씬에서 **미연결** — 확인 필요)
 - **티어 BGM**: 별도 AudioSource, 참가자 중 최고 유지 티어 기준 루프
 - **세션 종료**: `sessionEndClip` (씬에서 **미연결** — 확인 필요)
@@ -568,6 +569,7 @@ CompleteSession()
 | `OiiaMinigameModule.VideoEffects.cs` | 정답 MP4 Instantiate·틴트 색 |
 | `OiiaMinigameModule.Timer.cs` | 본게임 타이머 |
 | `OiiaMinigameModule.PatternAudio.cs` | 패턴 SFX, buzz |
+| `OiiaMinigameModule.FeverChant.cs` | 피버 O/I/A 스텝 다중 레이어 떼창 AudioSource 풀 |
 | `OiiaMinigameModule.TierBgm.cs` | 티어 BGM |
 | `OiiaMinigameModule.SlotPanels.cs` | 슬롯 패널 자동 수집 |
 | `OiiaMinigameModule.SlotHelpers.cs` | 유틸 함수 |
@@ -663,6 +665,10 @@ Minigame_O.I.I.A.
 | `tier3BeatLoop` | oiia beat.MP3 연결됨 | 3티어 BGM 없음 |
 | `tierBgmSource` | 비어 있음 | 런타임 2번째 AudioSource 자동 생성 |
 | `patternStepSfx[12]` | 12개 연결됨 | 패턴 12글자와 일치. 부족 시 경고 |
+| `feverChantLayerCount` / `PoolSize` | 씬 **12 / 32** | 피버 스텝당 레이어 수 / 동시 재생 풀 |
+| `feverChantPitchMin` / `Max` | 씬 **0.98 / 1.02** | 분산 레이어 피치 범위 |
+| `feverChantVolumeMin` / `Max` | 씬 **0.5 / 1** | 분산 레이어 볼륨 범위 |
+| `feverChantMaxStartDelay` | 씬 **0.15s** | 분산 레이어 최대 시작 지연 |
 | `sequenceTextPulseBoostPoints` | 22 | 정답 시 글자 커짐 크기 |
 | `sequenceTextNextHintColor` | 빨간색 | 다음 글자 색 |
 | `emptySlotBlurAlpha` | 0.9 | EMPTY 슬롯 어둡기 |

@@ -21,16 +21,25 @@ namespace MiniParty.Minigames.Oiia
         [Tooltip("레거시 패턴 스텝 SFX(개편 전). 2단계+ 디제잉 입력음으로 교체 예정. 현재 미사용.")]
         [SerializeField] AudioClip[] patternStepSfx = new AudioClip[0];
 
-        void PlayPatternStepSfx(int stepIndexZeroBased)
+        void PlayPatternStepSfx(int stepIndexZeroBased, bool feverChant)
         {
-            if (sfxSource == null || patternStepSfx == null)
+            if (patternStepSfx == null)
                 return;
 
             if (stepIndexZeroBased < 0 || stepIndexZeroBased >= patternStepSfx.Length)
                 return;
 
             AudioClip clip = patternStepSfx[stepIndexZeroBased];
-            if (clip != null)
+            if (clip == null)
+                return;
+
+            if (feverChant)
+            {
+                PlayFeverChantStep(clip);
+                return;
+            }
+
+            if (sfxSource != null)
                 sfxSource.PlayOneShot(clip);
         }
 

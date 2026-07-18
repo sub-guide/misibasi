@@ -142,7 +142,9 @@ namespace MiniParty.Minigames.Oiia
                 patternStepSfx != null &&
                 patternStepSfx.Length > 0)
             {
-                PlayPatternStepSfx((steppedPosition - 1) % patternStepSfx.Length);
+                PlayPatternStepSfx(
+                    (steppedPosition - 1) % patternStepSfx.Length,
+                    IsFeverActive(i));
             }
         }
 
