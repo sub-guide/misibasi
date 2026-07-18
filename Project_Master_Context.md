@@ -236,16 +236,21 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - [x] **1.5단계: 레거시 제거** — Burst/Shuffle/Guide/ButtonShuffle 삭제 · 게이지·문자패턴·가이드 바인딩 제거 · `TickGameplay` 스텁 · **에디터 정리·Play 검증 완료** (사용자, 2026-07-12)
 - [x] **2단계: 활성 타겟 3개 + 10키 판정** — `DjActive` · `OnDjHit`/`OnDjMiss` · L/R black Highlight(Displayed 스프라이트만 흰색) · Dev God 전버튼 Highlight · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **Blur 제거** — `BlurFx`·바인딩 삭제 · WAITING만 유지 · 스포트라이트 대체 예정 · **에디터·Play 검증 완료** (사용자, 2026-07-12)
-- [x] **3-A: 피버** — 패턴 12완성 진입 · 게이지=`matched/12` · 피버 중 패턴 **연속재생** · 종료 시 리셋 · **Play 검증 완료** (사용자, 2026-07-12)
+- [x] **3-A: 피버** — 패턴 12완성 진입 · 게이지=`matched/12` · 종료 시 리셋 · 전 키 정답 모드 (2026-07-12, 자동재생은 2026-07-18 제거)
 - [x] **3-B: 스포트라이트** — 글로벌 티어 · L/R Fixture+Beam · Beam만 색/스트로보 · `spotlightBeamAlpha` Inspector · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **3-C: 전광판·BGM** — Chroma→Space→Club · 단일 `mainBgmClip` · 티어 27/33.5 · Beam 예고·클립 · T3 고양이 상시회전 · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **CatMovement 삭제 · UiShake 계승** — 고양이 바운스 제거 · `ResolveGlobalTier` T2+/T3×2 · Tick `UpdateSlotUiShake` · 패널 배경 투명화 제거 · **Play 검증 완료** (사용자, 2026-07-12)
-- [x] **SubPatternGuide 접두 표시** — `oiiaiooiiiai` · 피버 혼합·연속재생 · **Play 검증 완료** (사용자, 2026-07-12)
+- [x] **SubPatternGuide 접두 표시** — `oiiaiooiiiai` · 12완성 시 피버 · 피버 진입/종료/미스 시 초기화 · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **스피커 시스템** — TMP 템플릿·티어 튜닝·대소문자 랜덤 · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **OIIA ABXY Unpressed 명도 100** — DjBox A/B/X/Y만 · **Play 검증 완료** (사용자, 2026-07-12)
 - [x] **관중 이펙트** — 피버 상승·진동·페이드 · 에디터 Rest 위치 · `crowdShakeAmplitude` · **Play 검증 완료** (사용자, 2026-07-13)
 - [x] **슬롯 패널 클리핑** — `clipSlotContentToPanel` · 패널 루트 `RectMask2D` · 이펙트가 옆 슬롯 위에 겹치지 않음 · **Play 검증 완료** (사용자, 2026-07-18)
 - [x] **UiShake 티어별·StageScreen·상시** — `uiShakeTier*` + `uiShakeIdleTier*` · 씬 튜닝 · **Play 검증 완료** (사용자, 2026-07-18)
+- [x] **피버 패턴 자동재생 제거** — 자동 접두 진행·스텝 SFX·타이머 제거 · **Play 검증 완료** (사용자, 2026-07-18)
+- [x] **피버 입력 기반 수동 패턴** — 버튼 입력마다 OIIA 스텝 SFX·SubPatternGuide·스피커 글자 진행 · **Play 검증 완료** (사용자, 2026-07-18)
+- [x] **피버 진입 직전 마지막 I SFX 누락 수정** — `AdvanceSubPatternOnHit` 진행 위치 반환 · **Play 검증 완료** (사용자, 2026-07-18)
+- [x] **피버 Scream 루프 사운드** — `Scream.mp3` · 피버 슬롯 존재 동안 반복 · 마지막 피버/세션 종료 시 정지 · **Play 검증 완료** (사용자, 2026-07-18)
+- [x] **글로벌 티어별 피버 개편** — T1 패턴 완성 3초 피버 · T2 패턴 반복/게이지 0/피버 없음 · T3 모든 참가 슬롯 전체 강제 피버 · **Play 검증 완료** (사용자, 2026-07-18)
 
 **OIIA 후속 (레거시 루프)**
 
@@ -302,4 +307,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-07-18 — UiShake 상시·티어별·StageScreen Play 검증·씬 튜닝 반영*
+*마스터 파일 갱신: 2026-07-18 — 글로벌 T1/T2/T3 피버 규칙 개편 Play 검증 완료*

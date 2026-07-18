@@ -127,10 +127,19 @@ namespace MiniParty.Minigames.Oiia
         /// DjBox 독립 피버 게이지 ×2.
         /// 비피버: SubPattern 진행(matched/12) · 피버: 남은 시간 소모 · 종료 시 0.
         /// </summary>
-        static void FlushFeverGauge(SlotUiBindings ui, ref SlotRuntime sr)
+        void FlushFeverGauge(SlotUiBindings ui, ref SlotRuntime sr)
         {
             float fill;
-            if (sr.FeverRemaining > 0f)
+            int tier = ResolveGlobalTier();
+            if (tier == 2)
+            {
+                fill = 0f;
+            }
+            else if (tier >= 3 && sr.FeverRemaining > 0f)
+            {
+                fill = 1f;
+            }
+            else if (sr.FeverRemaining > 0f)
             {
                 fill = sr.FeverRemaining / FeverDurationSeconds;
             }

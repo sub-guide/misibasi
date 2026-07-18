@@ -126,7 +126,7 @@ namespace MiniParty.Minigames.Oiia
             }
 
             sr.Combo++;
-            AdvanceSubPatternOnHit(i, ref sr);
+            int steppedPosition = AdvanceSubPatternOnHit(i, ref sr);
 
             if (!_ctx.IsPractice)
                 sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, DjHitScore);
@@ -137,13 +137,12 @@ namespace MiniParty.Minigames.Oiia
                 TriggerSlotUiShakeOnCorrect(i, ref sr);
             }
 
-            // 피버 중 패턴 SFX는 TickFeverSubPatternReplay가 담당
-            if (sr.FeverRemaining <= 0f &&
+            // 실제 입력마다 스텝 SFX 재생. steppedPosition은 피버 진입 리셋과 무관한 진행 위치.
+            if (steppedPosition > 0 &&
                 patternStepSfx != null &&
-                patternStepSfx.Length > 0 &&
-                sr.SubPatternMatched > 0)
+                patternStepSfx.Length > 0)
             {
-                PlayPatternStepSfx((sr.SubPatternMatched - 1) % patternStepSfx.Length);
+                PlayPatternStepSfx((steppedPosition - 1) % patternStepSfx.Length);
             }
         }
 

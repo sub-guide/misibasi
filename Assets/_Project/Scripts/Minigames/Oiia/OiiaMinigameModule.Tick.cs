@@ -33,6 +33,8 @@ namespace MiniParty.Minigames.Oiia
                 }
             }
 
+            UpdateGlobalTierFeverMode();
+
             ForEachSlot(i =>
             {
                 TickMeta(i);

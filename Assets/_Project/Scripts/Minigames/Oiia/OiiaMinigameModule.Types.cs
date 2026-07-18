@@ -42,12 +42,9 @@ namespace MiniParty.Minigames.Oiia
             public bool[] DjActive;
 
             /// <summary>
-            /// SubPatternGuide 진행도(0~12). 비피버: 정답마다 +1 · 피버: 자동 연속재생 · 종료/미스 시 0.
+            /// SubPatternGuide 진행도(0~12). 비피버 정답마다 +1 · 피버 진입/종료/미스 시 0.
             /// </summary>
             public int SubPatternMatched;
-
-            /// <summary>피버 중 패턴 연속재생 스텝 타이머.</summary>
-            public float FeverSubPatternStepTimer;
         }
 
         [System.Serializable]

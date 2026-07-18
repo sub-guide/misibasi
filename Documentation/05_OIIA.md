@@ -1,13 +1,13 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-07-18 — 슬롯 패널 `RectMask2D` 클리핑. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
+> **갱신**: 2026-07-18 — T1 패턴 피버·T2 패턴 반복·T3 전체 강제 피버. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
 
 ---
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: UiShake 티어별·StageScreen·상시 진동 **Play 검증 완료** (2026-07-18, 씬 튜닝 반영).  
+> **상태**: T3 전체 강제 피버 개편 **Play 검증 완료** (2026-07-18).  
 
 ### 원작 밈 연출 (코드 · 2026-07-12)
 
@@ -15,13 +15,13 @@
 |------|-----|
 | BGM | 본게임 시작부터 `mainBgmClip` 단일 루프 (티어별 사운드 **폐기**). 권장: `W&W - OIIA OIIA (Spinning Cat)` |
 | T1 | 0–**27**s · ChromaKey · Beam OFF |
-| T2 | 27–**33.5**s · Space · Beam 상시 OFF |
-| T3 | 33.5–60s · Club · Beam ON(네온) |
+| T2 | 27–**33.5**s · Space · Beam 상시 OFF · 패턴 반복, 피버 게이지 0 |
+| T3 | 33.5–60s · Club · Beam ON(네온) · 모든 참가 슬롯 강제 피버 |
 | Beam 예고 | **15–27**s · **32–33.5**s 흰색 Beam 초고속 점멸 |
 | 스포트라이트 | **회전 없음** · Fixture ON · Beam은 T3/예고/피버 · **슬롯 RectMask2D 클립** |
 | 고양이 | 글로벌 **T3**에서 미스·무입력에도 `SpinLoop` 상시 |
 | UI 흔들림 | `UiShake` — HUD·DjBox·StageScreen · **정답 임펄스** `uiShakeTier1/2/3` + **상시** `uiShakeIdleTier1/2/3` · 합산 |
-| SubPatternGuide | 고정 `oiiaiooiiiai` · 12완성→피버 · **피버 중 자동 연속재생** · 종료/미스→초기화 · 게이지=`matched/12` |
+| SubPatternGuide | 고정 `oiiaiooiiiai` · T1 12완성→3초 피버 · T2 입력 패턴 반복(피버 없음) · T3 강제 피버 중 입력마다 수동 진행 |
 | 스피커 | DjBox 위 L/R · 안쪽·위 · `speakerTier1/2/3` · `speakerLetterTemplate` · 분출 글자 **대소문자 랜덤** |
 | 관중 | `Crowd`/`CrowdPeople` · 피버 시 상승·진동·페이드아웃 · `crowdShakeAmplitude` Inspector |
 | 슬롯 클리핑 | `OiiaMinigameModule.SlotPanels.cs` · `clipSlotContentToPanel`(기본 ON) · 패널 루트 `RectMask2D` · 스피커·관중·스포트라이트 등 옆 슬롯 오버랩 방지 |
@@ -50,20 +50,21 @@
 
 - 고정 문자 패턴·게이지 → **시간 기반 글로벌 티어** + SNES **10키** 디제잉 박스.
 - 상시 **활성 타겟 3개** (`SnesControllerButtonVisual.SetHighlighted`). 순서 무관 성공 → 해당 키 끄고 비활성 중 1개 즉시 보충.
-- 60초 글로벌 티어로 전 슬롯 배경(크로마키→우주→클럽)·BGM 동기화. **패턴 `oiiaiooiiiai` 완성** 시 3초 피버(전 버튼 정답).
+- 60초 글로벌 티어로 전 슬롯 배경·BGM·피버 규칙 동기화. T1 패턴 완성은 3초 피버, T2는 패턴만 반복, T3는 모든 참가 슬롯이 구간 전체 피버.
 
 ### 3-A 피버 (코드)
 
 | 항목 | 값 |
 |------|-----|
-| 진입 | `SubPatternMatched` == 12 (`oiiaiooiiiai` 완성) → `BeginFever` |
-| 지속 | `FeverDurationSeconds` = 3 |
-| 효과 | 10키 전부 Highlight · 아무 키 정답 · 타겟 유지 · **패턴 `oiiaiooiiiai` 자동 연속재생**(문구+스텝 SFX) |
+| T1 | `SubPatternMatched == 12` → `BeginFever` · `FeverDurationSeconds` = 3 |
+| T2 | 피버 진입 없음 · 입력마다 패턴 문구·스피커·SFX 1~12 반복 · 피버 게이지 0 고정 |
+| T3 | `UpdateGlobalTierFeverMode`가 모든 참가 슬롯을 구간 전체 강제 피버 · 타이머 소모 없음 |
+| 피버 효과 | 10키 전부 Highlight · 모든 입력 정답 · 입력마다 `O→I→I→A…` 수동 진행(문구·스피커·스텝 SFX) |
+| 피버 사운드 | `Scream.mp3` · 피버 슬롯이 하나라도 있으면 전용 AudioSource로 루프 · 마지막 피버/세션 종료/재시작 시 정지 |
 | UI | 소형 디스플레이 `HudDisplay`: **Score ↔ `FEVER!` 상호 배타** (한 종류만). 마지막 1초 펄스 |
-| 게이지 | `FeverGauge` + `FeverGaugeB` — 비피버: `SubPatternMatched/12` · 피버: 시간 소모 |
+| 게이지 | T1 비피버: `matched/12`, 일반 피버: 시간 소모 · T2: 0 · T3: 1 |
 | 콤보 UI | `HudComboText` — **HudDisplay 밖** · `{n}` + `<size=55%> COMBO</size>` (숫자 강조) |
-| 종료 | 타이머 0 또는 미스 → **패턴 초기화** · 랜덤 3타겟 (Dev God면 전부 유지) |
-| 재생 간격 | Inspector `feverSubPatternStepSeconds` (기본 0.1s) |
+| 종료 | T1 일반 피버: 타이머 0 또는 미스 · T3 강제 피버: 라운드 종료까지 유지 |
 
 ### 2단계 게임플레이 (코드 · 검증 완료)
 

@@ -16,6 +16,7 @@ namespace MiniParty.Minigames.Oiia
             _running = true;
 
             _slots = new SlotRuntime[SlotCount];
+            ResetGlobalTierFeverMode();
 
             _remainingMainTime = Mathf.Max(MainRoundMinSeconds, MainRoundDurationSeconds);
 
@@ -35,6 +36,7 @@ namespace MiniParty.Minigames.Oiia
             }
 
             StopTierBgm();
+            StopFeverScreamAudio();
 
             UpdateMainTimerUi();
             ForEachSlot(FlushUi);

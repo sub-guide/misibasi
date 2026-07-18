@@ -5,35 +5,60 @@ namespace MiniParty.Minigames.Oiia
 {
     public sealed partial class OiiaMinigameModule
     {
-        /// <summary>피버 중 패턴 한 글자 진행 간격(초). 12글자 루프 연속재생.</summary>
-        [Header("피버 패턴 연속재생")]
-        [Tooltip("피버 중 SubPattern 한 글자마다의 간격(초).")]
-        [SerializeField] float feverSubPatternStepSeconds = 0.1f;
-
         /// <summary>
         /// 레거시 SequenceText A안과 동일: 맞춘 접두만 대문자로 표시.
         /// 폰트 크기·색·다음 글자 미리보기 없음.
-        /// 완성 시 피버 진입. 피버 중에는 자동으로 oiia 루프 연속재생.
+        /// 완성 시 피버 진입. 피버 종료/미스 시 진행도를 초기화.
+        /// 반환값: 이번 입력으로 진행한 글자의 1-based 위치(스텝 SFX 인덱스용). 진행 없으면 0.
+        /// 완성 → 피버 진입으로 <see cref="SlotRuntime.SubPatternMatched"/>가 0으로 리셋돼도
+        /// 반환값으로 마지막 글자 SFX를 재생할 수 있다.
         /// </summary>
-        void AdvanceSubPatternOnHit(int slotIndex, ref SlotRuntime sr)
+        int AdvanceSubPatternOnHit(int slotIndex, ref SlotRuntime sr)
         {
             if (sr.FeverRemaining > 0f)
-                return;
+            {
+                int feverLen = SubPatternLower.Length;
+                if (feverLen <= 0)
+                {
+                    sr.SubPatternMatched = 0;
+                    return 0;
+                }
+
+                sr.SubPatternMatched++;
+                if (sr.SubPatternMatched > feverLen)
+                    sr.SubPatternMatched = 1;
+
+                NotifySubPatternStepFromMatched(slotIndex, ref sr);
+                return sr.SubPatternMatched;
+            }
 
             int len = SubPatternLower.Length;
             if (len <= 0)
             {
                 sr.SubPatternMatched = 0;
-                return;
+                return 0;
+            }
+
+            // T2는 피버 없이 입력 패턴·가이드·스피커·SFX만 1~12로 계속 반복.
+            if (ResolveGlobalTier() == 2)
+            {
+                sr.SubPatternMatched++;
+                if (sr.SubPatternMatched > len)
+                    sr.SubPatternMatched = 1;
+
+                NotifySubPatternStepFromMatched(slotIndex, ref sr);
+                return sr.SubPatternMatched;
             }
 
             if (sr.SubPatternMatched >= len)
-                return;
+                return 0;
 
             sr.SubPatternMatched++;
+            int steppedPosition = sr.SubPatternMatched;
             if (sr.SubPatternMatched >= len)
             {
                 sr.SubPatternMatched = len;
+                steppedPosition = len;
                 NotifySubPatternStepFromMatched(slotIndex, ref sr);
                 TryBeginFeverOnPatternComplete(slotIndex);
             }
@@ -41,45 +66,13 @@ namespace MiniParty.Minigames.Oiia
             {
                 NotifySubPatternStepFromMatched(slotIndex, ref sr);
             }
+
+            return steppedPosition;
         }
 
         void ResetSubPatternProgress(ref SlotRuntime sr)
         {
             sr.SubPatternMatched = 0;
-            sr.FeverSubPatternStepTimer = 0f;
-        }
-
-        /// <summary>피버 중 `oiiaiooiiiai` 접두를 스텝마다 갱신·SFX 재생·랩.</summary>
-        void TickFeverSubPatternReplay(int slotIndex)
-        {
-            ref SlotRuntime sr = ref _slots[slotIndex];
-            if (sr.FeverRemaining <= 0f)
-                return;
-
-            int len = SubPatternLower.Length;
-            if (len <= 0)
-                return;
-
-            float step = Mathf.Max(0.02f, feverSubPatternStepSeconds);
-            sr.FeverSubPatternStepTimer += Time.deltaTime;
-
-            while (sr.FeverSubPatternStepTimer >= step)
-            {
-                sr.FeverSubPatternStepTimer -= step;
-                AdvanceFeverSubPatternStep(slotIndex, ref sr, len);
-            }
-        }
-
-        void AdvanceFeverSubPatternStep(int slotIndex, ref SlotRuntime sr, int len)
-        {
-            sr.SubPatternMatched++;
-            if (sr.SubPatternMatched > len)
-                sr.SubPatternMatched = 1;
-
-            NotifySubPatternStepFromMatched(slotIndex, ref sr);
-
-            if (patternStepSfx != null && patternStepSfx.Length > 0)
-                PlayPatternStepSfx((sr.SubPatternMatched - 1) % patternStepSfx.Length);
         }
 
         void FlushSubPatternGuideUi(SlotUiBindings ui, ref SlotRuntime sr)
