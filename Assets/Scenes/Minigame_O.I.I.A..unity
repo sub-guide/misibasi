@@ -1326,9 +1326,18 @@ MonoBehaviour:
   catAnimatorSpinLoopState: SpinLoop
   catAnimatorLayer: 0
   displayName: OIIA
+  crowdRiseDistance: 120
+  crowdRiseSeconds: 0.35
+  crowdFadeSeconds: 0.4
+  crowdShakeAmplitude: 10
+  crowdShakeFrequency: 3
+  crowdAutoPlaceAboveDjBox: 0
+  crowdAboveDjBoxPadding: 40
   oiiaLHighlightedBlack: {fileID: 21300000, guid: d8072eadcce37f343a6268ef3b047c04, type: 3}
   oiiaRHighlightedBlack: {fileID: 21300000, guid: 54719b7b6f37ac14a8381b9e4ccf52dc, type: 3}
   oiiaLrWhiteIconColorOnlyWhenHighlighted: 1
+  oiiaDjPadDimUnpressed: 1
+  oiiaDjPadUnpressedBrightness: 100
   exitScreenFader: {fileID: 1182976394}
   sessionEndHoldSeconds: 0.35
   exitFadeOutSeconds: 1
@@ -1357,6 +1366,7 @@ MonoBehaviour:
   - {fileID: 384121077}
   - {fileID: 875624585}
   slotPanelsContainer: {fileID: 664720836}
+  clipSlotContentToPanel: 1
   speakerLetterSpawnJitter: 18
   speakerLetterTemplate: {fileID: 594064463}
   speakerLetterOverrideFontSizeFromTier: 1
@@ -1394,9 +1404,27 @@ MonoBehaviour:
   stageBgCrossfadeSeconds: 0.4
   feverSubPatternStepSeconds: 0.1
   mainRoundTimerCentralTop: {fileID: 919785934}
-  uiShakeAmplitudeTier2: 10
-  uiShakeDuration: 0.25
-  uiShakeFrequency: 28
+  uiShakeTier1:
+    Amplitude: 0
+    Duration: 0
+    Frequency: 0
+  uiShakeTier2:
+    Amplitude: 8
+    Duration: 1
+    Frequency: 5
+  uiShakeTier3:
+    Amplitude: 20
+    Duration: 0.25
+    Frequency: 64
+  uiShakeIdleTier1:
+    Amplitude: 0
+    Frequency: 0
+  uiShakeIdleTier2:
+    Amplitude: 10
+    Frequency: 1
+  uiShakeIdleTier3:
+    Amplitude: 8
+    Frequency: 32
 --- !u!82 &2068533488
 AudioSource:
   m_ObjectHideFlags: 0

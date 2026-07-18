@@ -1,13 +1,13 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-07-12 — SubPatternGuide 접두 표시 · `CatMovement` 삭제 · `UiShake` 글로벌 티어. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
+> **갱신**: 2026-07-18 — 슬롯 패널 `RectMask2D` 클리핑. §1~§18 레거시 본문은 개편과 불일치할 수 있음 — §0·`02` 우선.
 
 ---
 
 ## 0. 개편 중 — OIIA 디제잉 레이브 (Rave)
 
-> **상태**: 관중 이펙트(피버·에디터 Rest) **Play 검증 완료** (2026-07-13).  
+> **상태**: UiShake 티어별·StageScreen·상시 진동 **Play 검증 완료** (2026-07-18, 씬 튜닝 반영).  
 
 ### 원작 밈 연출 (코드 · 2026-07-12)
 
@@ -20,10 +20,11 @@
 | Beam 예고 | **15–27**s · **32–33.5**s 흰색 Beam 초고속 점멸 |
 | 스포트라이트 | **회전 없음** · Fixture ON · Beam은 T3/예고/피버 · **슬롯 RectMask2D 클립** |
 | 고양이 | 글로벌 **T3**에서 미스·무입력에도 `SpinLoop` 상시 |
-| UI 흔들림 | `UiShake` — 글로벌 **T2+** 정답 시 HUD·DjBox 흔들림 · **T3 진폭 ×2** · `CatMovement` **삭제** |
+| UI 흔들림 | `UiShake` — HUD·DjBox·StageScreen · **정답 임펄스** `uiShakeTier1/2/3` + **상시** `uiShakeIdleTier1/2/3` · 합산 |
 | SubPatternGuide | 고정 `oiiaiooiiiai` · 12완성→피버 · **피버 중 자동 연속재생** · 종료/미스→초기화 · 게이지=`matched/12` |
 | 스피커 | DjBox 위 L/R · 안쪽·위 · `speakerTier1/2/3` · `speakerLetterTemplate` · 분출 글자 **대소문자 랜덤** |
 | 관중 | `Crowd`/`CrowdPeople` · 피버 시 상승·진동·페이드아웃 · `crowdShakeAmplitude` Inspector |
+| 슬롯 클리핑 | `OiiaMinigameModule.SlotPanels.cs` · `clipSlotContentToPanel`(기본 ON) · 패널 루트 `RectMask2D` · 스피커·관중·스포트라이트 등 옆 슬롯 오버랩 방지 |
 
 ### 3-C 전광판 · BGM (코드)
 
@@ -412,7 +413,7 @@ CompleteSession()
 | 연속 2·3루프 **진입 직후** (루프 완주 시) | Blur 흰색 깜빡임 **0.5초** (`TierBumpBlurRemaining`) |
 | 연속 3루프+ 플레이 중 (게이지 유지) | Blur 무지개 + 알파 깜빡임, 슬롯 배경 투명 |
 | 2티어+ 게이지 유지 | 고양이 SpinLoop (**바운스 `CatMovement` 삭제** — 중앙 고정) |
-| 글로벌 T2·T3 정답 | `UiShake` — HUD·DjBox anchoredPosition 흔들림 (`ResolveGlobalTier`) |
+| 글로벌 T1~T3 정답 | `UiShake` — HUD·DjBox·StageScreen · `uiShakeTier1/2/3` |
 | 글로벌 T3 | 흔들림 진폭 2배 |
 | 정답 | 고양이 SpinOnce + **BurstText** (± `burstTextRandomOffset`, **생성축** `burstTextSpawnRotation` + **스윙** `burstTextSwingMin~Max` @ `burstTextSwingFrequency` Hz, **티어별** Perlin 위치 진동 `burstTextShakeAmplitudeTier1~3`·`burstTextShakeFrequencyTier1~3`, **티어별 fontSize** `burstTextFontSizeTier1~3`, P5 아웃라인). Inspector **코믹스 BurstText** |
 | 셔플 이펙트 ~1초 | `ShuffleEffect` — 슬롯 중앙 스프라이트 확대·페이드. 입력·게이지·고양이·UI 흔들림 **정지 없음** |
@@ -486,25 +487,22 @@ CompleteSession()
 
 #### 슬롯 UI 흔들림 (`OiiaMinigameModule.UiShake.cs`)
 
-글로벌 **T2+**에서 **디제잉 정답**(`OnDjHit` → `TriggerSlotUiShakeOnCorrect`)마다 아래 UI의 `anchoredPosition`을 짧게 진동시킨다. T1·연습 모드는 변화 없음. Tick에서 `UpdateSlotUiShake` 매 프레임 갱신.
+본게임 **디제잉 정답**(`OnDjHit` → `TriggerSlotUiShakeOnCorrect`)마다 아래 UI의 `anchoredPosition`을 짧게 진동시킨다. 연습 모드는 변화 없음. Tick에서 `UpdateSlotUiShake` 매 프레임 갱신.
 
-| 대상 | 바인딩 |
-|------|--------|
-| 점수 | `HudScoreText` |
-| 콤보 | `HudComboText` |
-| 피버 문구 | `HudFeverText` |
-| 피버 게이지 | `FeverGaugeImage` / `FeverGaugeImageB` |
-| 서브 가이드 | `SubPatternGuideText` |
-| DJ 박스 | `DjBoxRoot` |
+**대상**: HudScore / HudCombo / HudFever / FeverGauge×2 / SubPatternGuide / **DjBoxRoot** / **StageScreenRoot**
 
-| 글로벌 티어 | 진폭 |
-|-------------|------|
-| 2 | `uiShakeAmplitudeTier2` (코드 기본 10px) |
-| 3 | 위 값 ×2 (`UiShakeTier3IntensityMultiplier`) |
+**티어별 Inspector** (`Minigame_O.I.I.A.` 씬 튜닝 · 2026-07-18)
 
-- `Begin()`: rest 좌표 즉시 복원 (`ResetAllSlotUiShake`).
-- **UI별 독립 진동**: 대상마다 `PhaseX`/`PhaseY` Perlin 위상을 두고, 정답마다 `RerollSlotUiShakeTargetPhases`로 재랜덤.
-- Inspector: `uiShakeAmplitudeTier2`, `uiShakeDuration`(0.25s), `uiShakeFrequency`(28Hz).
+| | T1 | T2 | T3 |
+|--|----|----|-----|
+| 정답 임펄스 `uiShakeTier*` Amplitude/Duration/Frequency | **0 / 0 / 0** (OFF) | **8 / 1 / 5** | **20 / 0.25 / 64** |
+| 상시 `uiShakeIdleTier*` Amplitude/Frequency | **0 / 0** (OFF) | **10 / 1** | **8 / 32** |
+
+- 상시·정답은 **별도 Perlin 위상** · 동시에 적용 시 **오프셋 합산**.
+- Amplitude ≤ 0 이면 해당 채널(상시 또는 정답) 없음.
+- 상시는 참가 슬롯(`_aliveMask`)만. 연습 모드 없음.
+- `Begin()`: rest 복원 (`ResetAllSlotUiShake`).
+- 정답마다 `RerollSlotUiShakeHitPhases` (상시 위상은 유지).
 
 ### 상태 흐름 (슬롯 런타임)
 
@@ -575,7 +573,7 @@ CompleteSession()
 | `OiiaMinigameModule.BlurFx.cs` | Blur·WAITING 연출 |
 | `OiiaMinigameModule.InputLetterFlashes.cs` | O/I/A 플래시 |
 | `OiiaMinigameModule.CatAnimator.cs` | 고양이 Animator (SpinOnce/SpinLoop) |
-| `OiiaMinigameModule.UiShake.cs` | 글로벌 T2+ 정답 시 슬롯 HUD·DjBox anchoredPosition 흔들림 (`CatMovement` 삭제) |
+| `OiiaMinigameModule.UiShake.cs` | HUD·DjBox·StageScreen · 정답 임펄스+상시 · `uiShakeTier*`/`uiShakeIdleTier*` |
 | `OiiaMinigameModule.SubPatternGuide.cs` | 고정 `oiiaiooiiiai` 정답 접두 대문자 표시 (크기·색·미리보기 없음) |
 | `OiiaMinigameModule.Speakers.cs` | L/R 스피커 우퍼 펄스 + 패턴 글자(O/I/A) 만화 분출 |
 | `OiiaMinigameModule.ExitSequence.cs` | 종료·Report 생성 |
@@ -670,9 +668,8 @@ Minigame_O.I.I.A.
 | `inputLetterBurstDuration` | 0.3 | O/I/A 플래시 시간 |
 | `inputLetterBurstFontGrowth` | 1000 | 플래시 확대량 (씬 값, 코드 기본 36과 다름) |
 | `catAnimatorIdleState` 등 | Idle/SpinOnce/SpinLoop | Animator 상태 이름 불일치 시 애니 안 됨 |
-| `uiShakeAmplitudeTier2` | 10 (코드 기본) | **10** (씬) | 글로벌 T2 정답 UI 흔들림 진폭(px). T3 2배 |
-| `uiShakeDuration` | 0.25 (코드 기본) | **0.25** (씬) | 정답 1회당 흔들림 시간(초) |
-| `uiShakeFrequency` | 28 (코드 기본) | **28** (씬) | 흔들림 진동 Hz |
+| `uiShakeTier1` / `Tier2` / `Tier3` | 씬 **0·0·0 / 8·1·5 / 20·0.25·64** | 정답 임펄스. Amplitude 0=없음 |
+| `uiShakeIdleTier1` / `Tier2` / `Tier3` | 씬 **0·0 / 10·1 / 8·32** | 상시 진동. 정답과 합산. Amplitude 0=없음 |
 | `burstTextDuration` | 0.55 (코드 기본) | — | BurstText 표시·페이드(초) |
 | `burstTextRandomOffset` | **50** (코드 기본) | — | 고양이 중심 ±스폰(px) |
 | `burstTextSpawnRotationMin` / `Max` | -30 / 30 | — | 생성 시 중심 Z 회전(도) |

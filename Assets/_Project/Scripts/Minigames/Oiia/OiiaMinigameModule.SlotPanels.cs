@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MiniParty.Minigames.Oiia
 {
@@ -12,6 +13,9 @@ namespace MiniParty.Minigames.Oiia
 
         [Tooltip("비우면 플레이 시작 시 `Panel_O.I.I.A._4Way` 직계 자식에서 `OiiaSlotPanelBindings` 를 찾는다.")]
         [SerializeField] Transform slotPanelsContainer;
+
+        [Tooltip("켜면 각 슬롯 패널 루트에 RectMask2D를 부착해, 스피커 분출·관중·스포트라이트 등 이펙트가 슬롯 영역 밖(옆 슬롯 위)으로 넘쳐 보이지 않게 클리핑한다.")]
+        [SerializeField] bool clipSlotContentToPanel = true;
 
         void Awake() => ResolveSlotBindingsFromPanels();
 
@@ -35,7 +39,21 @@ namespace MiniParty.Minigames.Oiia
             {
                 OiiaSlotPanelBindings panel = panels[i];
                 bindings[i] = panel != null ? panel.ToSlotUiBindings() : new SlotUiBindings();
+                EnsureSlotPanelClipping(panel);
             }
+        }
+
+        // 슬롯 밖으로 넘치는 이펙트가 옆 슬롯 위에 겹쳐 보이지 않도록 패널 루트에서 RectMask2D로 클리핑.
+        void EnsureSlotPanelClipping(OiiaSlotPanelBindings panel)
+        {
+            if (!clipSlotContentToPanel || panel == null)
+                return;
+
+            if (panel.transform is not RectTransform)
+                return;
+
+            if (panel.GetComponent<RectMask2D>() == null)
+                panel.gameObject.AddComponent<RectMask2D>();
         }
 
         OiiaSlotPanelBindings[] CollectSlotPanels()
