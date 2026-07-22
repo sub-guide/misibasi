@@ -20,7 +20,7 @@
 | 씬 스크립트 부착 | **부분 완료** | Module·Bootstrap MonoBehaviour 부착 + `module` 참조 (2026-06-21) |
 | UI (보드·점수) | **골격+프리팹 완료** | `Board_8Cells`·`Panel_RBC_Score_4Way` + `RBC_BoardCell`·`RBC_ScorePanel` prefab (2026-06-21) |
 | Canvas | **완료** | Canvas Scaler 1920×1080, Inspector Scale 1 (Canvas 구동) |
-| 오디오 에셋 | **없음** | RBC용 24클립(0/1/2 × 8) 미제작 — MusicSource 미배치 |
+| 오디오 에셋 | **임시 연결** | `MusicSource` + Module 클립 24칸 연결 (2026-07-18). RBC 전용 0_0~2_7 미제작 |
 | 판정 Sprite | **연결 완료** | `Assets/RhythmButtonChallenge/Sprites/` Perfect/Fast/Slow/Miss/Wrong → Module (2026-07-10) |
 | 버튼 Sprite | **연결 완료** | SNES Pixel Pack Unpressed → Module `spriteA`~`spriteRight` (2026-07-10) |
 | Build Settings | **미등록** | RBC 씬 빌드에 포함 안 됨 |
@@ -38,6 +38,7 @@ Minigame_RhythmButtonChallenge
 └── Canvas               (Canvas Scaler 1920×1080, Scale 1 — Canvas 구동)
     ├── PlayArea → Board_8Cells → Cell_0~7 (RBC_BoardCell prefab)
     └── Panel_RBC_Score_4Way → ScorePanel_1P~4P (RBC_ScorePanel prefab)
+(+ 씬 루트 `MusicSource` AudioSource — Module 연결, 2026-07-18)
 ```
 
 ### Build Settings (현재 등록된 씬)
@@ -750,7 +751,7 @@ Result 씬 (등수 → HP → 메인)
 - [x] `Board_8Cells` + Cell_0~7 (Bindings 컴포넌트) (2026-06-21)
 - [x] `Panel_RBC_Score_4Way` + ScorePanel_1P~4P (2026-06-21)
 - [x] Cell·ScorePanel **프리팹** — `Assets/RhythmButtonChallenge/Prefabs/RBC_BoardCell.prefab`, `RBC_ScorePanel.prefab` (2026-06-21)
-- [ ] `MusicSource` + AudioClip 24개 Inspector 연결
+- [x] `MusicSource` + AudioClip 24개 Inspector 연결 (2026-07-18)
 - [x] `spriteA`~`spriteRight` ← SNES Pixel Pack Unpressed (2026-07-10)
 - [x] 판정 Sprite 5종 ← `Assets/RhythmButtonChallenge/Sprites/` (2026-07-10)
 - [ ] `speedUpText` TMP
@@ -770,7 +771,7 @@ Result 씬 (등수 → HP → 메인)
 | 4 | Board_8Cells 8칸 UI | [x] |
 | 5 | Panel_RBC_Score_4Way 4패널 | [x] |
 | 5b | Cell·ScorePanel 프리팹화 | [x] |
-| 6 | MusicSource + 클립 24 | [ ] |
+| 6 | MusicSource + 클립 24 | [x] |
 | 7 | Gamepad/SNES Sprite 10 + 판정 Sprite 5 | [x] |
 | 8 | SpeedUpText, FadeOverlay | [ ] |
 | 9 | Module Inspector 전체 연결 | [ ] |

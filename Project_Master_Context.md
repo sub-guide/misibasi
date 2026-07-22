@@ -289,7 +289,8 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - [x] RBC 씬 Module·Bootstrap MonoBehaviour 부착 + `module` 참조 (2026-06-21, 사용자 에디터)
 - [x] RBC 씬 UI 골격·프리팹·Canvas (2026-06-21)
 - [x] RBC Module Sprite 15종 연결 — SNES Unpressed + `RhythmButtonChallenge/Sprites` 판정 (2026-07-10)
-- [ ] RBC MusicSource·AudioClip·SpeedUpText·FadeOverlay·Build (`05_Rhythm_Button_Challenge.md` §16 #6·#8~)
+- [x] RBC `MusicSource` + AudioClip 24 연결 (2026-07-18)
+- [ ] RBC SpeedUpText·FadeOverlay·Build (`05_Rhythm_Button_Challenge.md` §16 #8~)
 
 **운영·품질**
 
