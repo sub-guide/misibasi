@@ -18,7 +18,7 @@ namespace MiniParty.Minigames.Oiia
         [Range(0f, 1f)]
         [SerializeField] float tierBgmVolume = 0.85f;
 
-        [Tooltip("레거시 패턴 스텝 SFX(개편 전). 2단계+ 디제잉 입력음으로 교체 예정. 현재 미사용.")]
+        [Tooltip("패턴 스텝 SFX 12개(oiiaiooiiiai). 일반 입력은 OneShot, T1/T3 피버는 FeverChant 떼창.")]
         [SerializeField] AudioClip[] patternStepSfx = new AudioClip[0];
 
         void PlayPatternStepSfx(int stepIndexZeroBased, bool feverChant)
