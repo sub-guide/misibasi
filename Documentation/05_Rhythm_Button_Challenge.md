@@ -7,7 +7,7 @@
 
 ## 0. 새 채팅용 — 현재 상태 스냅샷
 
-> 이전 작업에서 **코드 구현은 끝났고**, Unity Editor는 **Module·Bootstrap 부착(2026-06-21)까지 완료**, UI·오디오는 **미착수** 상태다.  
+> 이전 작업에서 **코드 구현은 끝났고**, Unity Editor 조립·Build·메뉴 진입까지 **Play 확인 완료**(2026-07-22). 상세 플레이·부스 검증은 후속.  
 > 새 채팅·새 세션은 **섹션 0 → 섹션 16「다음 작업 순서」** 부터 읽으면 된다.
 
 ### 진행도 한눈에
@@ -21,10 +21,11 @@
 | UI (보드·점수) | **골격+프리팹 완료** | `Board_8Cells`·`Panel_RBC_Score_4Way` + `RBC_BoardCell`·`RBC_ScorePanel` prefab (2026-06-21) |
 | Canvas | **완료** | Canvas Scaler 1920×1080, Inspector Scale 1 (Canvas 구동) |
 | 오디오 에셋 | **임시 연결** | `MusicSource` + Module 클립 24칸 연결 (2026-07-18). RBC 전용 0_0~2_7 미제작 |
+| SpeedUp / Fade | **연결 완료** | `SpeedUpText` · `FadeOverlay`/`exitScreenFader` (2026-07-22) |
 | 판정 Sprite | **연결 완료** | `Assets/RhythmButtonChallenge/Sprites/` Perfect/Fast/Slow/Miss/Wrong → Module (2026-07-10) |
 | 버튼 Sprite | **연결 완료** | SNES Pixel Pack Unpressed → Module `spriteA`~`spriteRight` (2026-07-10) |
-| Build Settings | **미등록** | RBC 씬 빌드에 포함 안 됨 |
-| 메뉴 진입 테스트 | **막힘** | MainMenu `debugRouteAllToOiia = true` |
+| Build Settings | **등록 완료** | `Minigame_RhythmButtonChallenge` enabled (2026-07-22) |
+| 메뉴 진입 테스트 | **진입 OK** | `debugRouteAllToOiia = false` · Play로 RBC 씬 오픈 확인 (2026-07-22) |
 
 ### 실제 씬 Hierarchy (2026-06-21 YAML 기준)
 
@@ -45,15 +46,15 @@ Minigame_RhythmButtonChallenge
 
 1. `MainMenu`
 2. `Minigame_O.I.I.A.`
-3. `Results`  
-→ **`Minigame_RhythmButtonChallenge` 없음**
+3. `Results`
+4. **`Minigame_RhythmButtonChallenge`** (2026-07-22)
 
 ### 메인 메뉴 (`MainMenu.unity` Inspector 기준)
 
 | 항목 | 씬에 저장된 값 | 영향 |
 |------|----------------|------|
 | `catalog` | **빈 배열 `[]`** | 런타임 fallback 사용 → RBC 카탈로그 항목 포함 |
-| `debugRouteAllToOiia` | **`true`** | RBC를 골라도 **OIIA 씬**으로 감 |
+| `debugRouteAllToOiia` | **`false`** (2026-07-22) | 카탈로그 id별 씬 분기 |
 | `rhythmButtonChallengeSceneName` | **미저장** | 코드 기본값 `Minigame_RhythmButtonChallenge` 사용 |
 | `oiiaSceneName` | `Minigame_O.I.I.A.` | — |
 
@@ -154,7 +155,7 @@ Phase 2: Intro → Stage1~5 (2배속)
 Result 씬 → 메인 메뉴
 ```
 
-> **주의 (2026-06-21 확인)**: `MainMenu.unity`에 `debugRouteAllToOiia: 1`(true)로 **저장되어 있음**. RBC 테스트 전 반드시 Inspector에서 해제할 것.
+> **갱신 (2026-07-22)**: `MainMenu.unity`에서 `debugRouteAllToOiia: 0`(false) · Play로 RBC 진입 확인됨.
 
 ### 씬 내부 상태 머신
 
@@ -239,7 +240,7 @@ CompleteSession() → Result 씬
 | `ScoreText` (4패널) | 누적 점수 (`N0` 포맷) | 모두 |
 | `PlayerLabel` (4패널) | 플레이어 이름/번호 | **확인 필요** (코드에서 갱신 안 함) |
 | `speedUpText` | "SPEED UP!" 오버레이 | 모두 |
-| `FadeOverlay` | 종료 페이드 | 코드에서 Find — **씬에 없음** |
+| `FadeOverlay` | 종료 페이드 | Module `exitScreenFader` 연결됨 (2026-07-22) |
 
 ### 구간별 보드 동작
 
@@ -500,7 +501,7 @@ RBC에는 OIIA처럼 운영자 Enter 연습 전환 **없음**.
 ## 11. 씬 구조
 
 **씬 파일**: `Assets/Scenes/Minigame_RhythmButtonChallenge.unity`  
-**Build Settings**: **미등록** ✗ (2026-05-31: `EditorBuildSettings.asset`에 MainMenu / OIIA / Results만 있음)
+**Build Settings**: **등록** ✓ (2026-07-22: MainMenu / OIIA / Results / **RBC**)
 
 ### 현재 Hierarchy (씬 YAML 직접 확인, 2026-05-31)
 
@@ -707,14 +708,14 @@ Result 씬 (등수 → HP → 메인)
 
 | 항목 | 실제 | 비고 |
 |------|------|------|
-| 씬 완성도 | **스텁** | GameObject 이름만 있고 **MonoBehaviour 미부착** |
-| Build Settings | **미등록** | 빌드에 포함되지 않음 |
-| UI·오디오 에셋 | **없음** | 코드만 완성 |
+| 씬 완성도 | **플레이 진입 가능** | Module·UI·오디오·Fade·Build 연결 (2026-07-22). 상세 플레이 검증은 후속 |
+| Build Settings | **등록** | MainMenu / OIIA / Results / RBC |
+| UI·오디오 | **임시·연결됨** | 보드/점수 골격·Sprite·클립24(임시). RBC 전용 24클립·판정 아트 폴리시는 후속 |
 | 연습 모드 | 코드는 지원 가능 | 메뉴에서 진입 불가 |
 | `PlayerLabel` | 바인딩만 있음 | 갱신 코드 없음 |
-| `debugRouteAllToOiia` | MainMenu.unity **true** (코드 기본값은 false) | RBC 선택해도 OIIA로 감 |
-| `Assets/Sprites/Gamepad/` | 버튼 아이콘 **존재** | Module Inspector에 아직 미연결 |
-| RBC AudioClip | **0개** | OIIA `Sounds/Patturn/` 과 별개 |
+| `debugRouteAllToOiia` | MainMenu.unity **false** | 카탈로그→RBC 진입 OK (2026-07-22) |
+| 버튼 Sprite | SNES Unpressed → Module | 연결 완료 |
+| RBC AudioClip | 전용 0개 · Module엔 임시 클립 연결 | OIIA `Patturn` 등 재사용 가능 |
 | Result 씬 이름 | `Results` (Build) | PartySession 기본 `"Result"` — MainMenu에서 `Results`로 설정됨 |
 | Good 판정 | Fast, Slow 포함 | Miss/Wrong만 나쁨 |
 | 판정 창 경계 | -50, 50 ms 포함 Perfect | Fast/Slow와 겹치지 않게 설계됨 |
@@ -743,29 +744,18 @@ Result 씬 (등수 → HP → 메인)
 - [x] `RBC_Root` + 자식 GameObject **이름** 생성
 - [x] 빈 `Canvas` + `EventSystem` + `Main Camera`
 
-### 미완성 (Unity Editor — **여기서 중단**)
+### 미완성 (Unity Editor — 후속)
 
-- [x] **`RhythmButtonChallengeMinigameModule` MonoBehaviour 부착** (2026-06-21)
-- [x] **`RhythmButtonChallengeSceneBootstrap` MonoBehaviour 부착 + module 참조** (2026-06-21)
-- [x] Canvas Scale **(0,0,0) → (1,1,1)** + Canvas Scaler 1920×1080 (2026-06-21)
-- [x] `Board_8Cells` + Cell_0~7 (Bindings 컴포넌트) (2026-06-21)
-- [x] `Panel_RBC_Score_4Way` + ScorePanel_1P~4P (2026-06-21)
-- [x] Cell·ScorePanel **프리팹** — `Assets/RhythmButtonChallenge/Prefabs/RBC_BoardCell.prefab`, `RBC_ScorePanel.prefab` (2026-06-21)
-- [x] `MusicSource` + AudioClip 24개 Inspector 연결 (2026-07-18)
-- [x] `spriteA`~`spriteRight` ← SNES Pixel Pack Unpressed (2026-07-10)
-- [x] 판정 Sprite 5종 ← `Assets/RhythmButtonChallenge/Sprites/` (2026-07-10)
-- [ ] `speedUpText` TMP
-- [ ] `FadeOverlay` + `ScreenFader`
-- [ ] Module Inspector 전체 SerializeField 연결
-- [ ] **Build Settings** RBC 씬 등록
-- [ ] MainMenu `debugRouteAllToOiia` **false**
-- [ ] 부스 패드 실플레이 검증
+- [ ] Module Inspector `boardCells`/`scorePanels` 수동 연결 (선택 — 런타임 Find 가능)
+- [x] **Build Settings** RBC 씬 등록 (2026-07-22)
+- [x] MainMenu `debugRouteAllToOiia` **false** (2026-07-22)
+- [ ] 부스 패드·보드 UI·점수·Result 상세 플레이 검증
 
 ### 다음 작업 순서 (재개용 체크리스트)
 
 | # | 작업 | 완료 |
 |---|------|------|
-| 1 | MainMenu `debugRouteAllToOiia` 해제 | [ ] |
+| 1 | MainMenu `debugRouteAllToOiia` 해제 | [x] |
 | 2 | RBC 씬 Module·Bootstrap 스크립트 Add Component | [x] |
 | 3 | Canvas Scale 1,1,1 | [x] |
 | 4 | Board_8Cells 8칸 UI | [x] |
@@ -773,16 +763,19 @@ Result 씬 (등수 → HP → 메인)
 | 5b | Cell·ScorePanel 프리팹화 | [x] |
 | 6 | MusicSource + 클립 24 | [x] |
 | 7 | Gamepad/SNES Sprite 10 + 판정 Sprite 5 | [x] |
-| 8 | SpeedUpText, FadeOverlay | [ ] |
-| 9 | Module Inspector 전체 연결 | [ ] |
-| 10 | Build Settings 등록 | [ ] |
-| 11 | Play Mode 테스트 | [ ] |
+| 8 | SpeedUpText, FadeOverlay | [x] |
+| 9 | Module Inspector 전체 연결 | [~] (보드/점수는 런타임 Find) |
+| 10 | Build Settings 등록 | [x] |
+| 11 | Play Mode 씬 진입 | [x] |
+| 12 | Play 상세(보드·입력·Result) | [ ] |
 
 ### 임시·개발 설정 (현재 값)
 
-- [ ] `MainMenu.unity`: `debugRouteAllToOiia = true` ← **RBC 진입 막음**
-- [ ] `Minigame_RhythmButtonChallenge.unity`: Canvas Scale 0
-- [x] `RBC_Root` Transform 위치 `(868, 537, -0.98)` → `(0,0,0)` 정리 (2026-06-21)
+- [x] `MainMenu.unity`: `debugRouteAllToOiia = false` (2026-07-22)
+- [x] Canvas Scale / Scaler 1920×1080 (2026-06-21~)
+- [x] `RBC_Root` Transform `(0,0,0)` (2026-06-21)
+- [ ] RBC 전용 AudioClip 24 · 클립 길이 통일 폴리시
+- [ ] 보드/점수 레이아웃·판정 아이콘 비주얼 폴리시
 
 ---
 
@@ -790,10 +783,10 @@ Result 씬 (등수 → HP → 메인)
 
 | 문제 | 심각도 | 설명 |
 |------|--------|------|
-| 씬 스텁 상태 | **치명** | 플레이 불가. 모듈·부트스트랩 스크립트 미부착 |
-| Build Settings 미등록 | **치명** | 빌드된 exe에서 씬 로드 불가 |
-| 에셋 전무 | **치명** | UI·사운드 없이는 의미 있는 플레이 불가 |
-| debugRouteAllToOiia | 높음 | RBC 테스트 자체가 불가능할 수 있음 |
+| 씬 상세 플레이 미검증 | 중간 | 보드·입력·점수·SPEED UP·Result 페이드 확인 필요 |
+| Cell Image Sprite 미지정 | 높음 | `ActiveHighlight`/`ButtonIcon` Source Image 없으면 UI 미표시 (파란 화면처럼 보임) |
+| PhaseIntro 하이라이트 | **수정됨** | `Ui.cs` — PhaseIntro도 현재 박 ActiveHighlight (2026-07-22) |
+| 에셋 폴리시 | 중간 | RBC 전용 24클립·레이아웃 튜닝 미완 |
 | `musicSource.PlayOneShot(sessionEndClip)` | 낮음 | 종료 SFX가 musicSource 경유 — BGM과 같은 소스 |
 | ExtraInput Wrong 아이콘 | 낮음 | 추가 입력 시 판정 이미지를 Wrong으로 덮어씀 (점수만 -2000) |
 | 한 프레임 복수 슬롯 입력 순서 | 낮음 | ForEachSlot 순서대로 처리 — 동시 입력 우선순위는 슬롯 인덱스 순 |

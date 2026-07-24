@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &75748962
 RectTransform:
   m_ObjectHideFlags: 0
@@ -166,7 +166,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 75748961}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -181,8 +181,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: SPEED UP!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: de52ad48ecf712941971fb77fc5a90f3, type: 2}
-  m_sharedMaterial: {fileID: 5325239702830799694, guid: de52ad48ecf712941971fb77fc5a90f3, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ef630e33a7d29b24c93a7ad8af030cba, type: 2}
+  m_sharedMaterial: {fileID: 6931595843130593245, guid: ef630e33a7d29b24c93a7ad8af030cba, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1635,7 +1635,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: f5a48781f280bce4b87c45913c527b32, type: 3}
   speedUpDisplaySeconds: 2
   displayName: Rhythm Button Challenge
-  exitScreenFader: {fileID: 0}
+  exitScreenFader: {fileID: 1908861292}
   sessionEndHoldSeconds: 0.35
   exitFadeOutSeconds: 1
   sessionEndClip: {fileID: 0}
@@ -2059,6 +2059,8 @@ GameObject:
   - component: {fileID: 1908861289}
   - component: {fileID: 1908861291}
   - component: {fileID: 1908861290}
+  - component: {fileID: 1908861293}
+  - component: {fileID: 1908861292}
   m_Layer: 5
   m_Name: FadeOverlay
   m_TagString: Untagged
@@ -2080,10 +2082,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1760043794}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1908861290
 MonoBehaviour:
@@ -2098,7 +2100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2123,6 +2125,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1908861288}
   m_CullTransparentMesh: 1
+--- !u!114 &1908861292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1908861288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 523ff05ca48b94a43a668afdd449cd83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvasGroup: {fileID: 1908861293}
+--- !u!225 &1908861293
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1908861288}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2096985657
 GameObject:
   m_ObjectHideFlags: 0

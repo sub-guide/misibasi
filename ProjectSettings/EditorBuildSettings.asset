@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Results.unity
     guid: 58a78134fe5c01c468f8dfbefaaaee98
+  - enabled: 1
+    path: Assets/Scenes/Minigame_RhythmButtonChallenge.unity
+    guid: 667207fc36f6c1d428a537aca0675f5a
   m_configObjects: {}

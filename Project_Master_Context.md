@@ -177,7 +177,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `Documentation/03_Booth_USB_Controller_매핑.md` | USB 패드 물리 매핑 |
 | `Documentation/04_메인메뉴.md` | 메인 UI·로비·카탈로그 |
 | `Documentation/05_OIIA.md` | OIIA **기술 문서** (규칙·코드·씬·Inspector 참조) |
-| `Documentation/05_Rhythm_Button_Challenge.md` | RBC 스텁(미완성) |
+| `Documentation/05_Rhythm_Button_Challenge.md` | RBC 기술 문서 (에디터 조립·진입 Play OK, 상세 검증 후속) |
 
 ---
 
@@ -290,7 +290,9 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - [x] RBC 씬 UI 골격·프리팹·Canvas (2026-06-21)
 - [x] RBC Module Sprite 15종 연결 — SNES Unpressed + `RhythmButtonChallenge/Sprites` 판정 (2026-07-10)
 - [x] RBC `MusicSource` + AudioClip 24 연결 (2026-07-18)
-- [ ] RBC SpeedUpText·FadeOverlay·Build (`05_Rhythm_Button_Challenge.md` §16 #8~)
+- [x] RBC `SpeedUpText` + `FadeOverlay`/`exitScreenFader` (2026-07-22)
+- [x] RBC Build Settings 등록 + `debugRouteAllToOiia` false + **Play 씬 진입 확인** (2026-07-22)
+- [ ] RBC 플레이 상세 검증 — 보드·입력·점수·SPEED UP·Result (`05_Rhythm_Button_Challenge.md`)
 
 **운영·품질**
 
@@ -309,4 +311,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-07-22 — `05_OIIA.md`에 연습/T1/T1피버/T2/T3 스크린샷 상태 반영*
+*마스터 파일 갱신: 2026-07-22 — RBC Build·메뉴 진입 Play 확인*

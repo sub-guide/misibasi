@@ -131,8 +131,11 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 if (cell?.ActiveHighlight == null)
                     continue;
 
+                // PhaseIntro / Reveal / Input 모두 현재 박 하이라이트 (05 문서 구간별 보드 동작과 일치)
                 bool active = _segmentAudioStarted &&
-                              (_segmentKind == RbcSegmentKind.StageReveal || _segmentKind == RbcSegmentKind.StageInput) &&
+                              (_segmentKind == RbcSegmentKind.PhaseIntro ||
+                               _segmentKind == RbcSegmentKind.StageReveal ||
+                               _segmentKind == RbcSegmentKind.StageInput) &&
                               c == _beatIndex;
 
                 cell.ActiveHighlight.enabled = active;

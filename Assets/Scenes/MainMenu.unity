@@ -901,7 +901,7 @@ MonoBehaviour:
   partySession: {fileID: 1941257997}
   oiiaSceneName: Minigame_O.I.I.A.
   rhythmButtonChallengeSceneName: Minigame_RhythmButtonChallenge
-  debugRouteAllToOiia: 1
+  debugRouteAllToOiia: 0
   catalog: []
   menuCanvas: {fileID: 1891348209}
   carouselRows:
