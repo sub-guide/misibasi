@@ -39,7 +39,7 @@
 
 - θ(라디안), ω, 중력 토크 `∝ sinθ` (`gravityTorque` × Phase 가중)
 - ←/→ 제어 토크 + 회전 관성(`controlTorque`, `rotationalDamping`, `maxAngularSpeed`)
-- `|θ| ≥ 90°` → Stumble Buffer **0.5초** → 실패 시 ELIMINATED(본게임). 연습은 소프트 리셋
+- `|θ| ≥ maxTiltDegrees`(Inspector, 기본 **90°**) → 하드 클램프(초과 불가) · Stumble Buffer **`stumbleBufferSeconds`**(기본 0.5초) → 실패 시 ELIMINATED(본게임). 연습은 소프트 리셋
 - Phase2+ 미세 외력(Perlin), Phase3+ 중력 가중, Phase4 각가속·관성 극대화
 
 ---
@@ -118,11 +118,16 @@ OIIA와 동일: 씬 내 START READY → 운영자 Enter → `PrepareRound(false)
 | `mainRoundTimerCentralTop` | — | 중앙 타이머 TMP |
 | `phaseLabelText` | — | Phase TMP |
 | `gravityTorque` | 2.8 | 중력 토크 |
+| `maxTiltDegrees` | 90 | 기울기 절대 상한(도). 초과 불가 · Stumble 한도 |
+| `stumbleBufferSeconds` | 0.5 | 최대 각도 도달 후 탈락 유예(초) |
 | `controlTorque` | 9.5 | 좌우 복원 |
 | `jumpLockoutSeconds` | 0.35 | 점프 중 조작 불능 |
 | `doubleJumpChanceFromPhase3` | 0.4 | 연속 JUMP 비율 |
 | `hpLowScoreThreshold` | 3000 | 1P 저점수 컷 |
 | `presentationYawDegrees` | 22 | 연출용 Y 회전 |
+| `slotWorldSpacing` | 40 | Begin 시 슬롯 루트 X 분리 |
+| `disableMainCameraOnBegin` | true | Main Camera 끄기 |
+| `bindSlotCanvasesToSlotCamera` | true | 슬롯 Canvas → Screen Space Camera |
 | `exitScreenFader` | — | `FadeOverlay` / `ScreenFader` |
 | `coffinDanceSceneName` (GameFlow) | `Minigame_CoffinDance` | 로드 씬명 |
 

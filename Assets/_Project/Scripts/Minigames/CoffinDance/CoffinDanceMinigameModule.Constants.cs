@@ -5,8 +5,8 @@ namespace MiniParty.Minigames.CoffinDance
         public const int SlotCount = 4;
 
         public const float MainDurationSeconds = 60f;
-        public const float StumbleLimitDegrees = 90f;
-        public const float StumbleBufferSeconds = 0.5f;
+        public const float DefaultMaxTiltDegrees = 90f;
+        public const float DefaultStumbleBufferSeconds = 0.5f;
         public const float CenterHoldDegrees = 10f;
 
         public const float SurvivalScorePerSecond = 100f;

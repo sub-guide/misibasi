@@ -11,10 +11,10 @@ namespace MiniParty.Minigames.CoffinDance
     public sealed class CoffinDanceSlotBindings : MonoBehaviour
     {
         [Header("3D")]
-        [Tooltip("기울기(θ)가 적용되는 루트. 관+운구인 부모 권장.")]
+        [Tooltip("기울기 연출용 부모(운구인 포함). Yaw만 적용. Z 기울기는 Coffin에만.")]
         public Transform TiltRoot;
 
-        [Tooltip("관 Cube. 비우면 TiltRoot만 회전.")]
+        [Tooltip("관 Cube. 균형 기울기(Z)·점프 홉이 여기에만 적용됩니다.")]
         public Transform Coffin;
 
         [Tooltip("운구인 Capsule 6개 (좌 3·우 3). 선택.")]
@@ -34,7 +34,7 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("θ=0일 때 fillAmount.")]
         public float GaugeFillAtCenter = 0.5f;
 
-        [Tooltip("|θ|=StumbleLimit 일 때 fill이 0 또는 1로 치우침.")]
+        [Tooltip("|θ|=maxTiltDegrees 일 때 fill이 0 또는 1로 치우침.")]
         public float GaugeFillAtLimit = 0f;
     }
 }

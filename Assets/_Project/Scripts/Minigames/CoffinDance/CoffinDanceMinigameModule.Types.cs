@@ -40,6 +40,8 @@ namespace MiniParty.Minigames.CoffinDance
             public float JumpVisualT;
             public Vector3 CoffinBaseLocalPos;
             public bool HasCoffinBase;
+            public Vector3[] PallbearerBaseScale;
+            public Vector3[] PallbearerBasePos;
         }
     }
 }

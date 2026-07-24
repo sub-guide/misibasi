@@ -55,7 +55,7 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
             }
 
-            float limit = StumbleLimitDegrees * Mathf.Deg2Rad;
+            float limit = GetMaxTiltRadians();
             float t = Mathf.Clamp(_slots[i].ThetaRad / limit, -1f, 1f);
             // -1 → 0, 0 → center, +1 → 1 (또는 GaugeFillAtLimit 쪽)
             float center = bind.GaugeFillAtCenter;
@@ -93,7 +93,7 @@ namespace MiniParty.Minigames.CoffinDance
 
             if (_ctx.IsPractice)
             {
-                phaseLabelText.text = "연습";
+                phaseLabelText.text = "PRACTICE";
                 return;
             }
 
