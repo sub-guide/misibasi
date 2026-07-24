@@ -2,6 +2,7 @@ using System;
 using MiniParty.Core;
 using MiniParty.Input;
 using MiniParty.Minigames;
+using MiniParty.Minigames.CoffinDance;
 using MiniParty.Minigames.Oiia;
 using MiniParty.Minigames.RhythmButtonChallenge;
 using TMPro;
@@ -26,6 +27,9 @@ namespace MiniParty.Flow
 
         [Tooltip("Rhythm Button Challenge 전용 씬 이름. Build Settings 와 동일해야 함.")]
         [SerializeField] string rhythmButtonChallengeSceneName = "Minigame_RhythmButtonChallenge";
+
+        [Tooltip("관짝춤(Coffin Dance) 전용 씬 이름. Build Settings 와 동일해야 함.")]
+        [SerializeField] string coffinDanceSceneName = "Minigame_CoffinDance";
 
         [Header("디버그")]
         [Tooltip("체크 시 카탈로그 어떤 항목이든 oiia 씬으로 진입 (MVP 편의).")]
@@ -314,12 +318,14 @@ namespace MiniParty.Flow
             GameCatalogEntry entry = catalog[_selectedCatalogIndex];
 
             bool runRbc = string.Equals(entry.id, RhythmButtonChallengeMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
+            bool runCoffin = string.Equals(entry.id, CoffinDanceMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
             bool runOiia = debugRouteAllToOiia ||
                 string.Equals(entry.id, OiiaMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
 
-            if (!runRbc && !runOiia)
+            if (!runRbc && !runCoffin && !runOiia)
             {
                 partySession?.ResetOiiaCycleAfterMainSession();
+                partySession?.ResetCoffinDanceCycleAfterMainSession();
 
                 if (detailBody != null)
                     detailBody.text = "This minigame is not available yet.";
@@ -330,13 +336,19 @@ namespace MiniParty.Flow
             if (partySession == null)
                 return;
 
-            _lastStartedMinigameId = runRbc
-                ? RhythmButtonChallengeMinigameModule.BuiltInId
-                : OiiaMinigameModule.BuiltInId;
+            if (runRbc)
+                _lastStartedMinigameId = RhythmButtonChallengeMinigameModule.BuiltInId;
+            else if (runCoffin)
+                _lastStartedMinigameId = CoffinDanceMinigameModule.BuiltInId;
+            else
+                _lastStartedMinigameId = OiiaMinigameModule.BuiltInId;
 
-            _sessionPractice = runRbc
-                ? false
-                : partySession.TakeOiiaNextRoundIsPractice();
+            if (runRbc)
+                _sessionPractice = false;
+            else if (runCoffin)
+                _sessionPractice = partySession.TakeCoffinDanceNextRoundIsPractice();
+            else
+                _sessionPractice = partySession.TakeOiiaNextRoundIsPractice();
 
             for (var i = 0; i < 4; i++)
                 _playedThisSession[i] = false;
@@ -356,7 +368,14 @@ namespace MiniParty.Flow
             if (menuCanvas != null)
                 menuCanvas.enabled = false;
 
-            string sceneName = runRbc ? rhythmButtonChallengeSceneName : oiiaSceneName;
+            string sceneName;
+            if (runRbc)
+                sceneName = rhythmButtonChallengeSceneName;
+            else if (runCoffin)
+                sceneName = coffinDanceSceneName;
+            else
+                sceneName = oiiaSceneName;
+
             SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
         }
 
@@ -377,6 +396,15 @@ namespace MiniParty.Flow
                         psNotify.QueueOiiaMainRoundAfterPracticeEnded();
                     else
                         psNotify.ResetOiiaCycleAfterMainSession();
+                }
+
+                bool coffinSession = string.Equals(_lastStartedMinigameId, CoffinDanceMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
+                if (coffinSession)
+                {
+                    if (_sessionPractice)
+                        psNotify.QueueCoffinDanceMainRoundAfterPracticeEnded();
+                    else
+                        psNotify.ResetCoffinDanceCycleAfterMainSession();
                 }
             }
 
@@ -582,7 +610,12 @@ namespace MiniParty.Flow
                     title = "Rhythm Button Challenge",
                     blurb = "8-beat pattern memory.\nPhase 2 doubles speed.\nScore 500,000 to survive."
                 },
-                new GameCatalogEntry { id = "placeholder_03", title = "GAME 03 (TBD)", blurb = "Coming soon." },
+                new GameCatalogEntry
+                {
+                    id = CoffinDanceMinigameModule.BuiltInId,
+                    title = "관짝춤",
+                    blurb = ""
+                },
                 new GameCatalogEntry { id = "placeholder_04", title = "GAME 04 (TBD)", blurb = "Coming soon." },
                 new GameCatalogEntry { id = "placeholder_05", title = "GAME 05 (TBD)", blurb = "Coming soon." },
                 new GameCatalogEntry { id = "placeholder_06", title = "GAME 06 (TBD)", blurb = "Coming soon." },

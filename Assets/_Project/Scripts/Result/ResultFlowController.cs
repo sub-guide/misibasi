@@ -2,6 +2,7 @@ using System.Collections;
 using MiniParty.Flow;
 using MiniParty.Input;
 using MiniParty.Minigames;
+using MiniParty.Minigames.CoffinDance;
 using MiniParty.Minigames.Oiia;
 using MiniParty.Minigames.RhythmButtonChallenge;
 using UnityEngine;
@@ -80,7 +81,8 @@ namespace MiniParty.Result
                 _flavors = new IResultMinigameFlavor[]
                 {
                     new OiiaResultMinigameFlavor(),
-                    new RhythmButtonChallengeResultMinigameFlavor()
+                    new RhythmButtonChallengeResultMinigameFlavor(),
+                    new CoffinDanceResultMinigameFlavor()
                 };
                 return;
             }
@@ -95,7 +97,8 @@ namespace MiniParty.Result
             _flavors = list.Count > 0 ? list.ToArray() : new IResultMinigameFlavor[]
             {
                 new OiiaResultMinigameFlavor(),
-                new RhythmButtonChallengeResultMinigameFlavor()
+                new RhythmButtonChallengeResultMinigameFlavor(),
+                new CoffinDanceResultMinigameFlavor()
             };
         }
 

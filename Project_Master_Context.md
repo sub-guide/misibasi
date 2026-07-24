@@ -12,7 +12,7 @@
 
 # Project Master Context — Mini Party (바이블 코딩)
 
-> **갱신 기준일**: 2026-07-22  
+> **갱신 기준일**: 2026-07-24  
 > **상세 기술 문서**: `Documentation/` 폴더 (본 파일은 AI·협업 **행동 규칙 + 진행 로그** 전용)
 
 ---
@@ -178,6 +178,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `Documentation/04_메인메뉴.md` | 메인 UI·로비·카탈로그 |
 | `Documentation/05_OIIA.md` | OIIA **기술 문서** (규칙·코드·씬·Inspector 참조) |
 | `Documentation/05_Rhythm_Button_Challenge.md` | RBC 기술 문서 (에디터 조립·진입 Play OK, 상세 검증 후속) |
+| `Documentation/05_Coffin_Dance.md` | 관짝춤(Coffin Dance) 기술 문서 (C# 1차, 씬 조립 후속) |
 
 ---
 
@@ -294,6 +295,15 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - [x] RBC Build Settings 등록 + `debugRouteAllToOiia` false + **Play 씬 진입 확인** (2026-07-22)
 - [ ] RBC 플레이 상세 검증 — 보드·입력·점수·SPEED UP·Result (`05_Rhythm_Button_Challenge.md`)
 
+**관짝춤 / Coffin Dance (GAME 03)**
+
+- [x] C# 1차 — `CoffinDanceMinigameModule` partial · Bootstrap · SlotBindings · HpLoss · Result flavor (2026-07-24)
+- [x] `GameFlowDirector` 카탈로그 `coffin_dance`/`관짝춤` · 씬명 `Minigame_CoffinDance` · 연습 큐 (`PartySession`) (2026-07-24)
+- [x] `Documentation/05_Coffin_Dance.md` (2026-07-24)
+- [ ] 씬·슬롯 프리팹·Canvas 조립 (사용자 에디터)
+- [ ] Build Settings 등록 + MainMenu→관짝춤 Play 검증
+- [ ] 물리·JUMP·60초·Result·부스 패드 상세 검증
+
 **운영·품질**
 
 - [ ] 메인 슬롯 HUD vs Inspector vs 문서 교차 검증 (일지 2026-05-10 후속 메모)
@@ -311,4 +321,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-07-22 — RBC Build·메뉴 진입 Play 확인*
+*마스터 파일 갱신: 2026-07-24 — 관짝춤 C# 1차 · 카탈로그/Flow 연동*

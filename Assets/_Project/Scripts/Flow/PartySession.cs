@@ -59,6 +59,9 @@ namespace MiniParty.Flow
         /// </summary>
         bool _oiiaMainRoundQueuedAfterPractice;
 
+        /// <summary>관짝춤: Oiia와 동일 — 연습 Result 후 본게임 1회 예약.</summary>
+        bool _coffinMainRoundQueuedAfterPractice;
+
         /// <summary>다음 Oiia 로드가 연습이면 true, 본게임이면 false. 본게임 예약이 있으면 큐를 소비한다.</summary>
         public bool TakeOiiaNextRoundIsPractice()
         {
@@ -72,6 +75,19 @@ namespace MiniParty.Flow
         public void QueueOiiaMainRoundAfterPracticeEnded() => _oiiaMainRoundQueuedAfterPractice = true;
 
         public void ResetOiiaCycleAfterMainSession() => _oiiaMainRoundQueuedAfterPractice = false;
+
+        public bool TakeCoffinDanceNextRoundIsPractice()
+        {
+            if (!_coffinMainRoundQueuedAfterPractice)
+                return true;
+
+            _coffinMainRoundQueuedAfterPractice = false;
+            return false;
+        }
+
+        public void QueueCoffinDanceMainRoundAfterPracticeEnded() => _coffinMainRoundQueuedAfterPractice = true;
+
+        public void ResetCoffinDanceCycleAfterMainSession() => _coffinMainRoundQueuedAfterPractice = false;
 
         /// <summary>
         /// Result 연출 직후·메인 씬 로드 전에 호출. DontDestroyOnLoad 슬롯에 로비 상태를 반영한다.
