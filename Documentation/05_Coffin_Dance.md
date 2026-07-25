@@ -9,12 +9,12 @@
 
 | 영역 | 상태 | 비고 |
 |------|------|------|
-| C# 게임 로직 | **개편 완료** | θ/ω 진자 제거 → Rigidbody 순수 충돌 |
+| C# 게임 로직 | **완료·검증** | Rigidbody 순수 충돌 · Rest↔Crouch · FailFloor · 자유 점프 |
 | Flow·Result 연동 | **유지** | `GameFlowDirector` · `PartySession` · Result flavor |
-| 운구인 에셋 | **코드 연동** | `Kevin Iglesias/Human Character Dummy` · Pose 자동 본 탐색 |
-| 씬·슬롯 프리팹 | **에디터 후속** | Capsule→Dummy·Collider·카메라 로우앵글 |
-| Build Settings | **미등록** | 사용자 에디터 |
-| 메뉴 진입 테스트 | **미검증** | |
+| 운구인 에셋 | **완료·검증** | HumanDummy · Pose Capture · Pallbearer 프리팹 |
+| 씬·슬롯 프리팹 | **완료·검증** | FailFloor · upperArm SphereCollider · 게이지 비활성 |
+| Build Settings | **등록·검증** | 사용자 확인 |
+| 메뉴 진입 테스트 | **검증** | MainMenu→관짝춤 |
 
 ---
 
@@ -197,4 +197,4 @@ Minigame_CoffinDance
 
 ---
 
-문서 갱신: **2026-07-25** (FailFloor 실패 · 밸런스 게이지 제거)
+문서 갱신: **2026-07-25** (Play·Build Settings·MainMenu 진입 검증 완료)

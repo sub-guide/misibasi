@@ -317,9 +317,9 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - [x] `GameFlowDirector` 카탈로그 `coffin_dance`/`관짝춤` · 씬명 `Minigame_CoffinDance` · 연습 큐 (`PartySession`) (2026-07-24)
 - [x] `Documentation/05_Coffin_Dance.md` (2026-07-24)
 - [x] **물리 개편** — θ/ω 제거 · `CoffinDanceCoffinBody`(Rigidbody 제약·CoM) · `CoffinDancePallbearerPose`(Rest↔Crouch 포즈 보간 · upperArm SphereCollider) · A **자유 점프** · JUMP! 프롬프트 제거 · Phase 어깨 민감도 (2026-07-25)
-- [ ] 씬·슬롯 프리팹 — HumanDummy 6·관 Collider·로우앵글 카메라 (사용자 에디터, 채팅 가이드)
-- [ ] Build Settings 등록 + MainMenu→관짝춤 Play 검증
-- [ ] 순수 충돌·점프 착지·FailFloor 탈락·60초·Result·부스 패드 상세 검증
+- [x] FailFloor 접촉 실패 · 밸런스 게이지 제거 · extension 0~1 · ←/→ 좌=좌측/우=우측 승강 (2026-07-25)
+- [x] 씬·슬롯 프리팹 — HumanDummy·관 Collider·FailFloor·Pose Capture · **Play 검증 완료** (사용자, 2026-07-25)
+- [x] Build Settings 등록 + MainMenu→관짝춤 Play 검증 (사용자, 2026-07-25)
 - [ ] (필요 시) 순수 충돌 불안정 → 지지점 힘(B)/하이브리드(C) 보강
 
 **운영·품질**
@@ -339,4 +339,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-07-25 — 의도 실패 시 대안·폴백 금지 · 관짝춤 어깨 수동 정렬*
+*마스터 파일 갱신: 2026-07-25 — 관짝춤 Build Settings·MainMenu 진입 검증 완료*
