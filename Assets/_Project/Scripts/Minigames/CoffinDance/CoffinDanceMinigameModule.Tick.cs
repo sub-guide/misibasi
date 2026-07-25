@@ -42,8 +42,10 @@ namespace MiniParty.Minigames.CoffinDance
                     return;
                 }
             }
-
-            TickJumpPromptGlobal(dt);
+            else
+            {
+                RefreshPhaseParameters();
+            }
 
             ForEachSlot(i =>
             {
@@ -69,7 +71,6 @@ namespace MiniParty.Minigames.CoffinDance
 
             _flowState = CdFlowState.Ending;
             _endDelayRemain = SessionEndDelaySeconds;
-            _jumpPromptState = CdJumpPromptState.Idle;
             ForEachSlot(HideJumpPrompt);
         }
 

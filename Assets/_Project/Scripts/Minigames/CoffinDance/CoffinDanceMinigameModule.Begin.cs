@@ -19,11 +19,6 @@ namespace MiniParty.Minigames.CoffinDance
             _remainingMainTime = MainDurationSeconds;
             _rng = new System.Random(Random.Range(int.MinValue, int.MaxValue));
 
-            _jumpPromptState = CdJumpPromptState.Idle;
-            _jumpPromptRemain = 0f;
-            _jumpRequiredPresses = 1;
-            _jumpIsDouble = false;
-
             _slots = new SlotRuntime[SlotCount];
 
             var slotCameras = new System.Collections.Generic.HashSet<Camera>();
@@ -40,6 +35,8 @@ namespace MiniParty.Minigames.CoffinDance
 
                 ref SlotRuntime sr = ref _slots[i];
                 sr = default;
+                sr.LeftExtension = neutralExtension;
+                sr.RightExtension = neutralExtension;
 
                 CoffinDanceSlotBindings bind = GetBindings(i);
                 Camera slotCam = ResolveSlotCamera(bind);
@@ -54,33 +51,34 @@ namespace MiniParty.Minigames.CoffinDance
                         slotCam.backgroundColor = new Color(0.05f, 0.05f, 0.08f);
                     HideJumpPrompt(i);
                     SetEliminatedUi(i, false);
+                    bind?.ResolveCoffinBody()?.SetSimulationActive(false);
                     return;
                 }
 
-                float sign = (_rng.Next(0, 2) == 0) ? -1f : 1f;
-                sr.ThetaRad = sign * initialTiltDegrees * Mathf.Deg2Rad;
-                sr.Omega = -sign * initialAngularSpeed;
                 sr.ScoreExact = 0f;
                 sr.ScoreSum = 0;
                 sr.Eliminated = false;
-                sr.StumbleTimer = 0f;
-                sr.InStumble = false;
                 sr.JumpLockoutRemain = 0f;
-                sr.JumpSucceededThisPrompt = false;
-                sr.JumpPressesThisPrompt = 0;
-                sr.JumpVisualT = 0f;
+                sr.JumpActive = false;
+                sr.JumpElapsed = 0f;
 
                 if (bind != null)
                 {
-                    Transform coffin = ResolveCoffinTransform(bind);
-                    if (coffin != null)
-                    {
-                        sr.CoffinBaseLocalPos = coffin.localPosition;
-                        sr.HasCoffinBase = true;
-                    }
+                    bind.ResolvePallbearerPoses();
+                    PrepareAllPoses(bind);
+                    ApplyPresentationYaw(i);
+                    ApplyPallbearerPoses(i, ref sr);
 
-                    CachePallbearerBases(ref sr, bind);
-                    ApplyTiltVisual(i, ref sr);
+                    CoffinDanceCoffinBody body = bind.ResolveCoffinBody();
+                    if (body != null)
+                    {
+                        body.EnsureConfigured();
+                        body.SetSimulationActive(false);
+                        float sign = (_rng.Next(0, 2) == 0) ? -1f : 1f;
+                        // 관 위치는 에디터 rest · 중력으로 어깨 Collider에 얹힘
+                        body.SoftReset(sign * initialTiltDegrees, -sign * initialAngularSpeed);
+                        body.SetSimulationActive(true);
+                    }
                 }
 
                 HideJumpPrompt(i);
@@ -91,7 +89,6 @@ namespace MiniParty.Minigames.CoffinDance
                 DisableSceneMainCamera(slotCameras);
 
             RefreshPhaseParameters();
-            ScheduleNextJump(immediate: true);
             FlushAllUi();
         }
 
@@ -103,7 +100,6 @@ namespace MiniParty.Minigames.CoffinDance
             if (bind.SlotCamera != null)
                 return bind.SlotCamera;
 
-            // Inspector 미연결 시 자식 Camera 자동 탐색 (SlotCamera_1P 등)
             bind.SlotCamera = bind.GetComponentInChildren<Camera>(true);
             return bind.SlotCamera;
         }

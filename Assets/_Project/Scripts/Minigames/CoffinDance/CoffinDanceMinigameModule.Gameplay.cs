@@ -10,47 +10,60 @@ namespace MiniParty.Minigames.CoffinDance
             if (sr.Eliminated)
                 return;
 
-            if (sr.JumpLockoutRemain > 0f)
-            {
-                float before = sr.JumpLockoutRemain;
-                sr.JumpLockoutRemain -= dt;
-                if (before > 0f && sr.JumpLockoutRemain <= 0f)
-                    ApplyLandingImpulse(ref sr);
-            }
+            TickJumpState(i, ref sr, dt);
 
-            bool controlEnabled = sr.JumpLockoutRemain <= 0f;
+            bool controlEnabled = !sr.JumpActive && sr.JumpLockoutRemain <= 0f;
             float left = 0f;
             float right = 0f;
 
             if (controlEnabled)
+            {
                 ReadBalanceInput(i, out left, out right);
 
-            if (_jumpPromptState == CdJumpPromptState.Prompting &&
-                !sr.JumpSucceededThisPrompt &&
-                sr.JumpLockoutRemain <= 0f)
-            {
-                TickJumpInputForSlot(i);
+                if (WasJumpPressed(i))
+                    BeginFreeJump(ref sr);
             }
 
-            StepPhysics(ref sr, dt, left, right);
-            ApplyTiltVisual(i, ref sr);
-            AccruePassiveScore(ref sr, dt);
+            if (!sr.JumpActive)
+                StepShoulderControl(ref sr, dt, left, right);
 
-            if (CheckStumbleAndMaybeEliminate(i, ref sr, dt))
+            ApplyPallbearerPoses(i, ref sr);
+            ApplyPresentationYaw(i);
+            AccruePassiveScore(i, ref sr, dt);
+
+            if (CheckFailFloorAndMaybeEliminate(i, ref sr))
                 return;
         }
 
-        void SoftResetTilt(ref SlotRuntime sr)
+        void TickJumpState(int i, ref SlotRuntime sr, float dt)
         {
-            float sign = (_rng != null && _rng.Next(0, 2) == 0) ? -1f : 1f;
-            sr.ThetaRad = sign * initialTiltDegrees * Mathf.Deg2Rad * 0.5f;
-            sr.Omega = -sign * initialAngularSpeed * 0.5f;
-            sr.InStumble = false;
-            sr.StumbleTimer = 0f;
+            if (!sr.JumpActive)
+                return;
+
+            sr.JumpElapsed += dt;
+            sr.JumpLockoutRemain = Mathf.Max(0f, jumpLockoutSeconds - sr.JumpElapsed);
+
+            if (sr.JumpElapsed < jumpLockoutSeconds)
+                return;
+
+            // 착지
+            sr.JumpActive = false;
+            sr.JumpElapsed = jumpLockoutSeconds;
             sr.JumpLockoutRemain = 0f;
+            ApplyLandingImpulse(i);
         }
 
-        void AccruePassiveScore(ref SlotRuntime sr, float dt)
+        void BeginFreeJump(ref SlotRuntime sr)
+        {
+            if (sr.JumpActive)
+                return;
+
+            sr.JumpActive = true;
+            sr.JumpElapsed = 0f;
+            sr.JumpLockoutRemain = jumpLockoutSeconds;
+        }
+
+        void AccruePassiveScore(int i, ref SlotRuntime sr, float dt)
         {
             if (_ctx.IsPractice)
                 return;
@@ -58,21 +71,11 @@ namespace MiniParty.Minigames.CoffinDance
             float mul = _scoreMultiplier;
             float gain = SurvivalScorePerSecond * mul * dt;
 
-            float absDeg = Mathf.Abs(sr.ThetaRad) * Mathf.Rad2Deg;
+            float absDeg = Mathf.Abs(GetSlotTiltDegrees(i));
             if (absDeg <= CenterHoldDegrees)
                 gain += CenterHoldScorePerSecond * mul * dt;
 
             sr.ScoreExact += gain;
-            sr.ScoreSum = Mathf.Max(0, Mathf.FloorToInt(sr.ScoreExact));
-        }
-
-        void AddScoreInstant(ref SlotRuntime sr, int basePoints)
-        {
-            if (_ctx.IsPractice)
-                return;
-
-            float add = basePoints * _scoreMultiplier;
-            sr.ScoreExact += add;
             sr.ScoreSum = Mathf.Max(0, Mathf.FloorToInt(sr.ScoreExact));
         }
 
@@ -82,12 +85,20 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
 
             sr.Eliminated = true;
-            sr.InStumble = false;
-            sr.StumbleTimer = 0f;
+            sr.JumpActive = false;
+            sr.JumpLockoutRemain = 0f;
             sr.ScoreSum = Mathf.Max(0, Mathf.FloorToInt(sr.ScoreExact));
             _aliveMask[i] = false;
             SetEliminatedUi(i, true);
             HideJumpPrompt(i);
+
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            CoffinDanceCoffinBody body = bind?.ResolveCoffinBody();
+            if (body != null)
+            {
+                body.ClearFailFloorContact();
+                body.SetSimulationActive(false);
+            }
 
             if (!_ctx.IsPractice && CountAlive() == 0)
                 BeginEndDelay();

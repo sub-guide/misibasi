@@ -173,34 +173,20 @@ MonoBehaviour:
   - {fileID: 2040863851}
   mainRoundTimerCentralTop: {fileID: 302712886}
   phaseLabelText: {fileID: 718075610}
-  gravityTorque: 2.8
-  controlTorque: 9.5
-  rotationalDamping: 0.35
-  maxAngularSpeed: 8
   initialTiltDegrees: 6
-  initialAngularSpeed: 0.4
-  maxTiltDegrees: 50
-  stumbleBufferSeconds: 0
-  jumpInputWindowSeconds: 1.4
+  initialAngularSpeed: 25
+  neutralExtension: 0.5
+  shoulderRaiseSpeed: 1.4
+  shoulderReturnSpeed: 1.1
   jumpLockoutSeconds: 0.35
-  jumpLandingTorqueImpulse: 3.2
-  jumpFailTiltImpulse: 2.4
-  doubleJumpChanceFromPhase3: 0.4
-  phase2ExternalForce: 0.35
-  phase3GravityMul: 1.35
-  phase4GravityMul: 2
-  phase4InertiaMul: 1.6
+  phase2ShoulderMul: 1.25
+  phase3ShoulderMul: 1.55
+  phase4ShoulderMul: 2
   hpLowScoreThreshold: 3000
   presentationYawDegrees: 22
   slotWorldSpacing: 40
   disableMainCameraOnBegin: 1
   bindSlotCanvasesToSlotCamera: 1
-  scalePallbearersToCoffinCorners: 1
-  pallbearerCornerFollow: 1
-  pallbearerCornerHeightOffset: -0.7
-  pallbearerMinScaleY: 0.8
-  pallbearerMaxScaleY: 1.2
-  pallbearerCapsuleHalfHeight: 1
   exitScreenFader: {fileID: 989538419}
   sessionEndHoldSeconds: 0.35
   exitFadeOutSeconds: 1
@@ -457,6 +443,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 598833996468640288, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7997459
+      objectReference: {fileID: 0}
     - target: {fileID: 936179241830719038, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_text
       value: 2P
@@ -471,7 +461,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -509,13 +499,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4221425911557891870, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.7996281
+      objectReference: {fileID: 0}
+    - target: {fileID: 4221425911557891870, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.9162278
+      objectReference: {fileID: 0}
     - target: {fileID: 5499248171756492974, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_Name
       value: SlotCamera_2P
       objectReference: {fileID: 0}
+    - target: {fileID: 5678381588542048433, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7735542
+      objectReference: {fileID: 0}
     - target: {fileID: 7071815150378078884, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_Name
       value: Canvas_SlotUI_2P
+      objectReference: {fileID: 0}
+    - target: {fileID: 7686819325779342584, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7995876
+      objectReference: {fileID: 0}
+    - target: {fileID: 7686819325779342584, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.058919393
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -777,6 +787,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 598833996468640288, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7997459
+      objectReference: {fileID: 0}
     - target: {fileID: 936179241830719038, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_text
       value: 3P
@@ -791,7 +805,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -829,13 +843,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4221425911557891870, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.7996281
+      objectReference: {fileID: 0}
+    - target: {fileID: 4221425911557891870, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.9162278
+      objectReference: {fileID: 0}
     - target: {fileID: 5499248171756492974, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_Name
       value: SlotCamera_3P
       objectReference: {fileID: 0}
+    - target: {fileID: 5678381588542048433, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7735542
+      objectReference: {fileID: 0}
     - target: {fileID: 7071815150378078884, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_Name
       value: Canvas_SlotUI_3P
+      objectReference: {fileID: 0}
+    - target: {fileID: 7686819325779342584, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7995876
+      objectReference: {fileID: 0}
+    - target: {fileID: 7686819325779342584, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.058919393
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1136,6 +1170,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 598833996468640288, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7997459
+      objectReference: {fileID: 0}
     - target: {fileID: 936179241830719038, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_text
       value: 4P
@@ -1150,7 +1188,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1188,13 +1226,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4221425911557891870, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.7996281
+      objectReference: {fileID: 0}
+    - target: {fileID: 4221425911557891870, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.9162278
+      objectReference: {fileID: 0}
+    - target: {fileID: 4437832888193199543, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.79958874
+      objectReference: {fileID: 0}
+    - target: {fileID: 4437832888193199543, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.08509184
+      objectReference: {fileID: 0}
     - target: {fileID: 5499248171756492974, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_Name
       value: SlotCamera_4P
       objectReference: {fileID: 0}
+    - target: {fileID: 5678381588542048433, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7735542
+      objectReference: {fileID: 0}
     - target: {fileID: 7071815150378078884, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_Name
       value: Canvas_SlotUI_4P
+      objectReference: {fileID: 0}
+    - target: {fileID: 7686819325779342584, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7995876
+      objectReference: {fileID: 0}
+    - target: {fileID: 7686819325779342584, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.058919393
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

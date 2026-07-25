@@ -11,12 +11,6 @@ namespace MiniParty.Minigames.CoffinDance
             Complete
         }
 
-        enum CdJumpPromptState
-        {
-            Idle,
-            Prompting
-        }
-
         enum CdPhase
         {
             Phase1 = 1,
@@ -27,21 +21,14 @@ namespace MiniParty.Minigames.CoffinDance
 
         struct SlotRuntime
         {
-            public float ThetaRad;
-            public float Omega;
             public float ScoreExact;
             public int ScoreSum;
             public bool Eliminated;
-            public float StumbleTimer;
-            public bool InStumble;
             public float JumpLockoutRemain;
-            public bool JumpSucceededThisPrompt;
-            public int JumpPressesThisPrompt;
-            public float JumpVisualT;
-            public Vector3 CoffinBaseLocalPos;
-            public bool HasCoffinBase;
-            public Vector3[] PallbearerBaseScale;
-            public Vector3[] PallbearerBasePos;
+            public bool JumpActive;
+            public float JumpElapsed;
+            public float LeftExtension;
+            public float RightExtension;
         }
     }
 }

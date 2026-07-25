@@ -4,78 +4,93 @@ namespace MiniParty.Minigames.CoffinDance
 {
     public sealed partial class CoffinDanceMinigameModule
     {
-        void StepPhysics(ref SlotRuntime sr, float dt, float leftHeld, float rightHeld)
+        void StepShoulderControl(ref SlotRuntime sr, float dt, float leftHeld, float rightHeld)
         {
-            float gMul = gravityTorque * _gravityMul;
-            float alpha = gMul * Mathf.Sin(sr.ThetaRad);
+            float raise = shoulderRaiseSpeed * _shoulderSpeedMul;
+            float ret = shoulderReturnSpeed * _shoulderSpeedMul;
 
-            // ← = 양의 Z 기울기 반대(복원), → = 음의 Z 반대. (화면에서 관이 기운 쪽 반대로 누르는 감각)
-            float control = (leftHeld - rightHeld) * controlTorque * _inertiaMul;
-            alpha += control;
-
-            if (_externalForceAmp > 0f)
+            // ← = 좌측 들어올림 · → = 우측 들어올림 (반대쪽은 낮춤)
+            // extension 범위: 0=앉음 · 1=기립 (오버슈트 없음)
+            if (leftHeld > 0.5f)
             {
-                float noise = (Mathf.PerlinNoise(Time.time * 1.7f + sr.ThetaRad, 0.37f) - 0.5f) * 2f;
-                alpha += noise * _externalForceAmp;
+                sr.LeftExtension = Mathf.MoveTowards(sr.LeftExtension, MaxExtension, raise * dt);
+                sr.RightExtension = Mathf.MoveTowards(sr.RightExtension, MinExtension, raise * dt);
             }
-
-            sr.Omega += alpha * dt;
-            sr.Omega *= Mathf.Clamp01(1f - rotationalDamping * dt);
-            float maxW = maxAngularSpeed * _inertiaMul;
-            sr.Omega = Mathf.Clamp(sr.Omega, -maxW, maxW);
-            sr.ThetaRad += sr.Omega * dt;
-
-            ClampThetaToMaxTilt(ref sr);
-        }
-
-        void ClampThetaToMaxTilt(ref SlotRuntime sr)
-        {
-            float limitRad = GetMaxTiltRadians();
-            if (sr.ThetaRad > limitRad)
+            else if (rightHeld > 0.5f)
             {
-                sr.ThetaRad = limitRad;
-                if (sr.Omega > 0f)
-                    sr.Omega = 0f;
+                sr.RightExtension = Mathf.MoveTowards(sr.RightExtension, MaxExtension, raise * dt);
+                sr.LeftExtension = Mathf.MoveTowards(sr.LeftExtension, MinExtension, raise * dt);
             }
-            else if (sr.ThetaRad < -limitRad)
+            else
             {
-                sr.ThetaRad = -limitRad;
-                if (sr.Omega < 0f)
-                    sr.Omega = 0f;
+                sr.LeftExtension = Mathf.MoveTowards(sr.LeftExtension, neutralExtension, ret * dt);
+                sr.RightExtension = Mathf.MoveTowards(sr.RightExtension, neutralExtension, ret * dt);
             }
         }
 
-        float GetMaxTiltRadians() =>
-            Mathf.Max(1f, maxTiltDegrees) * Mathf.Deg2Rad;
-
-        bool CheckStumbleAndMaybeEliminate(int i, ref SlotRuntime sr, float dt)
+        void ApplyPallbearerPoses(int i, ref SlotRuntime sr)
         {
-            float limit = GetMaxTiltRadians();
-            // 수치 오차로 한도 미감지 방지
-            float abs = Mathf.Abs(sr.ThetaRad);
-            bool atLimit = abs >= limit - 0.0001f;
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            if (bind == null)
+                return;
 
-            if (!atLimit)
+            bind.ResolvePallbearerPoses();
+
+            float jumpT = 0f;
+            if (sr.JumpActive && jumpLockoutSeconds > 0.01f)
+                jumpT = Mathf.Clamp01(sr.JumpElapsed / jumpLockoutSeconds);
+
+            ApplySidePoses(bind.LeftPallbearerPoses, sr.LeftExtension, jumpT);
+            ApplySidePoses(bind.RightPallbearerPoses, sr.RightExtension, jumpT);
+        }
+
+        static void ApplySidePoses(CoffinDancePallbearerPose[] poses, float extension, float jumpT)
+        {
+            if (poses == null)
+                return;
+
+            for (var p = 0; p < poses.Length; p++)
             {
-                sr.InStumble = false;
-                sr.StumbleTimer = 0f;
-                return false;
+                CoffinDancePallbearerPose pose = poses[p];
+                if (pose == null)
+                    continue;
+
+                pose.SetExtension(extension);
+                pose.SetJumpPhase01(jumpT);
             }
+        }
 
-            if (!sr.InStumble)
-            {
-                sr.InStumble = true;
-                sr.StumbleTimer = Mathf.Max(0f, stumbleBufferSeconds);
-            }
+        void ApplyPresentationYaw(int i)
+        {
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            if (bind?.TiltRoot == null)
+                return;
 
-            sr.StumbleTimer -= dt;
-            if (sr.StumbleTimer > 0f)
+            bind.TiltRoot.localRotation = Quaternion.Euler(0f, presentationYawDegrees, 0f);
+        }
+
+        float GetSlotTiltDegrees(int i)
+        {
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            CoffinDanceCoffinBody body = bind != null ? bind.ResolveCoffinBody() : null;
+            if (body == null)
+                return 0f;
+
+            return body.GetTiltZDegrees();
+        }
+
+        bool CheckFailFloorAndMaybeEliminate(int i, ref SlotRuntime sr)
+        {
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            CoffinDanceCoffinBody body = bind != null ? bind.ResolveCoffinBody() : null;
+            if (body == null || !body.HasTouchedFailFloor)
                 return false;
 
-            // 연습: 탈락 대신 기울기 소프트 리셋 (본게임만 ELIMINATED)
+            body.ClearFailFloorContact();
+
             if (_ctx.IsPractice)
             {
-                SoftResetTilt(ref sr);
+                SoftResetSlot(i, ref sr);
                 return false;
             }
 
@@ -83,135 +98,52 @@ namespace MiniParty.Minigames.CoffinDance
             return true;
         }
 
-        void ApplyLandingImpulse(ref SlotRuntime sr)
+        void SoftResetSlot(int i, ref SlotRuntime sr)
         {
-            float sign = sr.Omega >= 0f ? 1f : -1f;
-            if (Mathf.Abs(sr.Omega) < 0.05f)
-                sign = sr.ThetaRad >= 0f ? 1f : -1f;
+            float sign = (_rng != null && _rng.Next(0, 2) == 0) ? -1f : 1f;
+            sr.LeftExtension = neutralExtension;
+            sr.RightExtension = neutralExtension;
+            sr.JumpActive = false;
+            sr.JumpElapsed = 0f;
+            sr.JumpLockoutRemain = 0f;
 
-            sr.Omega += sign * jumpLandingTorqueImpulse;
-        }
-
-        void ApplyFailTiltImpulse(ref SlotRuntime sr)
-        {
-            float sign = sr.ThetaRad >= 0f ? 1f : -1f;
-            if (Mathf.Abs(sr.ThetaRad) < 0.02f)
-                sign = (_rng != null && _rng.Next(0, 2) == 0) ? -1f : 1f;
-
-            sr.Omega += sign * jumpFailTiltImpulse;
-            sr.ThetaRad += sign * 12f * Mathf.Deg2Rad;
-            ClampThetaToMaxTilt(ref sr);
-        }
-
-        void ApplyTiltVisual(int i, ref SlotRuntime sr)
-        {
             CoffinDanceSlotBindings bind = GetBindings(i);
             if (bind == null)
                 return;
 
-            float deg = sr.ThetaRad * Mathf.Rad2Deg;
+            bind.ResolvePallbearerPoses();
+            PrepareAllPoses(bind);
+            ApplyPresentationYaw(i);
+            ApplyPallbearerPoses(i, ref sr);
 
-            // 연출용 Yaw만 TiltRoot(운구인 포함). 균형 기울기(Z)는 관만.
-            if (bind.TiltRoot != null)
-                bind.TiltRoot.localRotation = Quaternion.Euler(0f, presentationYawDegrees, 0f);
-
-            Transform coffin = ResolveCoffinTransform(bind);
-            if (coffin == null)
-                return;
-
-            coffin.localRotation = Quaternion.Euler(0f, 0f, deg);
-
-            if (sr.JumpLockoutRemain > 0f)
+            CoffinDanceCoffinBody body = bind.ResolveCoffinBody();
+            if (body != null)
             {
-                float t = 1f - Mathf.Clamp01(sr.JumpLockoutRemain / Mathf.Max(0.01f, jumpLockoutSeconds));
-                float hop = Mathf.Sin(t * Mathf.PI) * 0.35f;
-                if (sr.HasCoffinBase)
-                    coffin.localPosition = sr.CoffinBaseLocalPos + Vector3.up * hop;
-            }
-            else if (sr.HasCoffinBase)
-            {
-                coffin.localPosition = sr.CoffinBaseLocalPos;
-            }
-
-            if (scalePallbearersToCoffinCorners)
-                ApplyPallbearerScalesToCoffinCorners(ref sr, bind, coffin);
-        }
-
-        static void CachePallbearerBases(ref SlotRuntime sr, CoffinDanceSlotBindings bind)
-        {
-            if (bind?.Pallbearers == null)
-                return;
-
-            int n = bind.Pallbearers.Length;
-            sr.PallbearerBaseScale = new Vector3[n];
-            sr.PallbearerBasePos = new Vector3[n];
-
-            for (var p = 0; p < n; p++)
-            {
-                Transform t = bind.Pallbearers[p];
-                if (t == null)
-                    continue;
-
-                sr.PallbearerBaseScale[p] = t.localScale;
-                sr.PallbearerBasePos[p] = t.localPosition;
+                body.SetSimulationActive(false);
+                body.SoftReset(sign * initialTiltDegrees * 0.5f, -sign * initialAngularSpeed * 0.5f);
+                body.SetSimulationActive(true);
             }
         }
 
-        void ApplyPallbearerScalesToCoffinCorners(ref SlotRuntime sr, CoffinDanceSlotBindings bind, Transform coffin)
+        static void PrepareAllPoses(CoffinDanceSlotBindings bind)
         {
-            if (bind?.Pallbearers == null || sr.PallbearerBaseScale == null)
-                return;
-
-            // 기본 Cube 메시 half-extents = localScale/2
-            Vector3 half = coffin.localScale * 0.5f;
-            float hw = Mathf.Abs(half.x);
-            float hh = Mathf.Abs(half.y);
-            float halfCapsule = Mathf.Max(0.01f, pallbearerCapsuleHalfHeight);
-
-            for (var p = 0; p < bind.Pallbearers.Length; p++)
-            {
-                Transform bearer = bind.Pallbearers[p];
-                if (bearer == null || p >= sr.PallbearerBaseScale.Length)
-                    continue;
-
-                Vector3 baseScale = sr.PallbearerBaseScale[p];
-                Vector3 basePos = sr.PallbearerBasePos != null && p < sr.PallbearerBasePos.Length
-                    ? sr.PallbearerBasePos[p]
-                    : bearer.localPosition;
-
-                bool isLeft = basePos.x < coffin.localPosition.x;
-                float localZ = basePos.z - coffin.localPosition.z;
-                localZ = Mathf.Clamp(localZ, -Mathf.Abs(half.z), Mathf.Abs(half.z));
-
-                // 관 하단 좌/우 모서리 (받침 높이)
-                var cornerInCoffin = new Vector3(isLeft ? -hw : hw, -hh, localZ);
-                Vector3 cornerInParent = coffin.localPosition + coffin.localRotation * cornerInCoffin;
-
-                float restTopY = basePos.y + halfCapsule * baseScale.y;
-                float cornerTopY = cornerInParent.y + pallbearerCornerHeightOffset;
-                // follow=0 이면 원래 키, 1이면 모서리(+오프셋)에 맞춤
-                float targetTopY = Mathf.Lerp(restTopY, cornerTopY, pallbearerCornerFollow);
-
-                // 발 위치는 유지하고, 목표 머리 높이에 맞게 Y 스케일
-                float feetY = basePos.y - halfCapsule * baseScale.y;
-                float scaleY = (targetTopY - feetY) / halfCapsule;
-                scaleY = Mathf.Clamp(scaleY, pallbearerMinScaleY, pallbearerMaxScaleY);
-
-                bearer.localScale = new Vector3(baseScale.x, scaleY, baseScale.z);
-                bearer.localPosition = new Vector3(basePos.x, feetY + halfCapsule * scaleY, basePos.z);
-            }
+            PreparePoseArray(bind.LeftPallbearerPoses);
+            PreparePoseArray(bind.RightPallbearerPoses);
         }
 
-        static Transform ResolveCoffinTransform(CoffinDanceSlotBindings bind)
+        static void PreparePoseArray(CoffinDancePallbearerPose[] poses)
         {
-            if (bind == null)
-                return null;
+            if (poses == null)
+                return;
 
-            if (bind.Coffin != null)
-                return bind.Coffin;
+            for (var p = 0; p < poses.Length; p++)
+                poses[p]?.PrepareForGameplay();
+        }
 
-            // 구버전: Coffin 미연결 시 TiltRoot 전체 기울기 (하위 호환)
-            return bind.TiltRoot;
+        void ApplyLandingImpulse(int i)
+        {
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            bind?.ResolveCoffinBody()?.ApplyLandingImpulse();
         }
     }
 }

@@ -40,33 +40,6 @@ namespace MiniParty.Minigames.CoffinDance
                 if (show)
                     bind.PracticeReadyText.text = "READY";
             }
-
-            UpdateBalanceGauge(i, bind);
-        }
-
-        void UpdateBalanceGauge(int i, CoffinDanceSlotBindings bind)
-        {
-            if (bind.BalanceGaugeFill == null)
-                return;
-
-            if (!_participatedMask[i] || _slots == null)
-            {
-                bind.BalanceGaugeFill.fillAmount = bind.GaugeFillAtCenter;
-                return;
-            }
-
-            float limit = GetMaxTiltRadians();
-            float t = Mathf.Clamp(_slots[i].ThetaRad / limit, -1f, 1f);
-            // -1 → 0, 0 → center, +1 → 1 (또는 GaugeFillAtLimit 쪽)
-            float center = bind.GaugeFillAtCenter;
-            float edge = Mathf.Abs(bind.GaugeFillAtLimit - center) > 0.01f
-                ? bind.GaugeFillAtLimit
-                : (t >= 0f ? 1f : 0f);
-
-            if (t >= 0f)
-                bind.BalanceGaugeFill.fillAmount = Mathf.Lerp(center, edge >= center ? edge : 1f, t);
-            else
-                bind.BalanceGaugeFill.fillAmount = Mathf.Lerp(center, edge <= center ? edge : 0f, -t);
         }
 
         void UpdateCentralTimerUi()
@@ -104,16 +77,6 @@ namespace MiniParty.Minigames.CoffinDance
                 CdPhase.Phase3 => "PHASE 3",
                 _ => "PHASE 4 ×2"
             };
-        }
-
-        void ShowJumpPrompt(int i, bool isDouble)
-        {
-            CoffinDanceSlotBindings bind = GetBindings(i);
-            if (bind == null || bind.JumpPromptText == null)
-                return;
-
-            bind.JumpPromptText.gameObject.SetActive(true);
-            bind.JumpPromptText.text = isDouble ? "JUMP! JUMP!" : "JUMP!";
         }
 
         void HideJumpPrompt(int i)

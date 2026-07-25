@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-07-24 — C# 1차 프로토타입 기준.  
+> **문서 기준일**: 2026-07-25 — 어깨 지지 **순수 충돌** + Rest↔Crouch 보간 + **FailFloor 접촉 실패** · 게이지 제거.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -9,38 +9,60 @@
 
 | 영역 | 상태 | 비고 |
 |------|------|------|
-| C# 게임 로직 | **완료** | `Assets/_Project/Scripts/Minigames/CoffinDance/` |
-| Flow·Result 연동 | **완료** | `GameFlowDirector` · `PartySession` 연습 큐 · `ResultFlowController` flavor |
-| 씬 파일 | **미착수** | 목표명 `Minigame_CoffinDance` |
+| C# 게임 로직 | **개편 완료** | θ/ω 진자 제거 → Rigidbody 순수 충돌 |
+| Flow·Result 연동 | **유지** | `GameFlowDirector` · `PartySession` · Result flavor |
+| 운구인 에셋 | **코드 연동** | `Kevin Iglesias/Human Character Dummy` · Pose 자동 본 탐색 |
+| 씬·슬롯 프리팹 | **에디터 후속** | Capsule→Dummy·Collider·카메라 로우앵글 |
 | Build Settings | **미등록** | 사용자 에디터 |
-| 메뉴 진입 테스트 | **미검증** | 카탈로그 fallback `관짝춤` / `coffin_dance` |
+| 메뉴 진입 테스트 | **미검증** | |
 
 ---
 
 ## 1. 한 줄 요약
 
-4인 세로 분할 슬롯에서 **관( inverted pendulum )** 균형을 ←/→로 유지하고, 동시 **JUMP!** 이벤트에 A로 반응하는 60초 타임어택.
+4인 세로 분할 슬롯에서 **6명 운구인 어깨 Collider 위 관(Rigidbody)** 균형을 ←/→ 무릎 자세로 유지하고, **A로 자유 점프**하는 60초 타임어택.
 
 ---
 
 ## 2. 입력
 
-| 조작 | `BoothUsbGamepadLayout` | 개발 키보드(`1` 토글 1P) |
-|------|-------------------------|---------------------------|
-| 좌 복원력 | `stick/left` | `A` |
-| 우 복원력 | `stick/right` | `D` |
-| JUMP | `button2` (Face A) | `H` |
-| 연습 READY | Start | `B` |
-| 본게임 전환 | 운영자 Enter | — |
+| 조작 | `BoothUsbGamepadLayout` | 개발 키보드(`1` 토글 1P) | 효과 |
+|------|-------------------------|---------------------------|------|
+| 좌 | `stick/left` | `A` | 좌측 운구인 무릎 펴기($Y_L$↑) · 우측 낮춤 |
+| 우 | `stick/right` | `D` | 우측 운구인 무릎 펴기($Y_R$↑) · 좌측 낮춤 |
+| 점프 | `button2` (Face A) | `H` | **자유 점프** (프롬프트 없음) |
+| 연습 READY | Start | `B` | — |
+| 본게임 전환 | 운영자 Enter | — | — |
+
+extension 범위는 **0(앉음) ~ 1(기립)** 만. 반대쪽을 낮추며 관을 기울인다.
 
 ---
 
-## 3. 물리
+## 3. 물리 (순수 충돌)
 
-- θ(라디안), ω, 중력 토크 `∝ sinθ` (`gravityTorque` × Phase 가중)
-- ←/→ 제어 토크 + 회전 관성(`controlTorque`, `rotationalDamping`, `maxAngularSpeed`)
-- `|θ| ≥ maxTiltDegrees`(Inspector, 기본 **90°**) → 하드 클램프(초과 불가) · Stumble Buffer **`stumbleBufferSeconds`**(기본 0.5초) → 실패 시 ELIMINATED(본게임). 연습은 소프트 리셋
-- Phase2+ 미세 외력(Perlin), Phase3+ 중력 가중, Phase4 각가속·관성 극대화
+### 관 (`CoffinDanceCoffinBody`)
+
+- `Rigidbody` + Collider
+- `Freeze Position`: **X, Z** (Y만 이동)
+- `Freeze Rotation`: **X, Y** (Z만 회전)
+- `centerOfMass` 로컬 Y를 지지점보다 살짝 높게 (Inspector)
+- 기울기(점수용): `transform` 로컬 Z 각(도)
+- **실패**: `CoffinDanceFailFloor` Collider에 닿으면 본게임 ELIMINATED / 연습 SoftReset
+
+### FailFloor (`CoffinDanceFailFloor`)
+
+- **슬롯 프리팹 자식**으로 둔다 (씬 공용 Floor 금지 — 슬롯 X 분리)
+- BoxCollider + 마커 컴포넌트 · 관이 넘어지면 닿는 높이
+
+### 운구인 (`CoffinDancePallbearerPose`)
+
+- **Rest(선)** / **Crouch(앉은)** 두 자세를 에디터에서 Capture 후 `extension`으로 보간 (**0=앉음 · 1=선**)
+- **발 고정** (`lockFeetToRestPlant`, 기본 ON): Rest Capture 시 발 **월드 위치·각도**를 플랜트로 저장 · 보간/스냅 시 유지 (localRotation=Rest 아님)
+- ContextMenu: `Capture Rest Pose` · `Capture Crouch Pose` · `Snap Feet To Rest Plant`
+- 에디터 미리보기: `editorPreviewExtension` (Rest+Crouch 둘 다 캡처된 뒤에만)
+- 어깨 지지: `B-upperArm.L/R` + SphereCollider (에디터)
+- 관 위치: 에디터 배치 · Play 시 중력으로 얹힘
+- 점프: 보간 자세 + 루트 Y 홉 · 착지 Impulse
 
 ---
 
@@ -49,50 +71,50 @@
 | 항목 | 값 |
 |------|-----|
 | 생존 | 초당 **100** |
-| 중앙 유지 (`|θ| ≤ 10°`) | 초당 **50** |
-| JUMP 성공 | **+200** |
-| JUMP! JUMP! 성공 | **+450** |
+| 중앙 유지 (`|기울기| ≤ 10°`) | 초당 **50** |
 | Phase4 (50~60초) | **전체 ×2.0** |
 
-연습 UI 점수는 `-` 표시, Report `FinalScore`는 0.
+자유 점프에는 별도 성공 점수 없음. 연습 UI 점수는 `-`, Report `FinalScore`는 0.
 
 ---
 
-## 5. JUMP 이벤트
+## 5. JUMP (자유)
 
-- 4슬롯 **동시** 동일 지시
-- Phase1: 6~8초 / Phase2: 4~6초 / Phase3: 2.5~4초 / Phase4: 1.5~2.5초
-- **Phase3부터** `JUMP! JUMP!` 가능 (`doubleJumpChanceFromPhase3` 기본 0.4)
-- 성공: 점수 + `jumpLockoutSeconds`(기본 0.35) 조작 불능 → 착지 토크 충격
-- 미입력: `jumpFailTiltImpulse`로 기울기 충격
+- `A` 언제든 (지상·비잠금 시)
+- `jumpLockoutSeconds`(기본 **0.35**) 동안 ←/→ 불가 · 공중
+- 착지 순간 `CoffinDanceCoffinBody.ApplyLandingImpulse`
+- 구버전 전역 JUMP! 프롬프트·더블점프 스케줄 **제거**
 
 ---
 
 ## 6. Phase (본게임 60초)
 
-| 구간 | Phase |
-|------|-------|
-| 0~20초 | 1 |
-| 20~40초 | 2 |
-| 40~50초 | 3 |
-| 50~60초 | 4 (×2) |
+| 구간 | Phase | 어깨 승강 | 점수 |
+|------|-------|-----------|------|
+| 0~20초 | 1 | ×1 | ×1 |
+| 20~40초 | 2 | `phase2ShoulderMul` | ×1 |
+| 40~50초 | 3 | `phase3ShoulderMul` | ×1 |
+| 50~60초 | 4 | `phase4ShoulderMul` | ×2 |
 
-전원 탈락 또는 60초 → **1초**(`SessionEndDelaySeconds`) 후 종료 시퀀스 → Results.
+Stumble(각도 한도) **제거**.  
+실패: 관이 슬롯 `CoffinDanceFailFloor`에 접촉 → 본게임 ELIMINATED / 연습 SoftReset.
+
+전원 탈락 또는 60초 → **1초**(`SessionEndDelaySeconds`) 후 Results.
 
 ---
 
 ## 7. HP (`CoffinDanceHpLossRules`)
 
 - **1인**: 총점 `< hpLowScoreThreshold`(기본 **3000**) → HP −1
-- **2인 이상**: 하위 50%만 −1 (저점수 컷 없음)
-- 탈락자: **탈락 시점 점수**로 순위 산정 (`_participatedMask` 유지)
+- **2인 이상**: 하위 50%만 −1
+- 탈락자: 탈락 시점 점수로 순위 (`_participatedMask` 유지)
 
 ---
 
 ## 8. 연습 → 본게임
 
-OIIA와 동일: 씬 내 START READY → 운영자 Enter → `PrepareRound(false)` + `Begin` 재호출.  
-메뉴 첫 진입은 `PartySession.TakeCoffinDanceNextRoundIsPractice()`.
+OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Begin` 재호출.  
+메뉴 첫 진입: `PartySession.TakeCoffinDanceNextRoundIsPractice()`.
 
 ---
 
@@ -101,12 +123,15 @@ OIIA와 동일: 씬 내 START READY → 운영자 Enter → `PrepareRound(false)
 | 파일 | 역할 |
 |------|------|
 | `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` |
+| `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·착지 Impulse |
+| `CoffinDancePallbearerPose` | 본 자세·어깨 지지 Collider |
 | `CoffinDanceSceneBootstrap` | Begin/Tick |
 | `CoffinDanceSlotBindings` | 슬롯 프리팹 바인딩 |
 | `CoffinDanceHpLossRules` | HP 판정 |
 | `CoffinDanceResultMinigameFlavor` | Result ID 매칭 |
 
-`BuiltInId` = `"coffin_dance"` · DisplayName 기본 `"관짝춤"`.
+`BuiltInId` = `"coffin_dance"` · DisplayName 기본 `"관짝춤"`.  
+에셋: `Assets/Kevin Iglesias/Human Character Dummy/`.
 
 ---
 
@@ -117,30 +142,38 @@ OIIA와 동일: 씬 내 START READY → 운영자 Enter → `PrepareRound(false)
 | `slotBindings[4]` | — | `CoffinDanceSlotBindings` |
 | `mainRoundTimerCentralTop` | — | 중앙 타이머 TMP |
 | `phaseLabelText` | — | Phase TMP |
-| `gravityTorque` | 2.8 | 중력 토크 |
-| `maxTiltDegrees` | 90 | 기울기 절대 상한(도). 초과 불가 · Stumble 한도 |
-| `stumbleBufferSeconds` | 0.5 | 최대 각도 도달 후 탈락 유예(초) |
-| `controlTorque` | 9.5 | 좌우 복원 |
+| `initialTiltDegrees` | 6 | SoftReset 초기 기울기 |
+| `initialAngularSpeed` | 25 | SoftReset 초기 각속도 |
+| `shoulderRaiseSpeed` | 1.4 | ←/→ extension 속도 |
+| `neutralExtension` | 0.5 | 시작·중립 무릎 (0=앉음 · 1=기립) |
+| `shoulderReturnSpeed` | 1.1 | 중립 복귀 |
 | `jumpLockoutSeconds` | 0.35 | 점프 중 조작 불능 |
-| `doubleJumpChanceFromPhase3` | 0.4 | 연속 JUMP 비율 |
+| `phase2/3/4ShoulderMul` | 1.25/1.55/2 | Phase 민감도 |
 | `hpLowScoreThreshold` | 3000 | 1P 저점수 컷 |
-| `presentationYawDegrees` | 22 | 연출용 Y 회전 |
-| `slotWorldSpacing` | 40 | Begin 시 슬롯 루트 X 분리 |
-| `disableMainCameraOnBegin` | true | Main Camera 끄기 |
-| `bindSlotCanvasesToSlotCamera` | true | 슬롯 Canvas → Screen Space Camera |
-| `exitScreenFader` | — | `FadeOverlay` / `ScreenFader` |
+| `presentationYawDegrees` | 22 | TiltRoot Y 회전 |
+| `slotWorldSpacing` | 40 | 슬롯 X 분리 |
+| `disableMainCameraOnBegin` | true | Main Camera off |
+| `bindSlotCanvasesToSlotCamera` | true | 슬롯 Canvas → SSC |
+| `exitScreenFader` | — | FadeOverlay |
 | `coffinDanceSceneName` (GameFlow) | `Minigame_CoffinDance` | 로드 씬명 |
 
 ### SlotBindings
 
 | 필드 | 용도 |
 |------|------|
-| `TiltRoot` | θ(Z) + yaw(Y) 적용 루트 |
-| `Coffin` / `Pallbearers[6]` | 시각 참조(선택) |
-| `SlotCamera` | 세로 1/4 viewport |
-| `BalanceGaugeFill` | 기울기 게이지 Image |
-| `JumpPromptText` | JUMP! TMP |
-| `ScoreText` / `PracticeReadyText` / `EliminatedText` | HUD |
+| `TiltRoot` | yaw(Y)만 |
+| `Coffin` / `CoffinBody` | 관 Transform · `CoffinDanceCoffinBody` |
+| `Pallbearers[6]` | 좌 0~2 · 우 3~5 |
+| `LeftPallbearerPoses` / `RightPallbearerPoses` | 비우면 Pallbearers에서 `GetOrAdd` |
+| `SlotCamera` | 세로 1/4 · 로우앵글은 에디터 |
+| HUD | Score · PracticeReady · Eliminated (`JumpPromptText`·게이지는 비활성) |
+
+### CoffinBody
+
+| 필드 | 용도 |
+|------|------|
+| `centerOfMassLocal` | 기본 (0, 0.15, 0) |
+| `landingTorqueImpulse` | 착지 Z 토크 |
 
 ---
 
@@ -151,11 +184,17 @@ Minigame_CoffinDance
 ├── CoffinDance_Root
 │   ├── CoffinDanceMinigameModule
 │   └── CoffinDanceSceneBootstrap
-├── Slot_1P ~ Slot_4P  (CoffinDanceSlotBindings + 3D + Camera)
-├── Canvas (게이지·JUMP·Score·Timer·Phase · Overlay)
+├── Slot_1P ~ Slot_4P  (CoffinDanceSlotBindings)
+│   ├── TiltRoot (Y≈22°)
+│   │   ├── Pallbearer ×6 (HumanDummy + CoffinDancePallbearerPose)
+│   │   │     └── B-upperArm.L/R + SphereCollider (에디터)
+│   │   └── Coffin (Cube + Rigidbody + CoffinDanceCoffinBody)
+│   ├── FailFloor (BoxCollider + CoffinDanceFailFloor)
+│   └── SlotCamera (로우앵글)
+├── Canvas (Score·Timer·Phase · 게이지 제거)
 └── FadeOverlay (ScreenFader)
 ```
 
 ---
 
-문서 갱신: **2026-07-24** (C# 1차)
+문서 갱신: **2026-07-25** (FailFloor 실패 · 밸런스 게이지 제거)

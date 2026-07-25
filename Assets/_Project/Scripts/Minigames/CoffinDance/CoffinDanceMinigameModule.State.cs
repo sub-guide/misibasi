@@ -27,19 +27,9 @@ namespace MiniParty.Minigames.CoffinDance
         float _endDelayRemain;
         CdFlowState _flowState;
 
-        CdJumpPromptState _jumpPromptState;
-        float _nextJumpAtElapsed;
-        float _jumpPromptRemain;
-        int _jumpRequiredPresses;
-        bool _jumpIsDouble;
-
         CdPhase _phase;
         float _scoreMultiplier = 1f;
-        float _gravityMul = 1f;
-        float _inertiaMul = 1f;
-        float _externalForceAmp;
-        float _jumpIntervalMin;
-        float _jumpIntervalMax;
+        float _shoulderSpeedMul = 1f;
 
         System.Random _rng;
     }
