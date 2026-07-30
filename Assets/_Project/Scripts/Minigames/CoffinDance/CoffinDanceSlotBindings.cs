@@ -4,7 +4,8 @@ using UnityEngine;
 namespace MiniParty.Minigames.CoffinDance
 {
     /// <summary>
-    /// 슬롯 프리팹 루트. 관 Rigidbody·운구인 Pose·스코어 UI를 Module에 연결한다.
+    /// 슬롯 프리팹 루트. 관·운구인·스코어 UI를 Module에 연결한다.
+    /// Pallbearers[0..2]=좌 · [3..5]=우. Pose는 각 루트에서 자동 탐색.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CoffinDanceSlotBindings : MonoBehaviour
@@ -19,14 +20,8 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("관 물리 컴포넌트. 비우면 Coffin에서 GetComponent.")]
         public CoffinDanceCoffinBody CoffinBody;
 
-        [Tooltip("운구인 루트 6개 (좌 3·우 3). Pose는 자동 GetComponent.")]
+        [Tooltip("운구인 루트 6개. [0..2]=좌 · [3..5]=우.")]
         public Transform[] Pallbearers = new Transform[6];
-
-        [Tooltip("좌측 운구인 Pose 3개. 비우면 Pallbearers[0..2]에서 탐색.")]
-        public CoffinDancePallbearerPose[] LeftPallbearerPoses;
-
-        [Tooltip("우측 운구인 Pose 3개. 비우면 Pallbearers[3..5]에서 탐색.")]
-        public CoffinDancePallbearerPose[] RightPallbearerPoses;
 
         public Camera SlotCamera;
 
@@ -48,28 +43,32 @@ namespace MiniParty.Minigames.CoffinDance
             return CoffinBody;
         }
 
-        public void ResolvePallbearerPoses()
+        public void PrepareAllPoses()
         {
-            if (!Application.isPlaying)
-                return;
+            for (var i = 0; i < 6; i++)
+                GetOrAddPoseAt(i)?.PrepareForGameplay();
+        }
 
-            EnsurePoseArray(ref LeftPallbearerPoses, 3);
-            EnsurePoseArray(ref RightPallbearerPoses, 3);
-
-            for (var i = 0; i < 3; i++)
+        public void ApplySideExtension(bool leftSide, float extension, float jumpT)
+        {
+            int start = leftSide ? 0 : 3;
+            for (var i = start; i < start + 3; i++)
             {
-                if (LeftPallbearerPoses[i] == null && Pallbearers != null && i < Pallbearers.Length)
-                    LeftPallbearerPoses[i] = GetOrAddPose(Pallbearers[i]);
+                CoffinDancePallbearerPose pose = GetOrAddPoseAt(i);
+                if (pose == null)
+                    continue;
 
-                if (RightPallbearerPoses[i] == null && Pallbearers != null && i + 3 < Pallbearers.Length)
-                    RightPallbearerPoses[i] = GetOrAddPose(Pallbearers[i + 3]);
+                pose.SetExtension(extension);
+                pose.SetJumpPhase01(jumpT);
             }
         }
 
-        static void EnsurePoseArray(ref CoffinDancePallbearerPose[] arr, int len)
+        CoffinDancePallbearerPose GetOrAddPoseAt(int pallbearerIndex)
         {
-            if (arr == null || arr.Length != len)
-                arr = new CoffinDancePallbearerPose[len];
+            if (Pallbearers == null || pallbearerIndex < 0 || pallbearerIndex >= Pallbearers.Length)
+                return null;
+
+            return GetOrAddPose(Pallbearers[pallbearerIndex]);
         }
 
         static CoffinDancePallbearerPose GetOrAddPose(Transform root)

@@ -64,8 +64,7 @@ namespace MiniParty.Minigames.CoffinDance
 
                 if (bind != null)
                 {
-                    bind.ResolvePallbearerPoses();
-                    PrepareAllPoses(bind);
+                    bind.PrepareAllPoses();
                     ApplyPresentationYaw(i);
                     ApplyPallbearerPoses(i, ref sr);
 

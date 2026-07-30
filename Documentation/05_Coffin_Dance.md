@@ -1,7 +1,8 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-07-25 — 어깨 지지 **순수 충돌** + Rest↔Crouch 보간 + **FailFloor 접촉 실패** · 게이지 제거.  
-> 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
+> **문서 기준일**: 2026-07-31 — 실모델 Animator Idle↔Crouch · FailFloor · **Play 검증 완료**.  
+> 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
+> **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType** 은 폐기. 최신 진실은 아래 §0·§3.
 
 ---
 
@@ -9,12 +10,25 @@
 
 | 영역 | 상태 | 비고 |
 |------|------|------|
-| C# 게임 로직 | **완료·검증** | Rigidbody 순수 충돌 · Rest↔Crouch · FailFloor · 자유 점프 |
+| C# 게임 로직 | **완료·검증** | Animator Extension · FailFloor · 자유 점프 |
 | Flow·Result 연동 | **유지** | `GameFlowDirector` · `PartySession` · Result flavor |
-| 운구인 에셋 | **완료·검증** | HumanDummy · Pose Capture · Pallbearer 프리팹 |
-| 씬·슬롯 프리팹 | **완료·검증** | FailFloor · upperArm SphereCollider · 게이지 비활성 |
+| 운구인 에셋 | **완료·검증** | `Pallbearer.fbx` + UAL1 · **우어깨만** SphereCollider · 반대편 **Scale X=-1** |
+| 씬·슬롯 프리팹 | **완료·검증** | `Pallbearers[6]`만 (`Left/Right Pose` 배열 **없음**) |
 | Build Settings | **등록·검증** | 사용자 확인 |
 | 메뉴 진입 테스트 | **검증** | MainMenu→관짝춤 |
+
+### 다음 세션이 헷갈리기 쉬운 점
+
+| 항목 | 현재 진실 |
+|------|-----------|
+| 자세 | Capture 없음 · `PallbearerPose.controller` 1D Blend (`Extension` 0=Crouch · 1=Idle) |
+| FBX 클립명 | Unity에선 `Armature\|Idle_Loop` / `Armature\|Crouch_Idle_Loop` (생성 메뉴가 `\|` 접미사 매칭) |
+| 애니 소스 | `UAL1_Standard.fbx` (**RM 파일 쓰지 않음**) |
+| Edit Mode 미리보기 | **의도적 비활성** (AnimationMode가 Prefab Transform 오염) · Play에서만 블렌드 |
+| 어깨 Collider | 검증 기준 **RightArm만** · 관 반대편 운구인은 Scale 반전으로 맞춤 |
+| Slot 연결 | `Pallbearers[0..2]`=←쪽 · `[3..5]`=→쪽 |
+| 실패 | 각도 Stumble 아님 · `CoffinDanceFailFloor` 접촉 |
+| 레거시 | `PallbearerProtoType`(HumanDummy) · Capture Rest/Crouch — **참고만, 실사용 아님** |
 
 ---
 
@@ -56,14 +70,15 @@ extension 범위는 **0(앉음) ~ 1(기립)** 만. 반대쪽을 낮추며 관을
 
 ### 운구인 (`CoffinDancePallbearerPose`)
 
-- **Rest(선)** / **Crouch(앉은)** 두 자세를 에디터에서 Capture 후 `extension`으로 보간 (**0=앉음 · 1=선**)
-- **발 고정** (`lockFeetToRestPlant`, 기본 ON): Rest Capture 시 발 **월드 위치·각도**를 플랜트로 저장 · 보간/스냅 시 유지 (localRotation=Rest 아님)
-- ContextMenu: `Capture Rest Pose` · `Capture Crouch Pose` · `Snap Feet To Rest Plant`
-- 에디터 미리보기: `editorPreviewExtension` (Rest+Crouch 둘 다 캡처된 뒤에만)
-- 어깨 지지: `B-upperArm.L/R` + SphereCollider (에디터)
-- 관 위치: 에디터 배치 · Play 시 중력으로 얹힘
-- 점프: 보간 자세 + 루트 Y 홉 · 착지 Impulse
-
+- Animator **1D Blend**: `Extension` 0=`Crouch_Idle_Loop` · 1=`Idle_Loop` (`Assets/CoffinDance/Animations/UAL1_Standard.fbx`, **RM 아님**)
+- 클립 에셋명: `Armature|Idle_Loop` / `Armature|Crouch_Idle_Loop`
+- Controller: `Assets/CoffinDance/Animations/PallbearerPose.controller`  
+  (재생성: 메뉴 `Mini Party/Coffin Dance/Create Pallbearer Animator`)
+- `applyRootMotion = false` · Module `SetExtension` → `Animator.SetFloat("Extension")`
+- Capture / 본 Slerp / 발 플랜트 / Edit Mode 애니 미리보기 **없음** (Play에서만 구동)
+- 어깨 지지: **`mixamorig:RightArm` SphereCollider** (검증 배치). 관 반대편 운구인은 **Scale X=-1** 반전
+- 점프: Extension dip + 루트 Y 홉 · 착지 Impulse
+- 모델: `Assets/CoffinDance/Pallbearer.fbx` → `Prefabs/Pallbearer.prefab`
 ---
 
 ## 4. 점수
@@ -124,14 +139,17 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 |------|------|
 | `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` |
 | `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·착지 Impulse |
-| `CoffinDancePallbearerPose` | 본 자세·어깨 지지 Collider |
+| `CoffinDancePallbearerPose` | Animator Extension 블렌드 · 점프 홉 (Edit Mode 미구동) |
+| `CoffinDanceFailFloor` | 실패 바닥 마커 |
 | `CoffinDanceSceneBootstrap` | Begin/Tick |
-| `CoffinDanceSlotBindings` | 슬롯 프리팹 바인딩 |
+| `CoffinDanceSlotBindings` | `Pallbearers[6]` · PrepareAllPoses / ApplySideExtension |
 | `CoffinDanceHpLossRules` | HP 판정 |
 | `CoffinDanceResultMinigameFlavor` | Result ID 매칭 |
+| Editor `CoffinDancePallbearerAnimatorSetup` | Controller 생성 메뉴 |
 
 `BuiltInId` = `"coffin_dance"` · DisplayName 기본 `"관짝춤"`.  
-에셋: `Assets/Kevin Iglesias/Human Character Dummy/`.
+실사용 에셋: `Assets/CoffinDance/` (`Pallbearer.fbx`, `Animations/UAL1_Standard.fbx`, `PallbearerPose.controller`).  
+레거시: `PallbearerProtoType` / Kevin Iglesias HumanDummy — **미사용**.
 
 ---
 
@@ -163,8 +181,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 |------|------|
 | `TiltRoot` | yaw(Y)만 |
 | `Coffin` / `CoffinBody` | 관 Transform · `CoffinDanceCoffinBody` |
-| `Pallbearers[6]` | 좌 0~2 · 우 3~5 |
-| `LeftPallbearerPoses` / `RightPallbearerPoses` | 비우면 Pallbearers에서 `GetOrAdd` |
+| `Pallbearers[6]` | [0..2]=좌 · [3..5]=우 · Pose는 각 루트에서 자동 |
 | `SlotCamera` | 세로 1/4 · 로우앵글은 에디터 |
 | HUD | Score · PracticeReady · Eliminated (`JumpPromptText`·게이지는 비활성) |
 
@@ -186,15 +203,15 @@ Minigame_CoffinDance
 │   └── CoffinDanceSceneBootstrap
 ├── Slot_1P ~ Slot_4P  (CoffinDanceSlotBindings)
 │   ├── TiltRoot (Y≈22°)
-│   │   ├── Pallbearer ×6 (HumanDummy + CoffinDancePallbearerPose)
-│   │   │     └── B-upperArm.L/R + SphereCollider (에디터)
+│   │   ├── Pallbearer ×6 (실모델 + Animator + CoffinDancePallbearerPose)
+│   │   │     └── mixamorig:RightArm + SphereCollider (반대편은 Scale X=-1)
 │   │   └── Coffin (Cube + Rigidbody + CoffinDanceCoffinBody)
 │   ├── FailFloor (BoxCollider + CoffinDanceFailFloor)
 │   └── SlotCamera (로우앵글)
-├── Canvas (Score·Timer·Phase · 게이지 제거)
+├── Canvas (Score·Timer·Phase)
 └── FadeOverlay (ScreenFader)
 ```
 
 ---
 
-문서 갱신: **2026-07-25** (Play·Build Settings·MainMenu 진입 검증 완료)
+문서 갱신: **2026-07-31** (다음 세션 인수인계용 문서 정합 · 우어깨·Edit미리보기·에셋 경로)

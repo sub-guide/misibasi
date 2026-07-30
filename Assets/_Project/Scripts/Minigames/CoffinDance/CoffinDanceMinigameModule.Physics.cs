@@ -34,30 +34,12 @@ namespace MiniParty.Minigames.CoffinDance
             if (bind == null)
                 return;
 
-            bind.ResolvePallbearerPoses();
-
             float jumpT = 0f;
             if (sr.JumpActive && jumpLockoutSeconds > 0.01f)
                 jumpT = Mathf.Clamp01(sr.JumpElapsed / jumpLockoutSeconds);
 
-            ApplySidePoses(bind.LeftPallbearerPoses, sr.LeftExtension, jumpT);
-            ApplySidePoses(bind.RightPallbearerPoses, sr.RightExtension, jumpT);
-        }
-
-        static void ApplySidePoses(CoffinDancePallbearerPose[] poses, float extension, float jumpT)
-        {
-            if (poses == null)
-                return;
-
-            for (var p = 0; p < poses.Length; p++)
-            {
-                CoffinDancePallbearerPose pose = poses[p];
-                if (pose == null)
-                    continue;
-
-                pose.SetExtension(extension);
-                pose.SetJumpPhase01(jumpT);
-            }
+            bind.ApplySideExtension(leftSide: true, sr.LeftExtension, jumpT);
+            bind.ApplySideExtension(leftSide: false, sr.RightExtension, jumpT);
         }
 
         void ApplyPresentationYaw(int i)
@@ -111,8 +93,7 @@ namespace MiniParty.Minigames.CoffinDance
             if (bind == null)
                 return;
 
-            bind.ResolvePallbearerPoses();
-            PrepareAllPoses(bind);
+            bind.PrepareAllPoses();
             ApplyPresentationYaw(i);
             ApplyPallbearerPoses(i, ref sr);
 
@@ -123,21 +104,6 @@ namespace MiniParty.Minigames.CoffinDance
                 body.SoftReset(sign * initialTiltDegrees * 0.5f, -sign * initialAngularSpeed * 0.5f);
                 body.SetSimulationActive(true);
             }
-        }
-
-        static void PrepareAllPoses(CoffinDanceSlotBindings bind)
-        {
-            PreparePoseArray(bind.LeftPallbearerPoses);
-            PreparePoseArray(bind.RightPallbearerPoses);
-        }
-
-        static void PreparePoseArray(CoffinDancePallbearerPose[] poses)
-        {
-            if (poses == null)
-                return;
-
-            for (var p = 0; p < poses.Length; p++)
-                poses[p]?.PrepareForGameplay();
         }
 
         void ApplyLandingImpulse(int i)
