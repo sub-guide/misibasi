@@ -225,7 +225,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `MainMenu` | 로비·카탈로그·시작 |
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
 | `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
-| `Minigame_CoffinDance` | 시소(단일 x)·자율 노이즈·FailFloor · **Play 체감 검증 후속** |
+| `Minigame_CoffinDance` | 시소·고정 Sine 씰룩임 · 걷기 클립 · FailFloor · **Play 검증 통과** |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -253,9 +253,9 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ### 지금 포커스
 
-1. **관짝춤** — 시소·고정 씰룩임 **Play 체감·밸런스** (Phase 조작 난이도는 후속)
-2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
-3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
+1. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
+2. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
+3. **관짝춤** — (후속) Phase 조작 난이도 · (선택) 보행 위상 오프셋 · 폴리시
 
 ### 열린 결정 / 보류
 
@@ -294,11 +294,11 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 **관짝춤 / Coffin Dance**
 
-- [x] 실모델 Pallbearer + UAL1 Idle↔Crouch Animator · Slot 연결 · **Play 검증** (사용자, 2026-07-31)
-- [x] 시소 단일 x · 자율 스텝 노이즈 · Rate Limiter · 중립 복귀 제거 (2026-08-05)
-- [x] Phase별 Amp/Speed 제거 · 고정 `noiseAmp`/`maxNoiseSpeed` (2026-08-05)
-- [ ] 시소·고정 씰룩임 **Play 체감·밸런스**
+- [x] 실모델 Pallbearer + UAL1 Animator · Slot 연결 · **Play 검증** (2026-07-31)
+- [x] 시소 단일 x · 고정 Sine 씰룩임 · 중립 복귀 제거 · Phase Amp/Speed 제거 (2026-08-05)
+- [x] 운구인 `Crouch_Fwd_Loop`/`Walk_Formal_Loop` · Loop Time · **Play 검증 통과** (사용자, 2026-08-05)
 - [ ] (후속) Phase별 조작 난이도 재도입
+- [ ] (선택) 운구인별 보행 위상 오프셋 · Blend `timeScale` 동기화
 - [ ] (필요 시) 순수 충돌 불안정 → 지지점 힘(B)/하이브리드(C) 보강 — **질문 후**
 - [ ] (선택) 폴리시·연출 다듬기
 
@@ -310,10 +310,10 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 | 시기 | 요약 |
 |------|------|
-| 08-05 | 관짝춤 시소·고정 씰룩임 · Phase 조작 난이도 제거 · `shoulderReturnSpeed` 제거 |
+| 08-05 | 관짝춤 시소·고정 씰룩임 · 걷기 클립·Loop Time **Play 검증 통과** · Phase 조작 난이도 제거 |
 | 07-31 | 관짝춤 실모델 Animator·FailFloor·좌우/점프·배치 **Play 검증 통과** · Pose 배열 정리 |
-| 07-30 | 관짝춤 운구인 Pose → Animator `Idle_Loop`↔`Crouch_Idle_Loop` 블렌드 · Capture 제거 · Controller 생성 메뉴 |
-| ~07-18 | OIIA 디제잉 레이브 개편(피버·스포트라이트·스피커·관중·클리핑·티어별 피버 등) **Play 검증** |
+| 07-30 | 관짝춤 운구인 Pose → Animator 블렌드 · Capture 제거 · Controller 생성 메뉴 |
+| ~07-18 | OIIA 디제잉 레이브 개편 **Play 검증** |
 | ~07-10 | 공용 SNES Face/D-Pad/Shoulder/System Prefab 5종 · `instantHoldVisual` |
 | 07-22 | RBC Build 등록 · `debugRouteAllToOiia` false · **씬 진입** 확인 |
 | 07-24~25 | 관짝춤 C#·물리 개편(순수 충돌·자유 점프) · Build·MainMenu 진입 · **Play 검증** |
@@ -335,4 +335,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-08-05 — 관짝춤 시소·고정 노이즈 · Phase 조작 난이도 후속*
+*마스터 파일 갱신: 2026-08-05 — 관짝춤 시소·걷기 클립 Play 검증 통과 · Phase 난이도 후속*

@@ -7,36 +7,45 @@ using UnityEngine;
 namespace MiniParty.EditorTools
 {
     /// <summary>
-    /// UAL1 Idle_Loop ↔ Crouch_Idle_Loop 1D Blend AnimatorController 생성.
+    /// UAL1 Crouch_Fwd_Loop ↔ Walk_Formal_Loop 1D Blend AnimatorController 생성·갱신.
+    /// 컨트롤러가 이미 있으면 에셋을 재사용해 GUID(프리팹·씬 참조)를 유지한다.
     /// </summary>
     public static class CoffinDancePallbearerAnimatorSetup
     {
         const string FbxPath = "Assets/CoffinDance/Animations/UAL1_Standard.fbx";
         const string ControllerPath = "Assets/CoffinDance/Animations/PallbearerPose.controller";
-        const string IdleClipName = "Idle_Loop";
-        const string CrouchClipName = "Crouch_Idle_Loop";
+
+        /// <summary>Extension = 1 (기립 · 정중히 걷기).</summary>
+        const string UprightClipName = "Walk_Formal_Loop";
+
+        /// <summary>Extension = 0 (웅크린 채 전진).</summary>
+        const string CrouchClipName = "Crouch_Fwd_Loop";
+
+        const string StateName = "ExtensionBlend";
+        const string BlendTreeName = "CrouchWalk";
+        const string DirectBlendParam = "Blend";
         const string ExtensionParam = MiniParty.Minigames.CoffinDance.CoffinDancePallbearerPose.ExtensionParam;
 
         [MenuItem("Mini Party/Coffin Dance/Create Pallbearer Animator")]
         public static void CreatePallbearerAnimator()
         {
-            AnimationClip idle = FindClipExact(FbxPath, IdleClipName);
+            AnimationClip upright = FindClipExact(FbxPath, UprightClipName);
             AnimationClip crouch = FindClipExact(FbxPath, CrouchClipName);
 
-            if (idle == null || crouch == null)
+            if (upright == null || crouch == null)
             {
                 EditorUtility.DisplayDialog(
                     "Pallbearer Animator",
-                    BuildMissingClipMessage(idle, crouch),
+                    BuildMissingClipMessage(upright, crouch),
                     "OK");
                 return;
             }
 
-            if (idle == crouch)
+            if (upright == crouch)
             {
                 EditorUtility.DisplayDialog(
                     "Pallbearer Animator",
-                    "Idle/Crouch가 같은 클립으로 해석되었습니다. FBX 클립 이름을 확인하세요.",
+                    $"{UprightClipName}/{CrouchClipName}가 같은 클립으로 해석되었습니다. FBX 클립 이름을 확인하세요.",
                     "OK");
                 return;
             }
@@ -45,37 +54,34 @@ namespace MiniParty.EditorTools
             if (!string.IsNullOrEmpty(dir) && !AssetDatabase.IsValidFolder(dir))
                 Directory.CreateDirectory(dir);
 
-            if (AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ControllerPath) != null)
-                AssetDatabase.DeleteAsset(ControllerPath);
+            var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
+            bool created = controller == null;
+            if (created)
+                controller = AnimatorController.CreateAnimatorControllerAtPath(ControllerPath);
 
-            var controller = AnimatorController.CreateAnimatorControllerAtPath(ControllerPath);
-
-            // 기본값 1 = 기립 (0이면 Crouch만 보여 미리보기가 앉은 채로 고정된 것처럼 보임)
-            controller.AddParameter(new AnimatorControllerParameter
-            {
-                name = ExtensionParam,
-                type = AnimatorControllerParameterType.Float,
-                defaultFloat = 1f
-            });
+            EnsureExtensionParameter(controller);
 
             AnimatorStateMachine root = controller.layers[0].stateMachine;
-            AnimatorState state = root.AddState("ExtensionBlend");
-            root.defaultState = state;
+            AnimatorState state = FindOrCreateState(root);
 
-            var tree = new BlendTree
+            if (state.motion is not BlendTree tree)
             {
-                name = "IdleCrouch",
-                blendType = BlendTreeType.Simple1D,
-                blendParameter = ExtensionParam,
-                useAutomaticThresholds = false
+                tree = new BlendTree();
+                AssetDatabase.AddObjectToAsset(tree, controller);
+                state.motion = tree;
+            }
+
+            tree.name = BlendTreeName;
+            tree.blendType = BlendTreeType.Simple1D;
+            tree.blendParameter = ExtensionParam;
+            tree.useAutomaticThresholds = false;
+            tree.children = new[]
+            {
+                NewChild(crouch, 0f),
+                NewChild(upright, 1f)
             };
-            AssetDatabase.AddObjectToAsset(tree, controller);
 
-            // 0=Crouch · 1=Idle
-            tree.AddChild(crouch, 0f);
-            tree.AddChild(idle, 1f);
-            state.motion = tree;
-
+            EditorUtility.SetDirty(tree);
             EditorUtility.SetDirty(controller);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -83,9 +89,53 @@ namespace MiniParty.EditorTools
             Selection.activeObject = controller;
             EditorGUIUtility.PingObject(controller);
             Debug.Log(
-                $"[CoffinDance] Created {ControllerPath}\n" +
+                $"[CoffinDance] {(created ? "Created" : "Updated")} {ControllerPath}\n" +
                 $"  @0 {crouch.name} (instanceID={crouch.GetInstanceID()})\n" +
-                $"  @1 {idle.name} (instanceID={idle.GetInstanceID()})");
+                $"  @1 {upright.name} (instanceID={upright.GetInstanceID()})");
+        }
+
+        static ChildMotion NewChild(AnimationClip clip, float threshold)
+        {
+            return new ChildMotion
+            {
+                motion = clip,
+                threshold = threshold,
+                timeScale = 1f,
+                cycleOffset = 0f,
+                directBlendParameter = DirectBlendParam
+            };
+        }
+
+        static void EnsureExtensionParameter(AnimatorController controller)
+        {
+            AnimatorControllerParameter[] parameters = controller.parameters;
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                if (parameters[i].name == ExtensionParam)
+                    return;
+            }
+
+            // 기본값 1 = 기립 (0이면 웅크린 채로 고정된 것처럼 보임)
+            controller.AddParameter(new AnimatorControllerParameter
+            {
+                name = ExtensionParam,
+                type = AnimatorControllerParameterType.Float,
+                defaultFloat = 1f
+            });
+        }
+
+        static AnimatorState FindOrCreateState(AnimatorStateMachine root)
+        {
+            ChildAnimatorState[] states = root.states;
+            for (var i = 0; i < states.Length; i++)
+            {
+                if (states[i].state != null && states[i].state.name == StateName)
+                    return states[i].state;
+            }
+
+            AnimatorState state = root.AddState(StateName);
+            root.defaultState = state;
+            return state;
         }
 
         static AnimationClip FindClipExact(string assetPath, string clipName)
@@ -107,7 +157,7 @@ namespace MiniParty.EditorTools
                 if (clip.name == clipName)
                     return clip;
 
-                // Blender/Mixamo export: "Armature|Idle_Loop"
+                // Blender/Mixamo export: "Armature|Walk_Formal_Loop"
                 if (pipeSuffix == null &&
                     clip.name.EndsWith("|" + clipName, System.StringComparison.Ordinal))
                     pipeSuffix = clip;
@@ -116,12 +166,12 @@ namespace MiniParty.EditorTools
             return pipeSuffix;
         }
 
-        static string BuildMissingClipMessage(AnimationClip idle, AnimationClip crouch)
+        static string BuildMissingClipMessage(AnimationClip upright, AnimationClip crouch)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"클립을 찾지 못했습니다.\nFBX: {FbxPath}");
-            if (idle == null)
-                sb.AppendLine($"필요(미발견): {IdleClipName}");
+            if (upright == null)
+                sb.AppendLine($"필요(미발견): {UprightClipName}");
             if (crouch == null)
                 sb.AppendLine($"필요(미발견): {CrouchClipName}");
 

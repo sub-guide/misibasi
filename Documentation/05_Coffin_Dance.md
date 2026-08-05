@@ -16,17 +16,19 @@
 | 씬·슬롯 프리팹 | **완료·검증** | `Pallbearers[6]`만 (`Left/Right Pose` 배열 **없음**) |
 | Build Settings | **등록·검증** | 사용자 확인 |
 | 메뉴 진입 테스트 | **검증** | MainMenu→관짝춤 |
-| 시소·노이즈 개편 | **코드 반영** | Play 체감 검증은 후속 |
+| 시소·노이즈 개편 | **완료·검증** | 시소 Hold · Sine 씰룩임 · 걷기 클립 · Loop Time (사용자, 2026-08-05) |
 
 ### 다음 세션이 헷갈리기 쉬운 점
 
 | 항목 | 현재 진실 |
 |------|-----------|
-| 자세 | Capture 없음 · `PallbearerPose.controller` 1D Blend (`Extension` 0=Crouch · 1=Idle) |
+| 자세 | Capture 없음 · `PallbearerPose.controller` 1D Blend (`Extension` 0=`Crouch_Fwd_Loop` · 1=`Walk_Formal_Loop`) |
 | 어깨 높이 | **단일 시소** `x` · `Y_L=x` · `Y_R=1-x` (합=1, 순수 Z 기울기) |
 | 입력 Hold | 키를 떼도 `x_bias` **유지** · `shoulderReturnSpeed` **없음** |
 | 자율 흔들림 | **Sine만** → Rate Limiter · 고정 Amp/Speed (Phase별 난이도 후속) |
-| FBX 클립명 | Unity에선 `Armature\|Idle_Loop` / `Armature\|Crouch_Idle_Loop` |
+| FBX 클립명 | Unity에선 `Armature\|Walk_Formal_Loop` / `Armature\|Crouch_Fwd_Loop` (생성 메뉴가 `\|` 접미사도 매칭) |
+| Controller 재생성 | 메뉴가 **기존 에셋 재사용**(GUID 유지) · 프리팹 Animator 재연결 불필요 |
+| 클립 Loop | `Crouch_Fwd_Loop` · `Walk_Formal_Loop` **Loop Time ON** (사용자 수동, 2026-08-05 검증) |
 | 애니 소스 | `UAL1_Standard.fbx` (**RM 파일 쓰지 않음**) |
 | Edit Mode 미리보기 | **의도적 비활성** · Play에서만 블렌드 |
 | 어깨 Collider | 검증 기준 **RightArm만** · 관 반대편은 Scale 반전 |
@@ -87,7 +89,9 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 ### 운구인 (`CoffinDancePallbearerPose`)
 
-- Animator **1D Blend**: `Extension` 0=`Crouch_Idle_Loop` · 1=`Idle_Loop`
+- Animator **1D Blend**: `Extension` 0=`Crouch_Fwd_Loop` · 1=`Walk_Formal_Loop` (`UAL1_Standard.fbx`, **RM 아님**)
+- Controller: `Assets/CoffinDance/Animations/PallbearerPose.controller`  
+  (생성·갱신: 메뉴 `Mini Party/Coffin Dance/Create Pallbearer Animator` — 기존 에셋 재사용)
 - Module `SetExtension` → `Animator.SetFloat("Extension")`
 - 어깨 지지: **`mixamorig:RightArm` SphereCollider** · 반대편 **Scale X=-1**
 - 점프: Extension dip + 루트 Y 홉 · 착지 Impulse

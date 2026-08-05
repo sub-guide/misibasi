@@ -6,10 +6,10 @@ BlendTree:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: IdleCrouch
+  m_Name: CrouchWalk
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: -7993625790543202706, guid: 216f2380343f4ac428b4f03a7e53f6e9, type: 3}
+    m_Motion: {fileID: 4366774653929184976, guid: 216f2380343f4ac428b4f03a7e53f6e9, type: 3}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -17,7 +17,7 @@ BlendTree:
     m_DirectBlendParameter: Blend
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 7994627924475153551, guid: 216f2380343f4ac428b4f03a7e53f6e9, type: 3}
+    m_Motion: {fileID: 6426452042675443912, guid: 216f2380343f4ac428b4f03a7e53f6e9, type: 3}
     m_Threshold: 1
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1

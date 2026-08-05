@@ -3,7 +3,7 @@ using UnityEngine;
 namespace MiniParty.Minigames.CoffinDance
 {
     /// <summary>
-    /// 운구인 자세: Animator 1D Blend (Extension 0=Crouch_Idle · 1=Idle).
+    /// 운구인 자세: Animator 1D Blend (Extension 0=Crouch_Fwd · 1=Walk_Formal).
     /// Module의 SetExtension / SetJumpPhase01 API를 유지한다.
     /// Edit Mode에서는 Animator/Transform을 건드리지 않는다 (Prefab 위치 오염 방지).
     /// </summary>
