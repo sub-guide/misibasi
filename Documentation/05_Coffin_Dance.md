@@ -25,7 +25,7 @@
 | 자세 | Capture 없음 · `PallbearerPose.controller` 1D Blend (`Extension` 0=`Crouch_Fwd_Loop` · 1=`Walk_Formal_Loop`) |
 | 어깨 높이 | **단일 시소** `x` · `Y_L=x` · `Y_R=1-x` (합=1, 순수 Z 기울기) |
 | 입력 Hold | 키를 떼도 `x_bias` **유지** · `shoulderReturnSpeed` **없음** |
-| 자율 흔들림 | **Sine만** → Rate Limiter · 고정 Amp/Speed (Phase별 난이도 후속) |
+| 자율 흔들림 | **Sine만** 즉시 반영 · 고정 `noiseAmp` (Phase별 난이도 후속) · Rate Limiter **없음** |
 | FBX 클립명 | Unity에선 `Armature\|Walk_Formal_Loop` / `Armature\|Crouch_Fwd_Loop` (생성 메뉴가 `\|` 접미사도 매칭) |
 | Controller 재생성 | 메뉴가 **기존 에셋 재사용**(GUID 유지) · 프리팹 Animator 재연결 불필요 |
 | 클립 Loop | `Crouch_Fwd_Loop` · `Walk_Formal_Loop` **Loop Time ON** (사용자 수동, 2026-08-05 검증) |
@@ -79,11 +79,10 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 | 변수 | 역할 |
 |------|------|
-| `x_bias` (`SeesawBias`) | ←/→로만 변경 · 키 떼면 Hold |
+| `x_bias` (`SeesawBias`) | ←/→로만 변경(`seesawMoveSpeed`) · 키 떼면 Hold |
 | `DanceWave` | `Sin(2π · danceSineHz · Time.time)` · [-1, 1] |
-| `x_target` | `Clamp01(x_bias + DanceWave × noiseAmp)` |
-| `x_current` (`SeesawXCurrent`) | `MoveTowards(x_target, maxNoiseSpeed×dt)` |
-| `Y_L` / `Y_R` | `x_current` / `1 - x_current` |
+| `x` (`SeesawXCurrent`) | `Clamp01(x_bias + DanceWave × noiseAmp)` (즉시) |
+| `Y_L` / `Y_R` | `x` / `1 - x` |
 
 시작·SoftReset: `x_bias = x_current = xSeesawNeutral`(기본 0.5).
 
@@ -124,7 +123,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 | 구간 | Phase | 조작·노이즈 | 점수 |
 |------|-------|-------------|------|
-| 0~20초 | 1 | **고정** (`noiseAmp` / `maxNoiseSpeed`) | ×1 |
+| 0~20초 | 1 | **고정** (`noiseAmp` · `seesawMoveSpeed`) | ×1 |
 | 20~40초 | 2 | 동일 | ×1 |
 | 40~50초 | 3 | 동일 | ×1 |
 | 50~60초 | 4 | 동일 | ×2 |
@@ -176,28 +175,28 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `slotBindings[4]` | — | `CoffinDanceSlotBindings` |
 | `mainRoundTimerCentralTop` | — | 중앙 타이머 TMP |
 | `phaseLabelText` | — | Phase TMP |
-| `initialTiltDegrees` | 6 | SoftReset 초기 기울기 |
-| `initialAngularSpeed` | 25 | SoftReset 초기 각속도 |
 | `xSeesawNeutral` | 0.5 | 시작·SoftReset 시소 x |
+| `seesawMoveSpeed` | 1.4 | ←/→ x_bias 초당 속도 |
 | `danceSineHz` | 1.2 | DanceWave Sine 주파수 |
-| `noiseAmp` | 0.12 | 고정 노이즈 진폭 |
-| `maxNoiseSpeed` | 0.8 | 고정 초당 x 변화 상한 |
+| `noiseAmp` | 0.12 | 고정 노이즈 진폭 (씬에 0.1 저장 가능) |
 | `jumpLockoutSeconds` | 0.35 | 점프 중 조작 불능 |
 | `hpLowScoreThreshold` | 3000 | 1P 저점수 컷 |
-| `presentationYawDegrees` | 22 | TiltRoot Y 회전 |
+| ~~`presentationYawDegrees`~~ | — | **제거** · TiltRoot 회전은 프리팹 값 사용 |
 | `slotWorldSpacing` | 40 | 슬롯 X 분리 |
 | `disableMainCameraOnBegin` | true | Main Camera off |
 | `bindSlotCanvasesToSlotCamera` | true | 슬롯 Canvas → SSC |
 | `exitScreenFader` | — | FadeOverlay |
 | `coffinDanceSceneName` (GameFlow) | `Minigame_CoffinDance` | 로드 씬명 |
 
-**제거됨**: `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `dancePerlinHz`.
+**제거됨**: `presentationYawDegrees` · `initialTiltDegrees` · `initialAngularSpeed` · `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `maxNoiseSpeed` · `dancePerlinHz`.
+
+SoftReset: rest 위치·회전 · 속도 0만 복구 (초기 기울기/각속도 **없음**).
 
 ### SlotBindings
 
 | 필드 | 용도 |
 |------|------|
-| `TiltRoot` | yaw(Y)만 |
+| `TiltRoot` | 연출용 회전 · **프리팹에서 자유 설정**(코드가 덮어쓰지 않음) |
 | `Coffin` / `CoffinBody` | 관 Transform · `CoffinDanceCoffinBody` |
 | `Pallbearers[6]` | [0..2]=좌 · [3..5]=우 |
 | `SlotCamera` | 세로 1/4 |
@@ -220,7 +219,7 @@ Minigame_CoffinDance
 │   ├── CoffinDanceMinigameModule
 │   └── CoffinDanceSceneBootstrap
 ├── Slot_1P ~ Slot_4P  (CoffinDanceSlotBindings)
-│   ├── TiltRoot (Y≈22°)
+│   ├── TiltRoot (회전은 프리팹 값)
 │   │   ├── Pallbearer ×6 (실모델 + Animator + CoffinDancePallbearerPose)
 │   │   │     └── mixamorig:RightArm + SphereCollider (반대편은 Scale X=-1)
 │   │   └── Coffin (Cube + Rigidbody + CoffinDanceCoffinBody)

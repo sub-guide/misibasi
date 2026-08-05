@@ -17,7 +17,6 @@ namespace MiniParty.Minigames.CoffinDance
 
             _elapsedMainTime = 0f;
             _remainingMainTime = MainDurationSeconds;
-            _rng = new System.Random(Random.Range(int.MinValue, int.MaxValue));
 
             _slots = new SlotRuntime[SlotCount];
 
@@ -64,7 +63,6 @@ namespace MiniParty.Minigames.CoffinDance
                 if (bind != null)
                 {
                     bind.PrepareAllPoses();
-                    ApplyPresentationYaw(i);
                     ApplyPallbearerPoses(i, ref sr);
 
                     CoffinDanceCoffinBody body = bind.ResolveCoffinBody();
@@ -72,9 +70,8 @@ namespace MiniParty.Minigames.CoffinDance
                     {
                         body.EnsureConfigured();
                         body.SetSimulationActive(false);
-                        float sign = (_rng.Next(0, 2) == 0) ? -1f : 1f;
-                        // 관 위치는 에디터 rest · 중력으로 어깨 Collider에 얹힘
-                        body.SoftReset(sign * initialTiltDegrees, -sign * initialAngularSpeed);
+                        // 관 위치는 에디터 rest · 중력으로 어깨 Collider에 얹힘 (초기 기울기 없음)
+                        body.SoftReset();
                         body.SetSimulationActive(true);
                     }
                 }

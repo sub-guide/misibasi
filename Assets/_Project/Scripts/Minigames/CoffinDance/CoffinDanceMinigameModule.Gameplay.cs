@@ -28,7 +28,6 @@ namespace MiniParty.Minigames.CoffinDance
                 StepShoulderControl(ref sr, dt, left, right);
 
             ApplyPallbearerPoses(i, ref sr);
-            ApplyPresentationYaw(i);
             AccruePassiveScore(i, ref sr, dt);
 
             if (CheckFailFloorAndMaybeEliminate(i, ref sr))

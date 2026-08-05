@@ -102,7 +102,7 @@ namespace MiniParty.Minigames.CoffinDance
                 _touchedFailFloor = true;
         }
 
-        public void SoftReset(float initialTiltDegrees, float initialAngularSpeed)
+        public void SoftReset()
         {
             EnsureConfigured();
             ClearFailFloorContact();
@@ -120,15 +120,10 @@ namespace MiniParty.Minigames.CoffinDance
             if (_cachedRest)
             {
                 transform.localPosition = _restLocalPosition;
-                transform.localRotation = _restLocalRotation * Quaternion.Euler(0f, 0f, initialTiltDegrees);
-            }
-            else
-            {
-                transform.localRotation = Quaternion.Euler(0f, 0f, initialTiltDegrees);
+                transform.localRotation = _restLocalRotation;
             }
 
             Physics.SyncTransforms();
-            rb.angularVelocity = transform.TransformDirection(new Vector3(0f, 0f, initialAngularSpeed * Mathf.Deg2Rad));
 
             if (wasKinematic)
                 rb.isKinematic = true;

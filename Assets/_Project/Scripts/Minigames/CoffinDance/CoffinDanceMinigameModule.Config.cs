@@ -15,23 +15,19 @@ namespace MiniParty.Minigames.CoffinDance
         [SerializeField] TMP_Text mainRoundTimerCentralTop;
         [SerializeField] TMP_Text phaseLabelText;
 
-        [Header("물리 · SoftReset")]
-        [SerializeField] float initialTiltDegrees = 6f;
-        [SerializeField] float initialAngularSpeed = 25f;
-
         [Header("시소 (단일 x)")]
         [Tooltip("시작·중립 시소 위치. Y_L=x · Y_R=1-x. 기본 0.5=수평.")]
         [SerializeField] [Range(0f, 1f)] float xSeesawNeutral = DefaultSeesawNeutral;
+
+        [Tooltip("←/→로 x_bias가 변하는 초당 속도.")]
+        [SerializeField] float seesawMoveSpeed = DefaultSeesawMoveSpeed;
 
         [Header("자율 스텝 노이즈 (고정 · Sine)")]
         [Tooltip("Sine 파동 주파수(Hz). DanceWave = Sin(2π·f·t).")]
         [SerializeField] float danceSineHz = DefaultDanceSineHz;
 
-        [Tooltip("DanceWave 진폭. x_target = bias + wave×Amp.")]
+        [Tooltip("DanceWave 진폭. x = Clamp01(bias + wave×Amp).")]
         [SerializeField] float noiseAmp = DefaultNoiseAmp;
-
-        [Tooltip("x_current·x_bias 초당 변화 상한. 입력·노이즈 공통.")]
-        [SerializeField] float maxNoiseSpeed = DefaultMaxNoiseSpeed;
 
         [Header("점프 (자유 · A/button2)")]
         [Tooltip("점프~착지 총 시간(초). 이 동안 ←/→ 불가.")]
@@ -39,10 +35,6 @@ namespace MiniParty.Minigames.CoffinDance
 
         [Header("HP")]
         [SerializeField] int hpLowScoreThreshold = DefaultLowScoreThreshold;
-
-        [Header("연출")]
-        [Tooltip("관·운구인 정면이 화면 좌측을 보도록 TiltRoot Y 회전(도).")]
-        [SerializeField] float presentationYawDegrees = 22f;
 
         [Header("슬롯 화면 분할")]
         [Tooltip("슬롯 루트를 X축으로 떨어뜨려 서로 카메라에 안 보이게 함.")]

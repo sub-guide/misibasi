@@ -29,7 +29,5 @@ namespace MiniParty.Minigames.CoffinDance
 
         CdPhase _phase;
         float _scoreMultiplier = 1f;
-
-        System.Random _rng;
     }
 }

@@ -5,23 +5,21 @@ namespace MiniParty.Minigames.CoffinDance
     public sealed partial class CoffinDanceMinigameModule
     {
         /// <summary>
-        /// A안: x_bias(입력 Hold) + DanceWave×NoiseAmp → x_target,
-        /// x_current = MoveTowards(x_target, MaxSpeed). Y_L=x · Y_R=1-x.
+        /// A안: x_bias(입력 Hold) + DanceWave×noiseAmp → x 즉시 반영.
+        /// Y_L=x · Y_R=1-x. Rate Limiter 없음(Sine이 이미 부드러움).
         /// </summary>
         void StepShoulderControl(ref SlotRuntime sr, float dt, float leftHeld, float rightHeld)
         {
-            float maxSpeed = Mathf.Max(0f, maxNoiseSpeed);
+            float moveSpeed = Mathf.Max(0f, seesawMoveSpeed);
 
             // ← = Y_L↑ (x→1) · → = Y_R↑ (x→0). 키를 떼면 bias Hold (중립 복귀 없음).
             if (leftHeld > 0.5f)
-                sr.SeesawBias = Mathf.MoveTowards(sr.SeesawBias, MaxExtension, maxSpeed * dt);
+                sr.SeesawBias = Mathf.MoveTowards(sr.SeesawBias, MaxExtension, moveSpeed * dt);
             else if (rightHeld > 0.5f)
-                sr.SeesawBias = Mathf.MoveTowards(sr.SeesawBias, MinExtension, maxSpeed * dt);
+                sr.SeesawBias = Mathf.MoveTowards(sr.SeesawBias, MinExtension, moveSpeed * dt);
 
             float danceWave = ComputeDanceWave();
-            float xTarget = Mathf.Clamp01(sr.SeesawBias + danceWave * noiseAmp);
-            sr.SeesawXCurrent = Mathf.MoveTowards(sr.SeesawXCurrent, xTarget, maxSpeed * dt);
-            sr.SeesawXCurrent = Mathf.Clamp01(sr.SeesawXCurrent);
+            sr.SeesawXCurrent = Mathf.Clamp01(sr.SeesawBias + danceWave * noiseAmp);
         }
 
         float ComputeDanceWave()
@@ -42,15 +40,6 @@ namespace MiniParty.Minigames.CoffinDance
             float x = Mathf.Clamp01(sr.SeesawXCurrent);
             bind.ApplySideExtension(leftSide: true, x, jumpT);
             bind.ApplySideExtension(leftSide: false, 1f - x, jumpT);
-        }
-
-        void ApplyPresentationYaw(int i)
-        {
-            CoffinDanceSlotBindings bind = GetBindings(i);
-            if (bind?.TiltRoot == null)
-                return;
-
-            bind.TiltRoot.localRotation = Quaternion.Euler(0f, presentationYawDegrees, 0f);
         }
 
         float GetSlotTiltDegrees(int i)
@@ -84,7 +73,6 @@ namespace MiniParty.Minigames.CoffinDance
 
         void SoftResetSlot(int i, ref SlotRuntime sr)
         {
-            float sign = (_rng != null && _rng.Next(0, 2) == 0) ? -1f : 1f;
             ResetSeesawToNeutral(ref sr);
             sr.JumpActive = false;
             sr.JumpElapsed = 0f;
@@ -95,14 +83,13 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
 
             bind.PrepareAllPoses();
-            ApplyPresentationYaw(i);
             ApplyPallbearerPoses(i, ref sr);
 
             CoffinDanceCoffinBody body = bind.ResolveCoffinBody();
             if (body != null)
             {
                 body.SetSimulationActive(false);
-                body.SoftReset(sign * initialTiltDegrees * 0.5f, -sign * initialAngularSpeed * 0.5f);
+                body.SoftReset();
                 body.SetSimulationActive(true);
             }
         }

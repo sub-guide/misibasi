@@ -173,15 +173,12 @@ MonoBehaviour:
   - {fileID: 2040863851}
   mainRoundTimerCentralTop: {fileID: 302712886}
   phaseLabelText: {fileID: 718075610}
-  initialTiltDegrees: 6
-  initialAngularSpeed: 25
   xSeesawNeutral: 0.5
-  danceSineHz: 1.2
-  noiseAmp: 0.05
-  maxNoiseSpeed: 0.8
+  seesawMoveSpeed: 1.4
+  danceSineHz: 2
+  noiseAmp: 0.03
   jumpLockoutSeconds: 0.35
   hpLowScoreThreshold: 3000
-  presentationYawDegrees: 22
   slotWorldSpacing: 40
   disableMainCameraOnBegin: 1
   bindSlotCanvasesToSlotCamera: 1

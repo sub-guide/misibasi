@@ -296,7 +296,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 - [x] 실모델 Pallbearer + UAL1 Animator · Slot 연결 · **Play 검증** (2026-07-31)
 - [x] 시소 단일 x · 고정 Sine 씰룩임 · 중립 복귀 제거 · Phase Amp/Speed 제거 (2026-08-05)
-- [x] 운구인 `Crouch_Fwd_Loop`/`Walk_Formal_Loop` · Loop Time · **Play 검증 통과** (사용자, 2026-08-05)
+- [x] SoftReset 초기 기울기·각속도 제거 · `presentationYawDegrees` 제거(TiltRoot는 프리팹 값) (2026-08-05)
 - [ ] (후속) Phase별 조작 난이도 재도입
 - [ ] (선택) 운구인별 보행 위상 오프셋 · Blend `timeScale` 동기화
 - [ ] (필요 시) 순수 충돌 불안정 → 지지점 힘(B)/하이브리드(C) 보강 — **질문 후**
@@ -310,7 +310,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 | 시기 | 요약 |
 |------|------|
-| 08-05 | 관짝춤 시소·고정 씰룩임 · 걷기 클립·Loop Time **Play 검증 통과** · Phase 조작 난이도 제거 |
+| 08-05 | 관짝춤 시소·고정 씰룩임 · 걷기 클립 Play 검증 · `maxNoiseSpeed`→`seesawMoveSpeed` |
 | 07-31 | 관짝춤 실모델 Animator·FailFloor·좌우/점프·배치 **Play 검증 통과** · Pose 배열 정리 |
 | 07-30 | 관짝춤 운구인 Pose → Animator 블렌드 · Capture 제거 · Controller 생성 메뉴 |
 | ~07-18 | OIIA 디제잉 레이브 개편 **Play 검증** |
