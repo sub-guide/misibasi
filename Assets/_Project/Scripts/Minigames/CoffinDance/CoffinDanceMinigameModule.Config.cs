@@ -19,24 +19,23 @@ namespace MiniParty.Minigames.CoffinDance
         [SerializeField] float initialTiltDegrees = 6f;
         [SerializeField] float initialAngularSpeed = 25f;
 
-        [Header("어깨 승강 (←/→)")]
-        [Tooltip("시작·입력 없을 때 무릎 extension. 0=완전 앉음 · 1=기립 · 0.5≈반쯤 굽힘.")]
-        [SerializeField] [Range(0f, 1f)] float neutralExtension = DefaultNeutralExtension;
+        [Header("시소 (단일 x)")]
+        [Tooltip("시작·중립 시소 위치. Y_L=x · Y_R=1-x. 기본 0.5=수평.")]
+        [SerializeField] [Range(0f, 1f)] float xSeesawNeutral = DefaultSeesawNeutral;
 
-        [Tooltip("입력으로 extension이 변하는 초당 속도.")]
-        [SerializeField] float shoulderRaiseSpeed = 1.4f;
+        [Header("자율 스텝 노이즈 (고정 · Sine)")]
+        [Tooltip("Sine 파동 주파수(Hz). DanceWave = Sin(2π·f·t).")]
+        [SerializeField] float danceSineHz = DefaultDanceSineHz;
 
-        [Tooltip("입력 없을 때 Neutral로 돌아오는 속도.")]
-        [SerializeField] float shoulderReturnSpeed = 1.1f;
+        [Tooltip("DanceWave 진폭. x_target = bias + wave×Amp.")]
+        [SerializeField] float noiseAmp = DefaultNoiseAmp;
+
+        [Tooltip("x_current·x_bias 초당 변화 상한. 입력·노이즈 공통.")]
+        [SerializeField] float maxNoiseSpeed = DefaultMaxNoiseSpeed;
 
         [Header("점프 (자유 · A/button2)")]
         [Tooltip("점프~착지 총 시간(초). 이 동안 ←/→ 불가.")]
         [SerializeField] float jumpLockoutSeconds = 0.35f;
-
-        [Header("Phase 민감도 가중")]
-        [SerializeField] float phase2ShoulderMul = 1.25f;
-        [SerializeField] float phase3ShoulderMul = 1.55f;
-        [SerializeField] float phase4ShoulderMul = 2f;
 
         [Header("HP")]
         [SerializeField] int hpLowScoreThreshold = DefaultLowScoreThreshold;

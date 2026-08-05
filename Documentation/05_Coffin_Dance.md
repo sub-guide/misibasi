@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-07-31 — 실모델 Animator Idle↔Crouch · FailFloor · **Play 검증 완료**.  
+> **문서 기준일**: 2026-08-05 — 시소(단일 x) · 고정 자율 노이즈 · **중립 복귀 제거** · Phase 조작 난이도 **없음**(후속).  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType** 은 폐기. 최신 진실은 아래 §0·§3.
 
@@ -10,31 +10,35 @@
 
 | 영역 | 상태 | 비고 |
 |------|------|------|
-| C# 게임 로직 | **완료·검증** | Animator Extension · FailFloor · 자유 점프 |
+| C# 게임 로직 | **완료** | 시소 x · 고정 NoiseAmp/MaxSpeed · FailFloor · 자유 점프 |
 | Flow·Result 연동 | **유지** | `GameFlowDirector` · `PartySession` · Result flavor |
 | 운구인 에셋 | **완료·검증** | `Pallbearer.fbx` + UAL1 · **우어깨만** SphereCollider · 반대편 **Scale X=-1** |
 | 씬·슬롯 프리팹 | **완료·검증** | `Pallbearers[6]`만 (`Left/Right Pose` 배열 **없음**) |
 | Build Settings | **등록·검증** | 사용자 확인 |
 | 메뉴 진입 테스트 | **검증** | MainMenu→관짝춤 |
+| 시소·노이즈 개편 | **코드 반영** | Play 체감 검증은 후속 |
 
 ### 다음 세션이 헷갈리기 쉬운 점
 
 | 항목 | 현재 진실 |
 |------|-----------|
 | 자세 | Capture 없음 · `PallbearerPose.controller` 1D Blend (`Extension` 0=Crouch · 1=Idle) |
-| FBX 클립명 | Unity에선 `Armature\|Idle_Loop` / `Armature\|Crouch_Idle_Loop` (생성 메뉴가 `\|` 접미사 매칭) |
+| 어깨 높이 | **단일 시소** `x` · `Y_L=x` · `Y_R=1-x` (합=1, 순수 Z 기울기) |
+| 입력 Hold | 키를 떼도 `x_bias` **유지** · `shoulderReturnSpeed` **없음** |
+| 자율 흔들림 | **Sine만** → Rate Limiter · 고정 Amp/Speed (Phase별 난이도 후속) |
+| FBX 클립명 | Unity에선 `Armature\|Idle_Loop` / `Armature\|Crouch_Idle_Loop` |
 | 애니 소스 | `UAL1_Standard.fbx` (**RM 파일 쓰지 않음**) |
-| Edit Mode 미리보기 | **의도적 비활성** (AnimationMode가 Prefab Transform 오염) · Play에서만 블렌드 |
-| 어깨 Collider | 검증 기준 **RightArm만** · 관 반대편 운구인은 Scale 반전으로 맞춤 |
+| Edit Mode 미리보기 | **의도적 비활성** · Play에서만 블렌드 |
+| 어깨 Collider | 검증 기준 **RightArm만** · 관 반대편은 Scale 반전 |
 | Slot 연결 | `Pallbearers[0..2]`=←쪽 · `[3..5]`=→쪽 |
 | 실패 | 각도 Stumble 아님 · `CoffinDanceFailFloor` 접촉 |
-| 레거시 | `PallbearerProtoType`(HumanDummy) · Capture Rest/Crouch — **참고만, 실사용 아님** |
+| 레거시 | `PallbearerProtoType`(HumanDummy) · Capture Rest/Crouch — **참고만** |
 
 ---
 
 ## 1. 한 줄 요약
 
-4인 세로 분할 슬롯에서 **6명 운구인 어깨 Collider 위 관(Rigidbody)** 균형을 ←/→ 무릎 자세로 유지하고, **A로 자유 점프**하는 60초 타임어택.
+4인 세로 분할 슬롯에서 **6명 운구인 어깨 Collider 위 관(Rigidbody)** 균형을 ←/→ 시소로 유지하고, **A로 자유 점프**하는 60초 타임어택.
 
 ---
 
@@ -42,17 +46,18 @@
 
 | 조작 | `BoothUsbGamepadLayout` | 개발 키보드(`1` 토글 1P) | 효과 |
 |------|-------------------------|---------------------------|------|
-| 좌 | `stick/left` | `A` | 좌측 운구인 무릎 펴기($Y_L$↑) · 우측 낮춤 |
-| 우 | `stick/right` | `D` | 우측 운구인 무릎 펴기($Y_R$↑) · 좌측 낮춤 |
+| 좌 | `stick/left` | `A` | `x_bias`↑ → `Y_L`↑ · `Y_R`↓ |
+| 우 | `stick/right` | `D` | `x_bias`↓ → `Y_R`↑ · `Y_L`↓ |
 | 점프 | `button2` (Face A) | `H` | **자유 점프** (프롬프트 없음) |
 | 연습 READY | Start | `B` | — |
 | 본게임 전환 | 운영자 Enter | — | — |
 
-extension 범위는 **0(앉음) ~ 1(기립)** 만. 반대쪽을 낮추며 관을 기울인다.
+키를 떼면 `x_bias`는 **마지막 값 Hold**. 수평(≈0.5)으로 자동 복귀하지 않는다.  
+extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 ---
 
-## 3. 물리 (순수 충돌)
+## 3. 물리 (순수 충돌 + 시소 제어)
 
 ### 관 (`CoffinDanceCoffinBody`)
 
@@ -68,17 +73,26 @@ extension 범위는 **0(앉음) ~ 1(기립)** 만. 반대쪽을 낮추며 관을
 - **슬롯 프리팹 자식**으로 둔다 (씬 공용 Floor 금지 — 슬롯 X 분리)
 - BoxCollider + 마커 컴포넌트 · 관이 넘어지면 닿는 높이
 
+### 시소 제어 (Module · A안)
+
+| 변수 | 역할 |
+|------|------|
+| `x_bias` (`SeesawBias`) | ←/→로만 변경 · 키 떼면 Hold |
+| `DanceWave` | `Sin(2π · danceSineHz · Time.time)` · [-1, 1] |
+| `x_target` | `Clamp01(x_bias + DanceWave × noiseAmp)` |
+| `x_current` (`SeesawXCurrent`) | `MoveTowards(x_target, maxNoiseSpeed×dt)` |
+| `Y_L` / `Y_R` | `x_current` / `1 - x_current` |
+
+시작·SoftReset: `x_bias = x_current = xSeesawNeutral`(기본 0.5).
+
 ### 운구인 (`CoffinDancePallbearerPose`)
 
-- Animator **1D Blend**: `Extension` 0=`Crouch_Idle_Loop` · 1=`Idle_Loop` (`Assets/CoffinDance/Animations/UAL1_Standard.fbx`, **RM 아님**)
-- 클립 에셋명: `Armature|Idle_Loop` / `Armature|Crouch_Idle_Loop`
-- Controller: `Assets/CoffinDance/Animations/PallbearerPose.controller`  
-  (재생성: 메뉴 `Mini Party/Coffin Dance/Create Pallbearer Animator`)
-- `applyRootMotion = false` · Module `SetExtension` → `Animator.SetFloat("Extension")`
-- Capture / 본 Slerp / 발 플랜트 / Edit Mode 애니 미리보기 **없음** (Play에서만 구동)
-- 어깨 지지: **`mixamorig:RightArm` SphereCollider** (검증 배치). 관 반대편 운구인은 **Scale X=-1** 반전
+- Animator **1D Blend**: `Extension` 0=`Crouch_Idle_Loop` · 1=`Idle_Loop`
+- Module `SetExtension` → `Animator.SetFloat("Extension")`
+- 어깨 지지: **`mixamorig:RightArm` SphereCollider** · 반대편 **Scale X=-1**
 - 점프: Extension dip + 루트 Y 홉 · 착지 Impulse
 - 모델: `Assets/CoffinDance/Pallbearer.fbx` → `Prefabs/Pallbearer.prefab`
+
 ---
 
 ## 4. 점수
@@ -104,15 +118,15 @@ extension 범위는 **0(앉음) ~ 1(기립)** 만. 반대쪽을 낮추며 관을
 
 ## 6. Phase (본게임 60초)
 
-| 구간 | Phase | 어깨 승강 | 점수 |
-|------|-------|-----------|------|
-| 0~20초 | 1 | ×1 | ×1 |
-| 20~40초 | 2 | `phase2ShoulderMul` | ×1 |
-| 40~50초 | 3 | `phase3ShoulderMul` | ×1 |
-| 50~60초 | 4 | `phase4ShoulderMul` | ×2 |
+| 구간 | Phase | 조작·노이즈 | 점수 |
+|------|-------|-------------|------|
+| 0~20초 | 1 | **고정** (`noiseAmp` / `maxNoiseSpeed`) | ×1 |
+| 20~40초 | 2 | 동일 | ×1 |
+| 40~50초 | 3 | 동일 | ×1 |
+| 50~60초 | 4 | 동일 | ×2 |
 
-Stumble(각도 한도) **제거**.  
-실패: 관이 슬롯 `CoffinDanceFailFloor`에 접촉 → 본게임 ELIMINATED / 연습 SoftReset.
+Phase는 **HUD 라벨 + Phase4 점수×2** 만. 단계별 Amp/Speed 난이도는 **제거**(후속 재도입 가능).  
+Stumble(각도 한도) **제거**. 실패: FailFloor 접촉.
 
 전원 탈락 또는 60초 → **1초**(`SessionEndDelaySeconds`) 후 Results.
 
@@ -137,9 +151,9 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 
 | 파일 | 역할 |
 |------|------|
-| `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` |
+| `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 |
 | `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·착지 Impulse |
-| `CoffinDancePallbearerPose` | Animator Extension 블렌드 · 점프 홉 (Edit Mode 미구동) |
+| `CoffinDancePallbearerPose` | Animator Extension 블렌드 · 점프 홉 |
 | `CoffinDanceFailFloor` | 실패 바닥 마커 |
 | `CoffinDanceSceneBootstrap` | Begin/Tick |
 | `CoffinDanceSlotBindings` | `Pallbearers[6]` · PrepareAllPoses / ApplySideExtension |
@@ -147,9 +161,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `CoffinDanceResultMinigameFlavor` | Result ID 매칭 |
 | Editor `CoffinDancePallbearerAnimatorSetup` | Controller 생성 메뉴 |
 
-`BuiltInId` = `"coffin_dance"` · DisplayName 기본 `"관짝춤"`.  
-실사용 에셋: `Assets/CoffinDance/` (`Pallbearer.fbx`, `Animations/UAL1_Standard.fbx`, `PallbearerPose.controller`).  
-레거시: `PallbearerProtoType` / Kevin Iglesias HumanDummy — **미사용**.
+`BuiltInId` = `"coffin_dance"` · DisplayName 기본 `"관짝춤"`.
 
 ---
 
@@ -162,11 +174,11 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `phaseLabelText` | — | Phase TMP |
 | `initialTiltDegrees` | 6 | SoftReset 초기 기울기 |
 | `initialAngularSpeed` | 25 | SoftReset 초기 각속도 |
-| `shoulderRaiseSpeed` | 1.4 | ←/→ extension 속도 |
-| `neutralExtension` | 0.5 | 시작·중립 무릎 (0=앉음 · 1=기립) |
-| `shoulderReturnSpeed` | 1.1 | 중립 복귀 |
+| `xSeesawNeutral` | 0.5 | 시작·SoftReset 시소 x |
+| `danceSineHz` | 1.2 | DanceWave Sine 주파수 |
+| `noiseAmp` | 0.12 | 고정 노이즈 진폭 |
+| `maxNoiseSpeed` | 0.8 | 고정 초당 x 변화 상한 |
 | `jumpLockoutSeconds` | 0.35 | 점프 중 조작 불능 |
-| `phase2/3/4ShoulderMul` | 1.25/1.55/2 | Phase 민감도 |
 | `hpLowScoreThreshold` | 3000 | 1P 저점수 컷 |
 | `presentationYawDegrees` | 22 | TiltRoot Y 회전 |
 | `slotWorldSpacing` | 40 | 슬롯 X 분리 |
@@ -175,15 +187,17 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `exitScreenFader` | — | FadeOverlay |
 | `coffinDanceSceneName` (GameFlow) | `Minigame_CoffinDance` | 로드 씬명 |
 
+**제거됨**: `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `dancePerlinHz`.
+
 ### SlotBindings
 
 | 필드 | 용도 |
 |------|------|
 | `TiltRoot` | yaw(Y)만 |
 | `Coffin` / `CoffinBody` | 관 Transform · `CoffinDanceCoffinBody` |
-| `Pallbearers[6]` | [0..2]=좌 · [3..5]=우 · Pose는 각 루트에서 자동 |
-| `SlotCamera` | 세로 1/4 · 로우앵글은 에디터 |
-| HUD | Score · PracticeReady · Eliminated (`JumpPromptText`·게이지는 비활성) |
+| `Pallbearers[6]` | [0..2]=좌 · [3..5]=우 |
+| `SlotCamera` | 세로 1/4 |
+| HUD | Score · PracticeReady · Eliminated |
 
 ### CoffinBody
 
@@ -214,4 +228,4 @@ Minigame_CoffinDance
 
 ---
 
-문서 갱신: **2026-07-31** (다음 세션 인수인계용 문서 정합 · 우어깨·Edit미리보기·에셋 경로)
+문서 갱신: **2026-08-05** (시소 단일 x · Sine 고정 씰룩임 · Phase 조작 난이도 제거 · 중립 복귀 제거)

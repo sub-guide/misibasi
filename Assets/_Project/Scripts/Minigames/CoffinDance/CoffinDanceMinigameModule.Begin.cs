@@ -35,8 +35,7 @@ namespace MiniParty.Minigames.CoffinDance
 
                 ref SlotRuntime sr = ref _slots[i];
                 sr = default;
-                sr.LeftExtension = neutralExtension;
-                sr.RightExtension = neutralExtension;
+                ResetSeesawToNeutral(ref sr);
 
                 CoffinDanceSlotBindings bind = GetBindings(i);
                 Camera slotCam = ResolveSlotCamera(bind);

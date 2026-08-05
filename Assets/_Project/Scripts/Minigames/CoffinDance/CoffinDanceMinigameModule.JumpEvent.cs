@@ -4,6 +4,9 @@ namespace MiniParty.Minigames.CoffinDance
 {
     public sealed partial class CoffinDanceMinigameModule
     {
+        /// <summary>
+        /// Phase는 HUD 라벨·Phase4 점수×2 만. 조작/노이즈 난이도는 고정(후속 재도입 가능).
+        /// </summary>
         void RefreshPhaseParameters()
         {
             float t = _ctx.IsPractice ? 0f : _elapsedMainTime;
@@ -19,26 +22,7 @@ namespace MiniParty.Minigames.CoffinDance
                 phase = CdPhase.Phase4;
 
             _phase = phase;
-
-            switch (phase)
-            {
-                case CdPhase.Phase1:
-                    _shoulderSpeedMul = 1f;
-                    _scoreMultiplier = 1f;
-                    break;
-                case CdPhase.Phase2:
-                    _shoulderSpeedMul = phase2ShoulderMul;
-                    _scoreMultiplier = 1f;
-                    break;
-                case CdPhase.Phase3:
-                    _shoulderSpeedMul = phase3ShoulderMul;
-                    _scoreMultiplier = 1f;
-                    break;
-                default:
-                    _shoulderSpeedMul = phase4ShoulderMul;
-                    _scoreMultiplier = 2f;
-                    break;
-            }
+            _scoreMultiplier = phase == CdPhase.Phase4 ? 2f : 1f;
         }
     }
 }

@@ -175,13 +175,11 @@ MonoBehaviour:
   phaseLabelText: {fileID: 718075610}
   initialTiltDegrees: 6
   initialAngularSpeed: 25
-  neutralExtension: 0.5
-  shoulderRaiseSpeed: 1.4
-  shoulderReturnSpeed: 1.1
+  xSeesawNeutral: 0.5
+  danceSineHz: 1.2
+  noiseAmp: 0.05
+  maxNoiseSpeed: 0.8
   jumpLockoutSeconds: 0.35
-  phase2ShoulderMul: 1.25
-  phase3ShoulderMul: 1.55
-  phase4ShoulderMul: 2
   hpLowScoreThreshold: 3000
   presentationYawDegrees: 22
   slotWorldSpacing: 40
