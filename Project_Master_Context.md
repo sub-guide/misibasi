@@ -213,7 +213,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 - **스크립트 루트**: `Assets/_Project/Scripts/` — 새 미니게임은 `IMinigameModule` + `partial` (OIIA·RBC·Coffin Dance 참고).
 - **플레이어 데이터**는 **플레이어 번호(0~3 = 1P~4P)** 에 귀속. 슬롯 UI는 게임마다 다름(OIIA만 세로 4분할).
-- **입력**: 운영자 `OperatorInputService`(키보드 ↑↓·Enter) · 플레이어 `SlotGamepad` → `Joystick.all[i]` · 개발 `DeveloperKeyboardGamepadDebug`(`1` 토글 1P).
+- **입력**: 운영자 `OperatorInputService`(키보드 ↑↓·Enter) · 플레이어 `SlotGamepad` → `Joystick.all[i]` · 개발 `DeveloperKeyboardGamepadDebug`(`Ctrl` 토글 1P).
 - **부스 USB 버튼**은 반드시 `BoothUsbGamepadLayout` 상수·`03_Booth_USB_Controller_매핑.md` 를 거침.  
   OIIA: **O=Trigger(X), I=Button2(A), A=Button4(Y), B=Button3** — 루프 완주 시 3버튼 셔플 매핑.
 - **연습 → 본게임**은 모든 미니게임 필수(스킵 없음). HP는 **Result 씬에서만** −1.

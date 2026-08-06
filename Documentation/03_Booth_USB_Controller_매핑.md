@@ -29,13 +29,13 @@
 
 ## 개발자 키보드 디버그 (1P)
 
-`1`(키패드 `1` 포함)로 **토글**. 활성 시 **슬롯 0(1P)** 에만 아래 키가 패드 입력과 **OR** 합성된다. 실제 패드가 없어도 `SlotGamepad.HasInput(0)` 이 true.
+`Ctrl`(좌·우)로 **토글**. 활성 시 **슬롯 0(1P)** 에만 아래 키가 패드 입력과 **OR** 합성된다. 실제 패드가 없어도 `SlotGamepad.HasInput(0)` 이 true.
 
 | 키 | 부스 패드 (기획명) |
 |----|-------------------|
 | W / A / S / D | up / left / down / right |
 | Q / E | L / R |
-| T / Y / G / H | Y / X(Trigger) / B / A |
+| 키패드 7 / 8 / 4 / 5 | Y / X(Trigger) / B / A |
 | V / B | Select / Start |
 
 ## 변경 시
