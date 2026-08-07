@@ -174,7 +174,11 @@ MonoBehaviour:
   mainRoundTimerCentralTop: {fileID: 302712886}
   phaseLabelText: {fileID: 718075610}
   xSeesawNeutral: 0.5
-  seesawMoveSpeed: 1.4
+  seesawBaseSpeed: 1.2
+  holdMaxMultiplier: 3
+  holdAccelTime: 0.2
+  microDriftSpeed: 0.5
+  pullCoefficient: 2
   danceSineHz: 2
   noiseAmp: 0.03
   jumpLockoutSeconds: 0.35

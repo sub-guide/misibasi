@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-08-05 — 시소(단일 x) · 고정 자율 노이즈 · **중립 복귀 제거** · Phase 조작 난이도 **없음**(후속).  
+> **문서 기준일**: 2026-08-07 — 시소(단일 x) · 고정 자율 노이즈 · **좌우 조작 개편 Play 검증·수치 확정** · 어깨 SphereCollider Radius **27** · Phase 조작 난이도 **없음**(후속).  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType** 은 폐기. 최신 진실은 아래 §0·§3.
 
@@ -10,13 +10,14 @@
 
 | 영역 | 상태 | 비고 |
 |------|------|------|
-| C# 게임 로직 | **완료** | 시소 x · 고정 NoiseAmp/MaxSpeed · FailFloor · 자유 점프 |
+| C# 게임 로직 | **완료·검증** | 시소 x · 홀드 가속·중력형 도치·비선형 풀 · FailFloor · 자유 점프 |
 | Flow·Result 연동 | **유지** | `GameFlowDirector` · `PartySession` · Result flavor |
-| 운구인 에셋 | **완료·검증** | `Pallbearer.fbx` + UAL1 · **우어깨만** SphereCollider · 반대편 **Scale X=-1** |
+| 운구인 에셋 | **완료·검증** | `Pallbearer.fbx` + UAL1 · **우어깨만** SphereCollider(**Radius 27**) · 반대편 **Scale X=-1** |
 | 씬·슬롯 프리팹 | **완료·검증** | `Pallbearers[6]`만 (`Left/Right Pose` 배열 **없음**) |
 | Build Settings | **등록·검증** | 사용자 확인 |
 | 메뉴 진입 테스트 | **검증** | MainMenu→관짝춤 |
 | 시소·노이즈 개편 | **완료·검증** | 시소 Hold · Sine 씰룩임 · 걷기 클립 · Loop Time (사용자, 2026-08-05) |
+| 좌우 조작 개편 | **완료·검증** | 수치 확정 · 중력형 도치 · 어깨 Radius 27 (2026-08-07) |
 
 ### 다음 세션이 헷갈리기 쉬운 점
 
@@ -24,16 +25,16 @@
 |------|-----------|
 | 자세 | Capture 없음 · `PallbearerPose.controller` 1D Blend (`Extension` 0=`Crouch_Fwd_Loop` · 1=`Walk_Formal_Loop`) |
 | 어깨 높이 | **단일 시소** `x` · `Y_L=x` · `Y_R=1-x` (합=1, 순수 Z 기울기) |
-| 입력 Hold | 키를 떼도 `x_bias` **유지** · `shoulderReturnSpeed` **없음** |
+| 입력 Hold | 키를 떼도 `x_bias` **즉시 중립 복귀하지 않음** · **기운 쪽으로 중력형 미세 도치** + 비선형 풀 |
 | 자율 흔들림 | **Sine만** 즉시 반영 · 고정 `noiseAmp` (Phase별 난이도 후속) · Rate Limiter **없음** |
 | FBX 클립명 | Unity에선 `Armature\|Walk_Formal_Loop` / `Armature\|Crouch_Fwd_Loop` (생성 메뉴가 `\|` 접미사도 매칭) |
 | Controller 재생성 | 메뉴가 **기존 에셋 재사용**(GUID 유지) · 프리팹 Animator 재연결 불필요 |
 | 클립 Loop | `Crouch_Fwd_Loop` · `Walk_Formal_Loop` **Loop Time ON** (사용자 수동, 2026-08-05 검증) |
 | 애니 소스 | `UAL1_Standard.fbx` (**RM 파일 쓰지 않음**) |
 | Edit Mode 미리보기 | **의도적 비활성** · Play에서만 블렌드 |
-| 어깨 Collider | 검증 기준 **RightArm만** · 관 반대편은 Scale 반전 |
+| 어깨 Collider | **RightArm만** · `Pallbearer.prefab` SphereCollider **Radius 27** (25→27, 2026-08-07) · 반대편 Scale 반전 |
 | Slot 연결 | `Pallbearers[0..2]`=←쪽 · `[3..5]`=→쪽 |
-| 실패 | 각도 Stumble 아님 · `CoffinDanceFailFloor` 접촉 |
+| 실패 | 각도 Stumble 아님 · `CoffinDanceFailFloor` 접촉 (`x_bias` 0/1 한계 → 어깨 기울기로 탈락) |
 | 레거시 | `PallbearerProtoType`(HumanDummy) · Capture Rest/Crouch — **참고만** |
 
 ---
@@ -48,13 +49,13 @@
 
 | 조작 | `BoothUsbGamepadLayout` | 개발 키보드(`Ctrl` 토글 1P) | 효과 |
 |------|-------------------------|---------------------------|------|
-| 좌 | `stick/left` | `A` | `x_bias`↑ → `Y_L`↑ · `Y_R`↓ |
-| 우 | `stick/right` | `D` | `x_bias`↓ → `Y_R`↑ · `Y_L`↓ |
+| 좌 | `stick/left` | `A` | `x_bias`↑ → `Y_L`↑ · `Y_R`↓ (홀드 시 가속) |
+| 우 | `stick/right` | `D` | `x_bias`↓ → `Y_R`↑ · `Y_L`↓ (홀드 시 가속) |
 | 점프 | `button2` (Face A) | `H` | **자유 점프** (프롬프트 없음) |
 | 연습 READY | Start | `B` | — |
 | 본게임 전환 | 운영자 Enter | — | — |
 
-키를 떼면 `x_bias`는 **마지막 값 Hold**. 수평(≈0.5)으로 자동 복귀하지 않는다.  
+키를 떼면 `x_bias`는 중립으로 스냅되지 않는다. 미입력(또는 좌·우 동시)이면 **현재 기울기 방향 중력형 미세 도치**가 들어가고, 중앙 이탈 시 **비선형 풀**이 더해진다.  
 extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 ---
@@ -79,12 +80,33 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 | 변수 | 역할 |
 |------|------|
-| `x_bias` (`SeesawBias`) | ←/→로만 변경(`seesawMoveSpeed`) · 키 떼면 Hold |
+| `x_bias` (`SeesawBias`) | 좌우·미세 도치·비선형 풀로 변경 · `Clamp01` |
+| `HoldTimer` | 슬롯별 단일 홀드 누적(초). 미입력·동시 입력 시 0 |
 | `DanceWave` | `Sin(2π · danceSineHz · Time.time)` · [-1, 1] |
 | `x` (`SeesawXCurrent`) | `Clamp01(x_bias + DanceWave × noiseAmp)` (즉시) |
 | `Y_L` / `Y_R` | `x` / `1 - x` |
 
-시작·SoftReset: `x_bias = x_current = xSeesawNeutral`(기본 0.5).
+#### 조작 파라미터 (Inspector · **Play 검증 확정 2026-08-07**)
+
+| 필드 | 기본(=씬) | 설명 |
+|------|-----------|------|
+| `seesawBaseSpeed` | 1.2 | 좌/우 단일 입력 기본 탭 이동 속도 |
+| `holdMaxMultiplier` | 3.0 | 홀드 시 최대 가속 배율 |
+| `holdAccelTime` | 0.2 | 최대 가속 도달 시간(초) |
+| `microDriftSpeed` | 0.5 | 미입력·동시 입력 시 현재 기울기 방향 중력형 도치 속도 |
+| `pullCoefficient` | 2.0 | 중앙(0.5) 이탈 비선형 가속 계수 |
+
+#### `x_bias` 프레임별 연산 (`StepShoulderControl`)
+
+1. **입력**
+   - **미입력 또는 좌·우 동시**: `HoldTimer = 0` · `driftDir = Sign(x_bias - 0.5)`(정중앙이면 0) · `x_bias += driftDir × microDriftSpeed × dt` (기운 쪽으로 계속 밀림 = 중력형)
+   - **좌 또는 우 단일**: `HoldTimer += dt` · `speedMul = Lerp(1, holdMaxMultiplier, HoldTimer / holdAccelTime)` · `x_bias += inputDir × seesawBaseSpeed × speedMul × dt` (`inputDir`: 좌=+1, 우=-1)
+2. **비선형 이탈 가속 (공통)**: `offset = x_bias - 0.5` · `pullForce = pullCoefficient × offset² × Sign(offset)` · `x_bias += pullForce × dt`
+3. **범위**: `x_bias = Clamp01(x_bias)` · 0.0/1.0 한계에 닿으면 어깨 기울기로 FailFloor 접촉 탈락 가능
+
+#### 리셋 (Edge Case)
+
+`Begin` · `SoftResetSlot` → `ResetSeesawToNeutral`: `HoldTimer = 0` · `x_bias = x_current = xSeesawNeutral`(기본 0.5).
 
 ### 운구인 (`CoffinDancePallbearerPose`)
 
@@ -92,7 +114,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - Controller: `Assets/CoffinDance/Animations/PallbearerPose.controller`  
   (생성·갱신: 메뉴 `Mini Party/Coffin Dance/Create Pallbearer Animator` — 기존 에셋 재사용)
 - Module `SetExtension` → `Animator.SetFloat("Extension")`
-- 어깨 지지: **`mixamorig:RightArm` SphereCollider** · 반대편 **Scale X=-1**
+- 어깨 지지: **`mixamorig:RightArm` SphereCollider Radius 27** · 반대편 **Scale X=-1**
 - 점프: Extension dip + 루트 Y 홉 · 착지 Impulse
 - 모델: `Assets/CoffinDance/Pallbearer.fbx` → `Prefabs/Pallbearer.prefab`
 
@@ -123,7 +145,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 | 구간 | Phase | 조작·노이즈 | 점수 |
 |------|-------|-------------|------|
-| 0~20초 | 1 | **고정** (`noiseAmp` · `seesawMoveSpeed`) | ×1 |
+| 0~20초 | 1 | **고정** (`noiseAmp` · 시소 조작 파라미터) | ×1 |
 | 20~40초 | 2 | 동일 | ×1 |
 | 40~50초 | 3 | 동일 | ×1 |
 | 50~60초 | 4 | 동일 | ×2 |
@@ -176,9 +198,13 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `mainRoundTimerCentralTop` | — | 중앙 타이머 TMP |
 | `phaseLabelText` | — | Phase TMP |
 | `xSeesawNeutral` | 0.5 | 시작·SoftReset 시소 x |
-| `seesawMoveSpeed` | 1.4 | ←/→ x_bias 초당 속도 |
-| `danceSineHz` | 1.2 | DanceWave Sine 주파수 |
-| `noiseAmp` | 0.12 | 고정 노이즈 진폭 (씬에 0.1 저장 가능) |
+| `seesawBaseSpeed` | 1.2 | ←/→ 기본 탭 이동 속도 |
+| `holdMaxMultiplier` | 3.0 | 홀드 최대 가속 배율 |
+| `holdAccelTime` | 0.2 | 최대 가속 도달 시간(초) |
+| `microDriftSpeed` | 0.5 | 미입력·동시 입력 · 기울기 방향 중력형 도치 |
+| `pullCoefficient` | 2.0 | 중앙 이탈 비선형 가속 계수 |
+| `danceSineHz` | 1.2 | DanceWave Sine 주파수 (씬 **2**) |
+| `noiseAmp` | 0.12 | 고정 노이즈 진폭 (씬 **0.03**) |
 | `jumpLockoutSeconds` | 0.35 | 점프 중 조작 불능 |
 | `hpLowScoreThreshold` | 3000 | 1P 저점수 컷 |
 | ~~`presentationYawDegrees`~~ | — | **제거** · TiltRoot 회전은 프리팹 값 사용 |
@@ -188,9 +214,9 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `exitScreenFader` | — | FadeOverlay |
 | `coffinDanceSceneName` (GameFlow) | `Minigame_CoffinDance` | 로드 씬명 |
 
-**제거됨**: `presentationYawDegrees` · `initialTiltDegrees` · `initialAngularSpeed` · `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `maxNoiseSpeed` · `dancePerlinHz`.
+**제거됨**: `seesawMoveSpeed` · `presentationYawDegrees` · `initialTiltDegrees` · `initialAngularSpeed` · `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `maxNoiseSpeed` · `dancePerlinHz`.
 
-SoftReset: rest 위치·회전 · 속도 0만 복구 (초기 기울기/각속도 **없음**).
+SoftReset: rest 위치·회전 · 속도 0 · `HoldTimer=0` · `x_bias=xSeesawNeutral` (초기 기울기/각속도 **없음**).
 
 ### SlotBindings
 
@@ -221,7 +247,7 @@ Minigame_CoffinDance
 ├── Slot_1P ~ Slot_4P  (CoffinDanceSlotBindings)
 │   ├── TiltRoot (회전은 프리팹 값)
 │   │   ├── Pallbearer ×6 (실모델 + Animator + CoffinDancePallbearerPose)
-│   │   │     └── mixamorig:RightArm + SphereCollider (반대편은 Scale X=-1)
+│   │   │     └── mixamorig:RightArm + SphereCollider Radius 27 (반대편은 Scale X=-1)
 │   │   └── Coffin (Cube + Rigidbody + CoffinDanceCoffinBody)
 │   ├── FailFloor (BoxCollider + CoffinDanceFailFloor)
 │   └── SlotCamera (로우앵글)
@@ -231,4 +257,4 @@ Minigame_CoffinDance
 
 ---
 
-문서 갱신: **2026-08-05** (시소 단일 x · Sine 고정 씰룩임 · Phase 조작 난이도 제거 · 중립 복귀 제거)
+문서 갱신: **2026-08-07** (좌우 조작 Play 검증·수치 확정 · 어깨 SphereCollider Radius 25→27)

@@ -5,20 +5,39 @@ namespace MiniParty.Minigames.CoffinDance
     public sealed partial class CoffinDanceMinigameModule
     {
         /// <summary>
-        /// A안: x_bias(입력 Hold) + DanceWave×noiseAmp → x 즉시 반영.
+        /// A안: x_bias(홀드 가속·미세 도치·비선형 풀) + DanceWave×noiseAmp → x 즉시 반영.
         /// Y_L=x · Y_R=1-x. Rate Limiter 없음(Sine이 이미 부드러움).
         /// </summary>
         void StepShoulderControl(ref SlotRuntime sr, float dt, float leftHeld, float rightHeld)
         {
-            float moveSpeed = Mathf.Max(0f, seesawMoveSpeed);
-
-            // ← = Y_L↑ (x→1) · → = Y_R↑ (x→0). 키를 떼면 bias Hold (중립 복귀 없음).
-            if (leftHeld > 0.5f)
-                sr.SeesawBias = Mathf.MoveTowards(sr.SeesawBias, MaxExtension, moveSpeed * dt);
-            else if (rightHeld > 0.5f)
-                sr.SeesawBias = Mathf.MoveTowards(sr.SeesawBias, MinExtension, moveSpeed * dt);
-
+            bool left = leftHeld > 0.5f;
+            bool right = rightHeld > 0.5f;
             float danceWave = ComputeDanceWave();
+
+            // 미입력 또는 좌/우 동시 입력 → 홀드 리셋 + 현재 기울기 방향 중력형 미세 도치
+            if ((!left && !right) || (left && right))
+            {
+                sr.HoldTimer = 0f;
+                // 중앙(0.5)보다 오른쪽(+)/왼쪽(-)으로 기운 쪽을 계속 밀어 불안정 평형
+                float driftDir = Mathf.Sign(sr.SeesawBias - 0.5f);
+                sr.SeesawBias += driftDir * Mathf.Max(0f, microDriftSpeed) * dt;
+            }
+            else
+            {
+                // ← = Y_L↑ (x→1, +1) · → = Y_R↑ (x→0, -1). 홀드 누적 가속.
+                sr.HoldTimer += dt;
+                float accelT = Mathf.Max(0.0001f, holdAccelTime);
+                float speedMul = Mathf.Lerp(1f, holdMaxMultiplier, Mathf.Clamp01(sr.HoldTimer / accelT));
+                float inputDir = left ? 1f : -1f;
+                sr.SeesawBias += inputDir * Mathf.Max(0f, seesawBaseSpeed) * speedMul * dt;
+            }
+
+            // 중앙(0.5) 이탈 비선형 가속 (공통)
+            float offset = sr.SeesawBias - 0.5f;
+            float pullForce = pullCoefficient * (offset * offset) * Mathf.Sign(offset);
+            sr.SeesawBias += pullForce * dt;
+
+            sr.SeesawBias = Mathf.Clamp01(sr.SeesawBias);
             sr.SeesawXCurrent = Mathf.Clamp01(sr.SeesawBias + danceWave * noiseAmp);
         }
 
@@ -99,6 +118,7 @@ namespace MiniParty.Minigames.CoffinDance
             float n = Mathf.Clamp01(xSeesawNeutral);
             sr.SeesawBias = n;
             sr.SeesawXCurrent = n;
+            sr.HoldTimer = 0f;
         }
 
         void ApplyLandingImpulse(int i)
