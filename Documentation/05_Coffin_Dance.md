@@ -46,7 +46,7 @@
 
 ## 2. 입력
 
-| 조작 | `BoothUsbGamepadLayout` | 개발 키보드(`1` 토글 1P) | 효과 |
+| 조작 | `BoothUsbGamepadLayout` | 개발 키보드(`Ctrl` 토글 1P) | 효과 |
 |------|-------------------------|---------------------------|------|
 | 좌 | `stick/left` | `A` | `x_bias`↑ → `Y_L`↑ · `Y_R`↓ |
 | 우 | `stick/right` | `D` | `x_bias`↓ → `Y_R`↑ · `Y_L`↓ |

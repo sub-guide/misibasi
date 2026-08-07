@@ -4,8 +4,8 @@ using UnityEngine.InputSystem;
 namespace MiniParty.Input
 {
     /// <summary>
-    /// 개발자용 키보드 디버그: <c>1</c> 토글 시 1P 부스 패드 입력을 키보드로 에뮬레이션.
-    /// W/A/S/D=방향, Q=L, E=R, T=Y, Y=X(Trigger), G=B, H=A, V=Select, B=Start.
+    /// 개발자용 키보드 디버그: <c>Ctrl</c> 토글 시 1P 부스 패드 입력을 키보드로 에뮬레이션.
+    /// W/A/S/D=방향, Q=L, E=R, Numpad7=Y, Numpad8=X(Trigger), Numpad4=B, Numpad5=A, V=Select, B=Start.
     /// </summary>
     public static class DeveloperKeyboardGamepadDebug
     {
@@ -19,7 +19,7 @@ namespace MiniParty.Input
         public static bool AppliesToSlot(int slotIndex) =>
             slotIndex == PlayerSlotIndex && _active;
 
-        /// <summary>슬롯 입력 읽기 전에 한 프레임에 한 번 호출 — <c>1</c> 토글 감지.</summary>
+        /// <summary>슬롯 입력 읽기 전에 한 프레임에 한 번 호출 — <c>Ctrl</c> 토글 감지.</summary>
         public static void EnsureToggleChecked()
         {
             if (_lastToggleCheckFrame == Time.frameCount)
@@ -50,9 +50,9 @@ namespace MiniParty.Input
                 BoothUsbGamepadLayout.StickRight => KeyWasPressed(Key.D),
                 BoothUsbGamepadLayout.ShoulderL => KeyWasPressed(Key.Q),
                 BoothUsbGamepadLayout.ShoulderR => KeyWasPressed(Key.E),
-                BoothUsbGamepadLayout.FaceY => KeyWasPressed(Key.T),
-                BoothUsbGamepadLayout.FaceB => KeyWasPressed(Key.G),
-                BoothUsbGamepadLayout.FaceA => KeyWasPressed(Key.H),
+                BoothUsbGamepadLayout.FaceY => KeyWasPressed(Key.Numpad7),
+                BoothUsbGamepadLayout.FaceB => KeyWasPressed(Key.Numpad4),
+                BoothUsbGamepadLayout.FaceA => KeyWasPressed(Key.Numpad5),
                 BoothUsbGamepadLayout.Select => KeyWasPressed(Key.V),
                 BoothUsbGamepadLayout.Start => KeyWasPressed(Key.B),
                 _ => false
@@ -75,18 +75,18 @@ namespace MiniParty.Input
                 BoothUsbGamepadLayout.StickRight => KeyIsHeld(Key.D),
                 BoothUsbGamepadLayout.ShoulderL => KeyIsHeld(Key.Q),
                 BoothUsbGamepadLayout.ShoulderR => KeyIsHeld(Key.E),
-                BoothUsbGamepadLayout.FaceY => KeyIsHeld(Key.T),
-                BoothUsbGamepadLayout.FaceB => KeyIsHeld(Key.G),
-                BoothUsbGamepadLayout.FaceA => KeyIsHeld(Key.H),
+                BoothUsbGamepadLayout.FaceY => KeyIsHeld(Key.Numpad7),
+                BoothUsbGamepadLayout.FaceB => KeyIsHeld(Key.Numpad4),
+                BoothUsbGamepadLayout.FaceA => KeyIsHeld(Key.Numpad5),
                 BoothUsbGamepadLayout.Select => KeyIsHeld(Key.V),
                 BoothUsbGamepadLayout.Start => KeyIsHeld(Key.B),
                 _ => false
             };
         }
 
-        public static bool WasPrimaryTriggerPressed() => KeyWasPressed(Key.Y);
+        public static bool WasPrimaryTriggerPressed() => KeyWasPressed(Key.Numpad8);
 
-        public static bool IsPrimaryTriggerHeld() => KeyIsHeld(Key.Y);
+        public static bool IsPrimaryTriggerHeld() => KeyIsHeld(Key.Numpad8);
 
         static bool ToggleKeyPressedThisFrame()
         {
@@ -94,11 +94,11 @@ namespace MiniParty.Input
 
             bool fromSystem =
                 kb != null &&
-                (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame);
+                (kb.leftCtrlKey.wasPressedThisFrame || kb.rightCtrlKey.wasPressedThisFrame);
 
             bool fromLegacy =
-                UnityEngine.Input.GetKeyDown(KeyCode.Alpha1) ||
-                UnityEngine.Input.GetKeyDown(KeyCode.Keypad1);
+                UnityEngine.Input.GetKeyDown(KeyCode.LeftControl) ||
+                UnityEngine.Input.GetKeyDown(KeyCode.RightControl);
 
             return fromSystem || fromLegacy;
         }
@@ -150,10 +150,10 @@ namespace MiniParty.Input
                 Key.D => KeyCode.D,
                 Key.Q => KeyCode.Q,
                 Key.E => KeyCode.E,
-                Key.T => KeyCode.T,
-                Key.Y => KeyCode.Y,
-                Key.G => KeyCode.G,
-                Key.H => KeyCode.H,
+                Key.Numpad7 => KeyCode.Keypad7,
+                Key.Numpad8 => KeyCode.Keypad8,
+                Key.Numpad4 => KeyCode.Keypad4,
+                Key.Numpad5 => KeyCode.Keypad5,
                 Key.V => KeyCode.V,
                 Key.B => KeyCode.B,
                 _ => KeyCode.None
