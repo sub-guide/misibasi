@@ -3,7 +3,8 @@ using UnityEngine;
 namespace MiniParty.Minigames.CoffinDance
 {
     /// <summary>
-    /// 관 Rigidbody 설정(제약·무게중심)과 착지 Impulse.
+    /// 관 Rigidbody 설정(제약·무게중심). 플레이 중 관 운동은 운구인 어깨 SphereCollider 충돌만 받는다
+    /// (코드에서 Force/Torque를 가하지 않음).
     /// 관 위치는 에디터에서 배치하고, Play 시 중력으로 어깨 Collider 위에 얹힌다.
     /// </summary>
     [DisallowMultipleComponent]
@@ -13,9 +14,6 @@ namespace MiniParty.Minigames.CoffinDance
         [Header("무게중심")]
         [Tooltip("로컬 공간 CoM. 지지점보다 살짝 높게 두면 기울 때 넘어지기 쉬움.")]
         [SerializeField] Vector3 centerOfMassLocal = new Vector3(0f, 0.15f, 0f);
-
-        [Header("착지 충격")]
-        [SerializeField] float landingTorqueImpulse = 4.5f;
 
         Rigidbody _rb;
         Quaternion _restLocalRotation;
@@ -69,28 +67,6 @@ namespace MiniParty.Minigames.CoffinDance
             if (z > 180f)
                 z -= 360f;
             return z;
-        }
-
-        public float GetAngularVelocityZ()
-        {
-            if (Body == null)
-                return 0f;
-
-            return transform.InverseTransformDirection(Body.angularVelocity).z;
-        }
-
-        public void ApplyLandingImpulse()
-        {
-            if (Body == null || Body.isKinematic)
-                return;
-
-            float tilt = GetTiltZDegrees();
-            float w = GetAngularVelocityZ();
-            float sign = w >= 0f ? 1f : -1f;
-            if (Mathf.Abs(w) < 0.05f)
-                sign = tilt >= 0f ? 1f : -1f;
-
-            Body.AddRelativeTorque(0f, 0f, sign * landingTorqueImpulse, ForceMode.Impulse);
         }
 
         void OnCollisionEnter(Collision collision)

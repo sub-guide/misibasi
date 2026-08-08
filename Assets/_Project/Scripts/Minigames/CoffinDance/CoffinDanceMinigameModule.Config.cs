@@ -42,8 +42,14 @@ namespace MiniParty.Minigames.CoffinDance
         [SerializeField] float noiseAmp = DefaultNoiseAmp;
 
         [Header("점프 (자유 · A/button2)")]
-        [Tooltip("점프~착지 총 시간(초). 이 동안 ←/→ 불가.")]
+        [Tooltip("점프~착지 총 시간(초). 공중 동안 x_bias 연산(도치·풀·입력) Hold.")]
         [SerializeField] float jumpLockoutSeconds = 0.35f;
+
+        [Tooltip("착지 직후 미세 도치 속도 배율.")]
+        [SerializeField] float landingDriftMultiplier = DefaultLandingDriftMultiplier;
+
+        [Tooltip("착지 도치 증폭 유지 시간(초).")]
+        [SerializeField] float landingDriftDuration = DefaultLandingDriftDuration;
 
         [Header("HP")]
         [SerializeField] int hpLowScoreThreshold = DefaultLowScoreThreshold;

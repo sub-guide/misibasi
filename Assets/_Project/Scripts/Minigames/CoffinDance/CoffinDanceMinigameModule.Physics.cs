@@ -14,13 +14,21 @@ namespace MiniParty.Minigames.CoffinDance
             bool right = rightHeld > 0.5f;
             float danceWave = ComputeDanceWave();
 
+            // 착지 직후 미세 도치 증폭 (타이머는 입력 유무와 무관하게 차감 · Edge Case A: 입력은 아래 분기로 즉시 가산)
+            float effectiveDriftSpeed = Mathf.Max(0f, microDriftSpeed);
+            if (sr.LandingDriftTimer > 0f)
+            {
+                sr.LandingDriftTimer = Mathf.Max(0f, sr.LandingDriftTimer - dt);
+                effectiveDriftSpeed *= Mathf.Max(0f, landingDriftMultiplier);
+            }
+
             // 미입력 또는 좌/우 동시 입력 → 홀드 리셋 + 현재 기울기 방향 중력형 미세 도치
             if ((!left && !right) || (left && right))
             {
                 sr.HoldTimer = 0f;
                 // 중앙(0.5)보다 오른쪽(+)/왼쪽(-)으로 기운 쪽을 계속 밀어 불안정 평형
                 float driftDir = Mathf.Sign(sr.SeesawBias - 0.5f);
-                sr.SeesawBias += driftDir * Mathf.Max(0f, microDriftSpeed) * dt;
+                sr.SeesawBias += driftDir * effectiveDriftSpeed * dt;
             }
             else
             {
@@ -96,6 +104,7 @@ namespace MiniParty.Minigames.CoffinDance
             sr.JumpActive = false;
             sr.JumpElapsed = 0f;
             sr.JumpLockoutRemain = 0f;
+            sr.LandingDriftTimer = 0f;
 
             CoffinDanceSlotBindings bind = GetBindings(i);
             if (bind == null)
@@ -119,12 +128,7 @@ namespace MiniParty.Minigames.CoffinDance
             sr.SeesawBias = n;
             sr.SeesawXCurrent = n;
             sr.HoldTimer = 0f;
-        }
-
-        void ApplyLandingImpulse(int i)
-        {
-            CoffinDanceSlotBindings bind = GetBindings(i);
-            bind?.ResolveCoffinBody()?.ApplyLandingImpulse();
+            sr.LandingDriftTimer = 0f;
         }
     }
 }

@@ -34,6 +34,9 @@ namespace MiniParty.Minigames.CoffinDance
 
             /// <summary>좌/우 단일 홀드 누적 시간. 미입력·동시 입력 시 0.</summary>
             public float HoldTimer;
+
+            /// <summary>착지 직후 미세 도치 증폭 남은 시간(초). 0이면 배율 미적용.</summary>
+            public float LandingDriftTimer;
         }
     }
 }

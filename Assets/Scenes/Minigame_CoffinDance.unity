@@ -182,6 +182,8 @@ MonoBehaviour:
   danceSineHz: 2
   noiseAmp: 0.03
   jumpLockoutSeconds: 0.35
+  landingDriftMultiplier: 2
+  landingDriftDuration: 0.2
   hpLowScoreThreshold: 3000
   slotWorldSpacing: 40
   disableMainCameraOnBegin: 1

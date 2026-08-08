@@ -12,7 +12,9 @@ namespace MiniParty.Minigames.CoffinDance
 
             TickJumpState(i, ref sr, dt);
 
-            bool controlEnabled = !sr.JumpActive && sr.JumpLockoutRemain <= 0f;
+            // 공중(jumpLockout): x_bias 연산(도치·풀·입력) Hold — 점프 직전 시소 상태 유지
+            bool airborne = sr.JumpActive;
+            bool controlEnabled = !airborne && sr.JumpLockoutRemain <= 0f;
             float left = 0f;
             float right = 0f;
 
@@ -24,7 +26,7 @@ namespace MiniParty.Minigames.CoffinDance
                     BeginFreeJump(ref sr);
             }
 
-            if (!sr.JumpActive)
+            if (!airborne)
                 StepShoulderControl(ref sr, dt, left, right);
 
             ApplyPallbearerPoses(i, ref sr);
@@ -45,11 +47,11 @@ namespace MiniParty.Minigames.CoffinDance
             if (sr.JumpElapsed < jumpLockoutSeconds)
                 return;
 
-            // 착지
+            // 착지: 미세 도치 증폭 타이머만 가동 (관 Force/Torque 없음 · 어깨 Collider만)
             sr.JumpActive = false;
             sr.JumpElapsed = jumpLockoutSeconds;
             sr.JumpLockoutRemain = 0f;
-            ApplyLandingImpulse(i);
+            sr.LandingDriftTimer = Mathf.Max(0f, landingDriftDuration);
         }
 
         void BeginFreeJump(ref SlotRuntime sr)
@@ -86,6 +88,7 @@ namespace MiniParty.Minigames.CoffinDance
             sr.Eliminated = true;
             sr.JumpActive = false;
             sr.JumpLockoutRemain = 0f;
+            sr.LandingDriftTimer = 0f;
             sr.ScoreSum = Mathf.Max(0, Mathf.FloorToInt(sr.ScoreExact));
             _aliveMask[i] = false;
             SetEliminatedUi(i, true);

@@ -37,6 +37,12 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>중앙(0.5) 이탈 시 비선형 가속 계수.</summary>
         public const float DefaultPullCoefficient = 2.0f;
 
+        /// <summary>착지 직후 미세 도치 속도 배율.</summary>
+        public const float DefaultLandingDriftMultiplier = 2.5f;
+
+        /// <summary>착지 도치 증폭 유지 시간(초).</summary>
+        public const float DefaultLandingDriftDuration = 0.3f;
+
         /// <summary>고정 씰룩임 진폭 (Phase 난이도 없음 · 후속 재도입 가능).</summary>
         public const float DefaultNoiseAmp = 0.12f;
 
