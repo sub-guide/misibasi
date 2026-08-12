@@ -17,25 +17,33 @@ namespace MiniParty.Minigames.CoffinDance
             Phase4 = 4
         }
 
+        /// <summary>점프 FSM. None이 아니면 x_bias Hold · ←/→·점프 잠금.</summary>
+        enum JumpAnimPhase
+        {
+            None = 0,
+            /// <summary>지상 · 현재 프레임→JumpStart 첫 프레임 CrossFade. 종료 후 Impulse.</summary>
+            BlendIn = 1,
+            /// <summary>물리 공중 · JumpStart 연출. 착지 감지 시 Land.</summary>
+            Airborne = 2,
+            /// <summary>지상 · JumpLand 연출. 클립 종료 시 조작 재개.</summary>
+            Land = 3
+        }
+
         struct SlotRuntime
         {
             public float ScoreExact;
             public int ScoreSum;
             public bool Eliminated;
-            public float JumpLockoutRemain;
-            public bool JumpActive;
-            public float JumpElapsed;
 
-            /// <summary>플레이어 Hold 바이어스. 키를 떼도 유지(미세 도치·풀은 별도).</summary>
+            public JumpAnimPhase JumpPhase;
+            public float JumpPhaseTimer;
+            public float JumpClipDuration;
+
+            public bool JumpActive => JumpPhase != JumpAnimPhase.None;
+
             public float SeesawBias;
-
-            /// <summary>실제 어깨에 반영되는 x. Y_L=x · Y_R=1-x.</summary>
             public float SeesawXCurrent;
-
-            /// <summary>좌/우 단일 홀드 누적 시간. 미입력·동시 입력 시 0.</summary>
             public float HoldTimer;
-
-            /// <summary>착지 직후 미세 도치 증폭 남은 시간(초). 0이면 배율 미적용.</summary>
             public float LandingDriftTimer;
         }
     }

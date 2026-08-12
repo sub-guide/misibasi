@@ -56,9 +56,9 @@ namespace MiniParty.Minigames.CoffinDance
                 sr.ScoreExact = 0f;
                 sr.ScoreSum = 0;
                 sr.Eliminated = false;
-                sr.JumpLockoutRemain = 0f;
-                sr.JumpActive = false;
-                sr.JumpElapsed = 0f;
+                sr.JumpPhase = JumpAnimPhase.None;
+                sr.JumpPhaseTimer = 0f;
+                sr.JumpClipDuration = 0f;
 
                 if (bind != null)
                 {

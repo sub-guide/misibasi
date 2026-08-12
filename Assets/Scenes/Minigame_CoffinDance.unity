@@ -181,7 +181,12 @@ MonoBehaviour:
   pullCoefficient: 2
   danceSineHz: 2
   noiseAmp: 0.03
-  jumpLockoutSeconds: 0.35
+  jumpImpulse: 5
+  jumpAnimBlendSeconds: 0.2
+  jumpStartAnimSpeed: 2
+  jumpLandAnimSpeed: 4
+  jumpLandYOffset: -0.2
+  jumpLandYOffsetDuration: 0.1
   landingDriftMultiplier: 2
   landingDriftDuration: 0.2
   hpLowScoreThreshold: 3000

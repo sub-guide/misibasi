@@ -13,7 +13,7 @@
 
 # Project Master Context — Mini Party (바이블 코딩)
 
-> **갱신 기준일**: 2026-08-08  
+> **갱신 기준일**: 2026-08-12  
 > **상세 기술 문서**: `Documentation/` 폴더 (본 파일은 AI·협업 **행동 규칙 + 현재 상태판** 전용)  
 > **과거 완료 이력의 상세**: `Documentation/02_개발_진행_일지.md` (본 §6은 최근·미완·열린 결정 위주)
 
@@ -249,13 +249,13 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ## 6. 현재 진행 상황 (상태판)
 
-> **마지막 갱신**: 2026-08-08  
+> **마지막 갱신**: 2026-08-12  
 
 ### 지금 포커스
 
-1. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
-2. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
-3. **관짝춤** — (후속) Phase 조작 난이도 · (선택) 보행 위상 오프셋 · 폴리시
+1. **관짝춤** — 물리 점프 **프리팹(RB·발)·Play 검증** · `jumpImpulse`/애니 배속 맞춤
+2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
+3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
 ### 열린 결정 / 보류
 
@@ -265,7 +265,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | OIIA `buzzClip` / `sessionEndClip` | 의도적 미연결 | 연결 여부 **미결정** |
 | Result `rankRevealClip` / `hpHitClip` | 선택 | Inspector 오디오 |
 | C-11 `OiiaResultMinigameFlavor` | 미착수 | 현재 ID 매칭만 |
-| 관짝춤 물리 B/C | 필요 시 | 기본은 **순수 충돌(A)** · Force/Torque 없음 · 점프 Hold·착지 도치 **Play 검증**(2026-08-08). 좌우·어깨 R=27 **검증**(2026-08-07). Phase별 Amp/Speed **후속**. 지지점 힘 B/C는 질문→승인 |
+| 관짝춤 물리 B/C | 진행 | 운구인 RB 점프 C# **구현**(2026-08-12) · 프리팹 RB·발·제약 **에디터** · Play **미검증**. 관=어깨만. Phase **후속** |
 | SNES Full Controller | 2차 | Face/D-Pad/LR/System 완제품 5종은 완료 |
 
 ### 미완 · To-Do [ ]
@@ -301,10 +301,12 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - [x] 좌우 조작 개편 **Play 검증** · 수치 확정 · 어깨 SphereCollider Radius 25→27 (2026-08-07)
 - [x] 점프 중 `x_bias` Hold · 착지 미세 도치 증폭(`landingDriftMultiplier`/`Duration`) (2026-08-08)
 - [x] 관 `ApplyLandingImpulse`/`landingTorqueImpulse` **제거** — 어깨 SphereCollider(+중력)만 (2026-08-08)
-- [x] 점프·착지 쏠림·순수 충돌 **Play 검증** (2026-08-08)
+- [x] 점프·착지 쏠림·순수 충돌 **Play 검증** (2026-08-08 · 구 lockout 방식)
+- [x] Jump FSM C# (`Start→Land` · `jumpHeight` · CrossFade/`jumpAnimBlendSeconds` 제거 · `jumpLandYOffset`) (2026-08-08)
+- [x] 운구인 물리 점프 C# (`jumpImpulse` · FailFloor 접지 · Land 클립 후 재개 · Start/Land 애니 배속) (2026-08-12)
+- [ ] 프리팹 RB·발 Collider·제약 + `jumpImpulse`/배속 맞춤 + **Play 검증**
 - [ ] (후속) Phase별 조작 난이도 재도입
 - [ ] (선택) 운구인별 보행 위상 오프셋 · Blend `timeScale` 동기화
-- [ ] (필요 시) 순수 충돌 불안정 → 지지점 힘(B)/하이브리드(C) 보강 — **질문 후**
 - [ ] (선택) 폴리시·연출 다듬기
 
 **운영·품질**
@@ -315,7 +317,8 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 | 시기 | 요약 |
 |------|------|
-| 08-08 | 관짝춤 점프 Hold·착지 도치·관 Force/Torque 제거 **Play 검증 통과** |
+| 08-12 | 관짝춤 운구인 물리 점프(RB Impulse) · Land 배속 Inspector |
+| 08-08 | 관짝춤 Jump `Start→Land` · Land Y 오프셋 · CrossFade 제거 |
 | 08-07 | 관짝춤 좌우 조작 **Play 검증** · 수치 확정 · 어깨 Collider R 25→27 · 중력형 도치 |
 | 08-05 | 관짝춤 시소·고정 씰룩임 · 걷기 클립 Play 검증 · `maxNoiseSpeed`→`seesawMoveSpeed` |
 | 07-31 | 관짝춤 실모델 Animator·FailFloor·좌우/점프·배치 **Play 검증 통과** · Pose 배열 정리 |
@@ -342,4 +345,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-08-08 — 관짝춤 점프·착지·순수 충돌 Play 검증 통과*
+*마스터 파일 갱신: 2026-08-12 — 관짝춤 물리 점프 C# · 프리팹·Play 검증 대기*

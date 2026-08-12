@@ -41,11 +41,26 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("DanceWave 진폭. x = Clamp01(bias + wave×Amp).")]
         [SerializeField] float noiseAmp = DefaultNoiseAmp;
 
-        [Header("점프 (자유 · A/button2)")]
-        [Tooltip("점프~착지 총 시간(초). 공중 동안 x_bias 연산(도치·풀·입력) Hold.")]
-        [SerializeField] float jumpLockoutSeconds = 0.35f;
+        [Header("점프 (자유 · A/button2 · 물리)")]
+        [Tooltip("점프 시 루트 Rigidbody VelocityChange Impulse (Y). Module 공용.")]
+        [SerializeField] float jumpImpulse = DefaultJumpImpulse;
 
-        [Tooltip("착지 직후 미세 도치 속도 배율.")]
+        [Tooltip("현재 프레임→JumpStart 첫 프레임 페이드(초). 끝난 뒤 모션+Impulse. 0=즉시.")]
+        [SerializeField] float jumpAnimBlendSeconds = DefaultJumpAnimBlendSeconds;
+
+        [Tooltip("JumpStart Animator.speed. 에디터에서 조절.")]
+        [SerializeField] float jumpStartAnimSpeed = DefaultJumpStartAnimSpeed;
+
+        [Tooltip("JumpLand Animator.speed. 에디터에서 조절. Land 클립 끝난 뒤 조작 재개.")]
+        [SerializeField] float jumpLandAnimSpeed = DefaultJumpLandAnimSpeed;
+
+        [Tooltip("JumpLand 시작 시 rest+offset으로 점진 이동. 클립 종료 시 rest 즉시 복귀. 음수=내림.")]
+        [SerializeField] float jumpLandYOffset = DefaultJumpLandYOffset;
+
+        [Tooltip("Y 오프셋까지 점진 이동 시간(초). 0이면 즉시 스냅. 복귀는 즉시.")]
+        [SerializeField] float jumpLandYOffsetDuration = DefaultJumpLandYOffsetDuration;
+
+        [Tooltip("착지(Land 클립 종료) 직후 미세 도치 속도 배율.")]
         [SerializeField] float landingDriftMultiplier = DefaultLandingDriftMultiplier;
 
         [Tooltip("착지 도치 증폭 유지 시간(초).")]

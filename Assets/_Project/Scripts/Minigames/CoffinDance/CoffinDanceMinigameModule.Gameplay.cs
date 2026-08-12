@@ -12,21 +12,18 @@ namespace MiniParty.Minigames.CoffinDance
 
             TickJumpState(i, ref sr, dt);
 
-            // 공중(jumpLockout): x_bias 연산(도치·풀·입력) Hold — 점프 직전 시소 상태 유지
-            bool airborne = sr.JumpActive;
-            bool controlEnabled = !airborne && sr.JumpLockoutRemain <= 0f;
             float left = 0f;
             float right = 0f;
 
-            if (controlEnabled)
+            if (!sr.JumpActive)
             {
                 ReadBalanceInput(i, out left, out right);
 
                 if (WasJumpPressed(i))
-                    BeginFreeJump(ref sr);
+                    BeginFreeJump(i, ref sr);
             }
 
-            if (!airborne)
+            if (!sr.JumpActive)
                 StepShoulderControl(ref sr, dt, left, right);
 
             ApplyPallbearerPoses(i, ref sr);
@@ -38,30 +35,79 @@ namespace MiniParty.Minigames.CoffinDance
 
         void TickJumpState(int i, ref SlotRuntime sr, float dt)
         {
-            if (!sr.JumpActive)
+            if (sr.JumpPhase == JumpAnimPhase.None)
                 return;
 
-            sr.JumpElapsed += dt;
-            sr.JumpLockoutRemain = Mathf.Max(0f, jumpLockoutSeconds - sr.JumpElapsed);
+            CoffinDanceSlotBindings bind = GetBindings(i);
 
-            if (sr.JumpElapsed < jumpLockoutSeconds)
-                return;
+            switch (sr.JumpPhase)
+            {
+                case JumpAnimPhase.BlendIn:
+                    // 지상 페이드(현재→JumpStart 첫 프레임) · 종료 시 모션+Impulse 동시
+                    sr.JumpPhaseTimer += dt;
+                    if (sr.JumpPhaseTimer < Mathf.Max(0f, jumpAnimBlendSeconds))
+                        return;
 
-            // 착지: 미세 도치 증폭 타이머만 가동 (관 Force/Torque 없음 · 어깨 Collider만)
-            sr.JumpActive = false;
-            sr.JumpElapsed = jumpLockoutSeconds;
-            sr.JumpLockoutRemain = 0f;
-            sr.LandingDriftTimer = Mathf.Max(0f, landingDriftDuration);
+                    bind?.CommitJumpAfterBlend(jumpImpulse, jumpStartAnimSpeed);
+                    sr.JumpPhase = JumpAnimPhase.Airborne;
+                    sr.JumpPhaseTimer = 0f;
+                    break;
+
+                case JumpAnimPhase.Airborne:
+                    // JumpStart 중에는 Land 금지. 종료 후 + 이탈·재접지 → Land
+                    if (bind == null ||
+                        !bind.HasJumpStartCompleted() ||
+                        !bind.AreAllReadyToLand())
+                        return;
+
+                    sr.JumpPhase = JumpAnimPhase.Land;
+                    sr.JumpPhaseTimer = 0f;
+                    sr.JumpClipDuration = bind.EnterJumpLand(
+                        jumpLandAnimSpeed,
+                        jumpAnimBlendSeconds,
+                        DefaultJumpLandFallbackSeconds);
+                    bind.BeginLandYOffsetLerp(jumpLandYOffset, jumpLandYOffsetDuration);
+                    break;
+
+                case JumpAnimPhase.Land:
+                    sr.JumpPhaseTimer += dt;
+                    bind?.TickLandYOffsetLerp(dt);
+
+                    bool landDone = sr.JumpPhaseTimer >= sr.JumpClipDuration ||
+                                    (bind != null && bind.HasJumpLandCompleted());
+                    if (!landDone)
+                        return;
+
+                    sr.JumpPhase = JumpAnimPhase.None;
+                    sr.JumpPhaseTimer = 0f;
+                    sr.JumpClipDuration = 0f;
+                    bind?.EnterExtensionBlend(jumpAnimBlendSeconds); // ClearLandYOffset → rest 즉시 복귀
+                    sr.LandingDriftTimer = Mathf.Max(0f, landingDriftDuration);
+                    break;
+            }
         }
 
-        void BeginFreeJump(ref SlotRuntime sr)
+        void BeginFreeJump(int i, ref SlotRuntime sr)
         {
             if (sr.JumpActive)
                 return;
 
-            sr.JumpActive = true;
-            sr.JumpElapsed = 0f;
-            sr.JumpLockoutRemain = jumpLockoutSeconds;
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            sr.JumpPhaseTimer = 0f;
+            sr.JumpClipDuration = 0f;
+
+            float blend = Mathf.Max(0f, jumpAnimBlendSeconds);
+            if (blend > 0.0001f)
+            {
+                // 현재 프레임 → JumpStart 첫 프레임 페이드(지상) → 끝나면 모션+점프
+                sr.JumpPhase = JumpAnimPhase.BlendIn;
+                bind?.BeginJumpAnim(blend);
+            }
+            else
+            {
+                sr.JumpPhase = JumpAnimPhase.Airborne;
+                bind?.BeginJump(jumpImpulse, jumpStartAnimSpeed);
+            }
         }
 
         void AccruePassiveScore(int i, ref SlotRuntime sr, float dt)
@@ -86,8 +132,9 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
 
             sr.Eliminated = true;
-            sr.JumpActive = false;
-            sr.JumpLockoutRemain = 0f;
+            sr.JumpPhase = JumpAnimPhase.None;
+            sr.JumpPhaseTimer = 0f;
+            sr.JumpClipDuration = 0f;
             sr.LandingDriftTimer = 0f;
             sr.ScoreSum = Mathf.Max(0, Mathf.FloorToInt(sr.ScoreExact));
             _aliveMask[i] = false;
@@ -95,6 +142,12 @@ namespace MiniParty.Minigames.CoffinDance
             HideJumpPrompt(i);
 
             CoffinDanceSlotBindings bind = GetBindings(i);
+            if (bind != null)
+            {
+                bind.SetPallbearerSimulationActive(false);
+                bind.SoftResetAllPallbearers();
+            }
+
             CoffinDanceCoffinBody body = bind?.ResolveCoffinBody();
             if (body != null)
             {

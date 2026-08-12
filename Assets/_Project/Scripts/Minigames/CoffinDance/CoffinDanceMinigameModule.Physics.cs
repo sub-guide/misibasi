@@ -60,13 +60,10 @@ namespace MiniParty.Minigames.CoffinDance
             if (bind == null)
                 return;
 
-            float jumpT = 0f;
-            if (sr.JumpActive && jumpLockoutSeconds > 0.01f)
-                jumpT = Mathf.Clamp01(sr.JumpElapsed / jumpLockoutSeconds);
-
             float x = Mathf.Clamp01(sr.SeesawXCurrent);
-            bind.ApplySideExtension(leftSide: true, x, jumpT);
-            bind.ApplySideExtension(leftSide: false, 1f - x, jumpT);
+            bind.ApplySideExtension(leftSide: true, x);
+            bind.ApplySideExtension(leftSide: false, 1f - x);
+            // Land Y 오프셋은 Enter/Exit 시 1회만 (매 프레임 고정하지 않음 → 중력 유지)
         }
 
         float GetSlotTiltDegrees(int i)
@@ -101,16 +98,19 @@ namespace MiniParty.Minigames.CoffinDance
         void SoftResetSlot(int i, ref SlotRuntime sr)
         {
             ResetSeesawToNeutral(ref sr);
-            sr.JumpActive = false;
-            sr.JumpElapsed = 0f;
-            sr.JumpLockoutRemain = 0f;
+            sr.JumpPhase = JumpAnimPhase.None;
+            sr.JumpPhaseTimer = 0f;
+            sr.JumpClipDuration = 0f;
             sr.LandingDriftTimer = 0f;
 
             CoffinDanceSlotBindings bind = GetBindings(i);
             if (bind == null)
                 return;
 
-            bind.PrepareAllPoses();
+            // PrepareAllPoses는 rest를 재캐시하므로 SoftReset만 — 운구인 Y를 Begin 시점 rest로 복귀
+            bind.SoftResetAllPallbearers();
+            bind.SetPallbearerSimulationActive(true);
+            bind.IgnoreCoffinFootCollisions();
             ApplyPallbearerPoses(i, ref sr);
 
             CoffinDanceCoffinBody body = bind.ResolveCoffinBody();
