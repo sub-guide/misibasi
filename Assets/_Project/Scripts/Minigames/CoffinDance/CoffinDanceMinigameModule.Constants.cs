@@ -37,33 +37,6 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>중앙(0.5) 이탈 시 비선형 가속 계수.</summary>
         public const float DefaultPullCoefficient = 2.0f;
 
-        /// <summary>JumpStart CrossFade(벽시계 초) 후 Impulse. Land/Extension도 사용. 0=즉시.</summary>
-        public const float DefaultJumpAnimBlendSeconds = 0.1f;
-
-        /// <summary>점프 VelocityChange Impulse (Y).</summary>
-        public const float DefaultJumpImpulse = 4f;
-
-        /// <summary>JumpStart Animator.speed.</summary>
-        public const float DefaultJumpStartAnimSpeed = 1f;
-
-        /// <summary>JumpLand Animator.speed.</summary>
-        public const float DefaultJumpLandAnimSpeed = 1f;
-
-        /// <summary>Animator 길이 조회 실패 시 JumpLand fallback(초, speed=1 기준).</summary>
-        public const float DefaultJumpLandFallbackSeconds = 1.27f;
-
-        /// <summary>JumpLand 시작 후 Y 오프셋. 종료 시 rest 복귀.</summary>
-        public const float DefaultJumpLandYOffset = 0f;
-
-        /// <summary>Land Y 오프셋 점진 이동 시간(초). 0=즉시. 복귀는 즉시.</summary>
-        public const float DefaultJumpLandYOffsetDuration = 0.15f;
-
-        /// <summary>착지 직후 미세 도치 속도 배율.</summary>
-        public const float DefaultLandingDriftMultiplier = 2.5f;
-
-        /// <summary>착지 도치 증폭 유지 시간(초).</summary>
-        public const float DefaultLandingDriftDuration = 0.3f;
-
         /// <summary>고정 씰룩임 진폭 (Phase 난이도 없음 · 후속 재도입 가능).</summary>
         public const float DefaultNoiseAmp = 0.12f;
 

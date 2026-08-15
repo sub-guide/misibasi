@@ -180,15 +180,7 @@ MonoBehaviour:
   microDriftSpeed: 0.5
   pullCoefficient: 2
   danceSineHz: 2
-  noiseAmp: 0.03
-  jumpImpulse: 5
-  jumpAnimBlendSeconds: 0.2
-  jumpStartAnimSpeed: 2
-  jumpLandAnimSpeed: 4
-  jumpLandYOffset: -0.2
-  jumpLandYOffsetDuration: 0.1
-  landingDriftMultiplier: 2
-  landingDriftDuration: 0.2
+  noiseAmp: 0.05
   hpLowScoreThreshold: 3000
   slotWorldSpacing: 40
   disableMainCameraOnBegin: 1

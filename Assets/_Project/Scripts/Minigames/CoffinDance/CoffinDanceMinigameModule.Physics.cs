@@ -13,14 +13,7 @@ namespace MiniParty.Minigames.CoffinDance
             bool left = leftHeld > 0.5f;
             bool right = rightHeld > 0.5f;
             float danceWave = ComputeDanceWave();
-
-            // 착지 직후 미세 도치 증폭 (타이머는 입력 유무와 무관하게 차감 · Edge Case A: 입력은 아래 분기로 즉시 가산)
             float effectiveDriftSpeed = Mathf.Max(0f, microDriftSpeed);
-            if (sr.LandingDriftTimer > 0f)
-            {
-                sr.LandingDriftTimer = Mathf.Max(0f, sr.LandingDriftTimer - dt);
-                effectiveDriftSpeed *= Mathf.Max(0f, landingDriftMultiplier);
-            }
 
             // 미입력 또는 좌/우 동시 입력 → 홀드 리셋 + 현재 기울기 방향 중력형 미세 도치
             if ((!left && !right) || (left && right))
@@ -63,7 +56,6 @@ namespace MiniParty.Minigames.CoffinDance
             float x = Mathf.Clamp01(sr.SeesawXCurrent);
             bind.ApplySideExtension(leftSide: true, x);
             bind.ApplySideExtension(leftSide: false, 1f - x);
-            // Land Y 오프셋은 Enter/Exit 시 1회만 (매 프레임 고정하지 않음 → 중력 유지)
         }
 
         float GetSlotTiltDegrees(int i)
@@ -98,10 +90,6 @@ namespace MiniParty.Minigames.CoffinDance
         void SoftResetSlot(int i, ref SlotRuntime sr)
         {
             ResetSeesawToNeutral(ref sr);
-            sr.JumpPhase = JumpAnimPhase.None;
-            sr.JumpPhaseTimer = 0f;
-            sr.JumpClipDuration = 0f;
-            sr.LandingDriftTimer = 0f;
 
             CoffinDanceSlotBindings bind = GetBindings(i);
             if (bind == null)
@@ -109,8 +97,6 @@ namespace MiniParty.Minigames.CoffinDance
 
             // PrepareAllPoses는 rest를 재캐시하므로 SoftReset만 — 운구인 Y를 Begin 시점 rest로 복귀
             bind.SoftResetAllPallbearers();
-            bind.SetPallbearerSimulationActive(true);
-            bind.IgnoreCoffinFootCollisions();
             ApplyPallbearerPoses(i, ref sr);
 
             CoffinDanceCoffinBody body = bind.ResolveCoffinBody();
@@ -128,7 +114,6 @@ namespace MiniParty.Minigames.CoffinDance
             sr.SeesawBias = n;
             sr.SeesawXCurrent = n;
             sr.HoldTimer = 0f;
-            sr.LandingDriftTimer = 0f;
         }
     }
 }

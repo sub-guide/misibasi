@@ -256,7 +256,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `MainMenu` | 로비·카탈로그·시작 |
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
 | `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
-| `Minigame_CoffinDance` | 시소·고정 Sine 씰룩임 · 걷기 클립 · FailFloor · **Play 검증 통과** |
+| `Minigame_CoffinDance` | 시소·FailFloor·연습/본·탈락→Results **검증** · 점프 없음 |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -285,9 +285,8 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ### 지금 포커스
 
-1. **관짝춤** — 프리팹 RB·발·제약 + 점프(Impulse / CrossFade / Land Y) **Play 검증**
-2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
-3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
+1. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
+2. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
 ### 열린 결정 / 보류
 

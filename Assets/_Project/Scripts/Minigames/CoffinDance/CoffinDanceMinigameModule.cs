@@ -4,8 +4,8 @@ using UnityEngine;
 namespace MiniParty.Minigames.CoffinDance
 {
     /// <summary>
-    /// GAME 03 관짝춤 (Coffin Dance). 어깨 SphereCollider 순수 충돌 + ←/→ 시소 + A 자유 점프.
-    /// 입력: ←/→ 어깨 승강, A(<c>button2</c>) 점프 — <see cref="MiniParty.Input.BoothUsbGamepadLayout"/>.
+    /// GAME 03 관짝춤 (Coffin Dance). 어깨 SphereCollider 순수 충돌 + ←/→ 시소.
+    /// 입력: ←/→ 어깨 승강 — <see cref="MiniParty.Input.BoothUsbGamepadLayout"/>.
     /// </summary>
     public sealed partial class CoffinDanceMinigameModule : MonoBehaviour, IMinigameModule
     {

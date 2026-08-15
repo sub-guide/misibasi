@@ -47,7 +47,6 @@ namespace MiniParty.Minigames.CoffinDance
                 {
                     if (slotCam != null)
                         slotCam.backgroundColor = new Color(0.05f, 0.05f, 0.08f);
-                    HideJumpPrompt(i);
                     SetEliminatedUi(i, false);
                     bind?.ResolveCoffinBody()?.SetSimulationActive(false);
                     return;
@@ -56,9 +55,6 @@ namespace MiniParty.Minigames.CoffinDance
                 sr.ScoreExact = 0f;
                 sr.ScoreSum = 0;
                 sr.Eliminated = false;
-                sr.JumpPhase = JumpAnimPhase.None;
-                sr.JumpPhaseTimer = 0f;
-                sr.JumpClipDuration = 0f;
 
                 if (bind != null)
                 {
@@ -76,7 +72,6 @@ namespace MiniParty.Minigames.CoffinDance
                     }
                 }
 
-                HideJumpPrompt(i);
                 SetEliminatedUi(i, false);
             });
 

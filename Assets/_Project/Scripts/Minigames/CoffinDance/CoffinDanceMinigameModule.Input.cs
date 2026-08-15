@@ -21,14 +21,5 @@ namespace MiniParty.Minigames.CoffinDance
             if (BoothUsbSlotInput.IsPathHeld(slotIndex, pad, BoothUsbGamepadLayout.StickRight))
                 rightHeld = 1f;
         }
-
-        bool WasJumpPressed(int slotIndex)
-        {
-            if (!SlotGamepad.HasInput(slotIndex))
-                return false;
-
-            Joystick pad = SlotGamepad.Get(slotIndex);
-            return BoothUsbSlotInput.WasPathPressed(slotIndex, pad, BoothUsbGamepadLayout.FaceA);
-        }
     }
 }

@@ -71,7 +71,6 @@ namespace MiniParty.Minigames.CoffinDance
 
             _flowState = CdFlowState.Ending;
             _endDelayRemain = SessionEndDelaySeconds;
-            ForEachSlot(HideJumpPrompt);
         }
 
         int CountAlive()

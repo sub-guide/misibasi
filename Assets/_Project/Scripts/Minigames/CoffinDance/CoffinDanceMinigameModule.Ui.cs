@@ -79,15 +79,6 @@ namespace MiniParty.Minigames.CoffinDance
             };
         }
 
-        void HideJumpPrompt(int i)
-        {
-            CoffinDanceSlotBindings bind = GetBindings(i);
-            if (bind == null || bind.JumpPromptText == null)
-                return;
-
-            bind.JumpPromptText.gameObject.SetActive(false);
-        }
-
         void SetEliminatedUi(int i, bool eliminated)
         {
             CoffinDanceSlotBindings bind = GetBindings(i);
