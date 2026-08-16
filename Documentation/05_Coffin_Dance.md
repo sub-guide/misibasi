@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-08-16 — 관 CoM **기하 중심 (0,0,0)**. FailFloor 탈락 없음 · +Y Impulse · 60초 종료.  
+> **문서 기준일**: 2026-08-16 — 시소 입력 **LB/RB**. 관 CoM 기하 중심. FailFloor 탈락 없음 · +Y Impulse · 60초 종료.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -29,6 +29,7 @@
 | 자세 | Capture 없음 · `ExtensionBlend` 1D Blend만 |
 | 어깨 높이 | **단일 시소** `x` · `Y_L=x` · `Y_R=1-x` (합=1, 순수 Z 기울기) |
 | 입력 Hold | 키를 떼도 `x_bias` **즉시 중립 복귀하지 않음** · **기운 쪽으로 중력형 미세 도치** + 비선형 풀 |
+| 시소 입력 | **LB/RB** (`button5`/`button6`). 개발 키보드 **Q/E**. 스틱 좌우는 안 씀 |
 | 점프 | **없음**. A(`button2`) 미사용 |
 | 운구인 물리 | **루트 Rigidbody 없음** · **발/Toe Collider 없음** · 어깨 SphereCollider만 (정적 Collider로 관을 받침) |
 | 자율 흔들림 | **Sine만** 즉시 반영 · 고정 `noiseAmp` (Phase별 난이도 후속) · Rate Limiter **없음** |
@@ -48,7 +49,7 @@
 
 ## 1. 한 줄 요약
 
-4인 세로 분할 슬롯에서 **6명 운구인 어깨 Collider 위 관(Rigidbody)** 균형을 ←/→ 시소로 유지하는 60초 타임어택.
+4인 세로 분할 슬롯에서 **6명 운구인 어깨 Collider 위 관(Rigidbody)** 균형을 LB/RB 시소로 유지하는 60초 타임어택.
 
 ---
 
@@ -56,12 +57,12 @@
 
 | 조작 | `BoothUsbGamepadLayout` | 개발 키보드(`Ctrl` 토글 1P) | 효과 |
 |------|-------------------------|---------------------------|------|
-| 좌 | `stick/left` | `A` | `x_bias`↑ → `Y_L`↑ · `Y_R`↓ (홀드 시 가속) |
-| 우 | `stick/right` | `D` | `x_bias`↓ → `Y_R`↑ · `Y_L`↓ (홀드 시 가속) |
+| LB (L) | `ShoulderL` (`button5`) | `Q` | `x_bias`↑ → `Y_L`↑ · `Y_R`↓ (홀드 시 가속) |
+| RB (R) | `ShoulderR` (`button6`) | `E` | `x_bias`↓ → `Y_R`↑ · `Y_L`↓ (홀드 시 가속) |
 | 연습 READY | Start | `B` | — |
 | 본게임 전환 | 운영자 Enter | — | — |
 
-키를 떼면 `x_bias`는 중립으로 스냅되지 않는다. 미입력(또는 좌·우 동시)이면 **현재 기울기 방향 중력형 미세 도치**가 들어가고, 중앙 이탈 시 **비선형 풀**이 더해진다.  
+키를 떼면 `x_bias`는 중립으로 스냅되지 않는다. 미입력(또는 LB·RB 동시)이면 **현재 기울기 방향 중력형 미세 도치**가 들어가고, 중앙 이탈 시 **비선형 풀**이 더해진다.  
 extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 ---
@@ -99,7 +100,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 | 필드 | 기본(=씬) | 설명 |
 |------|-----------|------|
-| `seesawBaseSpeed` | 1.2 | 좌/우 단일 입력 기본 탭 이동 속도 |
+| `seesawBaseSpeed` | 1.2 | LB/RB 단일 입력 기본 탭 이동 속도 |
 | `holdMaxMultiplier` | 3.0 | 홀드 시 최대 가속 배율 |
 | `holdAccelTime` | 0.2 | 최대 가속 도달 시간(초) |
 | `microDriftSpeed` | 0.5 | 미입력·동시 입력 시 현재 기울기 방향 중력형 도치 속도 |
@@ -108,8 +109,8 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 #### `x_bias` 프레임별 연산 (`StepShoulderControl`)
 
 1. **입력**
-   - **미입력 또는 좌·우 동시**: `HoldTimer = 0` · `driftDir = Sign(x_bias - 0.5)`(정중앙이면 0) · `x_bias += driftDir × microDriftSpeed × dt` (기운 쪽으로 계속 밀림 = 중력형)
-   - **좌 또는 우 단일**: `HoldTimer += dt` · `speedMul = Lerp(1, holdMaxMultiplier, HoldTimer / holdAccelTime)` · `x_bias += inputDir × seesawBaseSpeed × speedMul × dt` (`inputDir`: 좌=+1, 우=-1)
+   - **미입력 또는 LB·RB 동시**: `HoldTimer = 0` · `driftDir = Sign(x_bias - 0.5)`(정중앙이면 0) · `x_bias += driftDir × microDriftSpeed × dt` (기운 쪽으로 계속 밀림 = 중력형)
+   - **LB 또는 RB 단일**: `HoldTimer += dt` · `speedMul = Lerp(1, holdMaxMultiplier, HoldTimer / holdAccelTime)` · `x_bias += inputDir × seesawBaseSpeed × speedMul × dt` (`inputDir`: LB=+1, RB=-1)
 2. **비선형 이탈 가속 (공통)**: `offset = x_bias - 0.5` · `pullForce = pullCoefficient × offset² × Sign(offset)` · `x_bias += pullForce × dt`
 3. **범위**: `x_bias = Clamp01(x_bias)` · 0.0/1.0 한계에 닿으면 어깨 기울기로 FailFloor 접촉(Impulse·패널티) 가능
 
@@ -206,7 +207,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `mainRoundTimerCentralTop` | — | 중앙 타이머 TMP |
 | `phaseLabelText` | — | Phase TMP |
 | `xSeesawNeutral` | 0.5 | 시작·SoftReset 시소 x |
-| `seesawBaseSpeed` | 1.2 | ←/→ 기본 탭 이동 속도 |
+| `seesawBaseSpeed` | 1.2 | LB/RB 기본 탭 이동 속도 |
 | `holdMaxMultiplier` | 3.0 | 홀드 최대 가속 배율 |
 | `holdAccelTime` | 0.2 | 홀드 최대 가속 도달 시간(초) |
 | `microDriftSpeed` | 0.5 | 미입력·동시 입력 · 기울기 방향 중력형 도치 |
@@ -267,4 +268,4 @@ Minigame_CoffinDance
 
 ---
 
-문서 갱신: **2026-08-16** (FailFloor 접촉 후 0.3초 어깨 IgnoreCollision)
+문서 갱신: **2026-08-16** (시소 입력 stick 좌우 → LB/RB)

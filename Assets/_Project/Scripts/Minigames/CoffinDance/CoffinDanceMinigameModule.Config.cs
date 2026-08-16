@@ -19,7 +19,7 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("시작·중립 시소 위치. Y_L=x · Y_R=1-x. 기본 0.5=수평.")]
         [SerializeField] [Range(0f, 1f)] float xSeesawNeutral = DefaultSeesawNeutral;
 
-        [Tooltip("←/→ 단일 입력 시 기본 탭 이동 속도.")]
+        [Tooltip("LB/RB 단일 입력 시 기본 탭 이동 속도.")]
         [SerializeField] float seesawBaseSpeed = DefaultSeesawBaseSpeed;
 
         [Tooltip("홀드 누적 시 최대 가속 배율.")]
@@ -28,7 +28,7 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("홀드 최대 가속에 도달하는 시간(초).")]
         [SerializeField] float holdAccelTime = DefaultHoldAccelTime;
 
-        [Tooltip("미입력·좌우 동시 입력 시 현재 기울기 방향(중앙 이탈)으로 계속 미는 중력형 도치 속도.")]
+        [Tooltip("미입력·LB/RB 동시 입력 시 현재 기울기 방향(중앙 이탈)으로 계속 미는 중력형 도치 속도.")]
         [SerializeField] float microDriftSpeed = DefaultMicroDriftSpeed;
 
         [Tooltip("중앙(0.5) 이탈량 제곱에 비례하는 비선형 가속 계수.")]

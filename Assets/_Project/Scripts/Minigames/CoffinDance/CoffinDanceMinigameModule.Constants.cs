@@ -31,7 +31,7 @@ namespace MiniParty.Minigames.CoffinDance
         public const float MinExtension = 0f;
         public const float MaxExtension = 1f;
 
-        /// <summary>←/→ 기본 탭 이동 속도.</summary>
+        /// <summary>LB/RB 기본 탭 이동 속도.</summary>
         public const float DefaultSeesawBaseSpeed = 1.2f;
 
         /// <summary>홀드 조작 시 최대 가속 배율.</summary>

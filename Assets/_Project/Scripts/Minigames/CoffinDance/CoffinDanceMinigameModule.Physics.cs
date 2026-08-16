@@ -15,7 +15,7 @@ namespace MiniParty.Minigames.CoffinDance
             float danceWave = ComputeDanceWave();
             float effectiveDriftSpeed = Mathf.Max(0f, microDriftSpeed);
 
-            // 미입력 또는 좌/우 동시 입력 → 홀드 리셋 + 현재 기울기 방향 중력형 미세 도치
+            // 미입력 또는 LB/RB 동시 입력 → 홀드 리셋 + 현재 기울기 방향 중력형 미세 도치
             if ((!left && !right) || (left && right))
             {
                 sr.HoldTimer = 0f;

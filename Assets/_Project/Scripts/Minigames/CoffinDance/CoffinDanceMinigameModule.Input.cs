@@ -15,10 +15,10 @@ namespace MiniParty.Minigames.CoffinDance
 
             Joystick pad = SlotGamepad.Get(slotIndex);
 
-            if (BoothUsbSlotInput.IsPathHeld(slotIndex, pad, BoothUsbGamepadLayout.StickLeft))
+            if (BoothUsbSlotInput.IsPathHeld(slotIndex, pad, BoothUsbGamepadLayout.ShoulderL))
                 leftHeld = 1f;
 
-            if (BoothUsbSlotInput.IsPathHeld(slotIndex, pad, BoothUsbGamepadLayout.StickRight))
+            if (BoothUsbSlotInput.IsPathHeld(slotIndex, pad, BoothUsbGamepadLayout.ShoulderR))
                 rightHeld = 1f;
         }
     }
