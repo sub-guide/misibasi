@@ -68,44 +68,46 @@ namespace MiniParty.Minigames.CoffinDance
             return body.GetTiltZDegrees();
         }
 
-        bool CheckFailFloorAndMaybeEliminate(int i, ref SlotRuntime sr)
+        void HandleFailFloorContact(int i, ref SlotRuntime sr)
         {
             CoffinDanceSlotBindings bind = GetBindings(i);
             CoffinDanceCoffinBody body = bind != null ? bind.ResolveCoffinBody() : null;
             if (body == null || !body.HasTouchedFailFloor)
-                return false;
-
-            body.ClearFailFloorContact();
-
-            if (_ctx.IsPractice)
-            {
-                SoftResetSlot(i, ref sr);
-                return false;
-            }
-
-            EliminateSlot(i, ref sr);
-            return true;
-        }
-
-        void SoftResetSlot(int i, ref SlotRuntime sr)
-        {
-            ResetSeesawToNeutral(ref sr);
-
-            CoffinDanceSlotBindings bind = GetBindings(i);
-            if (bind == null)
                 return;
 
-            // PrepareAllPoses는 rest를 재캐시하므로 SoftReset만 — 운구인 Y를 Begin 시점 rest로 복귀
-            bind.SoftResetAllPallbearers();
-            ApplyPallbearerPoses(i, ref sr);
+            body.ClearFailFloorContact();
+            body.ApplyUpwardImpulse(Mathf.Max(0f, failFloorUpwardImpulse));
+            BeginShoulderIgnore(i, ref sr);
 
-            CoffinDanceCoffinBody body = bind.ResolveCoffinBody();
-            if (body != null)
-            {
-                body.SetSimulationActive(false);
-                body.SoftReset();
-                body.SetSimulationActive(true);
-            }
+            if (_ctx.IsPractice)
+                return;
+
+            sr.ScoreExact = Mathf.Max(0f, sr.ScoreExact - Mathf.Max(0, failFloorPenaltyScore));
+            sr.ScoreSum = Mathf.FloorToInt(sr.ScoreExact);
+        }
+
+        void BeginShoulderIgnore(int i, ref SlotRuntime sr)
+        {
+            float dur = Mathf.Max(0f, failFloorShoulderIgnoreSeconds);
+            if (dur <= 0f)
+                return;
+
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            bind?.SetCoffinShoulderCollisionsIgnored(true);
+            sr.ShoulderIgnoreRemain = dur;
+        }
+
+        void TickShoulderIgnore(int i, ref SlotRuntime sr, float dt)
+        {
+            if (sr.ShoulderIgnoreRemain <= 0f)
+                return;
+
+            sr.ShoulderIgnoreRemain -= dt;
+            if (sr.ShoulderIgnoreRemain > 0f)
+                return;
+
+            sr.ShoulderIgnoreRemain = 0f;
+            GetBindings(i)?.SetCoffinShoulderCollisionsIgnored(false);
         }
 
         void ResetSeesawToNeutral(ref SlotRuntime sr)

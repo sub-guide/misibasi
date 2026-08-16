@@ -3,8 +3,8 @@ using UnityEngine;
 namespace MiniParty.Minigames.CoffinDance
 {
     /// <summary>
-    /// 관 Rigidbody 설정(제약·무게중심). 플레이 중 관 운동은 운구인 어깨 SphereCollider 충돌만 받는다
-    /// (코드에서 Force/Torque를 가하지 않음).
+    /// 관 Rigidbody 설정(제약·무게중심). 플레이 중 관 운동은 운구인 어깨 SphereCollider 충돌 +
+    /// FailFloor 접촉 시 월드 +Y Impulse.
     /// 관 위치는 에디터에서 배치하고, Play 시 중력으로 어깨 Collider 위에 얹힌다.
     /// </summary>
     [DisallowMultipleComponent]
@@ -12,8 +12,8 @@ namespace MiniParty.Minigames.CoffinDance
     public sealed class CoffinDanceCoffinBody : MonoBehaviour
     {
         [Header("무게중심")]
-        [Tooltip("로컬 공간 CoM. 지지점보다 살짝 높게 두면 기울 때 넘어지기 쉬움.")]
-        [SerializeField] Vector3 centerOfMassLocal = new Vector3(0f, 0.15f, 0f);
+        [Tooltip("로컬 공간 CoM. (0,0,0)=기하 중심(박스 콜라이더와 동일).")]
+        [SerializeField] Vector3 centerOfMassLocal = Vector3.zero;
 
         Rigidbody _rb;
         Quaternion _restLocalRotation;
@@ -26,6 +26,15 @@ namespace MiniParty.Minigames.CoffinDance
         public bool HasTouchedFailFloor => _touchedFailFloor;
 
         public void ClearFailFloorContact() => _touchedFailFloor = false;
+
+        public void ApplyUpwardImpulse(float impulse)
+        {
+            Rigidbody rb = Body;
+            if (rb == null || rb.isKinematic || impulse <= 0f)
+                return;
+
+            rb.AddForce(Vector3.up * impulse, ForceMode.Impulse);
+        }
 
         void Awake()
         {

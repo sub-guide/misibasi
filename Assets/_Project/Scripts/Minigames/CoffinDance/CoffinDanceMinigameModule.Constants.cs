@@ -10,6 +10,15 @@ namespace MiniParty.Minigames.CoffinDance
         public const float SurvivalScorePerSecond = 100f;
         public const float CenterHoldScorePerSecond = 50f;
 
+        /// <summary>FailFloor 접촉 1회당 월드 +Y Impulse (ForceMode.Impulse).</summary>
+        public const float DefaultFailFloorUpwardImpulse = 80f;
+
+        /// <summary>FailFloor 접촉 1회당 본게임 감점. 연습은 0.</summary>
+        public const int DefaultFailFloorPenaltyScore = 500;
+
+        /// <summary>FailFloor 접촉 후 관↔어깨 SphereCollider IgnoreCollision 유지 시간(초).</summary>
+        public const float DefaultFailFloorShoulderIgnoreSeconds = 0.3f;
+
         public const float Phase1EndSeconds = 20f;
         public const float Phase2EndSeconds = 40f;
         public const float Phase3EndSeconds = 50f;

@@ -917,7 +917,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 6801253829468794550}
-  body: {fileID: 0}
 --- !u!1 &4794917156951448213 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3638193520734090830, guid: 1b855360a48d9bf45b31eada08348e83, type: 3}
@@ -942,8 +941,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 27
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 30
+  m_Center: {x: 0, y: 10, z: 5}
 --- !u!95 &6801253829468794550 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 1b855360a48d9bf45b31eada08348e83, type: 3}

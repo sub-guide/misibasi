@@ -7,16 +7,13 @@ namespace MiniParty.Minigames.CoffinDance
         void TickSlotGameplay(int i, float dt)
         {
             ref SlotRuntime sr = ref _slots[i];
-            if (sr.Eliminated)
-                return;
 
             ReadBalanceInput(i, out float left, out float right);
             StepShoulderControl(ref sr, dt, left, right);
             ApplyPallbearerPoses(i, ref sr);
             AccruePassiveScore(i, ref sr, dt);
-
-            if (CheckFailFloorAndMaybeEliminate(i, ref sr))
-                return;
+            HandleFailFloorContact(i, ref sr);
+            TickShoulderIgnore(i, ref sr, dt);
         }
 
         void AccruePassiveScore(int i, ref SlotRuntime sr, float dt)
@@ -33,30 +30,6 @@ namespace MiniParty.Minigames.CoffinDance
 
             sr.ScoreExact += gain;
             sr.ScoreSum = Mathf.Max(0, Mathf.FloorToInt(sr.ScoreExact));
-        }
-
-        void EliminateSlot(int i, ref SlotRuntime sr)
-        {
-            if (sr.Eliminated)
-                return;
-
-            sr.Eliminated = true;
-            sr.ScoreSum = Mathf.Max(0, Mathf.FloorToInt(sr.ScoreExact));
-            _aliveMask[i] = false;
-            SetEliminatedUi(i, true);
-
-            CoffinDanceSlotBindings bind = GetBindings(i);
-            bind?.SoftResetAllPallbearers();
-
-            CoffinDanceCoffinBody body = bind?.ResolveCoffinBody();
-            if (body != null)
-            {
-                body.ClearFailFloorContact();
-                body.SetSimulationActive(false);
-            }
-
-            if (!_ctx.IsPractice && CountAlive() == 0)
-                BeginEndDelay();
         }
     }
 }

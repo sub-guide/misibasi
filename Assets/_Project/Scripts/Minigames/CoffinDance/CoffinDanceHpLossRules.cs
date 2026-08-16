@@ -5,7 +5,7 @@ namespace MiniParty.Minigames.CoffinDance
     /// <summary>
     /// 관짝춤 본게임 HP −1 판정.
     /// · 1인: 총점 &lt; 저점수 컷(기본 3000)
-    /// · 2인 이상: 하위 50%만 (저점수 컷 없음). 탈락자도 탈락 시점 점수로 순위 산정.
+    /// · 2인 이상: 하위 50%만 (저점수 컷 없음). 60초 만료 시점 점수로 순위.
     /// </summary>
     public static class CoffinDanceHpLossRules
     {

@@ -70,6 +70,30 @@ namespace MiniParty.Minigames.CoffinDance
             });
         }
 
+        public void SetCoffinShoulderCollisionsIgnored(bool ignored)
+        {
+            CoffinDanceCoffinBody body = ResolveCoffinBody();
+            Collider coffinCol = body != null ? body.GetComponent<Collider>() : null;
+            if (coffinCol == null || Pallbearers == null)
+                return;
+
+            for (var i = 0; i < Pallbearers.Length; i++)
+            {
+                Transform root = Pallbearers[i];
+                if (root == null)
+                    continue;
+
+                SphereCollider[] spheres = root.GetComponentsInChildren<SphereCollider>(true);
+                for (var s = 0; s < spheres.Length; s++)
+                {
+                    if (spheres[s] == null)
+                        continue;
+
+                    Physics.IgnoreCollision(coffinCol, spheres[s], ignored);
+                }
+            }
+        }
+
         void ForEachPose(System.Action<CoffinDancePallbearerPose> action)
         {
             for (var i = 0; i < 6; i++)

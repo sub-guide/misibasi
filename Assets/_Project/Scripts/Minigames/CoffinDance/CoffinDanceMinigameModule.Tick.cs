@@ -35,7 +35,7 @@ namespace MiniParty.Minigames.CoffinDance
                 _remainingMainTime = Mathf.Max(0f, MainDurationSeconds - _elapsedMainTime);
                 RefreshPhaseParameters();
 
-                if (_remainingMainTime <= 0f || CountAlive() == 0)
+                if (_remainingMainTime <= 0f)
                 {
                     BeginEndDelay();
                     FlushAllUi();
@@ -71,18 +71,6 @@ namespace MiniParty.Minigames.CoffinDance
 
             _flowState = CdFlowState.Ending;
             _endDelayRemain = SessionEndDelaySeconds;
-        }
-
-        int CountAlive()
-        {
-            var n = 0;
-            for (var i = 0; i < SlotCount; i++)
-            {
-                if (_aliveMask[i])
-                    n++;
-            }
-
-            return n;
         }
     }
 }

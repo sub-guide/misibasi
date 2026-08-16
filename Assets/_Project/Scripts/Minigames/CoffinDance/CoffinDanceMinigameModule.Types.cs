@@ -26,6 +26,7 @@ namespace MiniParty.Minigames.CoffinDance
             public float SeesawBias;
             public float SeesawXCurrent;
             public float HoldTimer;
+            public float ShoulderIgnoreRemain;
         }
     }
 }

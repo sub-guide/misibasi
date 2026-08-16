@@ -41,6 +41,16 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("DanceWave 진폭. x = Clamp01(bias + wave×Amp).")]
         [SerializeField] float noiseAmp = DefaultNoiseAmp;
 
+        [Header("FailFloor (접촉 1회 Impulse · 본게임 감점)")]
+        [Tooltip("관이 FailFloor에 처음 닿는 순간 월드 +Y로 가하는 Impulse. Play에서 조절.")]
+        [SerializeField] float failFloorUpwardImpulse = DefaultFailFloorUpwardImpulse;
+
+        [Tooltip("본게임 FailFloor 접촉 1회당 감점. 0 미만으로 내려가지 않음. 연습은 감점 없음.")]
+        [SerializeField] int failFloorPenaltyScore = DefaultFailFloorPenaltyScore;
+
+        [Tooltip("FailFloor 접촉 후 이 시간(초) 동안 관↔운구인 어깨 SphereCollider 충돌을 무시. 0이면 무시 없음.")]
+        [SerializeField] float failFloorShoulderIgnoreSeconds = DefaultFailFloorShoulderIgnoreSeconds;
+
         [Header("HP")]
         [SerializeField] int hpLowScoreThreshold = DefaultLowScoreThreshold;
 

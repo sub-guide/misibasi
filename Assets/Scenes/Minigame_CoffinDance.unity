@@ -181,6 +181,8 @@ MonoBehaviour:
   pullCoefficient: 2
   danceSineHz: 2
   noiseAmp: 0.05
+  failFloorUpwardImpulse: 8
+  failFloorPenaltyScore: 500
   hpLowScoreThreshold: 3000
   slotWorldSpacing: 40
   disableMainCameraOnBegin: 1

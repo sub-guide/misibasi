@@ -256,7 +256,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `MainMenu` | 로비·카탈로그·시작 |
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
 | `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
-| `Minigame_CoffinDance` | 시소·FailFloor·연습/본·탈락→Results **검증** · 점프 없음 |
+| `Minigame_CoffinDance` | 시소·FailFloor +Y Impulse(씬 1)·탈락 없음·60초 **검증** · 어깨 Ignore 0.3초 **Play 미검증** |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -280,13 +280,14 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ## 6. 지금 포커스 · 열린 결정
 
-> **마지막 갱신**: 2026-08-15  
+> **마지막 갱신**: 2026-08-16  
 > 완료 이력·To-Do·최근 완료는 **쓰지 않는다** (§3). 상세는 `02_개발_진행_일지.md`.
 
 ### 지금 포커스
 
-1. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
-2. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
+1. **관짝춤** — FailFloor 튕김 후 0.3초 어깨 Ignore **Play 검증**
+2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
+3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
 ### 열린 결정 / 보류
 
@@ -298,6 +299,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | OIIA `buzzClip` / `sessionEndClip` | 의도적 미연결 | 연결 여부 **미결정** |
 | Result `rankRevealClip` / `hpHitClip` | 선택 | Inspector 오디오 연결 여부 |
 | C-11 `OiiaResultMinigameFlavor` | 미착수 | 현재 ID 매칭만 |
+| 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
 | 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |
 
 ---
