@@ -110,6 +110,44 @@ namespace MiniParty.Minigames.CoffinDance
             GetBindings(i)?.SetCoffinShoulderCollisionsIgnored(false);
         }
 
+        static bool IsSeesawBiasAtExtreme(float bias)
+        {
+            return bias <= 0f || bias >= 1f;
+        }
+
+        void UpdateExtremeSeesawShoulderColliders(int i, ref SlotRuntime sr)
+        {
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            if (bind == null)
+                return;
+
+            if (!IsSeesawBiasAtExtreme(sr.SeesawBias))
+            {
+                bind.SetSideShoulderCollidersEnabled(leftSide: true, enabled: true);
+                bind.SetSideShoulderCollidersEnabled(leftSide: false, enabled: true);
+                return;
+            }
+
+            bool leftLow = sr.SeesawBias <= 0f;
+            bind.SetSideShoulderCollidersEnabled(leftSide: true, enabled: !leftLow);
+            bind.SetSideShoulderCollidersEnabled(leftSide: false, enabled: leftLow);
+        }
+
+        void ApplyShoulderDepenetration(int i, ref SlotRuntime sr)
+        {
+            if (IsSeesawBiasAtExtreme(sr.SeesawBias))
+                return;
+
+            if (sr.ShoulderIgnoreRemain > 0f)
+                return;
+
+            float maxY = Mathf.Max(0f, shoulderDepenetrationMaxY);
+            if (maxY <= 0f)
+                return;
+
+            GetBindings(i)?.ApplyUpwardShoulderDepenetration(maxY);
+        }
+
         void ResetSeesawToNeutral(ref SlotRuntime sr)
         {
             float n = Mathf.Clamp01(xSeesawNeutral);

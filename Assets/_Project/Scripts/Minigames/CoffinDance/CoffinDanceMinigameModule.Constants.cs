@@ -19,6 +19,9 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>FailFloor 접촉 후 관↔어깨 SphereCollider IgnoreCollision 유지 시간(초).</summary>
         public const float DefaultFailFloorShoulderIgnoreSeconds = 0.3f;
 
+        /// <summary>어깨와 겹칠 때 관을 +Y로만 밀어 올리는 한 프레임 최대량.</summary>
+        public const float DefaultShoulderDepenetrationMaxY = 0.5f;
+
         public const float Phase1EndSeconds = 20f;
         public const float Phase2EndSeconds = 40f;
         public const float Phase3EndSeconds = 50f;

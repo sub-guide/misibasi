@@ -77,6 +77,74 @@ namespace MiniParty.Minigames.CoffinDance
             if (coffinCol == null || Pallbearers == null)
                 return;
 
+            ForEachShoulderSphere(includeDisabled: true, sphere =>
+            {
+                Physics.IgnoreCollision(coffinCol, sphere, ignored);
+            });
+        }
+
+        public void SetSideShoulderCollidersEnabled(bool leftSide, bool enabled)
+        {
+            if (Pallbearers == null)
+                return;
+
+            int start = leftSide ? 0 : 3;
+            int end = start + 3;
+            for (var i = start; i < end && i < Pallbearers.Length; i++)
+            {
+                Transform root = Pallbearers[i];
+                if (root == null)
+                    continue;
+
+                SphereCollider[] spheres = root.GetComponentsInChildren<SphereCollider>(true);
+                for (var s = 0; s < spheres.Length; s++)
+                {
+                    if (spheres[s] != null)
+                        spheres[s].enabled = enabled;
+                }
+            }
+        }
+
+        public void ApplyUpwardShoulderDepenetration(float maxY)
+        {
+            CoffinDanceCoffinBody body = ResolveCoffinBody();
+            if (body == null || maxY <= 0f)
+                return;
+
+            Collider coffinCol = body.GetComponent<Collider>();
+            Rigidbody rb = body.Body;
+            if (coffinCol == null || rb == null || rb.isKinematic)
+                return;
+
+            Vector3 coffinPos = rb.position;
+            Quaternion coffinRot = rb.rotation;
+            float lift = 0f;
+
+            ForEachShoulderSphere(includeDisabled: false, sphere =>
+            {
+                Transform st = sphere.transform;
+                if (!Physics.ComputePenetration(
+                        coffinCol, coffinPos, coffinRot,
+                        sphere, st.position, st.rotation,
+                        out Vector3 direction, out float distance))
+                    return;
+
+                float y = direction.y * distance;
+                if (y > lift)
+                    lift = y;
+            });
+
+            if (lift <= 0f)
+                return;
+
+            body.LiftWorldY(Mathf.Min(lift, maxY));
+        }
+
+        void ForEachShoulderSphere(bool includeDisabled, System.Action<SphereCollider> action)
+        {
+            if (Pallbearers == null || action == null)
+                return;
+
             for (var i = 0; i < Pallbearers.Length; i++)
             {
                 Transform root = Pallbearers[i];
@@ -86,10 +154,13 @@ namespace MiniParty.Minigames.CoffinDance
                 SphereCollider[] spheres = root.GetComponentsInChildren<SphereCollider>(true);
                 for (var s = 0; s < spheres.Length; s++)
                 {
-                    if (spheres[s] == null)
+                    SphereCollider sphere = spheres[s];
+                    if (sphere == null)
+                        continue;
+                    if (!includeDisabled && !sphere.enabled)
                         continue;
 
-                    Physics.IgnoreCollision(coffinCol, spheres[s], ignored);
+                    action(sphere);
                 }
             }
         }

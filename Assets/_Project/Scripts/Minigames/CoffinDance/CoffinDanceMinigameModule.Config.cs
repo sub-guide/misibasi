@@ -51,6 +51,10 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("FailFloor 접촉 후 이 시간(초) 동안 관↔운구인 어깨 SphereCollider 충돌을 무시. 0이면 무시 없음.")]
         [SerializeField] float failFloorShoulderIgnoreSeconds = DefaultFailFloorShoulderIgnoreSeconds;
 
+        [Header("어깨 겹침")]
+        [Tooltip("시소가 최대(0/1)가 아닐 때, 관이 어깨와 겹치면 +Y로만 밀어 올리는 한 프레임 최대량.")]
+        [SerializeField] float shoulderDepenetrationMaxY = DefaultShoulderDepenetrationMaxY;
+
         [Header("HP")]
         [SerializeField] int hpLowScoreThreshold = DefaultLowScoreThreshold;
 

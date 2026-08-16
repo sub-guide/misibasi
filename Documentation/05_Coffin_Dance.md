@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-08-16 — 시소 입력 **LB/RB**. 관 CoM 기하 중심. FailFloor 탈락 없음 · +Y Impulse · 60초 종료.  
+> **문서 기준일**: 2026-08-16 — 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -10,7 +10,7 @@
 
 | 영역 | 상태 | 비고 |
 |------|------|------|
-| C# 게임 로직 | **FailFloor Impulse + 어깨 Ignore** | 탈락 없음 · +Y Impulse · 바닥 접촉 후 0.3초 어깨 Ignore **구현·Play 미검증**. CoM `(0,0,0)`. 패널티 수치 보류 |
+| C# 게임 로직 | **어깨 겹침 A + 최대 시소 낮은 쪽 off · Play 검증** | `x_bias` 0/1이 아니면 +Y 분리. 0/1이면 낮은 쪽 SphereCollider off·A 중지 (사용자, 2026-08-16) |
 | 점프 | **제거·Play 검증** | A로 점프 안 됨 (사용자, 2026-08-15) |
 | Animator | **ExtensionBlend만** | Jump 상태 에디터 삭제 완료 (사용자, 2026-08-15) |
 | Flow·Result 연동 | **60초 종료 검증** | 연습 READY→본 · FailFloor 탈락 경로 없음. 60초 → Results (사용자, 2026-08-15) |
@@ -41,7 +41,7 @@
 | 어깨 Collider | **RightArm만** · `Pallbearer.prefab` SphereCollider **Radius 27** (25→27, 2026-08-07) · 반대편 Scale 반전 |
 | Slot 연결 | `Pallbearers[0..2]`=←쪽 · `[3..5]`=→쪽 |
 | 실패 | 탈락 없음 · FailFloor 접촉 1회 → 월드 +Y Impulse |
-| 관 운동 | 어깨 SphereCollider + 중력 + FailFloor `AddForce(+Y, Impulse)` · 씬 `failFloorUpwardImpulse` **1** (코드 기본 80) |
+| 관 운동 | 어깨 충돌 + 중력 + FailFloor Impulse. 시소 최대 아니면 겹침 시 +Y 분리(`shoulderDepenetrationMaxY` 0.5). `x_bias` 0/1이면 낮은 쪽 어깨 Collider off |
 | 관 CoM | `centerOfMassLocal` **(0,0,0)** = 기하 중심. 예전 `(0, 0.15, 0)` 오프셋 **제거**(뒤집혀 어깨에 걸리던 원인) |
 | 레거시 | `PallbearerProtoType`(HumanDummy) · Capture Rest/Crouch · Jump FSM — **참고만** |
 
@@ -77,7 +77,9 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - `centerOfMass` 로컬 **(0,0,0)** = 기하 중심 (Inspector `centerOfMassLocal`)
 - 기울기(점수용): `transform` 로컬 Z 각(도)
 - **FailFloor 접촉** (`OnCollisionEnter` 1회): 월드 `Vector3.up` Impulse + `failFloorShoulderIgnoreSeconds`(기본 **0.3**) 동안 관↔어깨 SphereCollider `IgnoreCollision`. 본게임만 `failFloorPenaltyScore` 감점. **탈락·연습 SoftReset 없음**
-- **플레이 중 운동**: 운구인 어깨 SphereCollider 충돌 + 중력 + FailFloor +Y Impulse. 바닥 접촉 직후 잠시 어깨 충돌 무시. Y 회전 Freeze 유지 (시소는 Z만)
+- **플레이 중 운동**: 운구인 어깨 SphereCollider 충돌 + 중력 + FailFloor +Y Impulse. 바닥 접촉 직후 잠시 어깨 충돌 무시.
+- **겹침 분리 (A)**: `x_bias`가 0/1이 **아니면** 어깨와 `ComputePenetration` 후 **+Y만** 적용 (`shoulderDepenetrationMaxY`, 기본 0.5). FailFloor Ignore 중에는 A 중지.
+- **시소 최대**: `x_bias == 0` → 왼쪽 어깨 SphereCollider off. `== 1` → 오른쪽 off. 높은 쪽은 유지. 이때 A 중지. 0/1이 아니면 즉시 양쪽 켬.
 
 ### FailFloor (`CoffinDanceFailFloor`)
 
@@ -190,7 +192,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `CoffinDancePallbearerPose` | ExtensionBlend · `SoftResetTransform` (운구인 RB 없음) |
 | `CoffinDanceFailFloor` | 바닥 마커 (탈락 아님) |
 | `CoffinDanceSceneBootstrap` | Begin/Tick |
-| `CoffinDanceSlotBindings` | `Pallbearers[6]` · PrepareAllPoses / ApplySideExtension / SoftResetAllPallbearers / `SetCoffinShoulderCollisionsIgnored` |
+| `CoffinDanceSlotBindings` | `Pallbearers[6]` · PrepareAllPoses / ApplySideExtension / SoftResetAllPallbearers / `SetCoffinShoulderCollisionsIgnored` / `SetSideShoulderCollidersEnabled` / `ApplyUpwardShoulderDepenetration` |
 | `CoffinDanceHpLossRules` | HP 판정 |
 | `CoffinDanceResultMinigameFlavor` | Result ID 매칭 |
 | Editor `CoffinDancePallbearerAnimatorSetup` | Controller 생성 메뉴 (ExtensionBlend만) |
@@ -217,6 +219,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `failFloorUpwardImpulse` | 80 | FailFloor 접촉 1회 월드 +Y Impulse (**씬 1**) |
 | `failFloorPenaltyScore` | 500 | 본게임 접촉 1회 감점 (연습 0). **수치 보류** |
 | `failFloorShoulderIgnoreSeconds` | 0.3 | FailFloor 접촉 후 관↔어깨 IgnoreCollision 시간 |
+| `shoulderDepenetrationMaxY` | 0.5 | 시소 최대가 아닐 때 어깨 겹침 +Y 분리 한 프레임 최대 |
 | `hpLowScoreThreshold` | 3000 | 1P 저점수 컷 |
 | ~~`presentationYawDegrees`~~ | — | **제거** · TiltRoot 회전은 프리팹 값 사용 |
 | `slotWorldSpacing` | 40 | 슬롯 X 분리 |
@@ -268,4 +271,4 @@ Minigame_CoffinDance
 
 ---
 
-문서 갱신: **2026-08-16** (시소 입력 stick 좌우 → LB/RB)
+문서 갱신: **2026-08-16** (어깨 겹침 +Y 분리 · 시소 최대 낮은 쪽 off **Play 검증**)

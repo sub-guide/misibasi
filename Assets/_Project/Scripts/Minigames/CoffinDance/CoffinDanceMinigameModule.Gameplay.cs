@@ -11,9 +11,11 @@ namespace MiniParty.Minigames.CoffinDance
             ReadBalanceInput(i, out float left, out float right);
             StepShoulderControl(ref sr, dt, left, right);
             ApplyPallbearerPoses(i, ref sr);
+            UpdateExtremeSeesawShoulderColliders(i, ref sr);
             AccruePassiveScore(i, ref sr, dt);
             HandleFailFloorContact(i, ref sr);
             TickShoulderIgnore(i, ref sr, dt);
+            ApplyShoulderDepenetration(i, ref sr);
         }
 
         void AccruePassiveScore(int i, ref SlotRuntime sr, float dt)

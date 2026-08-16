@@ -36,6 +36,18 @@ namespace MiniParty.Minigames.CoffinDance
             rb.AddForce(Vector3.up * impulse, ForceMode.Impulse);
         }
 
+        public void LiftWorldY(float deltaY)
+        {
+            Rigidbody rb = Body;
+            if (rb == null || rb.isKinematic || deltaY <= 0f)
+                return;
+
+            rb.MovePosition(rb.position + Vector3.up * deltaY);
+            Vector3 v = rb.velocity;
+            if (v.y < 0f)
+                rb.velocity = new Vector3(v.x, 0f, v.z);
+        }
+
         void Awake()
         {
             EnsureConfigured();

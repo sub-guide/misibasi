@@ -48,8 +48,13 @@ namespace MiniParty.Minigames.CoffinDance
                     if (slotCam != null)
                         slotCam.backgroundColor = new Color(0.05f, 0.05f, 0.08f);
                     SetEliminatedUi(i, false);
-                    bind?.SetCoffinShoulderCollisionsIgnored(false);
-                    bind?.ResolveCoffinBody()?.SetSimulationActive(false);
+                    if (bind != null)
+                    {
+                        bind.SetCoffinShoulderCollisionsIgnored(false);
+                        bind.SetSideShoulderCollidersEnabled(leftSide: true, enabled: true);
+                        bind.SetSideShoulderCollidersEnabled(leftSide: false, enabled: true);
+                        bind.ResolveCoffinBody()?.SetSimulationActive(false);
+                    }
                     return;
                 }
 
@@ -60,6 +65,8 @@ namespace MiniParty.Minigames.CoffinDance
                 if (bind != null)
                 {
                     bind.SetCoffinShoulderCollisionsIgnored(false);
+                    bind.SetSideShoulderCollidersEnabled(leftSide: true, enabled: true);
+                    bind.SetSideShoulderCollidersEnabled(leftSide: false, enabled: true);
                     bind.PrepareAllPoses();
                     ApplyPallbearerPoses(i, ref sr);
 
