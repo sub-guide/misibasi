@@ -55,6 +55,13 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("시소가 최대(0/1)가 아닐 때, 관이 어깨와 겹치면 +Y로만 밀어 올리는 한 프레임 최대량.")]
         [SerializeField] float shoulderDepenetrationMaxY = DefaultShoulderDepenetrationMaxY;
 
+        [Header("점수")]
+        [Tooltip("노이즈 포함 최종 시소 x가 0.5에서 이 값 이내면 정중앙. 기본 0.05 → 0.45~0.55.")]
+        [SerializeField] float centerZoneThreshold = DefaultCenterZoneThreshold;
+
+        [Tooltip("정중앙 유지 시 초당 추가 점수. 생존 100과 합쳐 250. Phase4에서는 획득 ×2.")]
+        [SerializeField] float centerBonusScorePerSec = DefaultCenterBonusScorePerSec;
+
         [Header("HP")]
         [SerializeField] int hpLowScoreThreshold = DefaultLowScoreThreshold;
 

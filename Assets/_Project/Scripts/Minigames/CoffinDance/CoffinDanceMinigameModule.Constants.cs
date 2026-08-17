@@ -5,10 +5,14 @@ namespace MiniParty.Minigames.CoffinDance
         public const int SlotCount = 4;
 
         public const float MainDurationSeconds = 60f;
-        public const float CenterHoldDegrees = 10f;
 
         public const float SurvivalScorePerSecond = 100f;
-        public const float CenterHoldScorePerSecond = 50f;
+
+        /// <summary>최종 시소 x가 0.5에서 이 값 이내면 정중앙 보너스. 기본 0.05 → 0.45~0.55.</summary>
+        public const float DefaultCenterZoneThreshold = 0.05f;
+
+        /// <summary>정중앙 유지 시 초당 추가 점수. Phase4 배율은 생존 점수와 같이 적용.</summary>
+        public const float DefaultCenterBonusScorePerSec = 150f;
 
         /// <summary>FailFloor 접촉 1회당 월드 +Y Impulse (ForceMode.Impulse).</summary>
         public const float DefaultFailFloorUpwardImpulse = 80f;

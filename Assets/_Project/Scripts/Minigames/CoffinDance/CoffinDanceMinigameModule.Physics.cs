@@ -58,16 +58,6 @@ namespace MiniParty.Minigames.CoffinDance
             bind.ApplySideExtension(leftSide: false, 1f - x);
         }
 
-        float GetSlotTiltDegrees(int i)
-        {
-            CoffinDanceSlotBindings bind = GetBindings(i);
-            CoffinDanceCoffinBody body = bind != null ? bind.ResolveCoffinBody() : null;
-            if (body == null)
-                return 0f;
-
-            return body.GetTiltZDegrees();
-        }
-
         void HandleFailFloorContact(int i, ref SlotRuntime sr)
         {
             CoffinDanceSlotBindings bind = GetBindings(i);
