@@ -84,6 +84,7 @@ namespace MiniParty.Minigames.CoffinDance
 
             CoffinDanceSlotBindings bind = GetBindings(i);
             bind?.SetCoffinShoulderCollisionsIgnored(true);
+            bind?.ResolveCoffinBody()?.ClearShoulderContacts();
             sr.ShoulderIgnoreRemain = dur;
         }
 

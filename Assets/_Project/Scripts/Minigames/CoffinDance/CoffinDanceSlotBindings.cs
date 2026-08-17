@@ -140,6 +140,12 @@ namespace MiniParty.Minigames.CoffinDance
             body.LiftWorldY(Mathf.Min(lift, maxY));
         }
 
+        public bool IsCoffinTouchingAnyEnabledShoulder()
+        {
+            CoffinDanceCoffinBody body = ResolveCoffinBody();
+            return body != null && body.IsTouchingShoulder;
+        }
+
         void ForEachShoulderSphere(bool includeDisabled, System.Action<SphereCollider> action)
         {
             if (Pallbearers == null || action == null)

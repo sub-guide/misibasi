@@ -12,24 +12,27 @@ namespace MiniParty.Minigames.CoffinDance
             StepShoulderControl(ref sr, dt, left, right);
             ApplyPallbearerPoses(i, ref sr);
             UpdateExtremeSeesawShoulderColliders(i, ref sr);
-            AccruePassiveScore(ref sr, dt);
+            AccruePassiveScore(i, ref sr, dt);
             HandleFailFloorContact(i, ref sr);
             TickShoulderIgnore(i, ref sr, dt);
             ApplyShoulderDepenetration(i, ref sr);
         }
 
-        void AccruePassiveScore(ref SlotRuntime sr, float dt)
+        void AccruePassiveScore(int i, ref SlotRuntime sr, float dt)
         {
             if (_ctx.IsPractice)
                 return;
 
-            float mul = _scoreMultiplier;
-            float gain = SurvivalScorePerSecond * mul * dt;
-
-            // x = Clamp01(x_bias + DanceWave × noiseAmp) — StepShoulderControl에서 이미 반영
             float x = Mathf.Clamp01(sr.SeesawXCurrent);
             bool isCenter = Mathf.Abs(x - 0.5f) <= centerZoneThreshold;
-            if (isCenter)
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            bool supported = sr.ShoulderIgnoreRemain <= 0f
+                             && bind != null
+                             && bind.IsCoffinTouchingAnyEnabledShoulder();
+
+            float mul = _scoreMultiplier;
+            float gain = SurvivalScorePerSecond * mul * dt;
+            if (isCenter && supported)
                 gain += centerBonusScorePerSec * mul * dt;
 
             sr.ScoreExact += gain;

@@ -20,12 +20,17 @@ namespace MiniParty.Minigames.CoffinDance
         Vector3 _restLocalPosition;
         bool _cachedRest;
         bool _touchedFailFloor;
+        int _shoulderContactCount;
 
         public Rigidbody Body => _rb != null ? _rb : (_rb = GetComponent<Rigidbody>());
 
         public bool HasTouchedFailFloor => _touchedFailFloor;
 
+        public bool IsTouchingShoulder => _shoulderContactCount > 0;
+
         public void ClearFailFloorContact() => _touchedFailFloor = false;
+
+        public void ClearShoulderContacts() => _shoulderContactCount = 0;
 
         public void ApplyUpwardImpulse(float impulse)
         {
@@ -97,12 +102,38 @@ namespace MiniParty.Minigames.CoffinDance
 
             if (collision.collider.GetComponentInParent<CoffinDanceFailFloor>() != null)
                 _touchedFailFloor = true;
+
+            if (IsEnabledShoulderCollider(collision.collider))
+                _shoulderContactCount++;
+        }
+
+        void OnCollisionExit(Collision collision)
+        {
+            if (collision == null || collision.collider == null)
+                return;
+
+            if (IsEnabledShoulderCollider(collision.collider) || IsShoulderCollider(collision.collider))
+                _shoulderContactCount = Mathf.Max(0, _shoulderContactCount - 1);
+        }
+
+        static bool IsEnabledShoulderCollider(Collider col)
+        {
+            return col != null && col.enabled && IsShoulderCollider(col);
+        }
+
+        static bool IsShoulderCollider(Collider col)
+        {
+            if (!(col is SphereCollider))
+                return false;
+
+            return col.GetComponentInParent<CoffinDancePallbearerPose>() != null;
         }
 
         public void SoftReset()
         {
             EnsureConfigured();
             ClearFailFloorContact();
+            ClearShoulderContacts();
             Rigidbody rb = Body;
             if (rb == null)
                 return;

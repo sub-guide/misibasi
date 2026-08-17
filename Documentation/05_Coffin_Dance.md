@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-08-16 — 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off. 점수: 시소 `x` 정중앙 보너스.  
+> **문서 기준일**: 2026-08-17 — 정중앙 보너스 = 시소 `x` + 어깨 지지. 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -11,7 +11,7 @@
 | 영역 | 상태 | 비고 |
 |------|------|------|
 | C# 게임 로직 | **어깨 겹침 A + 최대 시소 낮은 쪽 off · Play 검증** | `x_bias` 0/1이 아니면 +Y 분리. 0/1이면 낮은 쪽 SphereCollider off·A 중지 (사용자, 2026-08-16) |
-| 점수 | **시소 정중앙 보너스 · 미검증** | 생존 100/초 + `|x-0.5|≤centerZoneThreshold`(기본 0.05)이면 +150/초. Phase4 획득 ×2. 관 Z 기울기 보너스 **폐기** |
+| 점수 | **시소 정중앙 + 어깨 지지 보너스 · Play 검증** | 생존 100/초. `|x-0.5|≤centerZoneThreshold` **그리고** 관이 활성 어깨 SphereCollider와 접촉(Ignore 중 제외)이면 +150/초. Phase4 획득 ×2 (사용자, 2026-08-17) |
 | 점프 | **제거·Play 검증** | A로 점프 안 됨 (사용자, 2026-08-15) |
 | Animator | **ExtensionBlend만** | Jump 상태 에디터 삭제 완료 (사용자, 2026-08-15) |
 | Flow·Result 연동 | **60초 종료 검증** | 연습 READY→본 · FailFloor 탈락 경로 없음. 60초 → Results (사용자, 2026-08-15) |
@@ -43,7 +43,7 @@
 | Slot 연결 | `Pallbearers[0..2]`=←쪽 · `[3..5]`=→쪽 |
 | 실패 | 탈락 없음 · FailFloor 접촉 1회 → 월드 +Y Impulse |
 | 관 운동 | 어깨 충돌 + 중력 + FailFloor Impulse. 시소 최대 아니면 겹침 시 +Y 분리(`shoulderDepenetrationMaxY` 0.5). `x_bias` 0/1이면 낮은 쪽 어깨 Collider off |
-| 점수 정중앙 | 노이즈 포함 최종 `x` (`SeesawXCurrent`). `|x-0.5| ≤ centerZoneThreshold`(기본 0.05). 관 Z 각 **아님** |
+| 점수 정중앙 | 노이즈 포함 최종 `x` **그리고** 관이 활성 어깨 SphereCollider와 접촉. FailFloor Ignore 중·공중·바닥은 보너스 없음. 관 Z 각 **아님** |
 | 관 CoM | `centerOfMassLocal` **(0,0,0)** = 기하 중심. 예전 `(0, 0.15, 0)` 오프셋 **제거**(뒤집혀 어깨에 걸리던 원인) |
 | 레거시 | `PallbearerProtoType`(HumanDummy) · Capture Rest/Crouch · Jump FSM — **참고만** |
 
@@ -136,14 +136,16 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 | 항목 | 값 |
 |------|-----|
 | 생존 | 초당 **100** (`SurvivalScorePerSecond`) |
-| 정중앙 유지 | 초당 **150** 추가 (`centerBonusScorePerSec`). 생존과 합쳐 초당 **250** |
+| 정중앙 유지 | 초당 **150** 추가 (`centerBonusScorePerSec`). 시소 정중앙 **그리고** 어깨 지지일 때만. 둘 다이면 생존과 합쳐 초당 **250** |
 | Phase4 (50~60초) | **획득 ×2.0** (FailFloor 패널티에는 배율 없음). 정중앙 유지 시 초당 **500** |
 | FailFloor 접촉 1회 | **−500** (`failFloorPenaltyScore`, Inspector). 0 미만 clamp. **연습 감점 없음** |
 
-정중앙 판정은 관 Z 각이 아니라 **노이즈 포함 최종 시소 `x`** (`SeesawXCurrent` = `Clamp01(x_bias + DanceWave × noiseAmp)`).
+정중앙 **보너스**만 아래 둘을 모두 만족해야 가산한다. 생존 초당 100은 지지·시소와 무관.
 
-`bool isCenter = Mathf.Abs(x - 0.5f) <= centerZoneThreshold`  
-기본 `centerZoneThreshold` **0.05** → `0.45 ≤ x ≤ 0.55`.
+1. 시소: `bool isCenter = Mathf.Abs(x - 0.5f) <= centerZoneThreshold`  
+   `x` = `SeesawXCurrent` = `Clamp01(x_bias + DanceWave × noiseAmp)`  
+   기본 `centerZoneThreshold` **0.05** → `0.45 ≤ x ≤ 0.55`.
+2. 지지: `ShoulderIgnoreRemain ≤ 0` 이고 관이 **활성화된** 운구인 어깨 SphereCollider와 접촉 중 (`CoffinDanceCoffinBody.IsTouchingShoulder`, Enter/Exit 카운트, 1개 이상). 관 Z 각은 쓰지 않음.
 
 연습 UI 점수는 `-`, Report `FinalScore`는 0. 연습은 생존·보너스 가산 없음.
 
@@ -195,11 +197,11 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | 파일 | 역할 |
 |------|------|
 | `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 |
-| `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·FailFloor 감지 · `ApplyUpwardImpulse` |
+| `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·FailFloor 감지 · `ApplyUpwardImpulse` · 어깨 접촉 카운트(`IsTouchingShoulder`) |
 | `CoffinDancePallbearerPose` | ExtensionBlend · `SoftResetTransform` (운구인 RB 없음) |
 | `CoffinDanceFailFloor` | 바닥 마커 (탈락 아님) |
 | `CoffinDanceSceneBootstrap` | Begin/Tick |
-| `CoffinDanceSlotBindings` | `Pallbearers[6]` · PrepareAllPoses / ApplySideExtension / SoftResetAllPallbearers / `SetCoffinShoulderCollisionsIgnored` / `SetSideShoulderCollidersEnabled` / `ApplyUpwardShoulderDepenetration` |
+| `CoffinDanceSlotBindings` | `Pallbearers[6]` · PrepareAllPoses / ApplySideExtension / SoftResetAllPallbearers / `SetCoffinShoulderCollisionsIgnored` / `SetSideShoulderCollidersEnabled` / `ApplyUpwardShoulderDepenetration` / `IsCoffinTouchingAnyEnabledShoulder` |
 | `CoffinDanceHpLossRules` | HP 판정 |
 | `CoffinDanceResultMinigameFlavor` | Result ID 매칭 |
 | Editor `CoffinDancePallbearerAnimatorSetup` | Controller 생성 메뉴 (ExtensionBlend만) |
@@ -280,4 +282,4 @@ Minigame_CoffinDance
 
 ---
 
-문서 갱신: **2026-08-16** (시소 `x` 정중앙 보너스 · 관 기울기 보너스 폐기)
+문서 갱신: **2026-08-17** (정중앙 보너스 Play 검증 · 디버그 로그 삭제)
