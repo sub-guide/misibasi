@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-08-17 — 정중앙 보너스 = 시소 `x` + 어깨 지지. 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
+> **문서 기준일**: 2026-08-24 — 정중앙 보너스 = 시소 `x` + 어깨 지지. 정중앙 카메라 FX **Play 검증**. 개발 무적(Backspace, 1P, Editor/Dev). 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -12,6 +12,8 @@
 |------|------|------|
 | C# 게임 로직 | **어깨 겹침 A + 최대 시소 낮은 쪽 off · Play 검증** | `x_bias` 0/1이 아니면 +Y 분리. 0/1이면 낮은 쪽 SphereCollider off·A 중지 (사용자, 2026-08-16) |
 | 점수 | **시소 정중앙 + 어깨 지지 보너스 · Play 검증** | 생존 100/초. `|x-0.5|≤centerZoneThreshold` **그리고** 관이 활성 어깨 SphereCollider와 접촉(Ignore 중 제외)이면 +150/초. Phase4 획득 ×2 (사용자, 2026-08-17) |
+| 정중앙 카메라 | **Play 검증** | 발동 = 점수 보너스와 동일. FOV SmoothStep. Z는 관 기울기×0.5 √추종. 뒤집힌 관은 카메라만 180° 접기. 수치 씬 확정 2026-08-24 (사용자) |
+| 개발 무적 | **Play 검증** (카메라 테스트에 사용) | Editor·Development Build만. Backspace 토글 **1P**. 미입력·동시 입력이면 `x`가 0.5로 복귀 (`devGodReturnSpeed` 씬 **3**) |
 | 점프 | **제거·Play 검증** | A로 점프 안 됨 (사용자, 2026-08-15) |
 | Animator | **ExtensionBlend만** | Jump 상태 에디터 삭제 완료 (사용자, 2026-08-15) |
 | Flow·Result 연동 | **60초 종료 검증** | 연습 READY→본 · FailFloor 탈락 경로 없음. 60초 → Results (사용자, 2026-08-15) |
@@ -44,6 +46,8 @@
 | 실패 | 탈락 없음 · FailFloor 접촉 1회 → 월드 +Y Impulse |
 | 관 운동 | 어깨 충돌 + 중력 + FailFloor Impulse. 시소 최대 아니면 겹침 시 +Y 분리(`shoulderDepenetrationMaxY` 0.5). `x_bias` 0/1이면 낮은 쪽 어깨 Collider off |
 | 점수 정중앙 | 노이즈 포함 최종 `x` **그리고** 관이 활성 어깨 SphereCollider와 접촉. FailFloor Ignore 중·공중·바닥은 보너스 없음. 관 Z 각 **아님** |
+| 정중앙 카메라 | 점수와 **같은 발동**. FOV는 시간 블렌드+SmoothStep. Z는 √추종. **뒤집힘(|Z|&gt;90)은 카메라만 180° 접기**(-90~+90). rest FOV·로컬 XY는 첫 Begin만 캡처. 로우앵글 X는 유지 |
+| 개발 무적 | Backspace 토글 · **1P만** · Editor/Development Build만. 출시 빌드에서는 키 무시. LB/RB는 먹고, 손 떼면 `devGodReturnSpeed`로 0.5 복귀. 어깨는 가짜 지지 없음 |
 | 관 CoM | `centerOfMassLocal` **(0,0,0)** = 기하 중심. 예전 `(0, 0.15, 0)` 오프셋 **제거**(뒤집혀 어깨에 걸리던 원인) |
 | 레거시 | `PallbearerProtoType`(HumanDummy) · Capture Rest/Crouch · Jump FSM — **참고만** |
 
@@ -63,8 +67,10 @@
 | RB (R) | `ShoulderR` (`button6`) | `E` | `x_bias`↓ → `Y_R`↑ · `Y_L`↓ (홀드 시 가속) |
 | 연습 READY | Start | `B` | — |
 | 본게임 전환 | 운영자 Enter | — | — |
+| 개발 무적 | — | **Backspace** 토글 (Editor·Development Build, 1P) | ON이면 미입력 시 `x=0.5`로 복귀. LB/RB는 기존 조작 |
 
 키를 떼면 `x_bias`는 중립으로 스냅되지 않는다. 미입력(또는 LB·RB 동시)이면 **현재 기울기 방향 중력형 미세 도치**가 들어가고, 중앙 이탈 시 **비선형 풀**이 더해진다.  
+개발 무적 ON(1P)일 때는 미입력·동시 입력에서 도치·풀·노이즈 대신 `x`가 0.5로 돌아온다.  
 extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 ---
@@ -151,6 +157,24 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 ---
 
+## 4-B. 정중앙 카메라 연출
+
+발동은 점수 정중앙 보너스와 같다(`IsCenterBalanceActive`). **연습에서도 카메라만** 동작하고, 연습 점수 가산은 없다. 참가 슬롯의 `SlotCamera`만 독립 갱신. 새 카메라 오브젝트는 없다.
+
+| 항목 | 동작 |
+|------|------|
+| FOV 진입 | `CamFovBlend` 0→1을 `camZoomInDuration`(코드 0.45 · **씬 3**초)로 채움. 적용은 `SmoothStep(0,1,blend)`. 목표 FOV = rest × `centerFovMultiplier`(코드 0.85 · **씬 0.75**) |
+| FOV 이탈 | 같은 SmoothStep. 시간 = 줌인 시간 ÷ `camZoomOutSpeedMul`(코드 3 · **씬 5**). FOV 스프링·오버슈트 **없음** |
+| Z 유지 | 목표 = `FoldCoffinZForCamera(GetTiltZDegrees())` × `centerCamTiltRatio`(0.5). `|Z|&gt;90`(뒤집힘)이면 180°를 접어 -90~+90만 사용(예: -170→+10). 이동량 = `camTiltFollowGain`(코드 20 · **씬 10**) × √\|오차\| × dt |
+| Z 이탈 | 목표 0° 부족감쇠 스프링(`camReturnSpringHz` 5, `camReturnSpringDamping` 코드 0.4 · **씬 1** = 오버슈트 없음) |
+| 보존 | rest 로컬 X/Y(로우앵글 약 −10°)는 그대로. 원복 Z는 0 |
+| rest 캡처 | 슬롯당 첫 `Begin`만 FOV·로컬 XY 저장. 매 `Begin` 시작 때 블렌드·Z·속도를 0으로 리셋하고 rest 포즈 적용 |
+| Ending | 기존처럼 게임플레이 Tick이 멈추면 카메라도 그 프레임에 고정 |
+
+구현: `CoffinDanceMinigameModule.CameraFx.cs` · `TickCenterBalanceCameraFx`. 수치는 Module Inspector.
+
+---
+
 ## 5. JUMP — **제거** (2026-08-15)
 
 A 자유 점프 · RB Impulse · `JumpStart`/`JumpStartHold`/`JumpLand` · Land Y 오프셋 · 착지 도치 · 점프 중 `x_bias` Hold · 발 접지 · 관↔발 `IgnoreCollision` · `JumpPromptText` **전부 폐기**.
@@ -196,7 +220,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 
 | 파일 | 역할 |
 |------|------|
-| `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 |
+| `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 · 정중앙 카메라(`CameraFx`) · 개발 무적(`DevGodMode`) |
 | `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·FailFloor 감지 · `ApplyUpwardImpulse` · 어깨 접촉 카운트(`IsTouchingShoulder`) |
 | `CoffinDancePallbearerPose` | ExtensionBlend · `SoftResetTransform` (운구인 RB 없음) |
 | `CoffinDanceFailFloor` | 바닥 마커 (탈락 아님) |
@@ -231,6 +255,14 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `shoulderDepenetrationMaxY` | 0.5 | 시소 최대가 아닐 때 어깨 겹침 +Y 분리 한 프레임 최대 |
 | `centerZoneThreshold` | 0.05 | 최종 시소 `x`가 0.5에서 이 값 이내면 정중앙 보너스 |
 | `centerBonusScorePerSec` | 150 | 정중앙 유지 시 초당 추가 점수. Phase4 배율은 생존과 같이 적용 |
+| `centerFovMultiplier` | 0.85 | 정중앙 목표 FOV = rest FOV × 이 값 (**씬 0.75**) |
+| `centerCamTiltRatio` | 0.5 | 정중앙 목표 카메라 Z = 관 Z × 이 값 (씬 동일) |
+| `camZoomInDuration` | 0.45 | 줌인 SmoothStep 시간(초). **씬 3** |
+| `camZoomOutSpeedMul` | 3 | 원복 시간 = 줌인 시간 ÷ 이 값. **씬 5** |
+| `camTiltFollowGain` | 20 | 정중앙 유지 중 Z √추종 세기. **씬 10** |
+| `camReturnSpringHz` | 5 | 이탈 Z 원복 스프링 주파수(Hz). 씬 동일 |
+| `camReturnSpringDamping` | 0.4 | 이탈 Z 스프링 감쇠비. **씬 1** (오버슈트 없음) |
+| `devGodReturnSpeed` | 3 | 개발 무적 ON·1P 미입력 시 `x`가 0.5로 돌아오는 속도(초당). 씬 동일. Editor/Dev만 로직 사용 |
 | `hpLowScoreThreshold` | 3000 | 1P 저점수 컷 |
 | ~~`presentationYawDegrees`~~ | — | **제거** · TiltRoot 회전은 프리팹 값 사용 |
 | `slotWorldSpacing` | 40 | 슬롯 X 분리 |

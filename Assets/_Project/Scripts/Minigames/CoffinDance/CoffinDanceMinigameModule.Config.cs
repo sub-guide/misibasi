@@ -62,6 +62,32 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("정중앙 유지 시 초당 추가 점수. 생존 100과 합쳐 250. Phase4에서는 획득 ×2.")]
         [SerializeField] float centerBonusScorePerSec = DefaultCenterBonusScorePerSec;
 
+        [Header("정중앙 카메라")]
+        [Tooltip("정중앙+어깨 지지 시 목표 FOV = 슬롯 카메라 rest FOV × 이 값. 기본 0.85.")]
+        [SerializeField] float centerFovMultiplier = DefaultCenterFovMultiplier;
+
+        [Tooltip("정중앙 유지 중 카메라 로컬 Z = 관 로컬 Z × 이 값. 기본 0.5.")]
+        [SerializeField] float centerCamTiltRatio = DefaultCenterCamTiltRatio;
+
+        [Tooltip("줌인 블렌드 0→1에 걸리는 시간(초). SmoothStep.")]
+        [SerializeField] float camZoomInDuration = DefaultCamZoomInDuration;
+
+        [Tooltip("원복 시간 = 줌인 시간 ÷ 이 값. 기본 3 → 0.15초.")]
+        [SerializeField] float camZoomOutSpeedMul = DefaultCamZoomOutSpeedMul;
+
+        [Tooltip("정중앙 유지 중 카메라 Z √추종 세기. 클수록 관 기울기에 빨리 붙음.")]
+        [SerializeField] float camTiltFollowGain = DefaultCamTiltFollowGain;
+
+        [Tooltip("정중앙 이탈 시 Z를 0으로 되돌리는 스프링 주파수(Hz).")]
+        [SerializeField] float camReturnSpringHz = DefaultCamReturnSpringHz;
+
+        [Tooltip("정중앙 이탈 시 Z 스프링 감쇠비. 1이면 탄력 없음, 작을수록 더 출렁.")]
+        [SerializeField] float camReturnSpringDamping = DefaultCamReturnSpringDamping;
+
+        [Header("개발 무적 (Editor / Development Build)")]
+        [Tooltip("Backspace 무적 ON일 때 1P가 LB/RB를 안 누르면 bias·최종 x가 0.5로 돌아오는 속도(초당). Play에서 조절.")]
+        [SerializeField] float devGodReturnSpeed = DefaultDevGodReturnSpeed;
+
         [Header("HP")]
         [SerializeField] int hpLowScoreThreshold = DefaultLowScoreThreshold;
 

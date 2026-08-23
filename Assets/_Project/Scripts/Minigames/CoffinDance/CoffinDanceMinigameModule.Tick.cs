@@ -15,6 +15,8 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
             }
 
+            TickDevGodModeToggle();
+
             float dt = Time.deltaTime;
 
             if (_ctx.IsPractice)

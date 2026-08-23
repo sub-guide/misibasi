@@ -295,7 +295,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `MainMenu` | 로비·카탈로그·시작 |
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
 | `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
-| `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 지지) · FailFloor Impulse · 겹침 +Y 분리 · 최대 시 낮은 쪽 어깨 off **Play 검증** |
+| `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 지지) · 정중앙 카메라 FX **Play 검증** · FailFloor Impulse · 겹침 +Y 분리 · 최대 시 낮은 쪽 어깨 off **Play 검증** |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -319,7 +319,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ## 6. 지금 포커스 · 열린 결정
 
-> **마지막 갱신**: 2026-08-23  
+> **마지막 갱신**: 2026-08-24  
 > 완료 이력·To-Do·최근 완료는 **쓰지 않는다** (§3). 상세는 `02_개발_진행_일지.md`.
 
 ### 지금 포커스

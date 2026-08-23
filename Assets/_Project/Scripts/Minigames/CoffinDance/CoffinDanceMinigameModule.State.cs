@@ -29,5 +29,10 @@ namespace MiniParty.Minigames.CoffinDance
 
         CdPhase _phase;
         float _scoreMultiplier = 1f;
+
+        readonly float[] _camRestFov = new float[SlotCount];
+        readonly float[] _camRestEulerX = new float[SlotCount];
+        readonly float[] _camRestEulerY = new float[SlotCount];
+        readonly bool[] _camRestCaptured = new bool[SlotCount];
     }
 }

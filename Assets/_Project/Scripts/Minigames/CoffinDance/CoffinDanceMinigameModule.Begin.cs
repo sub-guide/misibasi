@@ -41,6 +41,7 @@ namespace MiniParty.Minigames.CoffinDance
                 if (slotCam != null)
                     slotCameras.Add(slotCam);
 
+                CaptureSlotCameraRestIfNeeded(i, slotCam);
                 SetupSlotView(i, bind, slotCam);
 
                 if (!play)
@@ -82,6 +83,7 @@ namespace MiniParty.Minigames.CoffinDance
                 }
 
                 SetEliminatedUi(i, false);
+                ResetSlotCameraFx(i, slotCam);
             });
 
             if (disableMainCameraOnBegin && slotCameras.Count > 0)

@@ -183,6 +183,18 @@ MonoBehaviour:
   noiseAmp: 0.05
   failFloorUpwardImpulse: 8
   failFloorPenaltyScore: 500
+  failFloorShoulderIgnoreSeconds: 0.3
+  shoulderDepenetrationMaxY: 0.5
+  centerZoneThreshold: 0.2
+  centerBonusScorePerSec: 150
+  centerFovMultiplier: 0.75
+  centerCamTiltRatio: 0.5
+  camZoomInDuration: 3
+  camZoomOutSpeedMul: 5
+  camTiltFollowGain: 10
+  camReturnSpringHz: 5
+  camReturnSpringDamping: 1
+  devGodReturnSpeed: 3
   hpLowScoreThreshold: 3000
   slotWorldSpacing: 40
   disableMainCameraOnBegin: 1

@@ -14,6 +14,30 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>정중앙 유지 시 초당 추가 점수. Phase4 배율은 생존 점수와 같이 적용.</summary>
         public const float DefaultCenterBonusScorePerSec = 150f;
 
+        /// <summary>정중앙 카메라 목표 FOV = rest × 이 값.</summary>
+        public const float DefaultCenterFovMultiplier = 0.85f;
+
+        /// <summary>정중앙 카메라 목표 Z = 관 Z × 이 값.</summary>
+        public const float DefaultCenterCamTiltRatio = 0.5f;
+
+        /// <summary>정중앙 줌인 SmoothStep 시간(초).</summary>
+        public const float DefaultCamZoomInDuration = 0.45f;
+
+        /// <summary>원복 시간 = 줌인 시간 ÷ 이 배율.</summary>
+        public const float DefaultCamZoomOutSpeedMul = 3f;
+
+        /// <summary>정중앙 유지 중 카메라 Z √추종 게인.</summary>
+        public const float DefaultCamTiltFollowGain = 20f;
+
+        /// <summary>이탈 시 Z 원복 스프링 주파수(Hz).</summary>
+        public const float DefaultCamReturnSpringHz = 5f;
+
+        /// <summary>이탈 시 Z 원복 스프링 감쇠비. 1 미만이면 오버슈트.</summary>
+        public const float DefaultCamReturnSpringDamping = 0.4f;
+
+        /// <summary>개발 무적(1P) 미입력 시 bias·x가 0.5로 돌아오는 속도(초당).</summary>
+        public const float DefaultDevGodReturnSpeed = 3f;
+
         /// <summary>FailFloor 접촉 1회당 월드 +Y Impulse (ForceMode.Impulse).</summary>
         public const float DefaultFailFloorUpwardImpulse = 80f;
 
