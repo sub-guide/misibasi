@@ -17,7 +17,7 @@ namespace MiniParty.Minigames.CoffinDance
             UpdateExtremeSeesawShoulderColliders(i, ref sr);
             AccruePassiveScore(i, ref sr, dt);
             HandleFailFloorContact(i, ref sr);
-            TickShoulderIgnore(i, ref sr, dt);
+            TickFailFloorRecover(i, ref sr, dt);
             ApplyShoulderDepenetration(i, ref sr);
             TickCenterBalanceCameraFx(i, ref sr, dt);
         }

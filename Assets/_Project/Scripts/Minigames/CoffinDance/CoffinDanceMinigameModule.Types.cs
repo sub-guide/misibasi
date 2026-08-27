@@ -28,6 +28,12 @@ namespace MiniParty.Minigames.CoffinDance
             public float HoldTimer;
             public float ShoulderIgnoreRemain;
 
+            public bool FailFloorRecoverActive;
+            public float FailFloorRecoverDuration;
+            public float FailFloorRecoverElapsed;
+            public float FailFloorRecoverStartY;
+            public float FailFloorRecoverStartZ;
+
             public float CamFovBlend;
             public float CamZ;
             public float CamZVelocity;

@@ -181,9 +181,9 @@ MonoBehaviour:
   pullCoefficient: 2
   danceSineHz: 2
   noiseAmp: 0.05
-  failFloorUpwardImpulse: 8
   failFloorPenaltyScore: 500
-  failFloorShoulderIgnoreSeconds: 0.3
+  failFloorRecoverLocalY: 2.2
+  failFloorRecoverDuration: 0.5
   shoulderDepenetrationMaxY: 0.5
   centerZoneThreshold: 0.2
   centerBonusScorePerSec: 150

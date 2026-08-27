@@ -38,14 +38,14 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>개발 무적(1P) 미입력 시 bias·x가 0.5로 돌아오는 속도(초당).</summary>
         public const float DefaultDevGodReturnSpeed = 3f;
 
-        /// <summary>FailFloor 접촉 1회당 월드 +Y Impulse (ForceMode.Impulse).</summary>
-        public const float DefaultFailFloorUpwardImpulse = 80f;
-
         /// <summary>FailFloor 접촉 1회당 본게임 감점. 연습은 0.</summary>
         public const int DefaultFailFloorPenaltyScore = 500;
 
-        /// <summary>FailFloor 접촉 후 관↔어깨 SphereCollider IgnoreCollision 유지 시간(초).</summary>
-        public const float DefaultFailFloorShoulderIgnoreSeconds = 0.3f;
+        /// <summary>FailFloor 복구 목표 로컬 Y. 프리팹 Coffin rest(2.2) 플레이스홀더. Play에서 조절.</summary>
+        public const float DefaultFailFloorRecoverLocalY = 2.2f;
+
+        /// <summary>FailFloor 복구 SmoothStep 시간(초). 어깨 Ignore와 동일. Play에서 조절.</summary>
+        public const float DefaultFailFloorRecoverDuration = 0.5f;
 
         /// <summary>어깨와 겹칠 때 관을 +Y로만 밀어 올리는 한 프레임 최대량.</summary>
         public const float DefaultShoulderDepenetrationMaxY = 0.5f;

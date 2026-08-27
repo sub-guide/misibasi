@@ -4,7 +4,7 @@ namespace MiniParty.Minigames.CoffinDance
 {
     /// <summary>
     /// 관 Rigidbody 설정(제약·무게중심). 플레이 중 관 운동은 운구인 어깨 SphereCollider 충돌 +
-    /// FailFloor 접촉 시 월드 +Y Impulse.
+    /// 중력. FailFloor 접촉 시 Module이 로컬 Y·Z=0 SmoothStep 복구 후 다시 낙하.
     /// 관 위치는 에디터에서 배치하고, Play 시 중력으로 어깨 Collider 위에 얹힌다.
     /// </summary>
     [DisallowMultipleComponent]
@@ -32,13 +32,59 @@ namespace MiniParty.Minigames.CoffinDance
 
         public void ClearShoulderContacts() => _shoulderContactCount = 0;
 
-        public void ApplyUpwardImpulse(float impulse)
+        public void BeginKinematicHold()
         {
             Rigidbody rb = Body;
-            if (rb == null || rb.isKinematic || impulse <= 0f)
+            if (rb == null)
                 return;
 
-            rb.AddForce(Vector3.up * impulse, ForceMode.Impulse);
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+
+        public void EndKinematicHold()
+        {
+            Rigidbody rb = Body;
+            if (rb == null)
+                return;
+
+            rb.isKinematic = false;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        public void SetLocalYAndZDegrees(float localY, float zDegrees)
+        {
+            Transform t = transform;
+            Vector3 lp = t.localPosition;
+            lp.y = localY;
+
+            Vector3 euler = t.localEulerAngles;
+            float x = NormalizeSignedEuler(euler.x);
+            float y = NormalizeSignedEuler(euler.y);
+            Quaternion localRot = Quaternion.Euler(x, y, zDegrees);
+
+            Transform parent = t.parent;
+            Vector3 worldPos = parent != null ? parent.TransformPoint(lp) : lp;
+            Quaternion worldRot = parent != null ? parent.rotation * localRot : localRot;
+
+            Rigidbody rb = Body;
+            if (rb != null)
+            {
+                rb.MovePosition(worldPos);
+                rb.MoveRotation(worldRot);
+            }
+            else
+            {
+                t.localPosition = lp;
+                t.localRotation = localRot;
+            }
+        }
+
+        static float NormalizeSignedEuler(float degrees)
+        {
+            return Mathf.Repeat(degrees + 180f, 360f) - 180f;
         }
 
         public void LiftWorldY(float deltaY)

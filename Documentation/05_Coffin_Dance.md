@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-08-24 — 정중앙 보너스 = 시소 `x` + 어깨 지지. 정중앙 카메라 FX **Play 검증**. 개발 무적(Backspace, 1P, Editor/Dev). 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
+> **문서 기준일**: 2026-08-28 — FailFloor = 로컬 Y·Z=0 SmoothStep 복구 후 중력 낙하 **Play 검증**(Impulse **폐기**). 정중앙 보너스 = 시소 `x` + 어깨 지지. 정중앙 카메라 FX **Play 검증**. 개발 무적(Backspace, 1P, Editor/Dev). 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -24,6 +24,7 @@
 | 시소·노이즈 개편 | **완료·검증** | 시소 Hold · Sine 씰룩임 · 걷기 클립 · Loop Time (사용자, 2026-08-05) |
 | 좌우 조작 개편 | **완료·검증** | 수치 확정 · 중력형 도치 · 어깨 Radius 27 (2026-08-07) |
 | 관 물리 경로 | **완료·검증** | 어깨 SphereCollider + 중력만 (2026-08-08 Play) |
+| FailFloor 복구 | **Play 검증** | +Y Impulse 폐기. 로컬 Y·Z=0 SmoothStep 후 낙하 (사용자, 2026-08-28) |
 
 ### 다음 세션이 헷갈리기 쉬운 점
 
@@ -43,8 +44,8 @@
 | Edit Mode 미리보기 | **의도적 비활성** · Play에서만 블렌드 |
 | 어깨 Collider | **RightArm만** · `Pallbearer.prefab` SphereCollider **Radius 27** (25→27, 2026-08-07) · 반대편 Scale 반전 |
 | Slot 연결 | `Pallbearers[0..2]`=←쪽 · `[3..5]`=→쪽 |
-| 실패 | 탈락 없음 · FailFloor 접촉 1회 → 월드 +Y Impulse |
-| 관 운동 | 어깨 충돌 + 중력 + FailFloor Impulse. 시소 최대 아니면 겹침 시 +Y 분리(`shoulderDepenetrationMaxY` 0.5). `x_bias` 0/1이면 낮은 쪽 어깨 Collider off |
+| 실패 | 탈락 없음 · FailFloor 접촉 1회 → 로컬 Y·Z=0 SmoothStep 복구 후 중력 낙하 |
+| 관 운동 | 어깨 충돌 + 중력. FailFloor 시 kinematic SmoothStep(`failFloorRecoverLocalY` · 로컬 Z=0) 후 낙하. 시소 최대 아니면 겹침 시 +Y 분리(`shoulderDepenetrationMaxY` 0.5). `x_bias` 0/1이면 낮은 쪽 어깨 Collider off |
 | 점수 정중앙 | 노이즈 포함 최종 `x` **그리고** 관이 활성 어깨 SphereCollider와 접촉. FailFloor Ignore 중·공중·바닥은 보너스 없음. 관 Z 각 **아님** |
 | 정중앙 카메라 | 점수와 **같은 발동**. FOV는 시간 블렌드+SmoothStep. Z는 √추종. **뒤집힘(|Z|&gt;90)은 카메라만 180° 접기**(-90~+90). rest FOV·로컬 XY는 첫 Begin만 캡처. 로우앵글 X는 유지 |
 | 개발 무적 | Backspace 토글 · **1P만** · Editor/Development Build만. 출시 빌드에서는 키 무시. LB/RB는 먹고, 손 떼면 `devGodReturnSpeed`로 0.5 복귀. 어깨는 가짜 지지 없음 |
@@ -84,17 +85,17 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - `Freeze Rotation`: **X, Y** (Z만 회전)
 - `centerOfMass` 로컬 **(0,0,0)** = 기하 중심 (Inspector `centerOfMassLocal`)
 - 기울기: `transform` 로컬 Z 각(도) (`GetTiltZDegrees`). **점수 판정에는 쓰지 않음**
-- **FailFloor 접촉** (`OnCollisionEnter` 1회): 월드 `Vector3.up` Impulse + `failFloorShoulderIgnoreSeconds`(기본 **0.3**) 동안 관↔어깨 SphereCollider `IgnoreCollision`. 본게임만 `failFloorPenaltyScore` 감점. **탈락·연습 SoftReset 없음**
-- **플레이 중 운동**: 운구인 어깨 SphereCollider 충돌 + 중력 + FailFloor +Y Impulse. 바닥 접촉 직후 잠시 어깨 충돌 무시.
-- **겹침 분리 (A)**: `x_bias`가 0/1이 **아니면** 어깨와 `ComputePenetration` 후 **+Y만** 적용 (`shoulderDepenetrationMaxY`, 기본 0.5). FailFloor Ignore 중에는 A 중지.
+- **FailFloor 접촉** (`OnCollisionEnter` 1회): 관을 kinematic으로 두고 로컬 Y → `failFloorRecoverLocalY`, 로컬 Z → 0을 `failFloorRecoverDuration` 동안 SmoothStep. 같은 시간 관↔어깨 `IgnoreCollision`. 끝나면 물리·중력 재개. 복구 중 재접촉은 무시(재감점 없음). 본게임만 `failFloorPenaltyScore` 감점. **탈락·연습 SoftReset 없음**. +Y Impulse **폐기**
+- **플레이 중 운동**: 운구인 어깨 SphereCollider 충돌 + 중력. FailFloor 복구가 끝나면 낙하해 어깨에 얹힘.
+- **겹침 분리 (A)**: `x_bias`가 0/1이 **아니면** 어깨와 `ComputePenetration` 후 **+Y만** 적용 (`shoulderDepenetrationMaxY`, 기본 0.5). FailFloor 복구(어깨 Ignore) 중에는 A 중지.
 - **시소 최대**: `x_bias == 0` → 왼쪽 어깨 SphereCollider off. `== 1` → 오른쪽 off. 높은 쪽은 유지. 이때 A 중지. 0/1이 아니면 즉시 양쪽 켬.
 
 ### FailFloor (`CoffinDanceFailFloor`)
 
 - **슬롯 프리팹 자식**으로 둔다 (씬 공용 Floor 금지 — 슬롯 X 분리)
 - BoxCollider + 마커 컴포넌트 · 관이 넘어지면 닿는 높이
-- 접촉이 유지되는 동안 Impulse는 재적용하지 않음. 떨어졌다가 다시 닿으면 다시 Impulse·감점·어깨 Ignore 타이머 갱신
-- 접촉 직후 `failFloorShoulderIgnoreSeconds` 동안 관이 어깨를 통과해 올라감. 만료 시 충돌 복구. `Begin`에서도 복구
+- 접촉이 유지되는 동안 복구는 재시작하지 않음. 복구가 **끝난 뒤** 다시 떨어지면 다시 복구·감점
+- 복구 시간 = `failFloorRecoverDuration`(어깨 Ignore와 동일). 만료 시 충돌·물리 복구. `Begin`에서도 복구
 
 ### 시소 제어 (Module · A안)
 
@@ -122,7 +123,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
    - **미입력 또는 LB·RB 동시**: `HoldTimer = 0` · `driftDir = Sign(x_bias - 0.5)`(정중앙이면 0) · `x_bias += driftDir × microDriftSpeed × dt` (기운 쪽으로 계속 밀림 = 중력형)
    - **LB 또는 RB 단일**: `HoldTimer += dt` · `speedMul = Lerp(1, holdMaxMultiplier, HoldTimer / holdAccelTime)` · `x_bias += inputDir × seesawBaseSpeed × speedMul × dt` (`inputDir`: LB=+1, RB=-1)
 2. **비선형 이탈 가속 (공통)**: `offset = x_bias - 0.5` · `pullForce = pullCoefficient × offset² × Sign(offset)` · `x_bias += pullForce × dt`
-3. **범위**: `x_bias = Clamp01(x_bias)` · 0.0/1.0 한계에 닿으면 어깨 기울기로 FailFloor 접촉(Impulse·패널티) 가능
+3. **범위**: `x_bias = Clamp01(x_bias)` · 0.0/1.0 한계에 닿으면 어깨 기울기로 FailFloor 접촉(복구·패널티) 가능
 
 #### 리셋 (Edge Case)
 
@@ -151,7 +152,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 1. 시소: `bool isCenter = Mathf.Abs(x - 0.5f) <= centerZoneThreshold`  
    `x` = `SeesawXCurrent` = `Clamp01(x_bias + DanceWave × noiseAmp)`  
    기본 `centerZoneThreshold` **0.05** → `0.45 ≤ x ≤ 0.55`.
-2. 지지: `ShoulderIgnoreRemain ≤ 0` 이고 관이 **활성화된** 운구인 어깨 SphereCollider와 접촉 중 (`CoffinDanceCoffinBody.IsTouchingShoulder`, Enter/Exit 카운트, 1개 이상). 관 Z 각은 쓰지 않음.
+2. 지지: `ShoulderIgnoreRemain ≤ 0`(FailFloor 복구 중이 아님) 이고 관이 **활성화된** 운구인 어깨 SphereCollider와 접촉 중 (`CoffinDanceCoffinBody.IsTouchingShoulder`, Enter/Exit 카운트, 1개 이상). 관 Z 각은 쓰지 않음.
 
 연습 UI 점수는 `-`, Report `FinalScore`는 0. 연습은 생존·보너스 가산 없음.
 
@@ -195,7 +196,7 @@ C#은 `ExtensionBlend`만 호출한다. `PallbearerPose.controller`의 Jump 상�
 | 50~60초 | 4 | 동일 | ×2 |
 
 Phase는 **HUD 라벨 + Phase4 점수×2** 만. 단계별 Amp/Speed 난이도는 **제거**(후속 재도입 가능).  
-Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Impulse·패널티.
+Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 SmoothStep 복구·패널티.
 
 **60초** → **1초**(`SessionEndDelaySeconds`) 후 Results. 전원 탈락 조기 종료 **없음**.
 
@@ -221,7 +222,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | 파일 | 역할 |
 |------|------|
 | `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 · 정중앙 카메라(`CameraFx`) · 개발 무적(`DevGodMode`) |
-| `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·FailFloor 감지 · `ApplyUpwardImpulse` · 어깨 접촉 카운트(`IsTouchingShoulder`) |
+| `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·FailFloor 감지 · kinematic 복구(`BeginKinematicHold` / `SetLocalYAndZDegrees`) · 어깨 접촉 카운트(`IsTouchingShoulder`) |
 | `CoffinDancePallbearerPose` | ExtensionBlend · `SoftResetTransform` (운구인 RB 없음) |
 | `CoffinDanceFailFloor` | 바닥 마커 (탈락 아님) |
 | `CoffinDanceSceneBootstrap` | Begin/Tick |
@@ -249,9 +250,9 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `pullCoefficient` | 2.0 | 중앙 이탈 비선형 가속 계수 |
 | `danceSineHz` | 1.2 | DanceWave Sine 주파수 (씬 **2**) |
 | `noiseAmp` | 0.12 | 고정 노이즈 진폭 (씬 **0.03**) |
-| `failFloorUpwardImpulse` | 80 | FailFloor 접촉 1회 월드 +Y Impulse (**씬 1**) |
 | `failFloorPenaltyScore` | 500 | 본게임 접촉 1회 감점 (연습 0). **수치 보류** |
-| `failFloorShoulderIgnoreSeconds` | 0.3 | FailFloor 접촉 후 관↔어깨 IgnoreCollision 시간 |
+| `failFloorRecoverLocalY` | 2.2 | FailFloor 복구 목표 로컬 Y. 1~4P 공통. **Play 확인**(씬 2.2) |
+| `failFloorRecoverDuration` | 0.5 | 복구 SmoothStep 시간(초) = 어깨 Ignore 시간. **Play 확인**(씬 0.5) |
 | `shoulderDepenetrationMaxY` | 0.5 | 시소 최대가 아닐 때 어깨 겹침 +Y 분리 한 프레임 최대 |
 | `centerZoneThreshold` | 0.05 | 최종 시소 `x`가 0.5에서 이 값 이내면 정중앙 보너스 |
 | `centerBonusScorePerSec` | 150 | 정중앙 유지 시 초당 추가 점수. Phase4 배율은 생존과 같이 적용 |
@@ -271,7 +272,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `exitScreenFader` | — | FadeOverlay |
 | `coffinDanceSceneName` (GameFlow) | `Minigame_CoffinDance` | 로드 씬명 |
 
-**제거됨**: `jumpImpulse` · `jumpAnimBlendSeconds` · `jumpStartAnimSpeed` · `jumpLandAnimSpeed` · `jumpLandYOffset` · `jumpLandYOffsetDuration` · `landingDriftMultiplier` · `landingDriftDuration` · `jumpHeight` · `jumpLockoutSeconds` · `seesawMoveSpeed` · `presentationYawDegrees` · `initialTiltDegrees` · `initialAngularSpeed` · `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `maxNoiseSpeed` · `dancePerlinHz` · **`landingTorqueImpulse` / `ApplyLandingImpulse`** · FailFloor **탈락/`EliminateSlot`/연습 SoftReset**.
+**제거됨**: `jumpImpulse` · `jumpAnimBlendSeconds` · `jumpStartAnimSpeed` · `jumpLandAnimSpeed` · `jumpLandYOffset` · `jumpLandYOffsetDuration` · `landingDriftMultiplier` · `landingDriftDuration` · `jumpHeight` · `jumpLockoutSeconds` · `seesawMoveSpeed` · `presentationYawDegrees` · `initialTiltDegrees` · `initialAngularSpeed` · `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `maxNoiseSpeed` · `dancePerlinHz` · **`landingTorqueImpulse` / `ApplyLandingImpulse`** · **`failFloorUpwardImpulse` / `ApplyUpwardImpulse`** · **`failFloorShoulderIgnoreSeconds`** · FailFloor **탈락/`EliminateSlot`/연습 SoftReset**.
 
 `Begin` SoftReset: rest 위치·회전 · `HoldTimer=0` · `x_bias=xSeesawNeutral` (초기 기울기/각속도 **없음**). 플레이 중 SoftReset **없음**.
 
@@ -290,7 +291,8 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | 필드 | 용도 |
 |------|------|
 | `centerOfMassLocal` | 기본 **(0, 0, 0)** | 기하 중심. 예전 `(0, 0.15, 0)` 제거 |
-| ~~`landingTorqueImpulse`~~ | **제거**. FailFloor +Y Impulse는 Module `failFloorUpwardImpulse` |
+| ~~`landingTorqueImpulse`~~ | **제거** |
+| ~~`failFloorUpwardImpulse`~~ | **제거**. FailFloor는 Module `failFloorRecoverLocalY` / `failFloorRecoverDuration` |
 
 ---
 
