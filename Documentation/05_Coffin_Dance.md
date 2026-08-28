@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-08-28 — FailFloor = 로컬 Y·Z=0 SmoothStep 복구 후 중력 낙하 **Play 검증**(Impulse **폐기**). 정중앙 보너스 = 시소 `x` + 어깨 지지. 정중앙 카메라 FX **Play 검증**(뒤집힘 180° 접기 **제거**). 개발 무적(Backspace, 1P, Editor/Dev). 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
+> **문서 기준일**: 2026-08-28 — FailFloor = 로컬 Y·Z=0 SmoothStep 복구 후 중력 낙하 **Play 검증**(Impulse **폐기**). 정중앙 보너스 = 시소 `x` + 어깨 지지. 정중앙 카메라 FX **Play 검증**. 뒤집힘 180° 접기 **제거·Play 검증**. 개발 무적(Backspace, 1P, Editor/Dev). 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -12,7 +12,7 @@
 |------|------|------|
 | C# 게임 로직 | **어깨 겹침 A + 최대 시소 낮은 쪽 off · Play 검증** | `x_bias` 0/1이 아니면 +Y 분리. 0/1이면 낮은 쪽 SphereCollider off·A 중지 (사용자, 2026-08-16) |
 | 점수 | **시소 정중앙 + 어깨 지지 보너스 · Play 검증** | 생존 100/초. `|x-0.5|≤centerZoneThreshold` **그리고** 관이 활성 어깨 SphereCollider와 접촉(Ignore 중 제외)이면 +150/초. Phase4 획득 ×2 (사용자, 2026-08-17) |
-| 정중앙 카메라 | **Play 검증** | 발동 = 점수 보너스와 동일. FOV SmoothStep. Z는 관 기울기×0.5 √추종. 수치 씬 확정 2026-08-24 (사용자). 뒤집힘 180° 접기 **제거**(2026-08-28) |
+| 정중앙 카메라 | **Play 검증** | 발동 = 점수 보너스와 동일. FOV SmoothStep. Z는 관 기울기×0.5 √추종. 수치 씬 확정 2026-08-24 (사용자). 뒤집힘 180° 접기 **제거·Play 검증**(2026-08-28) |
 | 개발 무적 | **Play 검증** (카메라 테스트에 사용) | Editor·Development Build만. Backspace 토글 **1P**. 미입력·동시 입력이면 `x`가 0.5로 복귀 (`devGodReturnSpeed` 씬 **3**) |
 | 점프 | **제거·Play 검증** | A로 점프 안 됨 (사용자, 2026-08-15) |
 | Animator | **ExtensionBlend만** | Jump 상태 에디터 삭제 완료 (사용자, 2026-08-15) |
