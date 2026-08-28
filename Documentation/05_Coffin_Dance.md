@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-08-28 — FailFloor = 로컬 Y·Z=0 SmoothStep 복구 후 중력 낙하 **Play 검증**(Impulse **폐기**). 정중앙 보너스 = 시소 `x` + 어깨 지지. 정중앙 카메라 FX **Play 검증**. 개발 무적(Backspace, 1P, Editor/Dev). 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
+> **문서 기준일**: 2026-08-28 — FailFloor = 로컬 Y·Z=0 SmoothStep 복구 후 중력 낙하 **Play 검증**(Impulse **폐기**). 정중앙 보너스 = 시소 `x` + 어깨 지지. 정중앙 카메라 FX **Play 검증**(뒤집힘 180° 접기 **제거**). 개발 무적(Backspace, 1P, Editor/Dev). 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -12,7 +12,7 @@
 |------|------|------|
 | C# 게임 로직 | **어깨 겹침 A + 최대 시소 낮은 쪽 off · Play 검증** | `x_bias` 0/1이 아니면 +Y 분리. 0/1이면 낮은 쪽 SphereCollider off·A 중지 (사용자, 2026-08-16) |
 | 점수 | **시소 정중앙 + 어깨 지지 보너스 · Play 검증** | 생존 100/초. `|x-0.5|≤centerZoneThreshold` **그리고** 관이 활성 어깨 SphereCollider와 접촉(Ignore 중 제외)이면 +150/초. Phase4 획득 ×2 (사용자, 2026-08-17) |
-| 정중앙 카메라 | **Play 검증** | 발동 = 점수 보너스와 동일. FOV SmoothStep. Z는 관 기울기×0.5 √추종. 뒤집힌 관은 카메라만 180° 접기. 수치 씬 확정 2026-08-24 (사용자) |
+| 정중앙 카메라 | **Play 검증** | 발동 = 점수 보너스와 동일. FOV SmoothStep. Z는 관 기울기×0.5 √추종. 수치 씬 확정 2026-08-24 (사용자). 뒤집힘 180° 접기 **제거**(2026-08-28) |
 | 개발 무적 | **Play 검증** (카메라 테스트에 사용) | Editor·Development Build만. Backspace 토글 **1P**. 미입력·동시 입력이면 `x`가 0.5로 복귀 (`devGodReturnSpeed` 씬 **3**) |
 | 점프 | **제거·Play 검증** | A로 점프 안 됨 (사용자, 2026-08-15) |
 | Animator | **ExtensionBlend만** | Jump 상태 에디터 삭제 완료 (사용자, 2026-08-15) |
@@ -47,7 +47,7 @@
 | 실패 | 탈락 없음 · FailFloor 접촉 1회 → 로컬 Y·Z=0 SmoothStep 복구 후 중력 낙하 |
 | 관 운동 | 어깨 충돌 + 중력. FailFloor 시 kinematic SmoothStep(`failFloorRecoverLocalY` · 로컬 Z=0) 후 낙하. 시소 최대 아니면 겹침 시 +Y 분리(`shoulderDepenetrationMaxY` 0.5). `x_bias` 0/1이면 낮은 쪽 어깨 Collider off |
 | 점수 정중앙 | 노이즈 포함 최종 `x` **그리고** 관이 활성 어깨 SphereCollider와 접촉. FailFloor Ignore 중·공중·바닥은 보너스 없음. 관 Z 각 **아님** |
-| 정중앙 카메라 | 점수와 **같은 발동**. FOV는 시간 블렌드+SmoothStep. Z는 √추종. **뒤집힘(|Z|&gt;90)은 카메라만 180° 접기**(-90~+90). rest FOV·로컬 XY는 첫 Begin만 캡처. 로우앵글 X는 유지 |
+| 정중앙 카메라 | 점수와 **같은 발동**. FOV는 시간 블렌드+SmoothStep. Z는 √추종(`GetTiltZDegrees` × `centerCamTiltRatio`). rest FOV·로컬 XY는 첫 Begin만 캡처. 로우앵글 X는 유지 |
 | 개발 무적 | Backspace 토글 · **1P만** · Editor/Development Build만. 출시 빌드에서는 키 무시. LB/RB는 먹고, 손 떼면 `devGodReturnSpeed`로 0.5 복귀. 어깨는 가짜 지지 없음 |
 | 관 CoM | `centerOfMassLocal` **(0,0,0)** = 기하 중심. 예전 `(0, 0.15, 0)` 오프셋 **제거**(뒤집혀 어깨에 걸리던 원인) |
 | 레거시 | `PallbearerProtoType`(HumanDummy) · Capture Rest/Crouch · Jump FSM — **참고만** |
@@ -166,7 +166,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 |------|------|
 | FOV 진입 | `CamFovBlend` 0→1을 `camZoomInDuration`(코드 0.45 · **씬 3**초)로 채움. 적용은 `SmoothStep(0,1,blend)`. 목표 FOV = rest × `centerFovMultiplier`(코드 0.85 · **씬 0.75**) |
 | FOV 이탈 | 같은 SmoothStep. 시간 = 줌인 시간 ÷ `camZoomOutSpeedMul`(코드 3 · **씬 5**). FOV 스프링·오버슈트 **없음** |
-| Z 유지 | 목표 = `FoldCoffinZForCamera(GetTiltZDegrees())` × `centerCamTiltRatio`(0.5). `|Z|&gt;90`(뒤집힘)이면 180°를 접어 -90~+90만 사용(예: -170→+10). 이동량 = `camTiltFollowGain`(코드 20 · **씬 10**) × √\|오차\| × dt |
+| Z 유지 | 목표 = `GetTiltZDegrees()` × `centerCamTiltRatio`(0.5). 이동량 = `camTiltFollowGain`(코드 20 · **씬 10**) × √\|오차\| × dt |
 | Z 이탈 | 목표 0° 부족감쇠 스프링(`camReturnSpringHz` 5, `camReturnSpringDamping` 코드 0.4 · **씬 1** = 오버슈트 없음) |
 | 보존 | rest 로컬 X/Y(로우앵글 약 −10°)는 그대로. 원복 Z는 0 |
 | rest 캡처 | 슬롯당 첫 `Begin`만 FOV·로컬 XY 저장. 매 `Begin` 시작 때 블렌드·Z·속도를 0으로 리셋하고 rest 포즈 적용 |
@@ -272,7 +272,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `exitScreenFader` | — | FadeOverlay |
 | `coffinDanceSceneName` (GameFlow) | `Minigame_CoffinDance` | 로드 씬명 |
 
-**제거됨**: `jumpImpulse` · `jumpAnimBlendSeconds` · `jumpStartAnimSpeed` · `jumpLandAnimSpeed` · `jumpLandYOffset` · `jumpLandYOffsetDuration` · `landingDriftMultiplier` · `landingDriftDuration` · `jumpHeight` · `jumpLockoutSeconds` · `seesawMoveSpeed` · `presentationYawDegrees` · `initialTiltDegrees` · `initialAngularSpeed` · `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `maxNoiseSpeed` · `dancePerlinHz` · **`landingTorqueImpulse` / `ApplyLandingImpulse`** · **`failFloorUpwardImpulse` / `ApplyUpwardImpulse`** · **`failFloorShoulderIgnoreSeconds`** · FailFloor **탈락/`EliminateSlot`/연습 SoftReset**.
+**제거됨**: `jumpImpulse` · `jumpAnimBlendSeconds` · `jumpStartAnimSpeed` · `jumpLandAnimSpeed` · `jumpLandYOffset` · `jumpLandYOffsetDuration` · `landingDriftMultiplier` · `landingDriftDuration` · `jumpHeight` · `jumpLockoutSeconds` · `seesawMoveSpeed` · `presentationYawDegrees` · `initialTiltDegrees` · `initialAngularSpeed` · `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `maxNoiseSpeed` · `dancePerlinHz` · **`landingTorqueImpulse` / `ApplyLandingImpulse`** · **`failFloorUpwardImpulse` / `ApplyUpwardImpulse`** · **`failFloorShoulderIgnoreSeconds`** · **`FoldCoffinZForCamera`** · FailFloor **탈락/`EliminateSlot`/연습 SoftReset**.
 
 `Begin` SoftReset: rest 위치·회전 · `HoldTimer=0` · `x_bias=xSeesawNeutral` (초기 기울기/각속도 **없음**). 플레이 중 SoftReset **없음**.
 

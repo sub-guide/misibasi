@@ -65,7 +65,7 @@ namespace MiniParty.Minigames.CoffinDance
                 float coffinZ = 0f;
                 CoffinDanceCoffinBody body = bind != null ? bind.ResolveCoffinBody() : null;
                 if (body != null)
-                    coffinZ = FoldCoffinZForCamera(body.GetTiltZDegrees());
+                    coffinZ = body.GetTiltZDegrees();
 
                 StepCamZSqrtFollow(ref sr, coffinZ * centerCamTiltRatio, dt);
             }
@@ -128,20 +128,6 @@ namespace MiniParty.Minigames.CoffinDance
                 _camRestEulerX[i],
                 _camRestEulerY[i],
                 sr.CamZ);
-        }
-
-        /// <summary>
-        /// 카메라 전용. 뒤집힌 관(|Z|&gt;90)은 180°를 접어 -90~+90 기울기만 쓴다.
-        /// 예: -170 → +10, +180 → 0. 점수·물리는 오일러 원본을 유지.
-        /// </summary>
-        static float FoldCoffinZForCamera(float zDegrees)
-        {
-            float z = NormalizeSignedEuler(zDegrees);
-            if (z > 90f)
-                z -= 180f;
-            else if (z < -90f)
-                z += 180f;
-            return z;
         }
 
         static float NormalizeSignedEuler(float degrees)
