@@ -3,9 +3,9 @@ using UnityEngine;
 namespace MiniParty.Minigames.CoffinDance
 {
     /// <summary>
-    /// 관 Rigidbody 설정(제약·무게중심). 플레이 중 관 운동은 운구인 어깨 SphereCollider 충돌 +
-    /// 중력. FailFloor 접촉 시 Module이 로컬 Y·Z=0 SmoothStep 복구 후 다시 낙하.
-    /// 관 위치는 에디터에서 배치하고, Play 시 중력으로 어깨 Collider 위에 얹힌다.
+    /// 관 Rigidbody 설정(제약·무게중심). 어깨에 붙은 동안 Module이 가운데 운구인 2점 지지로
+    /// 로컬 Y·Z를 즉시 맞춘다(강체 자세만). 낙하·FailFloor 복구 중에는 어깨 충돌 + 중력.
+    /// 관 위치는 에디터에서 배치하고, Play 시작·재부착은 중력으로 어깨에 닿은 뒤 붙인다.
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody))]

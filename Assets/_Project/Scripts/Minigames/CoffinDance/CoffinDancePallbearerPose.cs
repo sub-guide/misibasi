@@ -4,7 +4,7 @@ namespace MiniParty.Minigames.CoffinDance
 {
     /// <summary>
     /// 운구인: Extension Blend(앉음↔기립)만.
-    /// Rigidbody 없음. 관은 어깨 SphereCollider(정적) 충돌로만 받친다.
+    /// Rigidbody 없음. 관은 붙은 동안 가운데 어깨 2점 스냅, 낙하 중에는 어깨 SphereCollider 충돌.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CoffinDancePallbearerPose : MonoBehaviour

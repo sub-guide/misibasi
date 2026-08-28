@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-08-28 — FailFloor = 로컬 Y·Z=0 SmoothStep 복구 후 중력 낙하 **Play 검증**(Impulse **폐기**). 정중앙 보너스 = 시소 `x` + 어깨 지지. 정중앙 카메라 FX **Play 검증**. 뒤집힘 180° 접기 **제거·Play 검증**. 개발 무적(Backspace, 1P, Editor/Dev). 시소 **LB/RB**. 겹침 시 +Y 분리. `x_bias` 0/1이면 낮은 쪽 어깨 off.  
+> **문서 기준일**: 2026-08-28 — 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -10,8 +10,8 @@
 
 | 영역 | 상태 | 비고 |
 |------|------|------|
-| C# 게임 로직 | **어깨 겹침 A + 최대 시소 낮은 쪽 off · Play 검증** | `x_bias` 0/1이 아니면 +Y 분리. 0/1이면 낮은 쪽 SphereCollider off·A 중지 (사용자, 2026-08-16) |
-| 점수 | **시소 정중앙 + 어깨 지지 보너스 · Play 검증** | 생존 100/초. `|x-0.5|≤centerZoneThreshold` **그리고** 관이 활성 어깨 SphereCollider와 접촉(Ignore 중 제외)이면 +150/초. Phase4 획득 ×2 (사용자, 2026-08-17) |
+| C# 게임 로직 | **낙하 잠금 + 복구 시소 0.5 · Play 검증** | 시소 0/1로 떨어지면 FailFloor까지 어깨 Ignore·재부착 금지. 복구 중 운구인 SmoothStep 0.5 (사용자, 2026-08-28) |
+| 점수 | **시소 정중앙 + 어깨 부착 보너스** | 생존 100/초. `|x-0.5|≤centerZoneThreshold` **그리고** `CoffinShoulderAttached`. Phase4 획득 ×2 |
 | 정중앙 카메라 | **Play 검증** | 발동 = 점수 보너스와 동일. FOV SmoothStep. Z는 관 기울기×0.5 √추종. 수치 씬 확정 2026-08-24 (사용자). 뒤집힘 180° 접기 **제거·Play 검증**(2026-08-28) |
 | 개발 무적 | **Play 검증** (카메라 테스트에 사용) | Editor·Development Build만. Backspace 토글 **1P**. 미입력·동시 입력이면 `x`가 0.5로 복귀 (`devGodReturnSpeed` 씬 **3**) |
 | 점프 | **제거·Play 검증** | A로 점프 안 됨 (사용자, 2026-08-15) |
@@ -23,7 +23,7 @@
 | 메뉴 진입 테스트 | **검증** | MainMenu→관짝춤 |
 | 시소·노이즈 개편 | **완료·검증** | 시소 Hold · Sine 씰룩임 · 걷기 클립 · Loop Time (사용자, 2026-08-05) |
 | 좌우 조작 개편 | **완료·검증** | 수치 확정 · 중력형 도치 · 어깨 Radius 27 (2026-08-07) |
-| 관 물리 경로 | **완료·검증** | 어깨 SphereCollider + 중력만 (2026-08-08 Play) |
+| 관 물리 경로 | **2점 스냅 · Play 검증** | 부착 중 kinematic Y+Z 스냅. 시소 최대면 잠금 낙하 (사용자, 2026-08-28) |
 | FailFloor 복구 | **Play 검증** | +Y Impulse 폐기. 로컬 Y·Z=0 SmoothStep 후 낙하 (사용자, 2026-08-28) |
 
 ### 다음 세션이 헷갈리기 쉬운 점
@@ -45,8 +45,8 @@
 | 어깨 Collider | **RightArm만** · `Pallbearer.prefab` SphereCollider **Radius 27** (25→27, 2026-08-07) · 반대편 Scale 반전 |
 | Slot 연결 | `Pallbearers[0..2]`=←쪽 · `[3..5]`=→쪽 |
 | 실패 | 탈락 없음 · FailFloor 접촉 1회 → 로컬 Y·Z=0 SmoothStep 복구 후 중력 낙하 |
-| 관 운동 | 어깨 충돌 + 중력. FailFloor 시 kinematic SmoothStep(`failFloorRecoverLocalY` · 로컬 Z=0) 후 낙하. 시소 최대 아니면 겹침 시 +Y 분리(`shoulderDepenetrationMaxY` 0.5). `x_bias` 0/1이면 낮은 쪽 어깨 Collider off |
-| 점수 정중앙 | 노이즈 포함 최종 `x` **그리고** 관이 활성 어깨 SphereCollider와 접촉. FailFloor Ignore 중·공중·바닥은 보너스 없음. 관 Z 각 **아님** |
+| 관 운동 | 부착 중: 가운데 어깨 2점에 Y+Z 즉시 스냅. 시소 최대면 `CoffinFallLockedUntilFloor` + 어깨 Ignore → FailFloor까지 재부착 없음. 복구 중 관·시소 SmoothStep(시소 0.5). 복구 후 낙하 → 어깨 접촉 시 재부착 |
+| 점수 정중앙 | 노이즈 포함 최종 `x` **그리고** `CoffinShoulderAttached`. FailFloor Ignore·공중·바닥은 보너스 없음. 관 Z 각 **아님** |
 | 정중앙 카메라 | 점수와 **같은 발동**. FOV는 시간 블렌드+SmoothStep. Z는 √추종(`GetTiltZDegrees` × `centerCamTiltRatio`). rest FOV·로컬 XY는 첫 Begin만 캡처. 로우앵글 X는 유지 |
 | 개발 무적 | Backspace 토글 · **1P만** · Editor/Development Build만. 출시 빌드에서는 키 무시. LB/RB는 먹고, 손 떼면 `devGodReturnSpeed`로 0.5 복귀. 어깨는 가짜 지지 없음 |
 | 관 CoM | `centerOfMassLocal` **(0,0,0)** = 기하 중심. 예전 `(0, 0.15, 0)` 오프셋 **제거**(뒤집혀 어깨에 걸리던 원인) |
@@ -56,7 +56,7 @@
 
 ## 1. 한 줄 요약
 
-4인 세로 분할 슬롯에서 **6명 운구인 어깨 Collider 위 관(Rigidbody)** 균형을 LB/RB 시소로 유지하는 60초 타임어택.
+4인 세로 분할 슬롯에서 **가운데 운구인 어깨 2점에 붙은 관**을 LB/RB 시소로 유지하는 60초 타임어택. 시소 최대·FailFloor 때만 낙하.
 
 ---
 
@@ -76,7 +76,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 ---
 
-## 3. 물리 (순수 충돌 + 시소 제어)
+## 3. 물리 (어깨 2점 스냅 + 시소 제어)
 
 ### 관 (`CoffinDanceCoffinBody`)
 
@@ -85,17 +85,18 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - `Freeze Rotation`: **X, Y** (Z만 회전)
 - `centerOfMass` 로컬 **(0,0,0)** = 기하 중심 (Inspector `centerOfMassLocal`)
 - 기울기: `transform` 로컬 Z 각(도) (`GetTiltZDegrees`). **점수 판정에는 쓰지 않음**
-- **FailFloor 접촉** (`OnCollisionEnter` 1회): 관을 kinematic으로 두고 로컬 Y → `failFloorRecoverLocalY`, 로컬 Z → 0을 `failFloorRecoverDuration` 동안 SmoothStep. 같은 시간 관↔어깨 `IgnoreCollision`. 끝나면 물리·중력 재개. 복구 중 재접촉은 무시(재감점 없음). 본게임만 `failFloorPenaltyScore` 감점. **탈락·연습 SoftReset 없음**. +Y Impulse **폐기**
-- **플레이 중 운동**: 운구인 어깨 SphereCollider 충돌 + 중력. FailFloor 복구가 끝나면 낙하해 어깨에 얹힘.
-- **겹침 분리 (A)**: `x_bias`가 0/1이 **아니면** 어깨와 `ComputePenetration` 후 **+Y만** 적용 (`shoulderDepenetrationMaxY`, 기본 0.5). FailFloor 복구(어깨 Ignore) 중에는 A 중지.
-- **시소 최대**: `x_bias == 0` → 왼쪽 어깨 SphereCollider off. `== 1` → 오른쪽 off. 높은 쪽은 유지. 이때 A 중지. 0/1이 아니면 즉시 양쪽 켬.
+- **FailFloor 접촉** (`OnCollisionEnter` 1회): 관을 kinematic으로 두고 로컬 Y → `failFloorRecoverLocalY`, 로컬 Z → 0을 `failFloorRecoverDuration` 동안 SmoothStep. 같은 시간 `x_bias`·`x`도 0.5로 SmoothStep(LB/RB·노이즈 없음). 관↔어깨 `IgnoreCollision`. 끝나면 시소는 0.5에서 재개·물리 낙하. 복구 중 재접촉은 무시(재감점 없음). 본게임만 `failFloorPenaltyScore` 감점. **탈락·연습 SoftReset 없음**. +Y Impulse **폐기**
+- **어깨 부착 (A안)**: 시소가 최대가 아니고 FailFloor 복구가 아니며 **낙하 잠금이 아니고** 관이 활성 어깨와 접촉하면 `CoffinShoulderAttached`. 이후 매 `LateUpdate`에 좌 `Pallbearers[1]` · 우 `[4]` 어깨 Sphere 꼭대기로 강체 로컬 Y·Z를 **즉시** 맞춤. 메시 변형 **없음**. 부착 중 +Y 분리 **끔**
+- **낙하 잠금**: 부착 중 `x_bias` 0/1이 되면 `CoffinFallLockedUntilFloor`. 어깨 `IgnoreCollision`. FailFloor에 닿을 때까지 재부착·+Y 분리 없음. 복구 시작 시 잠금 해제
+- **겹침 분리 (A)**: 미부착이고 잠금·시소 최대·Ignore가 아닐 때만 +Y (`shoulderDepenetrationMaxY`)
+- **시소 최대**: `x_bias == 0` → 왼쪽 어깨 SphereCollider off. `== 1` → 오른쪽 off. 높은 쪽은 유지. 0/1이 아니면 즉시 양쪽 켬.
 
 ### FailFloor (`CoffinDanceFailFloor`)
 
 - **슬롯 프리팹 자식**으로 둔다 (씬 공용 Floor 금지 — 슬롯 X 분리)
 - BoxCollider + 마커 컴포넌트 · 관이 넘어지면 닿는 높이
 - 접촉이 유지되는 동안 복구는 재시작하지 않음. 복구가 **끝난 뒤** 다시 떨어지면 다시 복구·감점
-- 복구 시간 = `failFloorRecoverDuration`(어깨 Ignore와 동일). 만료 시 충돌·물리 복구. `Begin`에서도 복구
+- 복구 시간 = `failFloorRecoverDuration`(어깨 Ignore와 동일). 복구 중 시소 0.5 SmoothStep. 만료 시 충돌·물리 복구·시소 0.5. `Begin`에서도 복구
 
 ### 시소 제어 (Module · A안)
 
@@ -123,7 +124,8 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
    - **미입력 또는 LB·RB 동시**: `HoldTimer = 0` · `driftDir = Sign(x_bias - 0.5)`(정중앙이면 0) · `x_bias += driftDir × microDriftSpeed × dt` (기운 쪽으로 계속 밀림 = 중력형)
    - **LB 또는 RB 단일**: `HoldTimer += dt` · `speedMul = Lerp(1, holdMaxMultiplier, HoldTimer / holdAccelTime)` · `x_bias += inputDir × seesawBaseSpeed × speedMul × dt` (`inputDir`: LB=+1, RB=-1)
 2. **비선형 이탈 가속 (공통)**: `offset = x_bias - 0.5` · `pullForce = pullCoefficient × offset² × Sign(offset)` · `x_bias += pullForce × dt`
-3. **범위**: `x_bias = Clamp01(x_bias)` · 0.0/1.0 한계에 닿으면 어깨 기울기로 FailFloor 접촉(복구·패널티) 가능
+3. **범위**: `x_bias = Clamp01(x_bias)` · 0.0/1.0 한계에 닿으면 낙하 잠금 → FailFloor
+4. **FailFloor 복구 중**: `StepShoulderControl` 스킵. `x_bias`=`x`= SmoothStep(시작값→0.5). 종료 후 0.5에서 입력 재개
 
 #### 리셋 (Edge Case)
 
@@ -133,7 +135,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 
 - Animator: `ExtensionBlend` — `SetFloat(Extension)` + `Play`
 - **루트 Rigidbody 없음** · **발 Collider 없음** (에디터 제거, 2026-08-15)
-- 어깨: **`mixamorig:RightArm` SphereCollider Radius 27** · 반대편 Scale X=-1 (관은 이 정적 Collider + 중력만)
+- 어깨: **`mixamorig:RightArm` SphereCollider** · 반대편 Scale X=-1. 부착 중 관은 가운데 운구인 두 Sphere로 Y+Z 스냅
 - 모델: `Prefabs/Pallbearer.prefab`
 
 ---
@@ -143,7 +145,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 | 항목 | 값 |
 |------|-----|
 | 생존 | 초당 **100** (`SurvivalScorePerSecond`) |
-| 정중앙 유지 | 초당 **150** 추가 (`centerBonusScorePerSec`). 시소 정중앙 **그리고** 어깨 지지일 때만. 둘 다이면 생존과 합쳐 초당 **250** |
+| 정중앙 유지 | 초당 **150** 추가 (`centerBonusScorePerSec`). 시소 정중앙 **그리고** 어깨 부착일 때만. 둘 다이면 생존과 합쳐 초당 **250** |
 | Phase4 (50~60초) | **획득 ×2.0** (FailFloor 패널티에는 배율 없음). 정중앙 유지 시 초당 **500** |
 | FailFloor 접촉 1회 | **−500** (`failFloorPenaltyScore`, Inspector). 0 미만 clamp. **연습 감점 없음** |
 
@@ -152,7 +154,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 1. 시소: `bool isCenter = Mathf.Abs(x - 0.5f) <= centerZoneThreshold`  
    `x` = `SeesawXCurrent` = `Clamp01(x_bias + DanceWave × noiseAmp)`  
    기본 `centerZoneThreshold` **0.05** → `0.45 ≤ x ≤ 0.55`.
-2. 지지: `ShoulderIgnoreRemain ≤ 0`(FailFloor 복구 중이 아님) 이고 관이 **활성화된** 운구인 어깨 SphereCollider와 접촉 중 (`CoffinDanceCoffinBody.IsTouchingShoulder`, Enter/Exit 카운트, 1개 이상). 관 Z 각은 쓰지 않음.
+2. 지지: `CoffinShoulderAttached` (시소 최대·FailFloor 복구가 아니고 어깨 접촉 후 2점 스냅 중). `ShoulderIgnoreRemain>0`이면 보너스 없음. 관 Z 각은 쓰지 않음.
 
 연습 UI 점수는 `-`, Report `FinalScore`는 0. 연습은 생존·보너스 가산 없음.
 
@@ -222,11 +224,11 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | 파일 | 역할 |
 |------|------|
 | `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 · 정중앙 카메라(`CameraFx`) · 개발 무적(`DevGodMode`) |
-| `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·FailFloor 감지 · kinematic 복구(`BeginKinematicHold` / `SetLocalYAndZDegrees`) · 어깨 접촉 카운트(`IsTouchingShoulder`) |
+| `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·FailFloor 감지 · kinematic 홀드(`BeginKinematicHold` / `SetLocalYAndZDegrees`) · 어깨 접촉 카운트(`IsTouchingShoulder`) |
 | `CoffinDancePallbearerPose` | ExtensionBlend · `SoftResetTransform` (운구인 RB 없음) |
 | `CoffinDanceFailFloor` | 바닥 마커 (탈락 아님) |
 | `CoffinDanceSceneBootstrap` | Begin/Tick |
-| `CoffinDanceSlotBindings` | `Pallbearers[6]` · PrepareAllPoses / ApplySideExtension / SoftResetAllPallbearers / `SetCoffinShoulderCollisionsIgnored` / `SetSideShoulderCollidersEnabled` / `ApplyUpwardShoulderDepenetration` / `IsCoffinTouchingAnyEnabledShoulder` |
+| `CoffinDanceSlotBindings` | `Pallbearers[6]` · 가운데 `[1]`/`[4]` 2점 자세(`TryComputeCoffinSupportLocalPose`) · PrepareAllPoses / ApplySideExtension / SoftResetAllPallbearers / `SetCoffinShoulderCollisionsIgnored` / `SetSideShoulderCollidersEnabled` / `ApplyUpwardShoulderDepenetration` |
 | `CoffinDanceHpLossRules` | HP 판정 |
 | `CoffinDanceResultMinigameFlavor` | Result ID 매칭 |
 | Editor `CoffinDancePallbearerAnimatorSetup` | Controller 생성 메뉴 (ExtensionBlend만) |
@@ -253,7 +255,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `failFloorPenaltyScore` | 500 | 본게임 접촉 1회 감점 (연습 0). **수치 보류** |
 | `failFloorRecoverLocalY` | 2.2 | FailFloor 복구 목표 로컬 Y. 1~4P 공통. **Play 확인**(씬 2.2) |
 | `failFloorRecoverDuration` | 0.5 | 복구 SmoothStep 시간(초) = 어깨 Ignore 시간. **Play 확인**(씬 0.5) |
-| `shoulderDepenetrationMaxY` | 0.5 | 시소 최대가 아닐 때 어깨 겹침 +Y 분리 한 프레임 최대 |
+| `shoulderDepenetrationMaxY` | 0.5 | 미부착·시소 최대가 아닐 때 어깨 겹침 +Y 분리 한 프레임 최대 |
 | `centerZoneThreshold` | 0.05 | 최종 시소 `x`가 0.5에서 이 값 이내면 정중앙 보너스 |
 | `centerBonusScorePerSec` | 150 | 정중앙 유지 시 초당 추가 점수. Phase4 배율은 생존과 같이 적용 |
 | `centerFovMultiplier` | 0.85 | 정중앙 목표 FOV = rest FOV × 이 값 (**씬 0.75**) |
@@ -282,7 +284,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 |------|------|
 | `TiltRoot` | 연출용 회전 · **프리팹에서 자유 설정**(코드가 덮어쓰지 않음) |
 | `Coffin` / `CoffinBody` | 관 Transform · `CoffinDanceCoffinBody` |
-| `Pallbearers[6]` | [0..2]=좌 · [3..5]=우 |
+| `Pallbearers[6]` | [0..2]=좌 · [3..5]=우. 2점 스냅은 가운데 `[1]`/`[4]` |
 | `SlotCamera` | 세로 1/4 |
 | HUD | Score · PracticeReady · Eliminated (Begin에서 숨김 · 플레이 중 탈락 UI 없음) |
 

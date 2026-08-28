@@ -9,15 +9,20 @@ namespace MiniParty.Minigames.CoffinDance
             ref SlotRuntime sr = ref _slots[i];
 
             ReadBalanceInput(i, out float left, out float right);
-            if (IsDevGodModeSlot(i) && !IsExclusiveShoulderInput(left, right))
-                StepDevGodIdleReturn(ref sr, dt);
-            else
-                StepShoulderControl(ref sr, dt, left, right);
-            ApplyPallbearerPoses(i, ref sr);
-            UpdateExtremeSeesawShoulderColliders(i, ref sr);
-            AccruePassiveScore(i, ref sr, dt);
+            if (!sr.FailFloorRecoverActive)
+            {
+                if (IsDevGodModeSlot(i) && !IsExclusiveShoulderInput(left, right))
+                    StepDevGodIdleReturn(ref sr, dt);
+                else
+                    StepShoulderControl(ref sr, dt, left, right);
+            }
+
             HandleFailFloorContact(i, ref sr);
             TickFailFloorRecover(i, ref sr, dt);
+            ApplyPallbearerPoses(i, ref sr);
+            UpdateExtremeSeesawShoulderColliders(i, ref sr);
+            UpdateCoffinShoulderAttach(i, ref sr);
+            AccruePassiveScore(i, ref sr, dt);
             ApplyShoulderDepenetration(i, ref sr);
             TickCenterBalanceCameraFx(i, ref sr, dt);
         }
@@ -45,8 +50,7 @@ namespace MiniParty.Minigames.CoffinDance
             if (sr.ShoulderIgnoreRemain > 0f)
                 return false;
 
-            CoffinDanceSlotBindings bind = GetBindings(i);
-            return bind != null && bind.IsCoffinTouchingAnyEnabledShoulder();
+            return sr.CoffinShoulderAttached;
         }
     }
 }

@@ -306,7 +306,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `MainMenu` | 로비·카탈로그·시작 |
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
 | `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
-| `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 지지) · 정중앙 카메라 FX **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** · 겹침 +Y 분리 · 최대 시 낮은 쪽 어깨 off **Play 검증** |
+| `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -387,4 +387,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-08-28 — §1 비간단 작업은 Cursor 플랜 모드 (전환 ≠ 승인)*
+*마스터 파일 갱신: 2026-08-28 — §6 포커스 RBC·OIIA 검증 (관짝춤 낙하 잠금 Play 검증 반영)*

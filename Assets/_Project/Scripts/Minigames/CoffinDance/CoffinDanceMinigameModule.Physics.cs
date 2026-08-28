@@ -86,10 +86,13 @@ namespace MiniParty.Minigames.CoffinDance
             float dur = Mathf.Max(0f, failFloorRecoverDuration);
             sr.FailFloorRecoverStartY = body.transform.localPosition.y;
             sr.FailFloorRecoverStartZ = body.GetTiltZDegrees();
+            sr.FailFloorRecoverStartSeesaw = sr.SeesawBias;
             sr.FailFloorRecoverDuration = dur;
             sr.FailFloorRecoverElapsed = 0f;
 
             body.BeginKinematicHold();
+            sr.CoffinShoulderAttached = false;
+            sr.CoffinFallLockedUntilFloor = false;
 
             if (dur <= 0f)
             {
@@ -116,6 +119,7 @@ namespace MiniParty.Minigames.CoffinDance
             {
                 sr.FailFloorRecoverActive = false;
                 sr.ShoulderIgnoreRemain = 0f;
+                sr.CoffinFallLockedUntilFloor = false;
                 return;
             }
 
@@ -140,6 +144,11 @@ namespace MiniParty.Minigames.CoffinDance
             float y = Mathf.Lerp(sr.FailFloorRecoverStartY, failFloorRecoverLocalY, t);
             float z = Mathf.Lerp(sr.FailFloorRecoverStartZ, 0f, t);
             body.SetLocalYAndZDegrees(y, z);
+
+            float seesaw = Mathf.Lerp(sr.FailFloorRecoverStartSeesaw, 0.5f, t);
+            sr.SeesawBias = seesaw;
+            sr.SeesawXCurrent = seesaw;
+            sr.HoldTimer = 0f;
         }
 
         void EndFailFloorRecover(int i, ref SlotRuntime sr, CoffinDanceCoffinBody body)
@@ -155,6 +164,8 @@ namespace MiniParty.Minigames.CoffinDance
             sr.FailFloorRecoverElapsed = 0f;
             sr.FailFloorRecoverDuration = 0f;
             sr.ShoulderIgnoreRemain = 0f;
+            sr.CoffinShoulderAttached = false;
+            sr.CoffinFallLockedUntilFloor = false;
         }
 
         static bool IsSeesawBiasAtExtreme(float bias)
@@ -182,6 +193,12 @@ namespace MiniParty.Minigames.CoffinDance
 
         void ApplyShoulderDepenetration(int i, ref SlotRuntime sr)
         {
+            if (sr.CoffinShoulderAttached)
+                return;
+
+            if (sr.CoffinFallLockedUntilFloor)
+                return;
+
             if (IsSeesawBiasAtExtreme(sr.SeesawBias))
                 return;
 
@@ -201,6 +218,65 @@ namespace MiniParty.Minigames.CoffinDance
             sr.SeesawBias = n;
             sr.SeesawXCurrent = n;
             sr.HoldTimer = 0f;
+        }
+
+        void UpdateCoffinShoulderAttach(int i, ref SlotRuntime sr)
+        {
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            CoffinDanceCoffinBody body = bind != null ? bind.ResolveCoffinBody() : null;
+            if (body == null)
+            {
+                sr.CoffinShoulderAttached = false;
+                return;
+            }
+
+            if (sr.FailFloorRecoverActive)
+                return;
+
+            if (IsSeesawBiasAtExtreme(sr.SeesawBias))
+            {
+                if (sr.CoffinShoulderAttached)
+                    BeginCoffinFallLock(i, ref sr, body);
+                return;
+            }
+
+            if (sr.CoffinFallLockedUntilFloor)
+                return;
+
+            if (sr.CoffinShoulderAttached)
+                return;
+
+            if (!body.IsTouchingShoulder)
+                return;
+
+            body.BeginKinematicHold();
+            sr.CoffinShoulderAttached = true;
+            SnapAttachedCoffinToShoulders(i, ref sr);
+        }
+
+        void BeginCoffinFallLock(int i, ref SlotRuntime sr, CoffinDanceCoffinBody body)
+        {
+            sr.CoffinShoulderAttached = false;
+            sr.CoffinFallLockedUntilFloor = true;
+            body?.EndKinematicHold();
+            GetBindings(i)?.SetCoffinShoulderCollisionsIgnored(true);
+            body?.ClearShoulderContacts();
+        }
+
+        void SnapAttachedCoffinToShoulders(int i, ref SlotRuntime sr)
+        {
+            if (!sr.CoffinShoulderAttached || sr.FailFloorRecoverActive)
+                return;
+
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            CoffinDanceCoffinBody body = bind != null ? bind.ResolveCoffinBody() : null;
+            if (bind == null || body == null)
+                return;
+
+            if (!bind.TryComputeCoffinSupportLocalPose(out float localY, out float zDegrees))
+                return;
+
+            body.SetLocalYAndZDegrees(localY, zDegrees);
         }
     }
 }

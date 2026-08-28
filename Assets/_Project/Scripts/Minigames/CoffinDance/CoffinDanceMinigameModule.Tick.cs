@@ -60,6 +60,23 @@ namespace MiniParty.Minigames.CoffinDance
             FlushAllUi();
         }
 
+        void LateUpdate()
+        {
+            if (!_running || _completing || _slots == null)
+                return;
+
+            if (_flowState != CdFlowState.Playing)
+                return;
+
+            ForEachSlot(i =>
+            {
+                if (!_aliveMask[i])
+                    return;
+
+                SnapAttachedCoffinToShoulders(i, ref _slots[i]);
+            });
+        }
+
         public void RequestEarlyExit()
         {
             if (_running)
