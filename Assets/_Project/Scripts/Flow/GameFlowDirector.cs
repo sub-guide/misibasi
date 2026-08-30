@@ -11,8 +11,8 @@ using UnityEngine.SceneManagement;
 namespace MiniParty.Flow
 {
     /// <summary>
-    /// 메인 메뉴 씬 전용: 로비 UI + 미니게임 씬 로드/복귀 후 결과 표시.
-    /// 미니게임 본편은 별도 씬에서 <see cref="OiiaSceneBootstrap"/> 등이 구동한다.
+    /// 메인 메뉴 씬 전용: 로비(JOIN/READY) + 카탈로그 선택 + 미니게임 씬 로드.
+    /// 목록/릴 비주얼은 설계 확정 후. 결과 연출은 Results 씬.
     /// </summary>
     [DefaultExecutionOrder(50)]
     public sealed class GameFlowDirector : MonoBehaviour
@@ -40,16 +40,11 @@ namespace MiniParty.Flow
 
         [Header("메뉴 UI 전용")]
         [SerializeField] Canvas menuCanvas;
-        [SerializeField] TMP_Text[] carouselRows = new TMP_Text[7];
         [SerializeField] TMP_Text detailTitle;
         [SerializeField] TMP_Text detailBody;
 
         [Header("슬롯 HUD (4)")]
         [SerializeField] SlotHudBind[] slotHud = new SlotHudBind[4];
-
-        [Header("오버레이")]
-        [SerializeField] GameObject resultRoot;
-        [SerializeField] TMP_Text resultBody;
 
         readonly OperatorInputService _operatorInput = new();
 
@@ -61,17 +56,6 @@ namespace MiniParty.Flow
 
         int _selectedCatalogIndex;
         PartyGamePhase _phase = PartyGamePhase.MainMenu;
-
-        const int VisibleWindow = 7;
-        const int CenterRow = 3;
-
-        [Serializable]
-        public sealed class GameCatalogEntry
-        {
-            public string id;
-            public string title;
-            [TextArea(2, 6)] public string blurb;
-        }
 
         [Serializable]
         public sealed class SlotHudBind
@@ -93,8 +77,6 @@ namespace MiniParty.Flow
 
             for (var i = 0; i < 4; i++)
                 WireSlotHud(i);
-
-            HideResultImmediate();
 
             EnsureCatalogPopulatedFallback();
             ClampSelection();
@@ -177,17 +159,6 @@ namespace MiniParty.Flow
 
             _loggedUiHints = true;
 
-            if (carouselRows == null || carouselRows.Length < VisibleWindow)
-                Debug.LogWarning(
-                    $"[GameFlowDirector] Carousel Rows 크기가 {VisibleWindow} 미만입니다. 메뉴 리스트가 보이지 않을 수 있습니다.",
-                    this);
-
-            for (var i = 0; i < VisibleWindow && carouselRows != null; i++)
-            {
-                if (carouselRows[i] == null)
-                    Debug.LogWarning($"[GameFlowDirector] Carousel Rows Element {i} 가 비었습니다.", this);
-            }
-
             for (var i = 0; i < 4; i++)
             {
                 if (slotHud == null || i >= slotHud.Length || slotHud[i] == null)
@@ -230,30 +201,24 @@ namespace MiniParty.Flow
                 return;
 
             if (_phase == PartyGamePhase.MainMenu)
-            {
                 TickMenuLobby();
-                return;
-            }
-
-            if (_phase == PartyGamePhase.ResultSummary)
-            {
-                if (_operatorInput.Confirm)
-                    FinishResultOverlay();
-            }
         }
 
         void TickMenuLobby()
         {
-            if (_operatorInput.MenuUp)
+            if (catalog != null && catalog.Length > 0)
             {
-                _selectedCatalogIndex = Wrap(_selectedCatalogIndex - 1, catalog.Length);
-                RefreshMenuUi(forceDetail: true);
-            }
+                if (_operatorInput.MenuUp)
+                {
+                    _selectedCatalogIndex = GameCatalogEntry.WrapIndex(_selectedCatalogIndex - 1, catalog.Length);
+                    RefreshMenuUi(forceDetail: true);
+                }
 
-            if (_operatorInput.MenuDown)
-            {
-                _selectedCatalogIndex = Wrap(_selectedCatalogIndex + 1, catalog.Length);
-                RefreshMenuUi(forceDetail: true);
+                if (_operatorInput.MenuDown)
+                {
+                    _selectedCatalogIndex = GameCatalogEntry.WrapIndex(_selectedCatalogIndex + 1, catalog.Length);
+                    RefreshMenuUi(forceDetail: true);
+                }
             }
 
             for (var i = 0; i < 4; i++)
@@ -315,7 +280,10 @@ namespace MiniParty.Flow
 
         void StartSelectedMinigame()
         {
-            GameCatalogEntry entry = catalog[_selectedCatalogIndex];
+            if (catalog == null || catalog.Length == 0)
+                return;
+
+            GameCatalogEntry entry = catalog[GameCatalogEntry.WrapIndex(_selectedCatalogIndex, catalog.Length)];
 
             bool runRbc = string.Equals(entry.id, RhythmButtonChallengeMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
             bool runCoffin = string.Equals(entry.id, CoffinDanceMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
@@ -408,19 +376,7 @@ namespace MiniParty.Flow
                 }
             }
 
-            if (fromResultScene)
-            {
-                HideResultImmediate();
-                _phase = PartyGamePhase.MainMenu;
-            }
-            else
-            {
-                _phase = PartyGamePhase.ResultSummary;
-                BuildResultText(report);
-
-                if (resultRoot != null)
-                    resultRoot.SetActive(true);
-            }
+            _phase = PartyGamePhase.MainMenu;
 
             RefreshSlotHud();
             RefreshMenuUi(forceDetail: true);
@@ -435,67 +391,17 @@ namespace MiniParty.Flow
             ps.FinalizeLobbyAfterMinigame(report);
         }
 
-        void BuildResultText(MinigameSessionReport report)
-        {
-            if (resultBody == null) return;
-
-            if (_sessionPractice)
-            {
-                resultBody.text =
-                    "Practice ended (Esc).\n" +
-                    "In practice: START when ready → all ready → Enter for MAIN.\n" +
-                    "Or from menu: each START toggles READY, then operator Enter.";
-                return;
-            }
-
-            string msg = "Round results\n";
-            for (var i = 0; i < 4; i++)
-            {
-                if (!_playedThisSession[i])
-                    continue;
-
-                PlayerSlotModel s = _slots[i];
-                msg += $"Slot {i + 1}: score {report.FinalScore[i]} / HP {s.HP} / streak {s.WinStreak}\n";
-            }
-
-            resultBody.text = msg;
-        }
-
-        void FinishResultOverlay()
-        {
-            HideResultImmediate();
-            _phase = PartyGamePhase.MainMenu;
-            RefreshMenuUi(forceDetail: true);
-        }
-
-        void HideResultImmediate()
-        {
-            if (resultRoot != null)
-                resultRoot.SetActive(false);
-        }
-
         void RefreshMenuUi(bool forceDetail)
         {
-            if (carouselRows.Length < VisibleWindow)
+            if (!forceDetail || detailTitle == null || detailBody == null)
                 return;
 
-            for (var row = 0; row < VisibleWindow; row++)
-            {
-                int idx = Wrap(_selectedCatalogIndex + (row - CenterRow), catalog.Length);
-                TMP_Text label = carouselRows[row];
-                if (label != null)
-                {
-                    string mark = row == CenterRow ? "[ " + catalog[idx].title + " ]" : catalog[idx].title;
-                    label.text = mark;
-                }
-            }
+            if (catalog == null || catalog.Length == 0)
+                return;
 
-            if (forceDetail && detailTitle != null && detailBody != null)
-            {
-                GameCatalogEntry e = catalog[_selectedCatalogIndex];
-                detailTitle.text = e.title;
-                detailBody.text = e.blurb;
-            }
+            GameCatalogEntry e = catalog[GameCatalogEntry.WrapIndex(_selectedCatalogIndex, catalog.Length)];
+            detailTitle.text = e.title;
+            detailBody.text = e.blurb;
         }
 
         void RefreshSlotHud()
@@ -630,13 +536,6 @@ namespace MiniParty.Flow
                 return;
 
             _selectedCatalogIndex = Mathf.Clamp(_selectedCatalogIndex, 0, catalog.Length - 1);
-        }
-
-        static int Wrap(int value, int length)
-        {
-            if (length <= 0) return 0;
-            int m = value % length;
-            return m < 0 ? m + length : m;
         }
     }
 }
