@@ -44,7 +44,8 @@ namespace MiniParty.Flow
         [SerializeField] TMP_Text detailBody;
 
         [Header("슬롯 HUD (4)")]
-        [SerializeField] SlotHudBind[] slotHud = new SlotHudBind[4];
+        [Tooltip("Slot_Player_1~4 의 SlotPokerHud. TMP Line1~3 바인딩은 제거됨.")]
+        [SerializeField] SlotPokerHud[] slotPokerHud = new SlotPokerHud[4];
 
         readonly OperatorInputService _operatorInput = new();
 
@@ -56,14 +57,6 @@ namespace MiniParty.Flow
 
         int _selectedCatalogIndex;
         PartyGamePhase _phase = PartyGamePhase.MainMenu;
-
-        [Serializable]
-        public sealed class SlotHudBind
-        {
-            public TMP_Text Line1;
-            public TMP_Text Line2;
-            public TMP_Text Line3;
-        }
 
         void Awake()
         {
@@ -161,14 +154,8 @@ namespace MiniParty.Flow
 
             for (var i = 0; i < 4; i++)
             {
-                if (slotHud == null || i >= slotHud.Length || slotHud[i] == null)
-                {
-                    Debug.LogWarning($"[GameFlowDirector] Slot Hud Element {i} 가 비었습니다.", this);
-                    continue;
-                }
-
-                if (slotHud[i].Line1 == null && slotHud[i].Line2 == null && slotHud[i].Line3 == null)
-                    Debug.LogWarning($"[GameFlowDirector] Slot Hud {i} 의 TMP 참조가 모두 비었습니다.", this);
+                if (slotPokerHud == null || i >= slotPokerHud.Length || slotPokerHud[i] == null)
+                    Debug.LogWarning($"[GameFlowDirector] Slot Poker Hud Element {i} 가 비었습니다.", this);
             }
 
             if (detailTitle == null || detailBody == null)
@@ -422,79 +409,16 @@ namespace MiniParty.Flow
             FlushSlotHudRow(model.Index);
         }
 
-        static readonly Color SlotHudWhite = Color.white;
-
-        /// <summary>EMPTY·ACTIVE Line2 흰색 안내 펄스(투명 ↔ 불투명). 값이 클수록 더 빠름.</summary>
-        const float SlotHudLine2PulseSpeed = 3.6f;
-
-        static readonly Color SlotHudReadyGreen = new(0.25f, 0.92f, 0.42f);
-
-        /// <summary>#FFCD00 ACTIVE Line2 안내색.</summary>
-        static readonly Color SlotHudActiveLine2 = new(1f, 205f / 255f, 0f);
-
-        static float SlotHudLine2PulseAlpha()
-        {
-            float ping = Mathf.Sin(Time.unscaledTime * SlotHudLine2PulseSpeed) * 0.5f + 0.5f;
-            return Mathf.Lerp(0.1f, 1f, ping);
-        }
-
         void FlushSlotHudRow(int i)
         {
-            if (i < 0 || i >= slotHud.Length || slotHud[i] == null)
+            if (slotPokerHud == null || i < 0 || i >= slotPokerHud.Length || slotPokerHud[i] == null)
                 return;
 
-            PlayerSlotModel s = _slots[i];
-            TMP_Text l1 = slotHud[i].Line1;
-            TMP_Text l2 = slotHud[i].Line2;
-            TMP_Text l3 = slotHud[i].Line3;
+            if (_slots == null || i >= _slots.Length)
+                return;
 
-            if (l1 != null)
-                l1.text = $"PLAYER {i + 1}";
-
-            if (l2 != null)
-            {
-                switch (s.State)
-                {
-                    case SlotState.EMPTY:
-                        l2.text = "PRESS START TO JOIN";
-                        l2.color = new Color(1f, 1f, 1f, SlotHudLine2PulseAlpha());
-                        break;
-                    case SlotState.ACTIVE:
-                        l2.text = "PRESS START TO READY";
-                        l2.color = new Color(
-                            SlotHudActiveLine2.r,
-                            SlotHudActiveLine2.g,
-                            SlotHudActiveLine2.b,
-                            SlotHudLine2PulseAlpha());
-                        break;
-                    case SlotState.READY:
-                        l2.text = "READY";
-                        l2.color = SlotHudReadyGreen;
-                        break;
-                    case SlotState.PLAYING:
-                        l2.text = "PLAY";
-                        l2.color = SlotHudWhite;
-                        break;
-                    case SlotState.RESULT:
-                        l2.text = "RESULT";
-                        l2.color = SlotHudWhite;
-                        break;
-                    case SlotState.GAMEOVER:
-                        l2.text = "GAME OVER";
-                        l2.color = SlotHudWhite;
-                        break;
-                    default:
-                        l2.text = string.Empty;
-                        l2.color = SlotHudWhite;
-                        break;
-                }
-            }
-
-            if (l3 != null)
-            {
-                l3.text = $"WIN {s.WinStreak}";
-                l3.color = SlotHudWhite;
-            }
+            int startHp = partySession != null ? partySession.StartingHp : 3;
+            slotPokerHud[i].Apply(_slots[i], startHp);
         }
 
         void EnsureCatalogPopulatedFallback()
