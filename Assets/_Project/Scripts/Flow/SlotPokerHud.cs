@@ -5,8 +5,7 @@ using UnityEngine.UI;
 namespace MiniParty.Flow
 {
     /// <summary>
-    /// 메인 하단 1슬롯 포커 카드 HUD. 위치·부채꼴·착지는 Animator 클립(에디터).
-    /// 코드는 상태·HP에 맞는 Mode/Pad만 넣는다.
+    /// 메인 하단 1슬롯 포커 HUD. 카드는 Animator Mode/Pad. 연승 칩은 SetActive만.
     /// </summary>
     public sealed class SlotPokerHud : MonoBehaviour
     {
@@ -35,6 +34,10 @@ namespace MiniParty.Flow
 
         [Tooltip("EMPTY 이고 HP≤0 (탈락 복귀). Start 재JOIN은 그대로.")]
         [SerializeField] Image blackoutOverlay;
+
+        [Header("연승 칩 (0=오른쪽 1연승 Chip_1)")]
+        [Tooltip("가로 나열. [0]이 1연승(오른쪽). 다음 연승은 왼쪽 칸. 최대는 배열 길이(5).")]
+        [SerializeField] GameObject[] streakChips;
 
         bool _loggedCapacity;
 
@@ -72,8 +75,11 @@ namespace MiniParty.Flow
             if (empty || noLives)
             {
                 HideAllCards();
+                ApplyStreakChips(0);
                 return;
             }
+
+            ApplyStreakChips(slot.WinStreak);
 
             int lost = startingHp - hp;
             if (lost < 0)
@@ -136,6 +142,24 @@ namespace MiniParty.Flow
                 Debug.LogError(
                     $"[SlotPokerHud] landPads({landPads.Length})와 cards({n}) 개수가 다릅니다. 가로 테두리와 카드를 같게 두세요.",
                     this);
+            }
+        }
+
+        void ApplyStreakChips(int winStreak)
+        {
+            if (streakChips == null)
+                return;
+
+            int show = winStreak;
+            if (show < 0)
+                show = 0;
+
+            for (var i = 0; i < streakChips.Length; i++)
+            {
+                if (streakChips[i] == null)
+                    continue;
+
+                streakChips[i].SetActive(i < show);
             }
         }
 
