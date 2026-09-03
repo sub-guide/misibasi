@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace MiniParty.Flow
 {
-    /// <summary>릴 한 칸. Image는 프리팹 Inspector에서 연결한다.</summary>
+    /// <summary>릴 한 칸. Image는 Inspector에서 연결한다.</summary>
     public sealed class ReelSymbolView : MonoBehaviour
     {
         [SerializeField] Image iconImage;
@@ -33,7 +33,7 @@ namespace MiniParty.Flow
                 return;
 
             iconImage.sprite = entry != null ? entry.icon : null;
-            iconImage.enabled = true;
+            iconImage.enabled = entry != null && entry.icon != null;
         }
 
         public void SetAnchoredY(float y)
@@ -44,17 +44,12 @@ namespace MiniParty.Flow
             _rect.anchoredPosition = p;
         }
 
-        public void ApplyVisual(bool isCenter, Color accent, Color silhouette, float scale, float alpha)
+        public void ApplyVisual(bool isCenter, Color accent, Color silhouette)
         {
-            CacheRect();
-            _rect.localScale = new Vector3(scale, scale, 1f);
-
             if (iconImage == null)
                 return;
 
-            Color c = isCenter ? accent : silhouette;
-            c.a *= alpha;
-            iconImage.color = c;
+            iconImage.color = isCenter ? accent : silhouette;
         }
     }
 }

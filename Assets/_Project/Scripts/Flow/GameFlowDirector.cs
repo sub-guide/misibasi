@@ -12,7 +12,7 @@ namespace MiniParty.Flow
 {
     /// <summary>
     /// 메인 메뉴 씬 전용: 로비(JOIN/READY) + 카탈로그 선택 + 미니게임 씬 로드.
-    /// 목록/릴 비주얼은 설계 확정 후. 결과 연출은 Results 씬.
+    /// ↑/↓는 이 디렉터만. 릴은 PlayStep. Space 스핀은 2차.
     /// </summary>
     [DefaultExecutionOrder(50)]
     public sealed class GameFlowDirector : MonoBehaviour
@@ -42,6 +42,9 @@ namespace MiniParty.Flow
         [SerializeField] Canvas menuCanvas;
         [SerializeField] TMP_Text detailTitle;
         [SerializeField] TMP_Text detailBody;
+
+        [Tooltip("없으면 ↑/↓는 우측 TMP만. Space 스핀 없음.")]
+        [SerializeField] MainMenuReelController reel;
 
         [Header("슬롯 HUD (4)")]
         [Tooltip("Slot_Player_1~4 의 SlotPokerHud. TMP Line1~3 바인딩은 제거됨.")]
@@ -73,6 +76,9 @@ namespace MiniParty.Flow
 
             EnsureCatalogPopulatedFallback();
             ClampSelection();
+            if (reel != null)
+                reel.BindCatalog(catalog, _selectedCatalogIndex);
+
             RefreshMenuUi(forceDetail: true);
 
             RefreshSlotHud();
@@ -160,6 +166,9 @@ namespace MiniParty.Flow
 
             if (detailTitle == null || detailBody == null)
                 Debug.LogWarning("[GameFlowDirector] Detail Title/Body TMP 가 비어 있을 수 있습니다.", this);
+
+            if (reel == null)
+                Debug.LogWarning("[GameFlowDirector] reel 이 비었습니다. ↑/↓는 TMP만 갱신합니다.", this);
         }
 
         void OnEnable()
@@ -196,16 +205,10 @@ namespace MiniParty.Flow
             if (catalog != null && catalog.Length > 0)
             {
                 if (_operatorInput.MenuUp)
-                {
-                    _selectedCatalogIndex = GameCatalogEntry.WrapIndex(_selectedCatalogIndex - 1, catalog.Length);
-                    RefreshMenuUi(forceDetail: true);
-                }
+                    TryStepCatalog(-1);
 
                 if (_operatorInput.MenuDown)
-                {
-                    _selectedCatalogIndex = GameCatalogEntry.WrapIndex(_selectedCatalogIndex + 1, catalog.Length);
-                    RefreshMenuUi(forceDetail: true);
-                }
+                    TryStepCatalog(1);
             }
 
             for (var i = 0; i < 4; i++)
@@ -247,6 +250,21 @@ namespace MiniParty.Flow
             }
 
             RefreshSlotHud();
+        }
+
+        void TryStepCatalog(int delta)
+        {
+            if (catalog == null || catalog.Length == 0)
+                return;
+
+            if (reel != null && reel.LockInputUntilSettled && reel.IsSettling)
+                return;
+
+            _selectedCatalogIndex = GameCatalogEntry.WrapIndex(_selectedCatalogIndex + delta, catalog.Length);
+            if (reel != null)
+                reel.PlayStep(_selectedCatalogIndex, delta);
+
+            RefreshMenuUi(forceDetail: true);
         }
 
         bool CanStartFromMenu()

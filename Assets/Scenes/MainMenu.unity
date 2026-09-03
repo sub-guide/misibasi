@@ -330,45 +330,21 @@ MonoBehaviour:
     title: OIIA
     blurb: 
     icon: {fileID: 21300000, guid: e47ce5720d047ed4cb91c9359fe50c24, type: 3}
-    accentColor: {r: 0, g: 1, b: 0, a: 0}
+    accentColor: {r: 0, g: 1, b: 0, a: 1}
   - id: rythm_button_challange
     title: "\uB9AC\uB4EC \uCC4C\uB9B0\uC9C0"
     blurb: 
-    icon: {fileID: 0}
-    accentColor: {r: 0, g: 0, b: 0, a: 0}
+    icon: {fileID: 744362712, guid: 7b6ee32416da2534f96ca18fd1ad5987, type: 3}
+    accentColor: {r: 1, g: 1, b: 1, a: 1}
   - id: coffin_dance
     title: "\uAD00\uC9DD\uCDA4"
     blurb: 
-    icon: {fileID: 0}
-    accentColor: {r: 0, g: 0, b: 0, a: 0}
-  - id: 
-    title: 
-    blurb: 
-    icon: {fileID: 0}
-    accentColor: {r: 0, g: 0, b: 0, a: 0}
-  - id: 
-    title: 
-    blurb: 
-    icon: {fileID: 0}
-    accentColor: {r: 0, g: 0, b: 0, a: 0}
-  - id: 
-    title: 
-    blurb: 
-    icon: {fileID: 0}
-    accentColor: {r: 0, g: 0, b: 0, a: 0}
-  - id: 
-    title: 
-    blurb: 
-    icon: {fileID: 0}
-    accentColor: {r: 0, g: 0, b: 0, a: 0}
-  - id: 
-    title: 
-    blurb: 
-    icon: {fileID: 0}
-    accentColor: {r: 0, g: 0, b: 0, a: 0}
+    icon: {fileID: 21300000, guid: 1322f48f8710b8e4c9d1e9df28db4cd2, type: 3}
+    accentColor: {r: 1, g: 1, b: 1, a: 1}
   menuCanvas: {fileID: 1891348209}
   detailTitle: {fileID: 943456224}
   detailBody: {fileID: 757318582}
+  reel: {fileID: 538125127}
   slotPokerHud:
   - {fileID: 2053135955234551533}
   - {fileID: 669898386}
@@ -490,6 +466,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 538125126}
+  - component: {fileID: 538125127}
   m_Layer: 5
   m_Name: Reel_Range
   m_TagString: Untagged
@@ -519,6 +496,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &538125127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538125125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1a6f54b7e0a513d2f4c9a5b1e7d3f04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  columns:
+  - {fileID: 5248850016905701035}
+  - {fileID: 858284910}
+  - {fileID: 696009723}
+  slotHeight: 300
+  duration: 0.2
+  bounceCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.1860735
+      outSlope: 3.1860735
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.35496658
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0.0019727836
+      outSlope: -0.0019727836
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.36449534
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lockInputUntilSettled: 1
+  silhouetteColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1001 &669898384
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -750,6 +771,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 445401078787294578, guid: 866ed59b9e66dc840ae60b600972fc95, type: 3}
   m_PrefabInstance: {fileID: 696009721}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &696009723 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6316780148686960932, guid: 866ed59b9e66dc840ae60b600972fc95, type: 3}
+  m_PrefabInstance: {fileID: 696009721}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0f5e43a6d9f402c1e3b8f4a0d6c2e93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &757318580
 GameObject:
   m_ObjectHideFlags: 0
@@ -986,6 +1018,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 445401078787294578, guid: 866ed59b9e66dc840ae60b600972fc95, type: 3}
   m_PrefabInstance: {fileID: 858284908}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &858284910 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6316780148686960932, guid: 866ed59b9e66dc840ae60b600972fc95, type: 3}
+  m_PrefabInstance: {fileID: 858284908}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0f5e43a6d9f402c1e3b8f4a0d6c2e93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &943456222
 GameObject:
   m_ObjectHideFlags: 0
@@ -1887,6 +1930,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 866ed59b9e66dc840ae60b600972fc95, type: 3}
+--- !u!114 &5248850016905701035 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6316780148686960932, guid: 866ed59b9e66dc840ae60b600972fc95, type: 3}
+  m_PrefabInstance: {fileID: 5248850016905701034}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0f5e43a6d9f402c1e3b8f4a0d6c2e93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
