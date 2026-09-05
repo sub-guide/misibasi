@@ -175,8 +175,8 @@ GameObject:
   - component: {fileID: 445401078787294578}
   - component: {fileID: 1014462126204916017}
   - component: {fileID: 4277311554817841406}
-  - component: {fileID: 5942892566032915920}
   - component: {fileID: 6316780148686960932}
+  - component: {fileID: 306580047191970824}
   m_Layer: 5
   m_Name: Reel
   m_TagString: Untagged
@@ -248,20 +248,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5942892566032915920
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2359527561882923845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding: {x: 0, y: 0, z: 0, w: 0}
-  m_Softness: {x: 0, y: 250}
 --- !u!114 &6316780148686960932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -280,6 +266,20 @@ MonoBehaviour:
   - {fileID: 684011094965013646}
   - {fileID: 156376134318463313}
   - {fileID: 8692656098589639564}
+--- !u!114 &306580047191970824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2359527561882923845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding: {x: 0, y: 0, z: 0, w: 0}
+  m_Softness: {x: 0, y: 300}
 --- !u!1 &4540221345627587359
 GameObject:
   m_ObjectHideFlags: 0

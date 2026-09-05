@@ -36,7 +36,7 @@ namespace MiniParty.Flow
         [SerializeField] Image blackoutOverlay;
 
         [Header("연승 칩 (0=오른쪽 1연승 Chip_1)")]
-        [Tooltip("가로 나열. [0]이 1연승(오른쪽). 다음 연승은 왼쪽 칸. 최대는 배열 길이(5).")]
+        [Tooltip("가로 나열. [0]이 1연승(오른쪽). 다음 연승은 왼쪽 칸. 최대는 배열 길이(4).")]
         [SerializeField] GameObject[] streakChips;
 
         bool _loggedCapacity;
