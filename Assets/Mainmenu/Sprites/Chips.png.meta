@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0ed291132c95e23418bc5c9fed8e01cd
+guid: ad7b04a0c9c8ce347a84d07b71b98afa
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Chip_1
+      name: Chips_0
       rect:
         serializedVersion: 2
-        x: 10
-        y: 518
-        width: 245
-        height: 245
+        x: 34
+        y: 181
+        width: 142
+        height: 142
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,20 +124,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9604bb6891173a14a8d3beeec5a019a1
-      internalID: 1896680322
+      spriteID: 9c275d8c06a38f442906508eb131591f
+      internalID: 1066946684
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chip_2
+      name: Chips_1
       rect:
         serializedVersion: 2
-        x: 290
-        y: 518
-        width: 245
-        height: 245
+        x: 246
+        y: 181
+        width: 142
+        height: 142
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,20 +145,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8cf9ed96f2ecacb4481107f6d16d59ab
-      internalID: -1685184178
+      spriteID: 2114c5c418e9396468b72c315f62286c
+      internalID: 1094302752
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chip_3
+      name: Chips_2
       rect:
         serializedVersion: 2
-        x: 582
-        y: 518
-        width: 245
-        height: 245
+        x: 453
+        y: 180
+        width: 142
+        height: 142
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,20 +166,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: deeba8fa610ac0a4a91a534a468a0493
-      internalID: -858524783
+      spriteID: 3a3c1d43b3b23934690427568ff23d86
+      internalID: -239464854
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chip_4
+      name: Chips_3
       rect:
         serializedVersion: 2
-        x: 874
-        y: 518
-        width: 245
-        height: 245
+        x: 664
+        y: 180
+        width: 142
+        height: 142
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -187,29 +187,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f459362d4f5628943811b9805ed0237f
-      internalID: 971362957
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Chip_5
-      rect:
-        serializedVersion: 2
-        x: 1152
-        y: 518
-        width: 245
-        height: 245
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8ba34309ca1f29c4a9ffc4567bdf067d
-      internalID: 1636884817
+      spriteID: c0c08b77b51627d42aa9977918ccb2c3
+      internalID: -1449628188
       vertices: []
       indices: 
       edges: []
@@ -225,22 +204,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Chip_1: 1896680322
-      Chip_2: -1685184178
-      Chip_3: -858524783
-      Chip_4: 971362957
-      Chip_5: 1636884817
-      Chips_0: 658389897
-      Chips_10: -1200953298
-      Chips_11: 1620536944
-      Chips_12: -1289997832
-      Chips_13: 1943110934
-      Chips_14: 723269949
-      Chips_5: -400799463
-      Chips_6: 1712504503
-      Chips_7: -764157353
-      Chips_8: -704891224
-      Chips_9: -1564383183
+      Chips_0: 1066946684
+      Chips_1: 1094302752
+      Chips_2: -239464854
+      Chips_3: -1449628188
+      Chips_4: -1269865908
+      Chips_5: 172534773
+      Chips_6: -699793999
+      Chips_7: -1318540728
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

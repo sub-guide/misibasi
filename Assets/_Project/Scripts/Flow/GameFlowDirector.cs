@@ -12,7 +12,7 @@ namespace MiniParty.Flow
 {
     /// <summary>
     /// 메인 메뉴 씬 전용: 로비(JOIN/READY) + 카탈로그 선택 + 미니게임 씬 로드.
-    /// ↑/↓는 이 디렉터만. 릴은 PlayStep. Space 스핀은 2차.
+    /// ↑/↓·Space는 이 디렉터만. 릴은 PlayStep / PlaySpin.
     /// </summary>
     [DefaultExecutionOrder(50)]
     public sealed class GameFlowDirector : MonoBehaviour
@@ -43,7 +43,7 @@ namespace MiniParty.Flow
         [SerializeField] TMP_Text detailTitle;
         [SerializeField] TMP_Text detailBody;
 
-        [Tooltip("없으면 ↑/↓는 우측 TMP만. Space 스핀 없음.")]
+        [Tooltip("없으면 ↑/↓는 우측 TMP만. Space 스핀도 없음.")]
         [SerializeField] MainMenuReelController reel;
 
         [Header("슬롯 HUD (4)")]
@@ -60,6 +60,7 @@ namespace MiniParty.Flow
 
         int _selectedCatalogIndex;
         PartyGamePhase _phase = PartyGamePhase.MainMenu;
+        bool _waitingSpinEnd;
 
         void Awake()
         {
@@ -202,12 +203,21 @@ namespace MiniParty.Flow
 
         void TickMenuLobby()
         {
+            if (_waitingSpinEnd && (reel == null || !reel.IsSpinning))
+            {
+                _waitingSpinEnd = false;
+                RefreshMenuUi(forceDetail: true);
+            }
+
             if (catalog != null && catalog.Length > 0)
             {
-                if (_operatorInput.MenuUp)
+                if (!CatalogLocked() && _operatorInput.Shuffle)
+                    TryShuffleCatalog();
+
+                if (!CatalogLocked() && _operatorInput.MenuUp)
                     TryStepCatalog(-1);
 
-                if (_operatorInput.MenuDown)
+                if (!CatalogLocked() && _operatorInput.MenuDown)
                     TryStepCatalog(1);
             }
 
@@ -233,7 +243,7 @@ namespace MiniParty.Flow
                 }
             }
 
-            if (_operatorInput.Confirm)
+            if (_operatorInput.Confirm && !CatalogLocked())
             {
                 if (CanStartFromMenu())
                 {
@@ -252,12 +262,45 @@ namespace MiniParty.Flow
             RefreshSlotHud();
         }
 
+        bool CatalogLocked()
+        {
+            if (reel == null)
+                return false;
+
+            if (reel.IsSpinning)
+                return true;
+
+            return reel.LockInputUntilSettled && reel.IsSettling;
+        }
+
+        void TryShuffleCatalog()
+        {
+            if (catalog == null || catalog.Length == 0)
+                return;
+
+            if (reel == null)
+                return;
+
+            if (CatalogLocked())
+                return;
+
+            int winner = UnityEngine.Random.Range(0, catalog.Length);
+            _selectedCatalogIndex = winner;
+            if (detailTitle != null)
+                detailTitle.text = string.Empty;
+            if (detailBody != null)
+                detailBody.text = string.Empty;
+
+            reel.PlaySpin(winner);
+            _waitingSpinEnd = true;
+        }
+
         void TryStepCatalog(int delta)
         {
             if (catalog == null || catalog.Length == 0)
                 return;
 
-            if (reel != null && reel.LockInputUntilSettled && reel.IsSettling)
+            if (CatalogLocked())
                 return;
 
             _selectedCatalogIndex = GameCatalogEntry.WrapIndex(_selectedCatalogIndex + delta, catalog.Length);

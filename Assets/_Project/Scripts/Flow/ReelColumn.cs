@@ -17,7 +17,8 @@ namespace MiniParty.Flow
             int selectedIndex,
             float scrollOffset,
             float slotHeight,
-            Color silhouetteColor)
+            Color silhouetteColor,
+            bool forceAllSilhouette = false)
         {
             if (symbols == null || symbols.Length == 0)
             {
@@ -93,7 +94,8 @@ namespace MiniParty.Flow
                 symbol.SetAnchoredY(_ys[i]);
 
                 Color accent = entry != null ? entry.accentColor : Color.white;
-                symbol.ApplyVisual(i == closest, accent, silhouetteColor);
+                bool isCenter = !forceAllSilhouette && i == closest;
+                symbol.ApplyVisual(isCenter, accent, silhouetteColor);
             }
         }
     }
