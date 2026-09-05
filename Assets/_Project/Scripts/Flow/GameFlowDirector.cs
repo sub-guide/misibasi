@@ -50,6 +50,16 @@ namespace MiniParty.Flow
         [Tooltip("Slot_Player_1~4 의 SlotPokerHud. TMP Line1~3 바인딩은 제거됨.")]
         [SerializeField] SlotPokerHud[] slotPokerHud = new SlotPokerHud[4];
 
+        [Header("메뉴 BGM")]
+        [Tooltip("Play On Awake 끄기. Spatial Blend 0 (2D).")]
+        [SerializeField] AudioSource menuBgmSource;
+
+        [Tooltip("비우면 AudioSource에 꽂힌 클립을 씀.")]
+        [SerializeField] AudioClip menuBgmClip;
+
+        [Tooltip("메뉴 BGM 볼륨.")]
+        [SerializeField] [Range(0f, 1f)] float menuBgmVolume = 1f;
+
         readonly OperatorInputService _operatorInput = new();
 
         PlayerSlotModel[] _slots;
@@ -104,6 +114,7 @@ namespace MiniParty.Flow
                     menuCanvas.enabled = true;
 
                 OnMinigameComplete(postResult, fromResultScene: true);
+                PlayMenuBgm();
                 return;
             }
 
@@ -115,6 +126,41 @@ namespace MiniParty.Flow
 
                 OnMinigameComplete(legacy, fromResultScene: false);
             }
+
+            PlayMenuBgm();
+        }
+
+        AudioClip ResolveMenuBgmClip()
+        {
+            if (menuBgmClip != null)
+                return menuBgmClip;
+
+            return menuBgmSource != null ? menuBgmSource.clip : null;
+        }
+
+        void PlayMenuBgm()
+        {
+            if (menuBgmSource == null)
+                return;
+
+            AudioClip clip = ResolveMenuBgmClip();
+            if (clip == null)
+                return;
+
+            menuBgmSource.clip = clip;
+            menuBgmSource.loop = true;
+            menuBgmSource.spatialBlend = 0f;
+            menuBgmSource.volume = menuBgmVolume;
+            if (!menuBgmSource.isPlaying)
+                menuBgmSource.Play();
+        }
+
+        void StopMenuBgm()
+        {
+            if (menuBgmSource == null)
+                return;
+
+            menuBgmSource.Stop();
         }
 
         void ApplySessionContextFromParty(PartySession ps)
@@ -170,6 +216,9 @@ namespace MiniParty.Flow
 
             if (reel == null)
                 Debug.LogWarning("[GameFlowDirector] reel 이 비었습니다. ↑/↓는 TMP만 갱신합니다.", this);
+
+            if (menuBgmSource == null || ResolveMenuBgmClip() == null)
+                Debug.LogWarning("[GameFlowDirector] 메뉴 BGM AudioSource 또는 AudioClip 이 비었습니다.", this);
         }
 
         void OnEnable()
@@ -182,6 +231,8 @@ namespace MiniParty.Flow
 
         void OnDestroy()
         {
+            StopMenuBgm();
+
             if (_slots == null)
                 return;
 
@@ -383,6 +434,8 @@ namespace MiniParty.Flow
 
             if (menuCanvas != null)
                 menuCanvas.enabled = false;
+
+            StopMenuBgm();
 
             string sceneName;
             if (runRbc)

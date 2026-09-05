@@ -39,7 +39,22 @@ namespace MiniParty.Flow
         [Tooltip("가로 나열. [0]이 1연승(오른쪽). 다음 연승은 왼쪽 칸. 최대는 배열 길이(4).")]
         [SerializeField] GameObject[] streakChips;
 
+        [Header("카드 SFX")]
+        [Tooltip("Play On Awake 끄기. Spatial Blend 0 (2D). PlayOneShot.")]
+        [SerializeField] AudioSource cardSfxSource;
+
+        [Tooltip("ACTIVE → READY (카드 착지).")]
+        [SerializeField] AudioClip cardPlaceClip;
+
+        [Tooltip("READY → ACTIVE (카드 회수).")]
+        [SerializeField] AudioClip cardRemoveClip;
+
+        [Tooltip("카드 효과음 볼륨.")]
+        [SerializeField] [Range(0f, 1f)] float cardSfxVolume = 1f;
+
         bool _loggedCapacity;
+        bool _hasLastState;
+        SlotState _lastState;
 
         [System.Serializable]
         public sealed class CardBind
@@ -65,6 +80,18 @@ namespace MiniParty.Flow
 
             int hp = slot.HP;
             SlotState state = slot.State;
+            SlotState prev = _lastState;
+            bool hadPrev = _hasLastState;
+            _lastState = state;
+            _hasLastState = true;
+
+            if (hadPrev)
+            {
+                if (prev == SlotState.ACTIVE && state == SlotState.READY)
+                    PlayCardSfx(cardPlaceClip);
+                else if (prev == SlotState.READY && state == SlotState.ACTIVE)
+                    PlayCardSfx(cardRemoveClip);
+            }
 
             bool empty = state == SlotState.EMPTY;
             bool noLives = hp <= 0;
@@ -110,6 +137,15 @@ namespace MiniParty.Flow
 
                 ApplyCard(cards[i], CardMode.Fan, 0);
             }
+        }
+
+        void PlayCardSfx(AudioClip clip)
+        {
+            if (cardSfxSource == null || clip == null)
+                return;
+
+            cardSfxSource.spatialBlend = 0f;
+            cardSfxSource.PlayOneShot(clip, cardSfxVolume);
         }
 
         void HideAllCards()
