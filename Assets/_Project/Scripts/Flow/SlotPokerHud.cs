@@ -113,6 +113,10 @@ namespace MiniParty.Flow
                 lost = 0;
 
             bool slam = state is SlotState.READY or SlotState.PLAYING or SlotState.RESULT;
+            int held = hp;
+            if (slam)
+                held -= 1;
+            int fanPad = held <= 1 ? 1 : 0;
             int n = cards != null ? cards.Length : 0;
 
             for (var i = 0; i < n; i++)
@@ -135,7 +139,7 @@ namespace MiniParty.Flow
                     continue;
                 }
 
-                ApplyCard(cards[i], CardMode.Fan, 0);
+                ApplyCard(cards[i], CardMode.Fan, fanPad);
             }
         }
 
