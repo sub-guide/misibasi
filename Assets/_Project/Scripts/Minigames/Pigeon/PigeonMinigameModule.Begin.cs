@@ -1,0 +1,31 @@
+using MiniParty.Core;
+using MiniParty.Minigames;
+using UnityEngine;
+
+namespace MiniParty.Minigames.Pigeon
+{
+    public sealed partial class PigeonMinigameModule
+    {
+        public void Begin(MinigameContext context)
+        {
+            _ctx = context;
+            gameObject.SetActive(true);
+            _running = true;
+
+            for (var i = 0; i < SlotCount; i++)
+            {
+                bool play = _ctx.Slots != null &&
+                            i < _ctx.Slots.Length &&
+                            _ctx.Slots[i].State == SlotState.PLAYING;
+
+                _participatedMask[i] = play;
+
+                Transform cursor = GetCursor(i);
+                if (cursor == null)
+                    continue;
+
+                cursor.gameObject.SetActive(play);
+            }
+        }
+    }
+}

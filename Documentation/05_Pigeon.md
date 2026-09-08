@@ -1,6 +1,6 @@
 # 05_Pigeon (비둘기야 먹자)
 
-> **문서 기준일**: 2026-09-09 — **연습 없음**. 메인 Enter → 바로 본게임. 사용자 씬 배치가 Hierarchy 기준. **C# 미착수**.  
+> **문서 기준일**: 2026-09-09 — 커서 이동·화면 Clamp **Play 확인**. 쪽기·스폰 미착수.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -10,11 +10,8 @@
 | 영역 | 상태 | 비고 |
 |------|------|------|
 | 기획·연출 의도 | **확정** | 판정=커서. 비둘기=연출. **연습 라운드 없음** |
-| C# (`IMinigameModule`) | **미착수** | `PigeonMinigameModule` / `PigeonSceneBootstrap` 없음 |
-| 씬 파일 | **있음** | `Minigame_Pigeon.unity` · Build 등록 |
-| 면 프리팹 | **있음** | `Assets/Pigeon/Prefabs/Noodle.prefab` (`CircleCollider2D`) |
-| 쏟기·쪽기 애니 | **준비됨** | 4P Animator. Loop Time **Off**. `CupNoodle` 시작 비활성. 입 Noodle 시작 비활성 |
-| 메뉴 카탈로그·씬 로드 | **미착수** | 메인에서 진입 불가 |
+| C# (`IMinigameModule`) | **커서 이동 · Clamp Play 확인** | `PigeonMinigameModule` + `PigeonSceneBootstrap`. 쪽기·스폰·종료 없음 |
+| 메뉴 카탈로그·씬 로드 | **Play 확인** | catalog `id` = `pigeon` · `pigeonSceneName` = `Minigame_Pigeon` |
 | 점수 HUD | **후속** | 이번 배치 없음 |
 
 ### 헷갈리기 쉬운 점
@@ -40,7 +37,7 @@
 
 | 조작 | `BoothUsbGamepadLayout` | 개발 키보드(`Ctrl` 토글 1P) | 효과 |
 |------|-------------------------|---------------------------|------|
-| 이동 | `StickUp/Down/Left/Right` (8방향) | `W` `A` `S` `D` | 커서 이동. 쪽기 애니 중 **잠금** |
+| 이동 | `StickUp/Down/Left/Right` (8방향, 대각 정규화) | `W` `A` `S` `D` | `cursorSpeed`(기본 **120**)로 로컬 이동. `playCamera` 화면 안으로 Clamp. 참가 슬롯만 |
 | 쪼기 | `FaceA` (`button2`) | 키패드 `5` | `Pigeon` 켜고 에디터 애니 재생. 애니 중 **재입력 잠금** |
 | 시작 | 메인 메뉴 운영자 Enter | — | 씬 로드와 동시에 본게임 |
 
@@ -105,7 +102,7 @@ Minigame_Pigeon
 
 | 오브젝트 | 역할 |
 |----------|------|
-| `PigeonRoot` | 이후 Bootstrap + Module |
+| `PigeonRoot` | `PigeonSceneBootstrap` + `PigeonMinigameModule` (에디터 연결) |
 | `Audio_Sfx` | `AudioSource`. Play On Awake 꺼짐. 클립 미연결 |
 | `Cursor_P*` | 조준·판정. CircleCollider2D. 틴트 1P 빨강 / 2P 파랑 / 3P 초록 / 4P 마젠타 |
 | `NoodlePosition` | 쏟기 위치 부모. Sprite 없음. 활성(자식 컵은 꺼 둠) |
@@ -117,29 +114,31 @@ Minigame_Pigeon
 
 ---
 
-## 5. 코드 (예정 · 미작성)
+## 5. 코드
 
-| 예정 심볼 | 역할 |
-|-----------|------|
-| `PigeonMinigameModule` | `IMinigameModule` + `partial` |
-| `PigeonSceneBootstrap` | `MinigameContext` → `Begin` / `Tick` |
-| 경로 | `Assets/_Project/Scripts/Minigames/Pigeon/` |
+경로: `Assets/_Project/Scripts/Minigames/Pigeon/`
 
-종료: `MinigameExitSequence` + `FadeOverlay` `ScreenFader`.
+| 심볼 | 역할 |
+|------|------|
+| `PigeonMinigameModule` | `IMinigameModule` + `partial`. `BuiltInId` = `pigeon` |
+| `PigeonSceneBootstrap` | `PartySession` → `Begin` / `Tick` |
+| `TickCursorMove` | D-Pad 홀드 → `localPosition`. 대각 `normalized` |
+| `ClampToCamera` | `playCamera` Orthographic 뷰를 커서 부모 로컬로 Clamp |
+
+Inspector: `cursors[4]` · `cursorSpeed` 기본·씬 **120** · `playCamera` = `Main Camera` (**Play 확인**).
+
+**이번 슬라이스에 없음**: 쪽기, 면 스폰, 타이머, Result 종료.
 
 ---
 
-## 6. 열린 결정 (코드 턴 전)
+## 6. 열린 결정
 
 | 주제 | 상태 |
 |------|------|
 | HP −1 규칙 | 미정 |
-| 본게임 제한시간 · 쏟기 주기 · 커서 속도 · 한 번에 깔 면 개수 | 미정 |
-| `GameFlowDirector` 카탈로그 id · 씬 로드 | 미정. 로드 시 연습 플래그 **false** |
+| 본게임 제한시간 · 쏟기 주기 · 한 번에 깔 면 개수 | 미정 |
 | 본게임 스폰 좌표 | 미정 (마커 여러 개 vs `NoodlePosition` 1점+오프셋) |
-| 4P 커서 마젠타 | 씬 값. 노랑으로 바꿀지는 미정 |
-| 비둘기 좌측 오프셋만 | 우측 Flip 여부는 에디터 애니에 맡김 |
+| 4P 커서 마젠타 | 씬 값 |
+| 비둘기 좌측 오프셋만 | 에디터 애니 |
 
----
-
-문서 갱신: **2026-09-09** (연습 없음) · **2026-09-07** (사용자 씬이 계약) · **2026-09-06** (초안 Hierarchy, 폐기)
+문서 갱신: **2026-09-09** (playCamera·id Play 확인) · **2026-09-09** (커서 이동 Play 확인) · **2026-09-09** (커서 이동) · **2026-09-09** (연습 없음) · **2026-09-07** (사용자 씬이 계약) · **2026-09-06** (초안 Hierarchy, 폐기)

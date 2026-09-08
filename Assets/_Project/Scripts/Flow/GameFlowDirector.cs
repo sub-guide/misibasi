@@ -4,6 +4,7 @@ using MiniParty.Input;
 using MiniParty.Minigames;
 using MiniParty.Minigames.CoffinDance;
 using MiniParty.Minigames.Oiia;
+using MiniParty.Minigames.Pigeon;
 using MiniParty.Minigames.RhythmButtonChallenge;
 using TMPro;
 using UnityEngine;
@@ -30,6 +31,9 @@ namespace MiniParty.Flow
 
         [Tooltip("관짝춤(Coffin Dance) 전용 씬 이름. Build Settings 와 동일해야 함.")]
         [SerializeField] string coffinDanceSceneName = "Minigame_CoffinDance";
+
+        [Tooltip("비둘기야 먹자 전용 씬 이름. Build Settings 와 동일해야 함.")]
+        [SerializeField] string pigeonSceneName = "Minigame_Pigeon";
 
         [Header("디버그")]
         [Tooltip("체크 시 카탈로그 어떤 항목이든 oiia 씬으로 진입 (MVP 편의).")]
@@ -386,10 +390,11 @@ namespace MiniParty.Flow
 
             bool runRbc = string.Equals(entry.id, RhythmButtonChallengeMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
             bool runCoffin = string.Equals(entry.id, CoffinDanceMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
+            bool runPigeon = string.Equals(entry.id, PigeonMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
             bool runOiia = debugRouteAllToOiia ||
                 string.Equals(entry.id, OiiaMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
 
-            if (!runRbc && !runCoffin && !runOiia)
+            if (!runRbc && !runCoffin && !runOiia && !runPigeon)
             {
                 partySession?.ResetOiiaCycleAfterMainSession();
                 partySession?.ResetCoffinDanceCycleAfterMainSession();
@@ -407,10 +412,12 @@ namespace MiniParty.Flow
                 _lastStartedMinigameId = RhythmButtonChallengeMinigameModule.BuiltInId;
             else if (runCoffin)
                 _lastStartedMinigameId = CoffinDanceMinigameModule.BuiltInId;
+            else if (runPigeon)
+                _lastStartedMinigameId = PigeonMinigameModule.BuiltInId;
             else
                 _lastStartedMinigameId = OiiaMinigameModule.BuiltInId;
 
-            if (runRbc)
+            if (runRbc || runPigeon)
                 _sessionPractice = false;
             else if (runCoffin)
                 _sessionPractice = partySession.TakeCoffinDanceNextRoundIsPractice();
@@ -442,6 +449,8 @@ namespace MiniParty.Flow
                 sceneName = rhythmButtonChallengeSceneName;
             else if (runCoffin)
                 sceneName = coffinDanceSceneName;
+            else if (runPigeon)
+                sceneName = pigeonSceneName;
             else
                 sceneName = oiiaSceneName;
 
@@ -560,7 +569,12 @@ namespace MiniParty.Flow
                     title = "관짝춤",
                     blurb = ""
                 },
-                new GameCatalogEntry { id = "placeholder_04", title = "GAME 04 (TBD)", blurb = "Coming soon." },
+                new GameCatalogEntry
+                {
+                    id = PigeonMinigameModule.BuiltInId,
+                    title = "비둘기야 먹자",
+                    blurb = "D-Pad 커서, A로 쪽기."
+                },
                 new GameCatalogEntry { id = "placeholder_05", title = "GAME 05 (TBD)", blurb = "Coming soon." },
                 new GameCatalogEntry { id = "placeholder_06", title = "GAME 06 (TBD)", blurb = "Coming soon." },
                 new GameCatalogEntry { id = "placeholder_07", title = "GAME 07 (TBD)", blurb = "Coming soon." },

@@ -1332,6 +1332,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1607633940}
+  - component: {fileID: 1607633942}
+  - component: {fileID: 1607633941}
   m_Layer: 0
   m_Name: PigeonRoot
   m_TagString: Untagged
@@ -1354,6 +1356,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1607633941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607633939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 171a0373157bda043b6495e44b9df43e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  module: {fileID: 1607633942}
+--- !u!114 &1607633942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607633939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dae9bc944c01d1046b254d704a038cea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayName: "\uBE44\uB458\uAE30\uC57C \uBA39\uC790"
+  cursors:
+  - {fileID: 1760544284}
+  - {fileID: 1559389162}
+  - {fileID: 1343334614}
+  - {fileID: 7994677}
+  cursorSpeed: 120
+  playCamera: {fileID: 1573283618}
 --- !u!1 &1656317904
 GameObject:
   m_ObjectHideFlags: 0

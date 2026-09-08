@@ -317,7 +317,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
 | `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
 | `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
-| `Minigame_Pigeon` | 비둘기야 먹자. 사용자 씬 기준 · 프리팹·마커·Animator **남음** · C# **미착수** |
+| `Minigame_Pigeon` | 비둘기야 먹자. 커서 이동·화면 Clamp **Play 확인** · 쪽기·스폰 미착수 |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -347,7 +347,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ### 지금 포커스
 
-1. **Pigeon** — 씬 에디터 준비됨. C#·카탈로그 **미착수**
+1. **Pigeon** — 커서 이동·Clamp **Play 확인**. 다음 기능(쪽기 등) 대기
 2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
 3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
@@ -364,8 +364,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
 | 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |
 | Pigeon HP −1 | 미정 | 하위 50% / 최하점 / 보류 |
-| Pigeon 손맛 값 | 미정 | 제한시간·쏟기 주기·커서 속도·한 번에 깔 면 개수 |
-| Pigeon 카탈로그·로드 | 미정 | `GameFlowDirector` id · 씬 분기. 로드 시 `PrepareRound(false)` |
+| Pigeon 손맛 값 | 미정 | 제한시간·쏟기 주기·한 번에 깔 면 개수 (`cursorSpeed` **120** 확정) |
 | Pigeon 본게임 스폰 좌표 | 미정 | 마커 여러 개 vs `NoodlePosition` 1점+오프셋 |
 
 ---
@@ -405,4 +404,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-09-09 — Pigeon 연습 없음*
+*마스터 파일 갱신: 2026-09-09 — Pigeon Clamp Play 확인*
