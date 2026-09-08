@@ -307,7 +307,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - **입력**: 운영자 `OperatorInputService`(키보드 ↑↓·Enter) · 플레이어 `SlotGamepad` → `Joystick.all[i]` · 개발 `DeveloperKeyboardGamepadDebug`(`Ctrl` 토글 1P).
 - **부스 USB 버튼**은 반드시 `BoothUsbGamepadLayout` 상수·`03_Booth_USB_Controller_매핑.md` 를 거침.  
   OIIA: **O=Trigger(X), I=Button2(A), A=Button4(Y), B=Button3** — 루프 완주 시 3버튼 셔플 매핑.
-- **연습 → 본게임**은 모든 미니게임 필수(스킵 없음). HP는 **Result 씬에서만** −1.
+- **연습 → 본게임**은 기본 필수(스킵 없음). **Pigeon만 예외**: 메인 Enter → 바로 본게임 (`05_Pigeon.md`). HP는 **Result 씬에서만** −1.
 
 **주요 씬** (Build Settings·Inspector 문자열 = 파일명과 동일):
 
@@ -317,6 +317,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
 | `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
 | `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
+| `Minigame_Pigeon` | 비둘기야 먹자. 사용자 씬 기준 · 프리팹·마커·Animator **남음** · C# **미착수** |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -333,6 +334,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `Documentation/05_OIIA.md` | OIIA 기술 문서 | OIIA 구현·수정 시 |
 | `Documentation/05_Rhythm_Button_Challenge.md` | RBC 기술 문서 | RBC 구현·검증 시 |
 | `Documentation/05_Coffin_Dance.md` | 관짝춤 기술 문서 | 관짝춤 구현·수정 시 |
+| `Documentation/05_Pigeon.md` | 비둘기야 먹자 기술 문서 | Pigeon 씬·규칙·이후 모듈 |
 
 기술 문서에 **에디터 Step-by-Step·검증 체크리스트 목록을 넣지 않는다** (§2·§3).
 
@@ -340,13 +342,14 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ## 6. 지금 포커스 · 열린 결정
 
-> **마지막 갱신**: 2026-09-06  
+> **마지막 갱신**: 2026-09-09  
 > 완료 이력·To-Do·최근 완료는 **쓰지 않는다** (§3). 상세는 `02_개발_진행_일지.md`.
 
 ### 지금 포커스
 
-1. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
-2. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
+1. **Pigeon** — 씬 에디터 준비됨. C#·카탈로그 **미착수**
+2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
+3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
 ### 열린 결정 / 보류
 
@@ -360,6 +363,10 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | C-11 `OiiaResultMinigameFlavor` | 미착수 | 현재 ID 매칭만 |
 | 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
 | 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |
+| Pigeon HP −1 | 미정 | 하위 50% / 최하점 / 보류 |
+| Pigeon 손맛 값 | 미정 | 제한시간·쏟기 주기·커서 속도·한 번에 깔 면 개수 |
+| Pigeon 카탈로그·로드 | 미정 | `GameFlowDirector` id · 씬 분기. 로드 시 `PrepareRound(false)` |
+| Pigeon 본게임 스폰 좌표 | 미정 | 마커 여러 개 vs `NoodlePosition` 1점+오프셋 |
 
 ---
 
@@ -398,4 +405,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-09-06 — 카드 HUD 애니 Play 확인*
+*마스터 파일 갱신: 2026-09-09 — Pigeon 연습 없음*

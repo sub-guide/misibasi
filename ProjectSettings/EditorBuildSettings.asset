@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Minigame_CoffinDance.unity
     guid: c8fd66d6d50cfb844a19911e01e47b27
+  - enabled: 1
+    path: Assets/Scenes/Minigame_Pigeon.unity
+    guid: def8537f67b29df4fb4f0d1063b5d891
   m_configObjects: {}
