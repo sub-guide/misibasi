@@ -19,6 +19,8 @@ namespace MiniParty.Minigames.Pigeon
 
                 TickCursorMove(i, speed, dt);
             }
+
+            TickPour(dt);
         }
 
         public void RequestEarlyExit()

@@ -26,6 +26,11 @@ namespace MiniParty.Minigames.Pigeon
 
                 cursor.gameObject.SetActive(play);
             }
+
+            _nextSortingOrder = 0;
+            _pourArmed = TryArmPour();
+            if (_pourArmed)
+                StartPourForward();
         }
     }
 }

@@ -196,7 +196,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 100
   m_Sprite: {fileID: 21300000, guid: dd40aa290bf32b14da3d34df88d31577, type: 3}
   m_Color: {r: 1, g: 0, b: 1, a: 1}
   m_FlipX: 0
@@ -770,7 +770,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 100
   m_Sprite: {fileID: 21300000, guid: 014bb26344242c54c979ffffe55cb976, type: 3}
   m_Color: {r: 0, g: 1, b: 0, a: 1}
   m_FlipX: 0
@@ -1184,7 +1184,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 100
   m_Sprite: {fileID: 21300000, guid: 61381900766e1e4478c29f4b3b9b71d9, type: 3}
   m_Color: {r: 0, g: 0, b: 1, a: 1}
   m_FlipX: 0
@@ -1389,6 +1389,16 @@ MonoBehaviour:
   - {fileID: 7994677}
   cursorSpeed: 120
   playCamera: {fileID: 1573283618}
+  noodlePrefab: {fileID: 8287524467600553144, guid: 64147fbef41e6ae4dbf3fb178f5f56cd, type: 3}
+  cupNoodle: {fileID: 1813455847}
+  cupAnimator: {fileID: 1813455849}
+  noodlePosition: {fileID: 455557506}
+  pileParent: {fileID: 1173331828}
+  pilesPerPour: 5
+  spawnJitterRadius: 30
+  pileSpawnStagger: 0.15
+  pourCooldown: 4
+  cupPourDuration: 0
 --- !u!1 &1656317904
 GameObject:
   m_ObjectHideFlags: 0
@@ -1565,7 +1575,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 100
   m_Sprite: {fileID: 21300000, guid: 6906673f996715c4aa427d97b16417c0, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0

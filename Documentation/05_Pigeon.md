@@ -1,6 +1,6 @@
 # 05_Pigeon (비둘기야 먹자)
 
-> **문서 기준일**: 2026-09-09 — 커서 이동·화면 Clamp **Play 확인**. 쪽기·스폰 미착수.  
+> **문서 기준일**: 2026-09-10 — `NoodlePosition` 화면 무작위 · 면 월드 스폰. 쪽기·제한시간 미착수.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -10,7 +10,7 @@
 | 영역 | 상태 | 비고 |
 |------|------|------|
 | 기획·연출 의도 | **확정** | 판정=커서. 비둘기=연출. **연습 라운드 없음** |
-| C# (`IMinigameModule`) | **커서 이동 · Clamp Play 확인** | `PigeonMinigameModule` + `PigeonSceneBootstrap`. 쪽기·스폰·종료 없음 |
+| C# (`IMinigameModule`) | **커서 Play 확인 · 면 스폰** | 정방향 `CupNoodle` → 스폰 → `CupNoodleReverse`. 쪽기·종료 없음 |
 | 메뉴 카탈로그·씬 로드 | **Play 확인** | catalog `id` = `pigeon` · `pigeonSceneName` = `Minigame_Pigeon` |
 | 점수 HUD | **후속** | 이번 배치 없음 |
 
@@ -23,7 +23,9 @@
 | 판정 | **커서 ↔ 바닥 면 더미** 겹침. 비둘기는 판정 안 함 |
 | 레디 | 씬 안 커서 흰색 레디 **없음**. 메인 메뉴 JOIN/READY만 |
 | 연습 | **없음**. `IsPractice == false` 로 진입. OIIA·관짝춤과 다름 |
+| `NoodlePosition` | 매 쏟기 화면 안 무작위. 면 부모 아님. 컵은 자식이라 같이 이동 |
 | 영어 식별 | 씬·폴더 **Pigeon**. 표시명 **비둘기야 먹자** |
+| 컵 역재생 | 컨트롤러 상태 `CupNoodleReverse` (Speed -1). 코드 `Play`. 컴포넌트 `Animator.speed = -1` **아님** |
 
 ---
 
@@ -47,7 +49,7 @@
 
 ### 스폰·점수
 
-- 면 더미 **프리팹**. 본게임만: `CupNoodle` 애니 재생 후 지정 좌표에 다수. 제한시간 동안 주기적으로 반복.
+- 면 더미 **프리팹**. 매 쏟기 시작 시 `NoodlePosition`을 `playCamera` 화면 안 무작위 **월드** 좌표로 옮김(컵도 자식이라 같이 이동). 정방향 끝 → 그 점 주변 지터를 가까운 순으로 월드 좌표 `Instantiate` (`pileParent` 없으면 `NoodlePosition.parent`). 기존 면은 따라가지 않음. → 역재생 → `pourCooldown`.
 - 면 더미 **1개 = 100점**.
 - 커서가 면 더미와 **겹친 상태**에서 버튼 **1회당 최대 1개**.
 - 연습용 랜덤 스폰 **없음**.
@@ -105,7 +107,7 @@ Minigame_Pigeon
 | `PigeonRoot` | `PigeonSceneBootstrap` + `PigeonMinigameModule` (에디터 연결) |
 | `Audio_Sfx` | `AudioSource`. Play On Awake 꺼짐. 클립 미연결 |
 | `Cursor_P*` | 조준·판정. CircleCollider2D. 틴트 1P 빨강 / 2P 파랑 / 3P 초록 / 4P 마젠타 |
-| `NoodlePosition` | 쏟기 위치 부모. Sprite 없음. 활성(자식 컵은 꺼 둠) |
+| `NoodlePosition` | 쏟기 기준점. **매 사이클 화면 안 무작위 월드 좌표**. 면의 부모 아님 |
 | `CupNoodle` | 쏟기 애니. **시작 비활성** |
 | `Pigeon/Noodle` | 적중 복귀 때만. **시작 비활성** |
 | `FadeOverlay` | `Canvas` 자식. `ScreenFader.canvasGroup` 연결됨 |
@@ -123,11 +125,12 @@ Minigame_Pigeon
 | `PigeonMinigameModule` | `IMinigameModule` + `partial`. `BuiltInId` = `pigeon` |
 | `PigeonSceneBootstrap` | `PartySession` → `Begin` / `Tick` |
 | `TickCursorMove` | D-Pad 홀드 → `localPosition`. 대각 `normalized` |
+| `TickPour` / `SpawnNextPile` | 화면 안 무작위 `NoodlePosition` → 정방향 → 월드 좌표 차례 스폰 → 역재생 |
 | `ClampToCamera` | `playCamera` Orthographic 뷰를 커서 부모 로컬로 Clamp |
 
-Inspector: `cursors[4]` · `cursorSpeed` 기본·씬 **120** · `playCamera` = `Main Camera` (**Play 확인**).
+Inspector: `cursors[4]` · `cursorSpeed` **120** · `playCamera`. 스폰: `noodlePrefab` · `cupNoodle` · `cupAnimator` · `noodlePosition` · `pileParent` · `pilesPerPour` **5** · `spawnJitterRadius` **30** · `pileSpawnStagger` **0.15** · `pourCooldown` **4** · `cupPourDuration` **0**.
 
-**이번 슬라이스에 없음**: 쪽기, 면 스폰, 타이머, Result 종료.
+**이번 슬라이스에 없음**: 쪽기, 점수, 라운드 제한시간, Result 종료.
 
 ---
 
@@ -136,9 +139,8 @@ Inspector: `cursors[4]` · `cursorSpeed` 기본·씬 **120** · `playCamera` = `
 | 주제 | 상태 |
 |------|------|
 | HP −1 규칙 | 미정 |
-| 본게임 제한시간 · 쏟기 주기 · 한 번에 깔 면 개수 | 미정 |
-| 본게임 스폰 좌표 | 미정 (마커 여러 개 vs `NoodlePosition` 1점+오프셋) |
+| 본게임 제한시간 | 미정 |
 | 4P 커서 마젠타 | 씬 값 |
 | 비둘기 좌측 오프셋만 | 에디터 애니 |
 
-문서 갱신: **2026-09-09** (playCamera·id Play 확인) · **2026-09-09** (커서 이동 Play 확인) · **2026-09-09** (커서 이동) · **2026-09-09** (연습 없음) · **2026-09-07** (사용자 씬이 계약) · **2026-09-06** (초안 Hierarchy, 폐기)
+문서 갱신: **2026-09-10** (NoodlePosition 화면 무작위·면 월드 스폰) · **2026-09-10** (중앙부터 차례 스폰) · **2026-09-10** (역재생 정규화 0) · **2026-09-09** (`CupNoodleReverse` Play) · **2026-09-09** (면 스폰) · **2026-09-09** (playCamera·id Play 확인) · **2026-09-09** (커서 이동 Play 확인) · **2026-09-09** (커서 이동) · **2026-09-09** (연습 없음) · **2026-09-07** (사용자 씬이 계약) · **2026-09-06** (초안 Hierarchy, 폐기)
