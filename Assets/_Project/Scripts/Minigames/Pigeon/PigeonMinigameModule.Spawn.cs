@@ -180,6 +180,9 @@ namespace MiniParty.Minigames.Pigeon
             SpriteRenderer sr = pile.GetComponent<SpriteRenderer>();
             if (sr != null)
                 sr.sortingOrder = ++_nextSortingOrder;
+
+            Collider2D col = pile.GetComponent<Collider2D>();
+            _floorPiles.Add(new FloorPile { Go = pile, Col = col, Sr = sr });
         }
     }
 }

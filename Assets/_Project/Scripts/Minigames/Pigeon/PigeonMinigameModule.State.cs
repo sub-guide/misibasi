@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MiniParty.Minigames.Pigeon
@@ -10,6 +11,20 @@ namespace MiniParty.Minigames.Pigeon
             Forward,
             Spawning,
             Reverse
+        }
+
+        enum PeckPhase
+        {
+            Idle,
+            Forward,
+            Reverse
+        }
+
+        struct FloorPile
+        {
+            public GameObject Go;
+            public Collider2D Col;
+            public SpriteRenderer Sr;
         }
 
         MinigameContext _ctx;
@@ -25,5 +40,12 @@ namespace MiniParty.Minigames.Pigeon
         Vector2[] _pourJitters;
         int _pourJitterCount;
         int _pourJitterIndex;
+
+        readonly List<FloorPile> _floorPiles = new List<FloorPile>();
+        readonly PeckPhase[] _peckPhase = new PeckPhase[SlotCount];
+        readonly float[] _peckElapsed = new float[SlotCount];
+        readonly float[] _peckClipDuration = new float[SlotCount];
+        readonly int[] _score = new int[SlotCount];
+        readonly Collider2D[] _peckOverlap = new Collider2D[24];
     }
 }

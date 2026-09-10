@@ -20,6 +20,9 @@ namespace MiniParty.Minigames.Pigeon
             if (cursor == null || !cursor.gameObject.activeInHierarchy)
                 return;
 
+            if (_peckPhase[slotIndex] != PeckPhase.Idle)
+                return;
+
             Vector2 dir = ReadMoveDir(slotIndex);
             if (dir.sqrMagnitude < 0.0001f)
                 return;

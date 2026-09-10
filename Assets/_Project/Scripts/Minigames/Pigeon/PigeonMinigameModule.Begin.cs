@@ -28,6 +28,14 @@ namespace MiniParty.Minigames.Pigeon
             }
 
             _nextSortingOrder = 0;
+            _floorPiles.Clear();
+            for (var i = 0; i < SlotCount; i++)
+            {
+                _score[i] = 0;
+                _peckPhase[i] = PeckPhase.Idle;
+                SetPeckVisuals(i, pigeonOn: false, mouthOn: false);
+            }
+
             _pourArmed = TryArmPour();
             if (_pourArmed)
                 StartPourForward();

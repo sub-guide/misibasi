@@ -27,5 +27,17 @@ namespace MiniParty.Minigames.Pigeon
 
         /// <summary>CupNoodle.anim stop. cupPourDuration이 0이면 클립 길이, 없으면 이 값.</summary>
         public const float DefaultCupPourDuration = 1.8833333f;
+
+        /// <summary>Pigeon.controller 정방향. 에디터 이름 계약.</summary>
+        public const string PeckForwardState = "Peck";
+
+        /// <summary>같은 Peck.anim, 상태 Speed -1. 에디터 이름 계약.</summary>
+        public const string PeckReverseState = "PeckReverse";
+
+        /// <summary>Peck.anim stop. peckDuration 0이면 클립 길이, 없으면 이 값.</summary>
+        public const float DefaultPeckDuration = 0.33333334f;
+
+        /// <summary>면 더미 1개. 기획 확정.</summary>
+        public const int DefaultScorePerPile = 100;
     }
 }

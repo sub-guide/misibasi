@@ -1399,6 +1399,30 @@ MonoBehaviour:
   pileSpawnStagger: 0.15
   pourCooldown: 4
   cupPourDuration: 0
+  peckPigeons:
+  - {fileID: 1825539897}
+  - {fileID: 1548988251}
+  - {fileID: 890272357}
+  - {fileID: 1811361458}
+  peckAnimators:
+  - {fileID: 1825539900}
+  - {fileID: 1548988254}
+  - {fileID: 890272360}
+  - {fileID: 1811361461}
+  mouthNoodles:
+  - {fileID: 1513753929}
+  - {fileID: 243499655}
+  - {fileID: 1801299534}
+  - {fileID: 2014868998}
+  peckCursorColliders:
+  - {fileID: 1760544286}
+  - {fileID: 1559389164}
+  - {fileID: 1343334616}
+  - {fileID: 7994679}
+  peckDuration: 0
+  scorePerPile: 100
+  peckSfxSource: {fileID: 0}
+  peckSfxClip: {fileID: 0}
 --- !u!1 &1656317904
 GameObject:
   m_ObjectHideFlags: 0

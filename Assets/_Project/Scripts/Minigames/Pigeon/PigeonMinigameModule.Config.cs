@@ -48,5 +48,29 @@ namespace MiniParty.Minigames.Pigeon
 
         [Tooltip("정방향·거꾸로 각각 대기 초. 0이면 Animator 클립 길이.")]
         [SerializeField] float cupPourDuration;
+
+        [Header("쪽기")]
+        [Tooltip("Cursor_P* 자식 Pigeon. 평소 비활성.")]
+        [SerializeField] GameObject[] peckPigeons = new GameObject[SlotCount];
+
+        [Tooltip("각 Pigeon의 Animator.")]
+        [SerializeField] Animator[] peckAnimators = new Animator[SlotCount];
+
+        [Tooltip("Pigeon 자식 입 Noodle. 적중 역재생 때만.")]
+        [SerializeField] GameObject[] mouthNoodles = new GameObject[SlotCount];
+
+        [Tooltip("판정용. Cursor_P* 의 CircleCollider2D.")]
+        [SerializeField] CircleCollider2D[] peckCursorColliders = new CircleCollider2D[SlotCount];
+
+        [Tooltip("정방향·거꾸로 각각 초. 0이면 Peck 클립 길이.")]
+        [SerializeField] float peckDuration;
+
+        [Tooltip("적중 1개 점수.")]
+        [SerializeField] int scorePerPile = DefaultScorePerPile;
+
+        [Tooltip("구~. 없어도 됨.")]
+        [SerializeField] AudioSource peckSfxSource;
+
+        [SerializeField] AudioClip peckSfxClip;
     }
 }

@@ -317,7 +317,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
 | `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
 | `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
-| `Minigame_Pigeon` | 비둘기야 먹자. 커서 **Play 확인** · 면 스폰 C# · 에디터 연결 후 Play |
+| `Minigame_Pigeon` | 비둘기야 먹자. 커서·면 스폰 · 쪽기 C#. `PeckReverse`·Inspector 후 Play |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -347,7 +347,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ### 지금 포커스
 
-1. **Pigeon** — `NoodlePosition` 화면 무작위 · 면 월드 스폰. **Play 확인** 대기
+1. **Pigeon** — 쪽기 C# 구현. **`PeckReverse` 에디터 · Inspector 드래그 · Play 확인** 대기
 2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
 3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
@@ -403,4 +403,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-09-10 — Pigeon NoodlePosition 화면 무작위*
+*마스터 파일 갱신: 2026-09-10 — Pigeon 쪽기 Peck*

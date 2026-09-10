@@ -18,6 +18,7 @@ namespace MiniParty.Minigames.Pigeon
                     continue;
 
                 TickCursorMove(i, speed, dt);
+                TickPeck(i, dt);
             }
 
             TickPour(dt);
