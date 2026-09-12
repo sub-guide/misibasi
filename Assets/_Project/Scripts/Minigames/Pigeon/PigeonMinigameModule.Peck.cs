@@ -39,9 +39,10 @@ namespace MiniParty.Minigames.Pigeon
             _peckPhase[slotIndex] = PeckPhase.Forward;
             _peckElapsed[slotIndex] = 0f;
             _peckClipDuration[slotIndex] = ResolvePeckDuration(anim);
+            _peckFromRight[slotIndex] = IsCursorRightOfScreenCenter(slotIndex);
 
             SetPeckVisuals(slotIndex, pigeonOn: true, mouthOn: false);
-            anim.Play(PeckForwardState, 0, 0f);
+            anim.Play(_peckFromRight[slotIndex] ? PeckRightForwardState : PeckForwardState, 0, 0f);
             anim.Update(0f);
 
             if (peckSfxSource != null && peckSfxClip != null)
@@ -59,7 +60,7 @@ namespace MiniParty.Minigames.Pigeon
 
             _peckPhase[slotIndex] = PeckPhase.Reverse;
             _peckElapsed[slotIndex] = 0f;
-            anim.Play(PeckReverseState, 0, 0f);
+            anim.Play(_peckFromRight[slotIndex] ? PeckRightReverseState : PeckReverseState, 0, 0f);
             anim.Update(0f);
         }
 
@@ -169,6 +170,17 @@ namespace MiniParty.Minigames.Pigeon
                 return null;
 
             return peckCursorColliders[slotIndex];
+        }
+
+
+        bool IsCursorRightOfScreenCenter(int slotIndex)
+        {
+            Transform cursor = GetCursor(slotIndex);
+            if (cursor == null)
+                return false;
+
+            float mid = playCamera != null ? playCamera.transform.position.x : 0f;
+            return cursor.position.x > mid;
         }
 
         float ResolvePeckDuration(Animator anim)

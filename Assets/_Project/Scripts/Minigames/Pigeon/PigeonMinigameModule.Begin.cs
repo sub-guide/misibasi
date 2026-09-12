@@ -33,6 +33,7 @@ namespace MiniParty.Minigames.Pigeon
             {
                 _score[i] = 0;
                 _peckPhase[i] = PeckPhase.Idle;
+                _peckFromRight[i] = false;
                 SetPeckVisuals(i, pigeonOn: false, mouthOn: false);
             }
 

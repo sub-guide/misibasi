@@ -34,6 +34,12 @@ namespace MiniParty.Minigames.Pigeon
         /// <summary>같은 Peck.anim, 상태 Speed -1. 에디터 이름 계약.</summary>
         public const string PeckReverseState = "PeckReverse";
 
+        /// <summary>PeckRight.anim. Editor name contract.</summary>
+        public const string PeckRightForwardState = "PeckRight";
+
+        /// <summary>Same PeckRight.anim, state Speed -1. Editor name contract.</summary>
+        public const string PeckRightReverseState = "PeckRightReverse";
+
         /// <summary>Peck.anim stop. peckDuration 0이면 클립 길이, 없으면 이 값.</summary>
         public const float DefaultPeckDuration = 0.33333334f;
 

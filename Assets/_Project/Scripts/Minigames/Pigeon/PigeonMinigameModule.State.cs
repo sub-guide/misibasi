@@ -43,6 +43,7 @@ namespace MiniParty.Minigames.Pigeon
 
         readonly List<FloorPile> _floorPiles = new List<FloorPile>();
         readonly PeckPhase[] _peckPhase = new PeckPhase[SlotCount];
+        readonly bool[] _peckFromRight = new bool[SlotCount];
         readonly float[] _peckElapsed = new float[SlotCount];
         readonly float[] _peckClipDuration = new float[SlotCount];
         readonly int[] _score = new int[SlotCount];

@@ -317,7 +317,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
 | `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
 | `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
-| `Minigame_Pigeon` | 비둘기야 먹자. 커서·면 스폰 · 쪽기 C#. `PeckReverse`·Inspector 후 Play |
+| `Minigame_Pigeon` | 비둘기야 먹자. 쪽기 좌 `Peck` / 우 `PeckRight`. 에디터 클립 후 Play |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -342,12 +342,12 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ## 6. 지금 포커스 · 열린 결정
 
-> **마지막 갱신**: 2026-09-10  
+> **마지막 갱신**: 2026-09-12  
 > 완료 이력·To-Do·최근 완료는 **쓰지 않는다** (§3). 상세는 `02_개발_진행_일지.md`.
 
 ### 지금 포커스
 
-1. **Pigeon** — 쪽기 C# 구현. **`PeckReverse` 에디터 · Inspector 드래그 · Play 확인** 대기
+1. **Pigeon** — 쪽기 좌우 클립. **`PeckRight`/`PeckRightReverse` 에디터 · Play 확인** 대기
 2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
 3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
@@ -403,4 +403,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-09-10 — Pigeon 쪽기 Peck*
+*마스터 파일 갱신: 2026-09-12 — Pigeon PeckRight*
