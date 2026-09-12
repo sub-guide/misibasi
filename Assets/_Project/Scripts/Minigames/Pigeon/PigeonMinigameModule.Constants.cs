@@ -28,6 +28,9 @@ namespace MiniParty.Minigames.Pigeon
         /// <summary>CupNoodle.anim stop. cupPourDuration이 0이면 클립 길이, 없으면 이 값.</summary>
         public const float DefaultCupPourDuration = 1.8833333f;
 
+        /// <summary>Soup.controller 상태. 에디터 이름 계약.</summary>
+        public const string SoupPlayState = "Soup";
+
         /// <summary>Pigeon.controller 정방향. 에디터 이름 계약.</summary>
         public const string PeckForwardState = "Peck";
 

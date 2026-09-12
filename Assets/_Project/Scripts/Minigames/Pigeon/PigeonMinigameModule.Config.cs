@@ -49,6 +49,12 @@ namespace MiniParty.Minigames.Pigeon
         [Tooltip("정방향·거꾸로 각각 대기 초. 0이면 Animator 클립 길이.")]
         [SerializeField] float cupPourDuration;
 
+        [Tooltip("Hierarchy Soup. 없어도 됨. 첫 면이 깔릴 때 한 번.")]
+        [SerializeField] GameObject soup;
+
+        [Tooltip("Soup의 Animator. 드래그. GetComponent 하지 않음.")]
+        [SerializeField] Animator soupAnimator;
+
         [Header("쪽기")]
         [Tooltip("Cursor_P* 자식 Pigeon. 평소 비활성.")]
         [SerializeField] GameObject[] peckPigeons = new GameObject[SlotCount];

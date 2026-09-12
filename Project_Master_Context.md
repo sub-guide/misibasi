@@ -347,7 +347,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ### 지금 포커스
 
-1. **Pigeon** — 쪽기 좌우 클립. **`PeckRight`/`PeckRightReverse` 에디터 · Play 확인** 대기
+1. **Pigeon** — 국물 `Soup` Inspector·컨트롤러 상태 · **Play 확인**. `PeckRight`도 에디터 대기
 2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
 3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
@@ -403,4 +403,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-09-12 — Pigeon PeckRight*
+*마스터 파일 갱신: 2026-09-12 — Pigeon Soup*

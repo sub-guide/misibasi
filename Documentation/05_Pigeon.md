@@ -1,6 +1,6 @@
 # 05_Pigeon (비둘기야 먹자)
 
-> **문서 기준일**: 2026-09-12 — 쪽기 좌 `Peck` / 우 `PeckRight`. HUD·제한시간 미착수.  
+> **문서 기준일**: 2026-09-12 — 국물 `Soup`는 쏟기당 첫 면과 함께 1회. HUD·제한시간 미착수.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -10,7 +10,7 @@
 | 영역 | 상태 | 비고 |
 |------|------|------|
 | 기획·연출 의도 | **확정** | 판정=커서. 비둘기=연출. **연습 라운드 없음** |
-| C# (`IMinigameModule`) | **커서·스폰 · 쪽기 구현** | 화면 중앙보다 오른쪽이면 `PeckRight` 쌍. 클립은 에디터. HUD·종료 없음 |
+| C# (`IMinigameModule`) | **커서·스폰 · 쪽기 · 국물 Play** | 첫 면 스폰 시 `Soup` 1회. 클립은 에디터 |
 | 메뉴 카탈로그·씬 로드 | **Play 확인** | catalog `id` = `pigeon` · `pigeonSceneName` = `Minigame_Pigeon` |
 | 점수 HUD | **후속** | 이번 배치 없음 |
 
@@ -28,7 +28,7 @@
 | 컵 역재생 | 컨트롤러 상태 `CupNoodleReverse` (Speed -1). 코드 `Play(..., 0)`. 컴포넌트 `Animator.speed = -1` **아님** |
 | 쪽기 역재생 | 왼쪽 `PeckReverse`, 오른쪽 `PeckRightReverse` (각 클립, Speed -1). `Play(..., 0)`. 컴포넌트 speed −1 **아님** |
 | 쪽기 좌우 | 커서 월드 X가 `playCamera.position.x`보다 크면 오른쪽 클립. 같거나 작으면 왼쪽. 런타임 스케일 반전 **아님** |
-| 쪽기 판정 시점 | Peck 정방향 **끝난 뒤**. A를 누른 프레임이 아님 |
+| 국물 | 쏟기당 **한 번**. 컵 정방향이 끝난 뒤 **첫 면**과 함께 `Play(Soup)`. 더미 5개마다 아님 |
 
 ---
 
@@ -52,7 +52,7 @@
 
 ### 스폰·점수
 
-- 면 더미 **프리팹**. 매 쏟기 시작 시 `NoodlePosition`을 `playCamera` 화면 안 무작위 **월드** 좌표로 옮김(컵도 자식이라 같이 이동). 정방향 끝 → 그 점 주변 지터를 가까운 순으로 월드 좌표 `Instantiate` (`pileParent` 없으면 `NoodlePosition.parent`). 기존 면은 따라가지 않음. → 역재생 → `pourCooldown`.
+- 면 더미 **프리팹**. 매 쏟기 시작 시 `NoodlePosition`을 `playCamera` 화면 안 무작위 **월드** 좌표로 옮김(컵도 자식이라 같이 이동). 정방향 끝 → **국물 `Soup` 1회**(연결돼 있으면) + 지터를 가까운 순으로 월드 `Instantiate` (`pileParent` 없으면 `NoodlePosition.parent`). 기존 면은 따라가지 않음. → 역재생 → `pourCooldown`.
 - 면 더미 **1개 = 100점**.
 - 커서가 면 더미와 **겹친 상태**에서 버튼 **1회당 최대 1개**.
 - 연습용 랜덤 스폰 **없음**.
@@ -95,7 +95,8 @@ Minigame_Pigeon
 ├── PlayField
 │   ├── Floor
 │   ├── NoodlePosition         Transform만. 활성. 자식 CupNoodle
-│   │   └── CupNoodle          **비활성**. CupNoodle.controller
+│   │   ├── CupNoodle          **비활성**. CupNoodle.controller
+│   │   └── Soup               에디터. 첫 면과 함께 Play. **시작 비활성 권장**
 │   └── Cursors
 │       └── Cursor_P1 … P4     CircleCollider2D Is Trigger
 │           └── Pigeon         4마리 비활성 + Pigeon.controller
@@ -112,6 +113,7 @@ Minigame_Pigeon
 | `Cursor_P*` | 조준·판정. CircleCollider2D. 틴트 1P 빨강 / 2P 파랑 / 3P 초록 / 4P 마젠타 |
 | `NoodlePosition` | 쏟기 기준점. **매 사이클 화면 안 무작위 월드 좌표**. 면의 부모 아님 |
 | `CupNoodle` | 쏟기 애니. **시작 비활성** |
+| `Soup` | 국물. 첫 면과 함께 상태 `Soup` 1회. **시작 비활성**. 위치는 에디터 |
 | `Pigeon/Noodle` | 적중 후 **PeckReverse 동안만**. **시작 비활성** |
 | `FadeOverlay` | `Canvas` 자식. `ScreenFader.canvasGroup` 연결됨 |
 
@@ -128,11 +130,11 @@ Minigame_Pigeon
 | `PigeonMinigameModule` | `IMinigameModule` + `partial`. `BuiltInId` = `pigeon` |
 | `PigeonSceneBootstrap` | `PartySession` → `Begin` / `Tick` |
 | `TickCursorMove` | D-Pad 홀드 → `localPosition`. 대각 `normalized`. Peck 중 잠금 |
-| `TickPour` / `SpawnNextPile` | 화면 안 무작위 `NoodlePosition` → 정방향 → 월드 좌표 차례 스폰 → 역재생 |
+| `TickPour` / `SpawnNextPile` | 화면 안 무작위 `NoodlePosition` → 정방향 → 첫 면 때 `PlaySoupOnce` → 월드 스폰 → 역재생 |
 | `PigeonMinigameModule.Peck.cs` | `TickPeck` · 좌 `Peck` / 우 `PeckRight` · `ResolvePeckHit` |
 | `ClampToCamera` | `playCamera` Orthographic 뷰를 커서 부모 로컬로 Clamp |
 
-Inspector: `cursors[4]` · `cursorSpeed` **120** · `playCamera`. 스폰: `noodlePrefab` · `cupNoodle` · `cupAnimator` · `noodlePosition` · `pileParent` · `pilesPerPour` **5** · `spawnJitterRadius` **30** · `pileSpawnStagger` **0.15** · `pourCooldown` **4** · `cupPourDuration` **0**. 쪽기: `peckPigeons[4]` · `peckAnimators[4]` · `mouthNoodles[4]` · `peckCursorColliders[4]` · `peckDuration` **0** · `scorePerPile` **100** · `peckSfxSource` · `peckSfxClip`.
+Inspector: `cursors[4]` · `cursorSpeed` **120** · `playCamera`. 스폰: `noodlePrefab` · `cupNoodle` · `cupAnimator` · `noodlePosition` · `pileParent` · `pilesPerPour` **5** · `spawnJitterRadius` **30** · `pileSpawnStagger` **0.15** · `pourCooldown` **4** · `cupPourDuration` **0** · `soup` · `soupAnimator`. 쪽기: `peckPigeons[4]` · `peckAnimators[4]` · `mouthNoodles[4]` · `peckCursorColliders[4]` · `peckDuration` **0** · `scorePerPile` **100** · `peckSfxSource` · `peckSfxClip`.
 
 **이번 슬라이스에 없음**: HUD, 라운드 제한시간, Result 종료.
 
@@ -147,4 +149,4 @@ Inspector: `cursors[4]` · `cursorSpeed` **120** · `playCamera`. 스폰: `noodl
 | 4P 커서 마젠타 | 씬 값 |
 | 비둘기 진입 방향 | 에디터 `Peck` / `PeckRight` |
 
-문서 갱신: **2026-09-12** (좌 Peck / 우 PeckRight) · **2026-09-10** (쪽기 Peck→판정→PeckReverse) · **2026-09-10** (NoodlePosition 화면 무작위·면 월드 스폰) · **2026-09-10** (중앙부터 차례 스폰) · **2026-09-10** (역재생 정규화 0) · **2026-09-09** (`CupNoodleReverse` Play) · **2026-09-09** (면 스폰) · **2026-09-09** (playCamera·id Play 확인) · **2026-09-09** (커서 이동 Play 확인) · **2026-09-09** (커서 이동) · **2026-09-09** (연습 없음) · **2026-09-07** (사용자 씬이 계약) · **2026-09-06** (초안 Hierarchy, 폐기)
+문서 갱신: **2026-09-12** (국물 Soup 1회) · **2026-09-12** (좌 Peck / 우 PeckRight) · **2026-09-10** (쪽기 Peck→판정→PeckReverse) · **2026-09-10** (NoodlePosition 화면 무작위·면 월드 스폰) · **2026-09-10** (중앙부터 차례 스폰) · **2026-09-10** (역재생 정규화 0) · **2026-09-09** (`CupNoodleReverse` Play) · **2026-09-09** (면 스폰) · **2026-09-09** (playCamera·id Play 확인) · **2026-09-09** (커서 이동 Play 확인) · **2026-09-09** (커서 이동) · **2026-09-09** (연습 없음) · **2026-09-07** (사용자 씬이 계약) · **2026-09-06** (초안 Hierarchy, 폐기)

@@ -13,6 +13,8 @@ namespace MiniParty.Minigames.Pigeon
             }
 
             cupNoodle.SetActive(false);
+            if (soup != null)
+                soup.SetActive(false);
             return true;
         }
 
@@ -50,6 +52,8 @@ namespace MiniParty.Minigames.Pigeon
             _pourClipDuration = ResolveCupPourDuration();
 
             PlaceNoodlePositionOnScreen();
+            if (soup != null)
+                soup.SetActive(false);
             cupNoodle.SetActive(true);
             cupAnimator.Play(CupPourForwardState, 0, 0f);
             cupAnimator.Update(0f);
@@ -60,6 +64,8 @@ namespace MiniParty.Minigames.Pigeon
             PreparePileWave();
             _pourPhase = PourPhase.Spawning;
             _pourElapsed = 0f;
+            if (_pourJitterCount > 0)
+                PlaySoupOnce();
             SpawnNextPile();
             if (_pourJitterIndex >= _pourJitterCount)
                 StartPourReverse();
@@ -89,6 +95,18 @@ namespace MiniParty.Minigames.Pigeon
             SpawnNextPile();
             if (_pourJitterIndex >= _pourJitterCount)
                 StartPourReverse();
+        }
+
+        void PlaySoupOnce()
+        {
+            if (soup != null)
+                soup.SetActive(true);
+
+            if (soupAnimator == null)
+                return;
+
+            soupAnimator.Play(SoupPlayState, 0, 0f);
+            soupAnimator.Update(0f);
         }
 
         void StartPourReverse()
