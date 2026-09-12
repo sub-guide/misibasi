@@ -37,6 +37,8 @@ namespace MiniParty.Minigames.Pigeon
                 SetPeckVisuals(i, pigeonOn: false, mouthOn: false);
             }
 
+            RefreshAllScoreLabels();
+
             _pourArmed = TryArmPour();
             if (_pourArmed)
                 StartPourForward();

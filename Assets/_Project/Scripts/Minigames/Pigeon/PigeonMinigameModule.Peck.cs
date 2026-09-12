@@ -118,6 +118,7 @@ namespace MiniParty.Minigames.Pigeon
                 Destroy(pile.Go);
 
             _score[slotIndex] += Mathf.Max(0, scorePerPile);
+            RefreshScoreLabel(slotIndex);
             SetMouth(slotIndex, true);
         }
 

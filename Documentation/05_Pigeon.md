@@ -1,6 +1,6 @@
 # 05_Pigeon (비둘기야 먹자)
 
-> **문서 기준일**: 2026-09-12 — 국물 `Soup`는 쏟기당 첫 면과 함께 1회. HUD·제한시간 미착수.  
+> **문서 기준일**: 2026-09-13 — 1P Play 확인. 제한시간·Results·2~4P 미착수/미검증.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -10,9 +10,9 @@
 | 영역 | 상태 | 비고 |
 |------|------|------|
 | 기획·연출 의도 | **확정** | 판정=커서. 비둘기=연출. **연습 라운드 없음** |
-| C# (`IMinigameModule`) | **커서·스폰 · 쪽기 · 국물 Play** | 첫 면 스폰 시 `Soup` 1회. 클립은 에디터 |
+| C# (`IMinigameModule`) | **1P Play 확인** | 커서·쏟기·국물 1회·쪽기 좌우·점수 HUD. 2~4P·부스 미검증 |
 | 메뉴 카탈로그·씬 로드 | **Play 확인** | catalog `id` = `pigeon` · `pigeonSceneName` = `Minigame_Pigeon` |
-| 점수 HUD | **후속** | 이번 배치 없음 |
+| 점수 HUD | **1P Play 확인** | `Score_P1`…`P4` TMP `{n}점`. 참가 슬롯만 |
 
 ### 헷갈리기 쉬운 점
 
@@ -70,7 +70,7 @@
 프로젝트 기본(연습→본)의 **Pigeon 예외**.
 
 - 메인 메뉴에서 참가자가 READY → 운영자 Enter → `PrepareRound(false)` → `Minigame_Pigeon` 로드.
-- 씬 `Begin` 시점이 곧 본게임: 쏟기·쪽기. 점수 숫자는 `_score`만(HUD 없음). 씬 안 Start 레디·`Begin` 재호출 없음.
+- 씬 `Begin` 시점이 곧 본게임: 쏟기·쪽기. 점수는 `_score`와 `Score_P*` `{n}점`. 씬 안 Start 레디·`Begin` 재호출 없음.
 - 제한시간·`Results` 퇴장은 **후속**.
 
 ### 예외
@@ -102,6 +102,8 @@ Minigame_Pigeon
 │           └── Pigeon         4마리 비활성 + Pigeon.controller
 │               └── Noodle     입 라면. **비활성**
 ├── Canvas
+│   ├── Player1 … Player4
+│   │   └── Score_P1 … Score_P4   TMP `{n}점`
 │   └── FadeOverlay
 └── EventSystem
 ```
@@ -115,9 +117,10 @@ Minigame_Pigeon
 | `CupNoodle` | 쏟기 애니. **시작 비활성** |
 | `Soup` | 국물. 첫 면과 함께 상태 `Soup` 1회. **시작 비활성**. 위치는 에디터 |
 | `Pigeon/Noodle` | 적중 후 **PeckReverse 동안만**. **시작 비활성** |
+| `Score_P*` | 슬롯 점수 TMP. 참가만 활성. 형식 `{점수}점` |
 | `FadeOverlay` | `Canvas` 자식. `ScreenFader.canvasGroup` 연결됨 |
 
-점수 TMP는 **아직 없음**(후속). `FadeOverlay`의 `ScreenFader.canvasGroup` 은 연결됨.
+`FadeOverlay`의 `ScreenFader.canvasGroup` 은 연결됨.
 
 ---
 
@@ -132,11 +135,12 @@ Minigame_Pigeon
 | `TickCursorMove` | D-Pad 홀드 → `localPosition`. 대각 `normalized`. Peck 중 잠금 |
 | `TickPour` / `SpawnNextPile` | 화면 안 무작위 `NoodlePosition` → 정방향 → 첫 면 때 `PlaySoupOnce` → 월드 스폰 → 역재생 |
 | `PigeonMinigameModule.Peck.cs` | `TickPeck` · 좌 `Peck` / 우 `PeckRight` · `ResolvePeckHit` |
+| `PigeonMinigameModule.Hud.cs` | `Score_P*`에 `{n}점`. 비참가 숨김 |
 | `ClampToCamera` | `playCamera` Orthographic 뷰를 커서 부모 로컬로 Clamp |
 
-Inspector: `cursors[4]` · `cursorSpeed` **120** · `playCamera`. 스폰: `noodlePrefab` · `cupNoodle` · `cupAnimator` · `noodlePosition` · `pileParent` · `pilesPerPour` **5** · `spawnJitterRadius` **30** · `pileSpawnStagger` **0.15** · `pourCooldown` **4** · `cupPourDuration` **0** · `soup` · `soupAnimator`. 쪽기: `peckPigeons[4]` · `peckAnimators[4]` · `mouthNoodles[4]` · `peckCursorColliders[4]` · `peckDuration` **0** · `scorePerPile` **100** · `peckSfxSource` · `peckSfxClip`.
+Inspector: `cursors[4]` · `cursorSpeed` **120** · `playCamera`. 스폰: `noodlePrefab` · `cupNoodle` · `cupAnimator` · `noodlePosition` · `pileParent` · `pilesPerPour` **5** · `spawnJitterRadius` **30** · `pileSpawnStagger` **0.15** · `pourCooldown` **4** · `cupPourDuration` **0** · `soup` · `soupAnimator`. 쪽기: `peckPigeons[4]` · `peckAnimators[4]` · `mouthNoodles[4]` · `peckCursorColliders[4]` · `peckDuration` **0** · `scorePerPile` **100** · `peckSfxSource` · `peckSfxClip`. HUD: `scoreLabels[4]`.
 
-**이번 슬라이스에 없음**: HUD, 라운드 제한시간, Result 종료.
+**이번 슬라이스에 없음**: 라운드 제한시간, Result 종료.
 
 ---
 
@@ -149,4 +153,4 @@ Inspector: `cursors[4]` · `cursorSpeed` **120** · `playCamera`. 스폰: `noodl
 | 4P 커서 마젠타 | 씬 값 |
 | 비둘기 진입 방향 | 에디터 `Peck` / `PeckRight` |
 
-문서 갱신: **2026-09-12** (국물 Soup 1회) · **2026-09-12** (좌 Peck / 우 PeckRight) · **2026-09-10** (쪽기 Peck→판정→PeckReverse) · **2026-09-10** (NoodlePosition 화면 무작위·면 월드 스폰) · **2026-09-10** (중앙부터 차례 스폰) · **2026-09-10** (역재생 정규화 0) · **2026-09-09** (`CupNoodleReverse` Play) · **2026-09-09** (면 스폰) · **2026-09-09** (playCamera·id Play 확인) · **2026-09-09** (커서 이동 Play 확인) · **2026-09-09** (커서 이동) · **2026-09-09** (연습 없음) · **2026-09-07** (사용자 씬이 계약) · **2026-09-06** (초안 Hierarchy, 폐기)
+문서 갱신: **2026-09-13** (1P Play 확인) · **2026-09-13** (점수 HUD) · **2026-09-12** (국물 Soup 1회) · **2026-09-12** (좌 Peck / 우 PeckRight) · **2026-09-10** (쪽기 Peck→판정→PeckReverse) · **2026-09-10** (NoodlePosition 화면 무작위·면 월드 스폰) · **2026-09-10** (중앙부터 차례 스폰) · **2026-09-10** (역재생 정규화 0) · **2026-09-09** (`CupNoodleReverse` Play) · **2026-09-09** (면 스폰) · **2026-09-09** (playCamera·id Play 확인) · **2026-09-09** (커서 이동 Play 확인) · **2026-09-09** (커서 이동) · **2026-09-09** (연습 없음) · **2026-09-07** (사용자 씬이 계약) · **2026-09-06** (초안 Hierarchy, 폐기)

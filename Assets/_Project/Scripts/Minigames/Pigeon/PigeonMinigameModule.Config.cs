@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace MiniParty.Minigames.Pigeon
@@ -78,5 +79,9 @@ namespace MiniParty.Minigames.Pigeon
         [SerializeField] AudioSource peckSfxSource;
 
         [SerializeField] AudioClip peckSfxClip;
+
+        [Header("점수 HUD")]
+        [Tooltip("Canvas Score_P1 … Score_P4 TMP. 인덱스 0=1P.")]
+        [SerializeField] TMP_Text[] scoreLabels = new TMP_Text[SlotCount];
     }
 }
