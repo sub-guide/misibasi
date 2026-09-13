@@ -317,7 +317,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
 | `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
 | `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
-| `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. 제한시간·Results·2~4P 후속 |
+| `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**(30초 바→Results). 2~4P·HP 후속 |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -347,7 +347,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ### 지금 포커스
 
-1. **Pigeon** — **1P Play 확인**. 다음 덩어리 미정(제한시간 / Results / 2~4P)
+1. **Pigeon** — **1P Play 확인**(HUD 슬롯·30초 바·Results). 다음 덩어리 미정
 2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
 3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
@@ -364,7 +364,6 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
 | 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |
 | Pigeon HP −1 | 미정 | 하위 50% / 최하점 / 보류 |
-| Pigeon 본게임 제한시간 | 미정 | 라운드 종료·Results 후속 |
 
 ---
 
@@ -403,4 +402,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-09-13 — Pigeon 1P Play 확인*
+*마스터 파일 갱신: 2026-09-13 — Pigeon 타이머·HUD·Results 1P Play 확인*

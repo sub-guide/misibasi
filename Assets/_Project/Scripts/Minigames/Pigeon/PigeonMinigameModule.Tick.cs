@@ -6,7 +6,7 @@ namespace MiniParty.Minigames.Pigeon
     {
         public void Tick()
         {
-            if (!_running)
+            if (!_running || _completing)
                 return;
 
             float dt = Time.deltaTime;
@@ -22,10 +22,12 @@ namespace MiniParty.Minigames.Pigeon
             }
 
             TickPour(dt);
+            TickRoundTimer(dt);
         }
 
         public void RequestEarlyExit()
         {
+            CompleteSession();
         }
     }
 }

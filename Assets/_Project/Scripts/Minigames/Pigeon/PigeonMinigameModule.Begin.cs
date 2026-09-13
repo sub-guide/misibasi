@@ -11,6 +11,8 @@ namespace MiniParty.Minigames.Pigeon
             _ctx = context;
             gameObject.SetActive(true);
             _running = true;
+            _completing = false;
+            _roundElapsed = 0f;
 
             for (var i = 0; i < SlotCount; i++)
             {
@@ -38,6 +40,7 @@ namespace MiniParty.Minigames.Pigeon
             }
 
             RefreshAllScoreLabels();
+            RefreshRoundTimer();
 
             _pourArmed = TryArmPour();
             if (_pourArmed)

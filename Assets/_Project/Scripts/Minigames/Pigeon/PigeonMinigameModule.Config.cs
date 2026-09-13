@@ -1,5 +1,7 @@
+using MiniParty.Flow;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MiniParty.Minigames.Pigeon
 {
@@ -83,5 +85,22 @@ namespace MiniParty.Minigames.Pigeon
         [Header("점수 HUD")]
         [Tooltip("Canvas Score_P1 … Score_P4 TMP. 인덱스 0=1P.")]
         [SerializeField] TMP_Text[] scoreLabels = new TMP_Text[SlotCount];
+
+        [Tooltip("Canvas Player1 … Player4. 비참가면 이 슬롯 전체를 끔.")]
+        [SerializeField] GameObject[] scoreHudSlots = new GameObject[SlotCount];
+
+        [Header("제한시간")]
+        [Tooltip("본게임 초. 0 이하면 타이머 없음.")]
+        [SerializeField] float roundDuration = DefaultRoundDuration;
+
+        [Tooltip("Canvas 하단 채움 Image. Type=Filled, Horizontal, Origin Left.")]
+        [SerializeField] Image roundTimerFill;
+
+        [Header("종료 → Result 씬")]
+        [Tooltip("Canvas FadeOverlay 의 ScreenFader.")]
+        [SerializeField] ScreenFader exitScreenFader;
+
+        [SerializeField] float sessionEndHoldSeconds = 0.35f;
+        [SerializeField] float exitFadeOutSeconds = 1f;
     }
 }

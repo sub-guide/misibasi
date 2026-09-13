@@ -7,18 +7,22 @@ namespace MiniParty.Minigames.Pigeon
     {
         void RefreshScoreLabel(int slotIndex)
         {
-            TMP_Text label = GetScoreLabel(slotIndex);
-            if (label == null)
-                return;
-
             bool show = slotIndex >= 0 &&
                         slotIndex < SlotCount &&
                         _participatedMask[slotIndex];
 
-            label.gameObject.SetActive(show);
+            GameObject slot = GetScoreHudSlot(slotIndex);
+            if (slot != null)
+                slot.SetActive(show);
+
+            TMP_Text label = GetScoreLabel(slotIndex);
+            if (label == null)
+                return;
+
             if (!show)
                 return;
 
+            label.gameObject.SetActive(true);
             label.text = $"{_score[slotIndex]}점";
         }
 
@@ -34,6 +38,14 @@ namespace MiniParty.Minigames.Pigeon
                 return null;
 
             return scoreLabels[slotIndex];
+        }
+
+        GameObject GetScoreHudSlot(int slotIndex)
+        {
+            if (scoreHudSlots == null || slotIndex < 0 || slotIndex >= scoreHudSlots.Length)
+                return null;
+
+            return scoreHudSlots[slotIndex];
         }
     }
 }

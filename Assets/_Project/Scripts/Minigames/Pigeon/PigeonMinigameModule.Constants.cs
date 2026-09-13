@@ -48,5 +48,8 @@ namespace MiniParty.Minigames.Pigeon
 
         /// <summary>면 더미 1개. 기획 확정.</summary>
         public const int DefaultScorePerPile = 100;
+
+        /// <summary>본게임 초. 사용자 승인 2026-09-13.</summary>
+        public const float DefaultRoundDuration = 30f;
     }
 }

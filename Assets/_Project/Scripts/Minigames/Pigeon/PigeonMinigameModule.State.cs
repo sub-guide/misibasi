@@ -48,5 +48,8 @@ namespace MiniParty.Minigames.Pigeon
         readonly float[] _peckClipDuration = new float[SlotCount];
         readonly int[] _score = new int[SlotCount];
         readonly Collider2D[] _peckOverlap = new Collider2D[24];
+
+        bool _completing;
+        float _roundElapsed;
     }
 }
