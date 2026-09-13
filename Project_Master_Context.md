@@ -307,7 +307,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - **입력**: 운영자 `OperatorInputService`(키보드 ↑↓·Enter) · 플레이어 `SlotGamepad` → `Joystick.all[i]` · 개발 `DeveloperKeyboardGamepadDebug`(`Ctrl` 토글 1P).
 - **부스 USB 버튼**은 반드시 `BoothUsbGamepadLayout` 상수·`03_Booth_USB_Controller_매핑.md` 를 거침.  
   OIIA: **O=Trigger(X), I=Button2(A), A=Button4(Y), B=Button3** — 루프 완주 시 3버튼 셔플 매핑.
-- **연습 → 본게임**은 기본 필수(스킵 없음). **Pigeon만 예외**: 메인 Enter → 바로 본게임 (`05_Pigeon.md`). HP는 **Result 씬에서만** −1.
+- **연습 → 본게임**은 기본 필수(스킵 없음). **예외 — Pigeon · RBC**: 메인 Enter → 바로 본게임 (`05_Pigeon.md` · `05_Rhythm_Button_Challenge.md`). HP는 **Result 씬에서만** −1.
 
 **주요 씬** (Build Settings·Inspector 문자열 = 파일명과 동일):
 
@@ -315,7 +315,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 |----|----------------|
 | `MainMenu` | 로비·카탈로그·시작 |
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
-| `Minigame_RhythmButtonChallenge` | 씬 진입 OK · **플레이 상세 검증** 남음 |
+| `Minigame_RhythmButtonChallenge` | **재설계 중**. 목표 스펙 `05`. 레포는 구구현. 진입 OK |
 | `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
 | `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. HP 1인 skip · 2인+ 하위 50% |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
@@ -347,8 +347,8 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ### 지금 포커스
 
-1. **Pigeon** — HP −1 구현. **1P는 안 깎임 Play 확인**. 2~4P 하위 50% 미검증
-2. **RBC** — 보드·입력·점수·SPEED UP·Result **상세 검증**
+1. **RBC** — 재설계. 목표 스펙 확정. 레포 C#은 구구현
+2. **Pigeon** — HP −1 구현. **1P는 안 깎임 Play 확인**. 2~4P 하위 50% 미검증
 3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
 ### 열린 결정 / 보류
@@ -363,6 +363,9 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | C-11 `OiiaResultMinigameFlavor` | 미착수 | 현재 ID 매칭만 |
 | 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
 | 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |
+| RBC 오디오 | **후속** | 에셋 미준비. 클록에 나중에 구독 |
+| RBC Intro 중 `n/5` | HUD 슬라이스 | 스테이지 전 표기 |
+| RBC Extra 테두리 | 구현 시 | 점수는 −2000. 녹 테두리 유지 vs 덮기 |
 
 ---
 
@@ -401,4 +404,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-09-13 — Pigeon HP −1*
+*마스터 파일 갱신: 2026-09-13 — RBC 재설계 스펙*
