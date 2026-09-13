@@ -1,6 +1,6 @@
 # 05_Rhythm_Button_Challenge
 
-> **문서 기준일**: 2026-09-13 — **목표 스펙** (재설계 합의). 레포 C#·씬은 아직 **구구현**.  
+> **문서 기준일**: 2026-09-13 — 목표 스펙. C# 스텁. 씬 보드·장식·`Phase` 배치됨. **플레이어 슬롯은 사용자 추가 중**.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -14,6 +14,7 @@
 | 메뉴 카탈로그·씬 로드 | **진입 OK** (2026-07-22) | `id` = `rhythm_button_challenge` · 씬 `Minigame_RhythmButtonChallenge` · `PrepareRound(false)` |
 | 오디오 | **후속** | 에셋 미준비. 목표 클록은 오디오 없이 진행 |
 | 화면 장식 | **에디터** | 로직 없음. AI 비범위 |
+| 씬 Hierarchy | **배치 완료** | 보드·장식·Phase·PlayerSlot. Module은 사용자가 `RBC_Root`에 붙임 |
 
 ### 헷갈리기 쉬운 점
 
@@ -24,8 +25,9 @@
 | 보드 | 목표 **4열×2행**. 구씬은 가로 1줄 8칸 |
 | 판정 그림 | 보드 칸 위 이펙트 **없음**. 슬롯 테두리만 |
 | 연습 | **없음** (Pigeon과 같은 기획 예외). 미완성이 아님 |
-| 페이즈 | **없음**. Intro 8박 후 스테이지 1~5만 |
-| HUD | `현재스테이지/5` (밈 `2/5`) |
+| 페이즈 | **게임 페이즈 없음**. 오브젝트 `Phase`는 스테이지 HUD `n/5` |
+| HUD | `Phase` TMP `{n}/5` |
+| 슬롯 테두리 | 슬롯당 Outline **1개**. 그 박 결과만 녹/빨. **8박 이력 없음** |
 
 ---
 
@@ -76,7 +78,7 @@ Input 구간·해당 박 윈도우가 열린 참가 슬롯만 읽는다. Reveal�
 [4] [5] [6] [7]     ← 5~8박 (아래줄 왼쪽→오른쪽)
 ```
 
-칸 안: **SNES Unpressed 아이콘**. 로직은 인덱스 0~7. 4열 배치는 에디터.
+칸 안: 각 `Square`의 `Icon` 아래 A/B/X/Y/LB/RB/방향 자식. **정답 버튼만 SetActive(true)**, 나머지 Off. 스프라이트 교체 아님.
 
 | 구간 | ButtonIcon | 하이라이트 |
 |------|------------|------------|
@@ -128,12 +130,12 @@ HP (`RhythmButtonChallengeHpLossRules`, Result에서만 −1):
 
 보드 칸의 Judgment Image · 성공 이펙트 **없음**.
 
-플레이어 **슬롯마다** 박 0~7 결과:
+`PlayerSlot` / `1P`~`4P`: Unity `Outline` **슬롯당 1개**.
 
-- 성공 → **녹색 테두리**
-- 실패 → **빨간 테두리**
+- 성공 → 테두리 **녹색**
+- 실패 → 테두리 **빨간**
 
-8박 이력을 남긴다. 슬롯 안 배치 좌표는 에디터. 비참가 슬롯은 숨김(Pigeon HUD와 같은 취지).
+**그 박의 최신 결과만** 보인다. 이전 박 이력은 남기지 않음. 비참가 슬롯은 숨김(Pigeon과 같은 취지).
 
 ### 비트클록
 
@@ -157,20 +159,20 @@ HP (`RhythmButtonChallengeHpLossRules`, Result에서만 −1):
 
 ```
 Minigame_RhythmButtonChallenge
-├── RBC_Root
-│   ├── RhythmButtonChallengeMinigameModule
-│   └── RhythmButtonChallengeSceneBootstrap
-├── Canvas
-│   ├── PlayArea / Board (4×2, Cell 0~7)
-│   ├── StageHud          TMP n/5
-│   ├── 플레이어 슬롯 1P~4P
-│   │   └── 박별 테두리 0~7
-│   └── FadeOverlay
-├── MusicSource           후속
-└── EventSystem
+├── Main Camera
+├── EventSystem
+├── RBC_Root                 사용자가 Module + Bootstrap 부착 예정
+├── MusicSource
+└── Canvas  1920×1080
+    ├── Background
+    ├── Decoration           Speaker · Electric · ExclamationMark · Bulb
+    ├── Cells                Square_1 … Square_8
+    ├── Phase                TMP `n/5`
+    ├── PlayerSlot           1P … 4P (각 Outline 1 + P*_Score)
+    └── FadeOverlay
 ```
 
-구씬에는 `Board_8Cells`(가로 8) · `Panel_RBC_Score_4Way` · 칸 안 `Judgment1P`~`4P` · `SpeedUpText` 가 있다. 목표는 4×2 · 슬롯 테두리 · `n/5` · SpeedUp 없음.
+`1P`~`4P`는 왼쪽부터. 각 자식 `P1_Score` … `P4_Score`. Module·Bootstrap은 `RBC_Root` 같은 오브젝트. Find 없음.
 
 `RhythmButtonChallengeSceneBootstrap`: `PartySession` 없으면 `Begin` 안 함. 메뉴 경유 진입.
 
@@ -196,7 +198,7 @@ Minigame_RhythmButtonChallenge
 
 유지 계약: `IMinigameModule` · `MinigameSessionReport` · `BoothUsbGamepadLayout` 10키 · 씬 이름.
 
-**없음**: 비트클록 · 4×2 구동 · 슬롯 테두리 · 오디오.
+**없음**: 비트클록 C# · 칸 아이콘 On/Off 구동 · 슬롯 Outline 색 · 오디오.
 
 ---
 
@@ -206,7 +208,7 @@ Minigame_RhythmButtonChallenge
 |------|------|
 | 오디오 클립 나누기 | **후속**. 에셋 미준비 |
 | Intro 중 `n/5` 표시 | HUD 슬라이스에서 씬 값 |
-| Extra 시 테두리 덮어쓰기 | 점수 Extra는 레거시. 색은 구현 때 확인 |
+| Extra 시 테두리 | Outline 1개(최신). Extra −2000일 때 색 덮기 여부 |
 | 화면 장식 | 에디터. 문서화 안 함 |
 | 비트 길이 기본값 | C# 클록 슬라이스에서 질문 |
 

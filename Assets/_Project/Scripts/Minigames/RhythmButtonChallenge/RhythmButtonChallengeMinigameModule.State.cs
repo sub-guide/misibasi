@@ -12,9 +12,6 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
         bool _running;
         bool _completing;
 
-        int _stageIndex = 1;
-        RbcSegmentKind _segmentKind = RbcSegmentKind.PhaseIntro;
-
         RbcButton[] _currentPattern = new RbcButton[BeatsPerSegment];
 
         int _sessionSeed;
