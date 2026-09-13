@@ -11,5 +11,8 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 
         [Header("HUD")]
         [SerializeField] TMP_Text phaseLabel;
+
+        [Tooltip("1P~4P. 비참가 슬롯은 숨김.")]
+        [SerializeField] RectTransform[] playerSlots;
     }
 }

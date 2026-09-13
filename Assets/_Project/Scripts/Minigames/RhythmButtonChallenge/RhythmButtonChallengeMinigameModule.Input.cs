@@ -5,6 +5,30 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 {
     public sealed partial class RhythmButtonChallengeMinigameModule
     {
+        void TickInput()
+        {
+            if (_segmentKind != RbcSegmentKind.StageInput || !_clockStarted)
+                return;
+
+            ForEachSlot(i =>
+            {
+                if (!_aliveMask[i])
+                    return;
+
+                if (_slots[i].BeatState != BeatJudgment.Pending)
+                    return;
+
+                RbcButton? pressed = ReadAnyGameplayButtonPressed(i, SlotGamepad.Get(i));
+                if (!pressed.HasValue)
+                    return;
+
+                if (pressed.Value == _currentPattern[_beatIndex])
+                    ApplySuccess(i);
+                else
+                    ApplyFail(i);
+            });
+        }
+
         static bool WasPressed(int slotIndex, Joystick pad, string path) =>
             BoothUsbSlotInput.WasPathPressed(slotIndex, pad, path);
 

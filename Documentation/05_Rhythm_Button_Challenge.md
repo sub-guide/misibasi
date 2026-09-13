@@ -1,6 +1,6 @@
 # 05_Rhythm_Button_Challenge
 
-> **문서 기준일**: 2026-09-13 — 클록·보드 아이콘·Input Outline **Play 확인**. 패드 입력·슬롯 색 없음.  
+> **문서 기준일**: 2026-09-14 — Extra 삭제. 한 박 첫 입력만. 녹/빨 0.2초 검정 페이드. 오디오 후속.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -10,8 +10,8 @@
 | 영역 | 상태 | 비고 |
 |------|------|------|
 | 목표 기획 | **확정** | 무페이즈 5스테이지 · 연습 없음 · 성공/실패 · 4×2 · 슬롯 Outline 1개(최신) |
-| C# (`IMinigameModule`) | **클록+보드 Play 확인** | Intro→Reveal/Input×5→Result. 아이콘 On/Off. Outline은 Input 현재 박만 |
-| 메뉴 카탈로그·씬 로드 | **진입 Play 확인** | `phaseLabel`·`boardSquares` 연결됨 |
+| C# (`IMinigameModule`) | **입력+점수 Play 확인** | Extra 없음. 한 박 첫 입력만. 녹/빨 0.2초 페이드 |
+| 메뉴 카탈로그·씬 로드 | **진입 Play 확인** | `phaseLabel`·`boardSquares` 연결됨. `playerSlots` 에디터 |
 | 오디오 | **후속** | 에셋 미준비. 목표 클록은 오디오 없이 진행 |
 | 화면 장식 | **에디터** | 로직 없음. AI 비범위 |
 | 씬 Hierarchy | **배치 완료** | 보드·장식·Phase·PlayerSlot. Module은 사용자가 `RBC_Root`에 붙임 |
@@ -21,13 +21,13 @@
 | 항목 | 진실 |
 |------|------|
 | 이 문서 | **목표 스펙**. 구 5단 판정·페이즈2·SPEED UP은 **폐기** |
-| 레포 플레이 | 아이콘·Input Outline **Play 확인**. 입력 없음 |
+| 레포 플레이 | 보드·입력·슬롯 색 **Play 확인**. Extra 제거는 재확인 |
 | 보드 | 목표 **4열×2행**. 구씬은 가로 1줄 8칸 |
 | 판정 그림 | 보드 칸 위 이펙트 **없음**. 슬롯 테두리만 |
 | 연습 | **없음** (Pigeon과 같은 기획 예외). 미완성이 아님 |
 | 페이즈 | **게임 페이즈 없음**. 오브젝트 `Phase`는 스테이지 HUD `n/5` |
 | HUD | `Phase` TMP `{n}/5` |
-| 슬롯 테두리 | 슬롯당 Outline **1개**. 그 박 결과만 녹/빨. **8박 이력 없음** |
+| 슬롯 테두리 | 슬롯당 Outline **1개**. 성공 녹 · 실패 빨. 0.2초 검정 페이드. **8박 이력 없음** |
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. 입력
 
-Input 구간·해당 박 윈도우가 열린 참가 슬롯만 읽는다. Reveal·Intro에서는 무시.
+Input 구간·해당 박 윈도우가 열린 참가 슬롯만 읽는다. Reveal·Intro에서는 무시. **한 박의 첫 입력만** 판정하고 나머지는 무시.
 
 | RBC 버튼 | `BoothUsbGamepadLayout` | 개발 키보드(`Ctrl` 토글 1P) |
 |----------|-------------------------|------------------------------|
@@ -103,9 +103,9 @@ Input 구간·해당 박 윈도우가 열린 참가 슬롯만 읽는다. Reveal�
 
 한 박 = 비트클록 구간. **성공 / 실패**만. Perfect·Fast·Slow·Miss·Wrong·ms 창 없음.
 
-- **성공**: 그 박이 끝나기 전에 **정답 버튼**.
-- **실패**: **오답**, 또는 **박 종료까지 입력 없음**.
-- 성공 후 같은 박 추가 입력: 레거시 **Extra −2000**. 테두리는 이미 성공(녹)이면 유지할지 덮을지는 구현 시 레거시 Wrong 덮어쓰기와 맞출지 질문. **기본 합의는 점수 Extra만 레거시**.
+- **성공**: 그 박의 **첫 입력이 정답**.
+- **실패**: 첫 입력이 **오답**, 또는 **박 종료까지 입력 없음**.
+- 같은 박의 둘째 입력부터 **무시**. Extra 점수·테두리 **없음**.
 
 ### 점수 · HP (레거시 숫자)
 
@@ -113,7 +113,6 @@ Input 구간·해당 박 윈도우가 열린 참가 슬롯만 읽는다. Reveal�
 |------|----|
 | 성공 | +10,000 |
 | 실패 | −10,000 |
-| Extra | −2,000 |
 | 8박 전부 성공 | +30,000 |
 | 점수 하한 | 0 |
 
@@ -132,10 +131,10 @@ HP (`RhythmButtonChallengeHpLossRules`, Result에서만 −1):
 
 `PlayerSlot` / `1P`~`4P`: Unity `Outline` **슬롯당 1개**.
 
-- 성공 → 테두리 **녹색**
-- 실패 → 테두리 **빨간**
+- 성공 → 테두리 **녹색** → **0.2초** 대기색(검정) 페이드
+- 실패 → 테두리 **빨간** → 같은 페이드
 
-**그 박의 최신 결과만** 보인다. 이전 박 이력은 남기지 않음. 비참가 슬롯은 숨김(Pigeon과 같은 취지).
+검정으로 **즉시 바꾸지 않음**. 다음 박 판정이 나오면 그 색부터 페이드를 다시 시작한다. 비참가 슬롯은 숨김(Pigeon과 같은 취지).
 
 ### 비트클록
 
@@ -161,7 +160,7 @@ HP (`RhythmButtonChallengeHpLossRules`, Result에서만 −1):
 Minigame_RhythmButtonChallenge
 ├── Main Camera
 ├── EventSystem
-├── RBC_Root                 Module + Bootstrap. `phaseLabel`·`boardSquares` 연결됨 |
+├── RBC_Root                 Module + Bootstrap. `phaseLabel`·`boardSquares` 연결됨. `playerSlots` 에디터 |
 ├── MusicSource
 └── Canvas  1920×1080
     ├── Background
@@ -186,10 +185,12 @@ Minigame_RhythmButtonChallenge
 |------|------|
 | `RhythmButtonChallengeMinigameModule` | `BuiltInId`. Begin에서 Intro 클록 시작 |
 | `.BeatClock.cs` | 구간 8박 → 다음 Reveal/Input 또는 `CompleteSession` |
-| `.Hud.cs` | `beatDurationSeconds` **0.5** · `phaseLabel` |
+| `.Hud.cs` | `beatDurationSeconds` **0.5** · `phaseLabel` · `playerSlots` |
 | `.Board.cs` | `boardSquares` 8칸. `Icon` 자식 이름(A/B/X/Y/LB/RB/방향). Outline은 Input 현재 박 |
 | `.Pattern.cs` | Reveal 시작 때 `GeneratePatternForStage` |
-| `.Input.cs` | Tick에서 아직 안 읽음 |
+| `.Input.cs` | Input 구간만 10키. 한 박 첫 입력만 |
+| `.Judgment.cs` | 성공 +10000 · 실패 −10000 · 8박 보너스 +30000 |
+| `.SlotUi.cs` | 슬롯 Outline 녹/빨. 0.2초 검정 페이드. 점수 `{n}점` |
 | `.ExitSequence.cs` | `exitScreenFader` 씬에 연결됨 |
 | `RhythmButtonChallengeSceneBootstrap` | `PartySession` → `Begin`/`Tick`. `FindObjectOfType` 없음 |
 | `RhythmButtonChallengeHpLossRules` | 50만 + 하위 50% |
@@ -201,7 +202,7 @@ Minigame_RhythmButtonChallenge
 
 유지 계약: `IMinigameModule` · `MinigameSessionReport` · `BoothUsbGamepadLayout` 10키 · 씬 이름.
 
-**없음**: 패드 입력 · 슬롯 Outline 색 · 오디오.
+**없음**: 오디오.
 
 ---
 
@@ -210,7 +211,6 @@ Minigame_RhythmButtonChallenge
 | 주제 | 상태 |
 |------|------|
 | 오디오 클립 나누기 | **후속**. 에셋 미준비 |
-| Extra 시 테두리 | Outline 1개(최신). Extra −2000일 때 색 덮기 여부 |
 | 화면 장식 | 에디터. 문서화 안 함 |
 
-문서 갱신: **2026-09-13** (보드 아이콘·Input Outline) · **2026-09-13** (비트클록) · **2026-09-13** (구 로직 삭제·스텁) · **2026-09-13** (목표 스펙 전면 재작성)
+문서 갱신: **2026-09-14** (Extra 삭제) · **2026-09-14** (Extra 빨강·0.2초 페이드) · **2026-09-13** (입력·슬롯 색·점수) · **2026-09-13** (보드 아이콘·Input Outline) · **2026-09-13** (비트클록) · **2026-09-13** (구 로직 삭제·스텁) · **2026-09-13** (목표 스펙 전면 재작성)

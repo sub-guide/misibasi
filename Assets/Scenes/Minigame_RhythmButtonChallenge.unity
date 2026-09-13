@@ -1273,6 +1273,11 @@ MonoBehaviour:
   exitFadeOutSeconds: 1
   beatDurationSeconds: 0.5
   phaseLabel: {fileID: 1314361026}
+  playerSlots:
+  - {fileID: 1549949787}
+  - {fileID: 571900075}
+  - {fileID: 1608795700}
+  - {fileID: 1084072026}
 --- !u!1 &1063251289
 GameObject:
   m_ObjectHideFlags: 0

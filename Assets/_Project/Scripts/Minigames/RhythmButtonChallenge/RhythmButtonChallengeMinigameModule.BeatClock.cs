@@ -12,8 +12,12 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             _clockStarted = true;
             if (kind == RbcSegmentKind.StageReveal)
                 GeneratePatternForStage(_stageIndex);
+            if (kind == RbcSegmentKind.StageInput)
+                ResetInputStreaks();
             RefreshPhaseLabel();
             RefreshBoard();
+            if (kind == RbcSegmentKind.StageInput)
+                OpenBeatWindow();
         }
 
         void TickBeatClock()
@@ -35,7 +39,11 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 BeatsPerSegment - 1);
             if (_beatIndex != targetBeat)
             {
+                if (_segmentKind == RbcSegmentKind.StageInput)
+                    FinalizePendingBeats();
                 _beatIndex = targetBeat;
+                if (_segmentKind == RbcSegmentKind.StageInput)
+                    OpenBeatWindow();
                 RefreshBoard();
             }
 
@@ -60,6 +68,8 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                     break;
 
                 case RbcSegmentKind.StageInput:
+                    FinalizePendingBeats();
+                    ApplyEightBeatBonus();
                     if (_stageIndex < StagesPerPhase)
                     {
                         _stageIndex++;

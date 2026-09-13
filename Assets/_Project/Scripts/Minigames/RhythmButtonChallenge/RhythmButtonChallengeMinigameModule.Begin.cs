@@ -25,6 +25,9 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 
             _stageIndex = 1;
             ResolveBoard();
+            ResolveSlotUi();
+            ApplySlotParticipation();
+            RefreshAllScoreLabels();
             StartSegment(RbcSegmentKind.PhaseIntro);
         }
     }

@@ -23,9 +23,18 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             StageInput
         }
 
+        enum BeatJudgment
+        {
+            Pending,
+            Success,
+            Fail
+        }
+
         struct SlotRuntime
         {
             public int ScoreSum;
+            public BeatJudgment BeatState;
+            public int SuccessesThisInput;
         }
     }
 }

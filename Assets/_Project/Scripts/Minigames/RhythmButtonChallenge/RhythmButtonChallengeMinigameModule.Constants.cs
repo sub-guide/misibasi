@@ -8,7 +8,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 
         const int ScoreSuccess = 10000;
         const int ScoreFail = -10000;
-        const int ScoreExtraInputPenalty = -2000;
         const int ScoreEightBeatBonus = 30000;
+        const float SlotOutlineFadeToIdleSeconds = 0.2f;
     }
 }
