@@ -1,6 +1,6 @@
 # 05_Rhythm_Button_Challenge
 
-> **문서 기준일**: 2026-09-13 — 목표 스펙. C# 스텁. 씬 보드·장식·`Phase` 배치됨. **플레이어 슬롯은 사용자 추가 중**.  
+> **문서 기준일**: 2026-09-13 — 클록·보드 아이콘·Input Outline **Play 확인**. 패드 입력·슬롯 색 없음.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -9,9 +9,9 @@
 
 | 영역 | 상태 | 비고 |
 |------|------|------|
-| 목표 기획 | **확정** | 무페이즈 5스테이지 · 연습 없음 · 성공/실패 · 4×2 · 슬롯 박별 테두리 |
-| C# (`IMinigameModule`) | **스텁** | 구 페이즈·정확도·박마다 클립·Find UI **삭제**. Begin 후 ESC→Result. 클록·보드·입력 미구현 |
-| 메뉴 카탈로그·씬 로드 | **진입 OK** (2026-07-22) | `id` = `rhythm_button_challenge` · 씬 `Minigame_RhythmButtonChallenge` · `PrepareRound(false)` |
+| 목표 기획 | **확정** | 무페이즈 5스테이지 · 연습 없음 · 성공/실패 · 4×2 · 슬롯 Outline 1개(최신) |
+| C# (`IMinigameModule`) | **클록+보드 Play 확인** | Intro→Reveal/Input×5→Result. 아이콘 On/Off. Outline은 Input 현재 박만 |
+| 메뉴 카탈로그·씬 로드 | **진입 Play 확인** | `phaseLabel`·`boardSquares` 연결됨 |
 | 오디오 | **후속** | 에셋 미준비. 목표 클록은 오디오 없이 진행 |
 | 화면 장식 | **에디터** | 로직 없음. AI 비범위 |
 | 씬 Hierarchy | **배치 완료** | 보드·장식·Phase·PlayerSlot. Module은 사용자가 `RBC_Root`에 붙임 |
@@ -21,7 +21,7 @@
 | 항목 | 진실 |
 |------|------|
 | 이 문서 | **목표 스펙**. 구 5단 판정·페이즈2·SPEED UP은 **폐기** |
-| 레포 플레이 | Begin 후 **정지**. ESC로 Result (점수 0) |
+| 레포 플레이 | 아이콘·Input Outline **Play 확인**. 입력 없음 |
 | 보드 | 목표 **4열×2행**. 구씬은 가로 1줄 8칸 |
 | 판정 그림 | 보드 칸 위 이펙트 **없음**. 슬롯 테두리만 |
 | 연습 | **없음** (Pigeon과 같은 기획 예외). 미완성이 아님 |
@@ -69,7 +69,7 @@ Input 구간·해당 박 윈도우가 열린 참가 슬롯만 읽는다. Reveal�
 ```
 
 - 페이즈 · SPEED UP · pitch 배속 **없음**.
-- HUD TMP: `{stageIndex}/5` (1부터). Intro 중 표기는 미정이면 `1/5` 전 또는 Intro 전용 공란 — **구현 슬라이스에서 HUD를 붙일 때 씬 값 우선**. 목표는 스테이지 진행 중 `n/5`.
+- HUD TMP `Phase`: Intro 중 씬 텍스트 유지. Reveal부터 `{stageIndex}/5`.
 
 ### 보드
 
@@ -78,13 +78,13 @@ Input 구간·해당 박 윈도우가 열린 참가 슬롯만 읽는다. Reveal�
 [4] [5] [6] [7]     ← 5~8박 (아래줄 왼쪽→오른쪽)
 ```
 
-칸 안: 각 `Square`의 `Icon` 아래 A/B/X/Y/LB/RB/방향 자식. **정답 버튼만 SetActive(true)**, 나머지 Off. 스프라이트 교체 아님.
+칸 안: 각 `Square`의 `Icon` 아래 A/B/X/Y/LB/RB/방향 자식. **정답 버튼만 SetActive(true)**, 나머지 Off. 스프라이트 교체 아님. 이름 조회는 `Icon` 아래에서만( `Outline` 의 Left/Up 등과 구분).
 
-| 구간 | ButtonIcon | 하이라이트 |
-|------|------------|------------|
-| Intro | 비표시 | 현재 박 |
-| Reveal | 0~현재박 순차 공개 | 현재 박 |
-| Input | 8칸 전부 | 현재 박 |
+| 구간 | ButtonIcon | Square `Outline` |
+|------|------------|------------------|
+| Intro | 비표시 | 없음 |
+| Reveal | 0~현재박 순차 공개 | 없음 |
+| Input | 8칸 전부 | 눌러야 하는 현재 박만 |
 
 ### 패턴 (레거시)
 
@@ -141,7 +141,7 @@ HP (`RhythmButtonChallengeHpLossRules`, Result에서만 −1):
 
 경과 `Time.unscaledTimeAsDouble` → 박 인덱스. **박마다 `AudioSource.Stop`/`Play`로 시간을 만들지 않음.**
 
-오디오 전에는 비트 길이 `[SerializeField]`. 오디오는 이후 클록에 구독.
+`beatDurationSeconds` Inspector. 기본 **0.5**(구 클립 없을 때 폴백과 같음). 0 이하면 진행 안 함(LogError). 오디오는 이후 클록에 구독.
 
 ### 화면 장식
 
@@ -161,7 +161,7 @@ HP (`RhythmButtonChallengeHpLossRules`, Result에서만 −1):
 Minigame_RhythmButtonChallenge
 ├── Main Camera
 ├── EventSystem
-├── RBC_Root                 사용자가 Module + Bootstrap 부착 예정
+├── RBC_Root                 Module + Bootstrap. `phaseLabel`·`boardSquares` 연결됨 |
 ├── MusicSource
 └── Canvas  1920×1080
     ├── Background
@@ -184,10 +184,13 @@ Minigame_RhythmButtonChallenge
 
 | 심볼 | 역할 |
 |------|------|
-| `RhythmButtonChallengeMinigameModule` | `BuiltInId`. Begin/Tick 스텁. ESC → Result |
-| `.Pattern.cs` | 스테이지 풀 · 3연속 금지. 시드에 페이즈 항 없음. 아직 Begin에서 호출 안 함 |
-| `.Input.cs` | 10키 `ReadAnyGameplayButtonPressed`. Tick에서 아직 안 읽음 |
-| `.ExitSequence.cs` | `exitScreenFader` Inspector. Find 없음 |
+| `RhythmButtonChallengeMinigameModule` | `BuiltInId`. Begin에서 Intro 클록 시작 |
+| `.BeatClock.cs` | 구간 8박 → 다음 Reveal/Input 또는 `CompleteSession` |
+| `.Hud.cs` | `beatDurationSeconds` **0.5** · `phaseLabel` |
+| `.Board.cs` | `boardSquares` 8칸. `Icon` 자식 이름(A/B/X/Y/LB/RB/방향). Outline은 Input 현재 박 |
+| `.Pattern.cs` | Reveal 시작 때 `GeneratePatternForStage` |
+| `.Input.cs` | Tick에서 아직 안 읽음 |
+| `.ExitSequence.cs` | `exitScreenFader` 씬에 연결됨 |
 | `RhythmButtonChallengeSceneBootstrap` | `PartySession` → `Begin`/`Tick`. `FindObjectOfType` 없음 |
 | `RhythmButtonChallengeHpLossRules` | 50만 + 하위 50% |
 | `RhythmButtonChallengeResultMinigameFlavor` | ID 매칭만 |
@@ -198,7 +201,7 @@ Minigame_RhythmButtonChallenge
 
 유지 계약: `IMinigameModule` · `MinigameSessionReport` · `BoothUsbGamepadLayout` 10키 · 씬 이름.
 
-**없음**: 비트클록 C# · 칸 아이콘 On/Off 구동 · 슬롯 Outline 색 · 오디오.
+**없음**: 패드 입력 · 슬롯 Outline 색 · 오디오.
 
 ---
 
@@ -207,9 +210,7 @@ Minigame_RhythmButtonChallenge
 | 주제 | 상태 |
 |------|------|
 | 오디오 클립 나누기 | **후속**. 에셋 미준비 |
-| Intro 중 `n/5` 표시 | HUD 슬라이스에서 씬 값 |
 | Extra 시 테두리 | Outline 1개(최신). Extra −2000일 때 색 덮기 여부 |
 | 화면 장식 | 에디터. 문서화 안 함 |
-| 비트 길이 기본값 | C# 클록 슬라이스에서 질문 |
 
-문서 갱신: **2026-09-13** (구 로직 삭제·스텁) · **2026-09-13** (목표 스펙 전면 재작성)
+문서 갱신: **2026-09-13** (보드 아이콘·Input Outline) · **2026-09-13** (비트클록) · **2026-09-13** (구 로직 삭제·스텁) · **2026-09-13** (목표 스펙 전면 재작성)

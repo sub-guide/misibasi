@@ -22,6 +22,10 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 _aliveMask[i] = _ctx.Slots[i].State == SlotState.PLAYING;
                 _slots[i].ScoreSum = 0;
             });
+
+            _stageIndex = 1;
+            ResolveBoard();
+            StartSegment(RbcSegmentKind.PhaseIntro);
         }
     }
 }

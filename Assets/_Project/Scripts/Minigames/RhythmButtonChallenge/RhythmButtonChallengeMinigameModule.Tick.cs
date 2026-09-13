@@ -10,7 +10,12 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 return;
 
             if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+            {
                 CompleteSession();
+                return;
+            }
+
+            TickBeatClock();
         }
 
         public void RequestEarlyExit()

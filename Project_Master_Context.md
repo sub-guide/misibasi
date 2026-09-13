@@ -315,7 +315,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 |----|----------------|
 | `MainMenu` | 로비·카탈로그·시작 |
 | `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
-| `Minigame_RhythmButtonChallenge` | **재설계**. C# 스텁(ESC→Result). 목표 스펙 `05` |
+| `Minigame_RhythmButtonChallenge` | 비트클록. `Phase` HUD. 입력 없음 |
 | `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
 | `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. HP 1인 skip · 2인+ 하위 50% |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
@@ -347,7 +347,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ### 지금 포커스
 
-1. **RBC** — 씬 배치 완료. 사용자가 `RBC_Root`에 스크립트 부착
+1. **RBC** — 패드 입력·슬롯 Outline 색·점수 (미착수)
 2. **Pigeon** — HP −1 구현. **1P는 안 깎임 Play 확인**. 2~4P 하위 50% 미검증
 3. **OIIA** — 개편 후 **2~4P·부스 다패드** 재검증
 
@@ -364,7 +364,6 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
 | 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |
 | RBC 오디오 | **후속** | 에셋 미준비. 클록에 나중에 구독 |
-| RBC Intro 중 `n/5` | HUD 슬라이스 | 스테이지 전 표기 |
 | RBC Extra 테두리 | 구현 시 | Outline 1개(최신만). Extra −2000일 때 색 덮기 여부 |
 
 ---
@@ -404,4 +403,4 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ---
 
-*마스터 파일 갱신: 2026-09-13 — RBC 씬 사용자 조립*
+*마스터 파일 갱신: 2026-09-13 — RBC 보드 Play 확인*

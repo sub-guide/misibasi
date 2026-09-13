@@ -540,7 +540,7 @@ MonoBehaviour:
     blurb: 
     icon: {fileID: 21300000, guid: e47ce5720d047ed4cb91c9359fe50c24, type: 3}
     accentColor: {r: 0, g: 1, b: 0, a: 1}
-  - id: rythm_button_challange
+  - id: rhythm_button_challenge
     title: "\uB9AC\uB4EC \uCC4C\uB9B0\uC9C0"
     blurb: 
     icon: {fileID: 744362712, guid: 7b6ee32416da2534f96ca18fd1ad5987, type: 3}

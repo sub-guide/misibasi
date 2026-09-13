@@ -16,6 +16,13 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             Right
         }
 
+        enum RbcSegmentKind
+        {
+            PhaseIntro,
+            StageReveal,
+            StageInput
+        }
+
         struct SlotRuntime
         {
             public int ScoreSum;

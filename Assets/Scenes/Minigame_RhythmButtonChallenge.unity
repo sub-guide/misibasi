@@ -1209,6 +1209,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 983734364}
+  - component: {fileID: 983734366}
+  - component: {fileID: 983734365}
   m_Layer: 0
   m_Name: RBC_Root
   m_TagString: Untagged
@@ -1231,6 +1233,46 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &983734365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 983734363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92ed9695560d9334a9f534fb4bb2ec41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  module: {fileID: 983734366}
+--- !u!114 &983734366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 983734363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02017b85b2627c14ea2d532209cbeb2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boardSquares:
+  - {fileID: 424821513}
+  - {fileID: 125786502}
+  - {fileID: 1978509758}
+  - {fileID: 1946618584}
+  - {fileID: 40298910}
+  - {fileID: 1959843340}
+  - {fileID: 1952364221}
+  - {fileID: 1370809459}
+  displayName: Rhythm Button Challenge
+  exitScreenFader: {fileID: 1908861292}
+  sessionEndHoldSeconds: 0.35
+  exitFadeOutSeconds: 1
+  beatDurationSeconds: 0.5
+  phaseLabel: {fileID: 1314361026}
 --- !u!1 &1063251289
 GameObject:
   m_ObjectHideFlags: 0
