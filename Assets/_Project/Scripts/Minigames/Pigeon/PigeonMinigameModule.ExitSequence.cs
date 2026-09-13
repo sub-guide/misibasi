@@ -58,6 +58,8 @@ namespace MiniParty.Minigames.Pigeon
                 report.FinalScore[i] = _participatedMask[i] ? Mathf.Max(0, _score[i]) : 0;
             }
 
+            PigeonHpLossRules.FillHpLost(report.FinalScore, _participatedMask, report.HpLostThisSession);
+
             return report;
         }
     }
