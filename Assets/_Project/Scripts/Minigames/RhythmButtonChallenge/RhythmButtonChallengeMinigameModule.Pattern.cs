@@ -43,7 +43,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
         }
 
         int ComputePatternSeed(int stageIndex) =>
-            unchecked(_sessionSeed * 397 ^ _phaseNumber * 17 ^ stageIndex);
+            unchecked(_sessionSeed * 397 ^ stageIndex);
 
         bool WouldViolateConsecutiveRule(RbcButton candidate, int beatIndex)
         {

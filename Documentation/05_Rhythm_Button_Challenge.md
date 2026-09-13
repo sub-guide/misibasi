@@ -10,7 +10,7 @@
 | 영역 | 상태 | 비고 |
 |------|------|------|
 | 목표 기획 | **확정** | 무페이즈 5스테이지 · 연습 없음 · 성공/실패 · 4×2 · 슬롯 박별 테두리 |
-| C# (`IMinigameModule`) | **구구현** | 가로 8칸 · Phase1/2 · Perfect~Wrong · 박마다 클립 Play. 목표와 **불일치** |
+| C# (`IMinigameModule`) | **스텁** | 구 페이즈·정확도·박마다 클립·Find UI **삭제**. Begin 후 ESC→Result. 클록·보드·입력 미구현 |
 | 메뉴 카탈로그·씬 로드 | **진입 OK** (2026-07-22) | `id` = `rhythm_button_challenge` · 씬 `Minigame_RhythmButtonChallenge` · `PrepareRound(false)` |
 | 오디오 | **후속** | 에셋 미준비. 목표 클록은 오디오 없이 진행 |
 | 화면 장식 | **에디터** | 로직 없음. AI 비범위 |
@@ -20,7 +20,7 @@
 | 항목 | 진실 |
 |------|------|
 | 이 문서 | **목표 스펙**. 구 5단 판정·페이즈2·SPEED UP은 **폐기** |
-| 레포 플레이 | 당분간 **구규칙**으로 돈다 |
+| 레포 플레이 | Begin 후 **정지**. ESC로 Result (점수 0) |
 | 보드 | 목표 **4열×2행**. 구씬은 가로 1줄 8칸 |
 | 판정 그림 | 보드 칸 위 이펙트 **없음**. 슬롯 테두리만 |
 | 연습 | **없음** (Pigeon과 같은 기획 예외). 미완성이 아님 |
@@ -180,19 +180,23 @@ Minigame_RhythmButtonChallenge
 
 경로: `Assets/_Project/Scripts/Minigames/RhythmButtonChallenge/`
 
-| 심볼 | 역할 (목표 / 현) |
-|------|------------------|
-| `RhythmButtonChallengeMinigameModule` | `BuiltInId` = `rhythm_button_challenge`. 목표는 비트클록+무페이즈. **현은 구 partial** |
-| `RhythmButtonChallengeSceneBootstrap` | `PartySession` → `Begin`/`Tick` |
-| `RhythmButtonChallengeHpLossRules` | 50만 + 하위 50%. 유지 |
+| 심볼 | 역할 |
+|------|------|
+| `RhythmButtonChallengeMinigameModule` | `BuiltInId`. Begin/Tick 스텁. ESC → Result |
+| `.Pattern.cs` | 스테이지 풀 · 3연속 금지. 시드에 페이즈 항 없음. 아직 Begin에서 호출 안 함 |
+| `.Input.cs` | 10키 `ReadAnyGameplayButtonPressed`. Tick에서 아직 안 읽음 |
+| `.ExitSequence.cs` | `exitScreenFader` Inspector. Find 없음 |
+| `RhythmButtonChallengeSceneBootstrap` | `PartySession` → `Begin`/`Tick`. `FindObjectOfType` 없음 |
+| `RhythmButtonChallengeHpLossRules` | 50만 + 하위 50% |
 | `RhythmButtonChallengeResultMinigameFlavor` | ID 매칭만 |
-| `GameFlowDirector` | id 매칭 → 씬 로드, `_sessionPractice = false` |
+| `*BoardCellBindings` / `*ScorePanelBindings` | Inspector 필드만. 이름 AutoWire 없음 |
+| `GameFlowDirector` | id → 씬, `practice = false` |
+
+**삭제됨**: `.AudioFlow.cs` · `.Gameplay.cs` · `.Ui.cs` (박마다 클립, 5단 판정, `GameObject.Find`)
 
 유지 계약: `IMinigameModule` · `MinigameSessionReport` · `BoothUsbGamepadLayout` 10키 · 씬 이름.
 
-새 코드에 넣지 않음: `GameObject.Find` 폴백, 박마다 클립으로 박 길이 계산, SPEED UP 분기, 보드 칸 판정 스프라이트.
-
-**이번 문서 슬라이스에 없음**: 비트클록 C# · 4×2 에디터 조립 · 슬롯 테두리 구현 · 오디오.
+**없음**: 비트클록 · 4×2 구동 · 슬롯 테두리 · 오디오.
 
 ---
 
@@ -206,4 +210,4 @@ Minigame_RhythmButtonChallenge
 | 화면 장식 | 에디터. 문서화 안 함 |
 | 비트 길이 기본값 | C# 클록 슬라이스에서 질문 |
 
-문서 갱신: **2026-09-13** (목표 스펙 전면 재작성)
+문서 갱신: **2026-09-13** (구 로직 삭제·스텁) · **2026-09-13** (목표 스펙 전면 재작성)

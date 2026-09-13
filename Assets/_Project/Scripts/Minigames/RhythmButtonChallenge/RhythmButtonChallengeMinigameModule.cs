@@ -4,8 +4,8 @@ using UnityEngine;
 namespace MiniParty.Minigames.RhythmButtonChallenge
 {
     /// <summary>
-    /// Rhythm Button Challenge 미니게임. OIIA와 동일하게 partial로 역할 분리.
-    /// 부스 패드: A/B/X/Y/L/R/방향 — <see cref="MiniParty.Input.BoothUsbGamepadLayout"/>.
+    /// Rhythm Button Challenge. 4×2 보드, 성공/실패. 부스 패드 10키.
+    /// <see cref="MiniParty.Input.BoothUsbGamepadLayout"/>.
     /// </summary>
     public sealed partial class RhythmButtonChallengeMinigameModule : MonoBehaviour, IMinigameModule
     {

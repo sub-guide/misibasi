@@ -5,7 +5,7 @@ using UnityEngine;
 namespace MiniParty.Minigames.RhythmButtonChallenge
 {
     /// <summary>
-    /// Rhythm Button Challenge 전용 씬 루트에 붙임. PartySession 슬롯으로 컨텍스트 생성 후 모듈 구동.
+    /// Rhythm Button Challenge 씬 루트. PartySession 슬롯으로 컨텍스트 생성 후 모듈 구동.
     /// </summary>
     public sealed class RhythmButtonChallengeSceneBootstrap : MonoBehaviour
     {
@@ -22,8 +22,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             }
 
             if (module == null)
-                module = GetComponent<RhythmButtonChallengeMinigameModule>() ??
-                         FindObjectOfType<RhythmButtonChallengeMinigameModule>();
+                module = GetComponent<RhythmButtonChallengeMinigameModule>();
 
             if (module == null)
             {

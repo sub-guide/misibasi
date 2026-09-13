@@ -5,10 +5,8 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 {
     public sealed partial class RhythmButtonChallengeMinigameModule
     {
-        static bool WasPressed(int slotIndex, Joystick pad, string path)
-        {
-            return BoothUsbSlotInput.WasPathPressed(slotIndex, pad, path);
-        }
+        static bool WasPressed(int slotIndex, Joystick pad, string path) =>
+            BoothUsbSlotInput.WasPathPressed(slotIndex, pad, path);
 
         RbcButton? ReadAnyGameplayButtonPressed(int slotIndex, Joystick pad)
         {
