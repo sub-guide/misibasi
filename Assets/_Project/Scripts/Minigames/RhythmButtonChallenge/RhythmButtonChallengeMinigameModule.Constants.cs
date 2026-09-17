@@ -10,5 +10,8 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
         const int ScoreFail = -10000;
         const int ScoreEightBeatBonus = 30000;
         const float SlotOutlineFadeToIdleSeconds = 0.2f;
+
+        static readonly int SquareIntroAnimStateHash = UnityEngine.Animator.StringToHash("Square_Intro");
+        static readonly UnityEngine.Vector3 SquareIntroRestScale = new(1.1f, 0f, 1.1f);
     }
 }

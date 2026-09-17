@@ -24,6 +24,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
         {
             _completing = true;
             _running = false;
+            StopSessionAudio();
 
             MinigameSessionReport report = BuildSessionReport();
 

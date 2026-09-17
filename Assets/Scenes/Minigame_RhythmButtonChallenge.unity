@@ -1258,6 +1258,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02017b85b2627c14ea2d532209cbeb2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  musicSource: {fileID: 1856012201}
+  sessionTrack: {fileID: 8300000, guid: 25cab35471eb70547a5dcdcc4fb6fc84, type: 3}
   boardSquares:
   - {fileID: 424821513}
   - {fileID: 125786502}
@@ -1271,7 +1273,8 @@ MonoBehaviour:
   exitScreenFader: {fileID: 1908861292}
   sessionEndHoldSeconds: 0.35
   exitFadeOutSeconds: 1
-  beatDurationSeconds: 0.5
+  preIntroDelaySeconds: 0.05
+  beatDurationSeconds: 0.3333
   phaseLabel: {fileID: 1314361026}
   playerSlots:
   - {fileID: 1549949787}
@@ -3052,7 +3055,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1366882659}
-  - {fileID: 1856012202}
   - {fileID: 983734364}
+  - {fileID: 1856012202}
   - {fileID: 1760043794}
   - {fileID: 349037859}

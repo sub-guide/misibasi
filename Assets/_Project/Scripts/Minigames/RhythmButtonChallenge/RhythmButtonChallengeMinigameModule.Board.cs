@@ -15,6 +15,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 
         struct BoardCellCache
         {
+            public Animator SquareAnimator;
             public GameObject Outline;
             public GameObject[] IconByButton;
         }
@@ -74,6 +75,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 
                 cells[i] = new BoardCellCache
                 {
+                    SquareAnimator = square.GetComponent<Animator>(),
                     Outline = outline.gameObject,
                     IconByButton = icons
                 };
@@ -123,6 +125,37 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 if (icons[b].activeSelf != on)
                     icons[b].SetActive(on);
             }
+        }
+
+        void PrepareIntroSquareVisuals()
+        {
+            if (!_boardReady)
+                return;
+
+            for (var i = 0; i < BeatsPerSegment; i++)
+            {
+                RectTransform square = boardSquares[i];
+                square.localScale = SquareIntroRestScale;
+
+                Animator anim = _boardCells[i].SquareAnimator;
+                if (anim == null)
+                    continue;
+
+                anim.enabled = false;
+            }
+        }
+
+        void PlayIntroSquareBeat(int beatIndex)
+        {
+            if (!_boardReady || beatIndex < 0 || beatIndex >= BeatsPerSegment)
+                return;
+
+            Animator anim = _boardCells[beatIndex].SquareAnimator;
+            if (anim == null)
+                return;
+
+            anim.enabled = true;
+            anim.Play(SquareIntroAnimStateHash, 0, 0f);
         }
     }
 }

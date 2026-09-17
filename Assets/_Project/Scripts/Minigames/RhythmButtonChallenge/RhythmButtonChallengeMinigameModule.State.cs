@@ -18,6 +18,9 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
         double _segmentStartTime;
         bool _clockStarted;
 
+        bool _waitingPreIntro;
+        double _preIntroDelayEndTime;
+
         RbcButton[] _currentPattern = new RbcButton[BeatsPerSegment];
 
         int _sessionSeed;

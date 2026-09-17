@@ -4,6 +4,25 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 {
     public sealed partial class RhythmButtonChallengeMinigameModule
     {
+        void BeginPreIntroDelay()
+        {
+            _waitingPreIntro = true;
+            _clockStarted = false;
+            _preIntroDelayEndTime = Time.unscaledTimeAsDouble + preIntroDelaySeconds;
+        }
+
+        void TickPreIntroDelay()
+        {
+            if (!_waitingPreIntro)
+                return;
+
+            if (Time.unscaledTimeAsDouble >= _preIntroDelayEndTime)
+            {
+                _waitingPreIntro = false;
+                StartSegment(RbcSegmentKind.PhaseIntro);
+            }
+        }
+
         void StartSegment(RbcSegmentKind kind)
         {
             _segmentKind = kind;
@@ -18,6 +37,11 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             RefreshBoard();
             if (kind == RbcSegmentKind.StageInput)
                 OpenBeatWindow();
+            if (kind == RbcSegmentKind.PhaseIntro)
+            {
+                PrepareIntroSquareVisuals();
+                PlayIntroSquareBeat(0);
+            }
         }
 
         void TickBeatClock()
@@ -44,6 +68,8 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 _beatIndex = targetBeat;
                 if (_segmentKind == RbcSegmentKind.StageInput)
                     OpenBeatWindow();
+                if (_segmentKind == RbcSegmentKind.PhaseIntro)
+                    PlayIntroSquareBeat(_beatIndex);
                 RefreshBoard();
             }
 
@@ -73,6 +99,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                     if (_stageIndex < StagesPerPhase)
                     {
                         _stageIndex++;
+                        RefreshPhaseLabel();
                         StartSegment(RbcSegmentKind.StageReveal);
                     }
                     else

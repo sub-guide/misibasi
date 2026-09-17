@@ -28,7 +28,13 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             ResolveSlotUi();
             ApplySlotParticipation();
             RefreshAllScoreLabels();
-            StartSegment(RbcSegmentKind.PhaseIntro);
+            StartSessionAudio();
+
+            _waitingPreIntro = false;
+            if (preIntroDelaySeconds > 0f)
+                BeginPreIntroDelay();
+            else
+                StartSegment(RbcSegmentKind.PhaseIntro);
         }
     }
 }
