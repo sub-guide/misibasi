@@ -38,6 +38,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 
                 _slots[i].ScoreSum = ApplyScoreDeltaNonNegative(_slots[i].ScoreSum, scoreEightBeatBonus);
                 PlayScorePopup(i, ScorePopupKind.Bonus);
+                TriggerSlotShakeOnBonus(i);
                 RefreshScoreLabel(i);
             });
         }
@@ -51,6 +52,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 scoreSuccess);
             SetSlotOutlineJudged(slotIndex, success: true);
             PlayScorePopup(slotIndex, ScorePopupKind.Success);
+            TriggerSlotShakeOnSuccess(slotIndex);
             RefreshScoreLabel(slotIndex);
         }
 
@@ -62,6 +64,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 scoreFail);
             SetSlotOutlineJudged(slotIndex, success: false);
             PlayScorePopup(slotIndex, ScorePopupKind.Fail);
+            TriggerSlotShakeOnFail(slotIndex);
             RefreshScoreLabel(slotIndex);
         }
     }

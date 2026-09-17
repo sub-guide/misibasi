@@ -142,6 +142,8 @@ threshold **정확히** 달성 시 저점수 규칙 아님.
 
 `RhythmButtonChallengeScorePanelBindings`: `ScoreText` · `PopupSuccess` · `PopupFail` · `PopupBonus`(Animator). 모듈 `scorePanels[4]`. 성공/실패/8박 보너스 시 해당 Animator `ScoreEffect` 재생. TMP 문구는 에디터. `scorePopupVisibleSeconds`.
 
+`playerSlots` 루트 RectTransform: 판정별 Perlin 임펄스(`slotShakeOnSuccess` · `slotShakeOnFail` · `slotShakeOnBonus`). 슬롯마다 독립.
+
 ### 비트클록
 
 경과 `Time.unscaledTimeAsDouble` → 박 인덱스. **박마다 `AudioSource.Stop`/`Play`로 시간을 만들지 않음.**
@@ -156,7 +158,7 @@ threshold **정확히** 달성 시 저점수 규칙 아님.
 
 ### 화면 장식
 
-확성기·번개 등 씬 장식은 사용자 에디터. 규칙·코드 계약 없음.
+`Decoration` + `RhythmButtonChallengeDecorationLoopShakeBindings`: `LoopShakeTargets`에 자식 RectTransform Inspector 연결. 모듈 `decorationLoopShake` · `decorationLoopShakeAmplitude` · `decorationLoopShakeFrequency`로 **공통 루프 Perlin 진동**. 세션 Begin~종료.
 
 ---
 
@@ -204,6 +206,9 @@ Minigame_RhythmButtonChallenge
 | `.Judgment.cs` | `ApplySuccess`/`ApplyFail` · 8박 보너스 (`score*` 필드) |
 | `.SlotUi.cs` | 슬롯 Outline 녹/빨. 0.2초 검정 페이드. 총점 `{n}점` |
 | `.ScorePopup.cs` | 성공/실패/보너스 Animator `ScoreEffect` |
+| `.SlotShake.cs` | 판정별 슬롯 UI 진동(Inspector 3종) |
+| `.DecorationLoopShake.cs` | Decoration 자식 공통 루프 진동 |
+| `RhythmButtonChallengeDecorationLoopShakeBindings` | `LoopShakeTargets[]` |
 | `.Audio.cs` | `musicSource` · `sessionTrack`. Begin Play / 종료 Stop |
 | `.ExitSequence.cs` | `exitScreenFader` 씬에 연결됨 |
 | `RhythmButtonChallengeSceneBootstrap` | `PartySession` → `Begin`/`Tick`. `FindObjectOfType` 없음 |
