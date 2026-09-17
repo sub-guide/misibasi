@@ -62,8 +62,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 RhythmButtonChallengeHpLossRules.FillHpLost(
                     report.FinalScore,
                     participated,
-                    report.HpLostThisSession,
-                    hpLowScoreThreshold);
+                    report.HpLostThisSession);
             }
 
             return report;

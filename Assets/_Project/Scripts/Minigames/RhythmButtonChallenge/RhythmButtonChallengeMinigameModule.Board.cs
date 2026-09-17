@@ -16,6 +16,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
         struct BoardCellCache
         {
             public Animator SquareAnimator;
+            public Animator IconAnimator;
             public GameObject Outline;
             public GameObject[] IconByButton;
         }
@@ -73,9 +74,19 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                     icons[b] = child.gameObject;
                 }
 
+                Animator iconAnimator = iconRoot.GetComponent<Animator>();
+                if (iconAnimator == null)
+                {
+                    Debug.LogError(
+                        $"[RhythmButtonChallengeMinigameModule] {square.name}/Icon 에 Animator 가 없습니다.",
+                        square);
+                    return;
+                }
+
                 cells[i] = new BoardCellCache
                 {
                     SquareAnimator = square.GetComponent<Animator>(),
+                    IconAnimator = iconAnimator,
                     Outline = outline.gameObject,
                     IconByButton = icons
                 };
@@ -156,6 +167,19 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 
             anim.enabled = true;
             anim.Play(SquareIntroAnimStateHash, 0, 0f);
+        }
+
+        void PlayRevealIconBeat(int beatIndex)
+        {
+            if (!_boardReady || beatIndex < 0 || beatIndex >= BeatsPerSegment)
+                return;
+
+            Animator anim = _boardCells[beatIndex].IconAnimator;
+            if (anim == null)
+                return;
+
+            anim.enabled = true;
+            anim.Play(IconRevealAnimStateHash, 0, 0f);
         }
     }
 }

@@ -20,10 +20,6 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
         [SerializeField] int scoreFail = -10000;
         [SerializeField] int scoreEightBeatBonus = 30000;
 
-        [Header("HP")]
-        [Tooltip("Result HP: 총점이 이 값 미만이면 −1 (정확히 같으면 저점수 규칙 아님). 2인+ 하위 50%는 별도.")]
-        [SerializeField] int hpLowScoreThreshold = RhythmButtonChallengeHpLossRules.DefaultLowScoreThreshold;
-
         [Header("HUD")]
         [SerializeField] TMP_Text phaseLabel;
 

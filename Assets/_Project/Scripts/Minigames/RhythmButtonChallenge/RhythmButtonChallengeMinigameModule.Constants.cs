@@ -9,6 +9,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
         const float SlotOutlineFadeToIdleSeconds = 0.2f;
 
         static readonly int SquareIntroAnimStateHash = UnityEngine.Animator.StringToHash("Square_Intro");
+        static readonly int IconRevealAnimStateHash = UnityEngine.Animator.StringToHash("Reveal");
         static readonly int ScorePopupAnimStateHash = UnityEngine.Animator.StringToHash("ScoreEffect");
         static readonly UnityEngine.Vector3 SquareIntroRestScale = new(1.1f, 0f, 1.1f);
     }

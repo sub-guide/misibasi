@@ -1,6 +1,6 @@
 # 05_Rhythm_Button_Challenge
 
-> **문서 기준일**: 2026-09-18 — 본게임·오디오·점수 팝업·입력 bias · Inspector 점수/HP **Play 확인**. 24박 클립 미사용.  
+> **문서 기준일**: 2026-09-18 — **1차 완료**(유지보수). 1P·에디터 단독 **Play 확인**. 버그fix 외 신규 작업 없음. 24박 클립 미사용.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -9,11 +9,12 @@
 
 | 영역 | 상태 | 비고 |
 |------|------|------|
+| **전체** | **1차 완료** | 버그 없으면 개발 중단. 후속은 fix·부스 2~4P |
 | 목표 기획 | **확정** | 무페이즈 5스테이지 · 연습 없음 · 성공/실패 · 4×2 · 슬롯 Outline 1개(최신) |
-| C# (`IMinigameModule`) | **Play 확인** | bias · Extra 없음. 한 박 첫 입력. 슬롯 Outline·점수 팝업 |
+| C# (`IMinigameModule`) | **Play 확인** | bias · Icon Reveal · shake · HP 1P skip. 한 박 첫 입력 |
 | 메뉴 카탈로그·씬 로드 | **Play 확인** | MainMenu · `scorePanels`·`playerSlots` 등 |
 | 오디오 | **Play 확인** | `RBC_Track` Begin 1회 · ESC/종료 Stop · 클록 싱크 |
-| 화면 장식 | **에디터** | 로직 없음. AI 비범위 |
+| 화면 장식 | **Play 확인** | `DecorationLoopShake` 루프 진동 |
 | 씬 Hierarchy | **배치 완료** | 보드·장식·Phase·PlayerSlot. Module은 사용자가 `RBC_Root`에 붙임 |
 
 ### 헷갈리기 쉬운 점
@@ -21,7 +22,7 @@
 | 항목 | 진실 |
 |------|------|
 | 이 문서 | **목표 스펙**. 구 5단 판정·페이즈2·SPEED UP은 **폐기** |
-| 레포 플레이 | **Play 확인**(2026-09-18). 팝업 3종 · bias · 씬 `score*`/HP **3500** · 2~4P |
+| 레포 플레이 | **Play 확인**(2026-09-18). 1P·에디터 단독 범위 **완료**. 2~4P 부스 다패드는 **미검증** |
 | 보드 | 목표 **4열×2행**. 구씬은 가로 1줄 8칸 |
 | 판정 그림 | 보드 칸 위 이펙트 **없음**. 슬롯 테두리만 |
 | 연습 | **없음** (Pigeon과 같은 기획 예외). 미완성이 아님 |
@@ -85,7 +86,7 @@ Input 구간·해당 박 윈도우가 열린 참가 슬롯만 읽는다. Reveal�
 | 구간 | ButtonIcon | Square `Outline` |
 |------|------------|------------------|
 | Intro | 비표시 | 없음 · **Square_1~8**은 각자 박(0~7)에 `Square_Intro` 애니 1회 |
-| Reveal | 0~현재박 순차 공개 | 없음 |
+| Reveal | 0~현재박 순차 공개 · 해당 칸 `Icon` Animator **`Reveal`** 매 박 | 없음 |
 | Input | 8칸 전부 | 눌러야 하는 현재 박만 |
 
 ### 패턴 (레거시)
@@ -122,12 +123,10 @@ Input 구간·해당 박 윈도우가 열린 참가 슬롯만 읽는다. Reveal�
 
 이론 최대 = `5 × (8×scoreSuccess + scoreEightBeatBonus)` (기본 **550,000**).
 
-HP (`RhythmButtonChallengeHpLossRules`, Result에서만 −1):
+HP (`RhythmButtonChallengeHpLossRules`, Result에서만 −1, Pigeon과 동일 취지):
 
-1. `FinalScore < hpLowScoreThreshold` (Inspector, 기본 **500000**)
-2. 참가 2명 이상 **하위 50%** (OR)
-
-threshold **정확히** 달성 시 저점수 규칙 아님.
+- **1인**: HP 감소 없음.
+- **2인 이상**: 점수 **하위 50%**만 −1 (2→1, 3→1, 4→2). 저점수 컷 없음.
 
 ### 판정 UI
 
@@ -200,7 +199,7 @@ Minigame_RhythmButtonChallenge
 | `RhythmButtonChallengeMinigameModule` | `BuiltInId`. Begin에서 Intro 클록 시작 |
 | `.BeatClock.cs` | 구간 8박 → 다음 Reveal/Input 또는 `CompleteSession` |
 | `.Hud.cs` | 클록·점수·HP · `phaseLabel` · `playerSlots` · `scorePanels` · `scorePopupVisibleSeconds` |
-| `.Board.cs` | `boardSquares` 8칸. `Icon` 자식 이름(A/B/X/Y/LB/RB/방향). Outline은 Input 현재 박 |
+| `.Board.cs` | `boardSquares` 8칸. `Icon` Animator `Reveal` · 자식 이름(A/B/X/Y/LB/RB/방향). Outline은 Input 현재 박 |
 | `.Pattern.cs` | Reveal 시작 때 `GeneratePatternForStage` |
 | `.Input.cs` | Input 구간만 10키. 한 박 첫 입력만 |
 | `.Judgment.cs` | `ApplySuccess`/`ApplyFail` · 8박 보너스 (`score*` 필드) |
@@ -212,7 +211,7 @@ Minigame_RhythmButtonChallenge
 | `.Audio.cs` | `musicSource` · `sessionTrack`. Begin Play / 종료 Stop |
 | `.ExitSequence.cs` | `exitScreenFader` 씬에 연결됨 |
 | `RhythmButtonChallengeSceneBootstrap` | `PartySession` → `Begin`/`Tick`. `FindObjectOfType` 없음 |
-| `RhythmButtonChallengeHpLossRules` | 50만 + 하위 50% |
+| `RhythmButtonChallengeHpLossRules` | 1인 skip · 2인+ 하위 50% |
 | `RhythmButtonChallengeResultMinigameFlavor` | ID 매칭만 |
 | `RhythmButtonChallengeScorePanelBindings` | `ScoreText` · 팝업 Animator 3. 모듈 `scorePanels` |
 | `*BoardCellBindings` | Inspector 필드만. 이름 AutoWire 없음 |
@@ -230,6 +229,6 @@ Minigame_RhythmButtonChallenge
 
 | 주제 | 상태 |
 |------|------|
-| 화면 장식 | 에디터. 문서화 안 함 |
+| 2~4P 부스 동시 | **후순위** — 패드 있을 때 HP 하위 50%·다패드 입력 |
 
 문서 갱신: **2026-09-17** (RBC_Track 오디오) · **2026-09-14** (Extra 삭제) · **2026-09-14** (Extra 빨강·0.2초 페이드) · **2026-09-13** (입력·슬롯 색·점수) · **2026-09-13** (보드 아이콘·Input Outline) · **2026-09-13** (비트클록) · **2026-09-13** (구 로직 삭제·스텁) · **2026-09-13** (목표 스펙 전면 재작성)

@@ -4,18 +4,15 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 {
     /// <summary>
     /// Rhythm Button Challenge 본게임 종료 시 HP 1 감소 대상 판정.
-    /// (1) 총점 &lt; lowScoreThreshold(모듈 `hpLowScoreThreshold`, 기본 500000) · (2) 참가 2명 이상이면 하위 50%.
-    /// threshold 정확히 달성 시 HP 감소 없음 (저점수 규칙 미해당).
+    /// · 1인: 깎지 않음.
+    /// · 2인 이상: 하위 50%만 (2→1, 3→1, 4→2). 저점수 컷 없음.
     /// </summary>
     public static class RhythmButtonChallengeHpLossRules
     {
-        public const int DefaultLowScoreThreshold = 500000;
-
         public static void FillHpLost(
             int[] finalScore,
             bool[] participated,
-            bool[] hpLostOut,
-            int lowScoreThreshold = DefaultLowScoreThreshold)
+            bool[] hpLostOut)
         {
             if (hpLostOut == null)
                 return;
@@ -34,16 +31,6 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             }
 
             int count = active.Count;
-            if (count == 0)
-                return;
-
-            for (var a = 0; a < active.Count; a++)
-            {
-                int slot = active[a];
-                if (finalScore[slot] < lowScoreThreshold)
-                    hpLostOut[slot] = true;
-            }
-
             if (count < 2)
                 return;
 

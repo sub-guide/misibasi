@@ -42,6 +42,9 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 PrepareIntroSquareVisuals();
                 PlayIntroSquareBeat(0);
             }
+
+            if (kind == RbcSegmentKind.StageReveal)
+                PlayRevealIconBeat(0);
         }
 
         void TickBeatClock()
@@ -71,6 +74,8 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 if (_segmentKind == RbcSegmentKind.PhaseIntro)
                     PlayIntroSquareBeat(_beatIndex);
                 RefreshBoard();
+                if (_segmentKind == RbcSegmentKind.StageReveal)
+                    PlayRevealIconBeat(_beatIndex);
             }
 
             double segmentEnd = _segmentStartTime + duration * BeatsPerSegment;

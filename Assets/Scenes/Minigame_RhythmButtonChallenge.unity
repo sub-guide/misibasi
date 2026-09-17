@@ -2202,7 +2202,6 @@ MonoBehaviour:
   scoreSuccess: 100
   scoreFail: -50
   scoreEightBeatBonus: 300
-  hpLowScoreThreshold: 3500
   phaseLabel: {fileID: 1314361026}
   playerSlots:
   - {fileID: 1549949787}
