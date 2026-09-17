@@ -1,6 +1,6 @@
 # 05_Rhythm_Button_Challenge
 
-> **문서 기준일**: 2026-09-18 — `RBC_Track`·Intro·보드·입력·슬롯·HP·종료 **Play 확인**. 클록 `beatDurationSeconds`·`preIntroDelaySeconds` 씬 튜닝. 24박 클립 미사용.  
+> **문서 기준일**: 2026-09-18 — 본게임·오디오·점수 팝업·입력 bias · Inspector 점수/HP **Play 확인**. 24박 클립 미사용.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -10,8 +10,8 @@
 | 영역 | 상태 | 비고 |
 |------|------|------|
 | 목표 기획 | **확정** | 무페이즈 5스테이지 · 연습 없음 · 성공/실패 · 4×2 · 슬롯 Outline 1개(최신) |
-| C# (`IMinigameModule`) | **Play 확인** | Extra 없음. 한 박 첫 입력. 녹/빨 0.2초 페이드. 8박 보너스 |
-| 메뉴 카탈로그·씬 로드 | **Play 확인** | MainMenu 진입 · `phaseLabel`·`boardSquares`·`playerSlots` |
+| C# (`IMinigameModule`) | **Play 확인** | bias · Extra 없음. 한 박 첫 입력. 슬롯 Outline·점수 팝업 |
+| 메뉴 카탈로그·씬 로드 | **Play 확인** | MainMenu · `scorePanels`·`playerSlots` 등 |
 | 오디오 | **Play 확인** | `RBC_Track` Begin 1회 · ESC/종료 Stop · 클록 싱크 |
 | 화면 장식 | **에디터** | 로직 없음. AI 비범위 |
 | 씬 Hierarchy | **배치 완료** | 보드·장식·Phase·PlayerSlot. Module은 사용자가 `RBC_Root`에 붙임 |
@@ -21,7 +21,7 @@
 | 항목 | 진실 |
 |------|------|
 | 이 문서 | **목표 스펙**. 구 5단 판정·페이즈2·SPEED UP은 **폐기** |
-| 레포 플레이 | **Play 확인**(2026-09-18). Intro Square 박별 · 2~4P·Results HP 포함 |
+| 레포 플레이 | **Play 확인**(2026-09-18). 팝업 3종 · bias · 씬 `score*`/HP **3500** · 2~4P |
 | 보드 | 목표 **4열×2행**. 구씬은 가로 1줄 8칸 |
 | 판정 그림 | 보드 칸 위 이펙트 **없음**. 슬롯 테두리만 |
 | 연습 | **없음** (Pigeon과 같은 기획 예외). 미완성이 아님 |
