@@ -15,9 +15,10 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 return;
             }
 
-            TickInput();
             TickPreIntroDelay();
             TickBeatClock();
+            TickInput();
+            TickScorePopupHides();
             TickOutlineFades();
         }
 

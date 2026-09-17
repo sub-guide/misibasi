@@ -14,10 +14,14 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             public GameObject Root;
             public Outline Outline;
             public TMP_Text ScoreText;
+            public Animator PopupSuccess;
+            public Animator PopupFail;
+            public Animator PopupBonus;
             public Color IdleOutlineColor;
             public bool OutlineFading;
             public double OutlineFadeStart;
             public Color OutlineFadeFrom;
+            public double PopupHideTime;
         }
 
         [System.NonSerialized] SlotUiCache[] _slotUi;
@@ -36,26 +40,33 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 return;
             }
 
+            if (scorePanels == null || scorePanels.Length != SlotCount)
+            {
+                Debug.LogError(
+                    "[RhythmButtonChallengeMinigameModule] scorePanels 에 P1~P4 ScorePanelBindings 를 4칸 연결하세요.",
+                    this);
+                return;
+            }
+
             var ui = new SlotUiCache[SlotCount];
             for (var i = 0; i < SlotCount; i++)
             {
                 RectTransform slot = playerSlots[i];
-                if (slot == null)
+                RhythmButtonChallengeScorePanelBindings panel = scorePanels[i];
+                if (slot == null || panel == null)
                 {
                     Debug.LogError(
-                        $"[RhythmButtonChallengeMinigameModule] playerSlots[{i}] 가 비어 있습니다.",
+                        $"[RhythmButtonChallengeMinigameModule] playerSlots[{i}] 또는 scorePanels[{i}] 가 비어 있습니다.",
                         this);
                     return;
                 }
 
                 var outline = slot.GetComponent<Outline>();
-                Transform score = slot.Find($"P{i + 1}_Score");
-                var scoreText = score != null ? score.GetComponent<TMP_Text>() : null;
-                if (outline == null || scoreText == null)
+                if (outline == null || panel.ScoreText == null)
                 {
                     Debug.LogError(
-                        $"[RhythmButtonChallengeMinigameModule] {slot.name} 에 Outline 또는 P{i + 1}_Score 가 없습니다.",
-                        slot);
+                        $"[RhythmButtonChallengeMinigameModule] {slot.name} Outline 또는 {panel.name} ScoreText 가 없습니다.",
+                        panel);
                     return;
                 }
 
@@ -63,7 +74,10 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 {
                     Root = slot.gameObject,
                     Outline = outline,
-                    ScoreText = scoreText,
+                    ScoreText = panel.ScoreText,
+                    PopupSuccess = panel.PopupSuccess,
+                    PopupFail = panel.PopupFail,
+                    PopupBonus = panel.PopupBonus,
                     IdleOutlineColor = outline.effectColor
                 };
             }

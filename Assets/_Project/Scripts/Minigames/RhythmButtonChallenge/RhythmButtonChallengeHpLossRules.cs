@@ -4,8 +4,8 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
 {
     /// <summary>
     /// Rhythm Button Challenge 본게임 종료 시 HP 1 감소 대상 판정.
-    /// (1) 총점 &lt; 500000 · (2) 참가 2명 이상이면 하위 50%.
-    /// 500000점 정확히 달성 시 HP 감소 없음 (저점수 규칙 미해당).
+    /// (1) 총점 &lt; lowScoreThreshold(모듈 `hpLowScoreThreshold`, 기본 500000) · (2) 참가 2명 이상이면 하위 50%.
+    /// threshold 정확히 달성 시 HP 감소 없음 (저점수 규칙 미해당).
     /// </summary>
     public static class RhythmButtonChallengeHpLossRules
     {

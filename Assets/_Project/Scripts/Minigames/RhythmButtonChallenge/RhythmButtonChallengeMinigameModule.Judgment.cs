@@ -36,7 +36,8 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 if (!_aliveMask[i] || _slots[i].SuccessesThisInput != BeatsPerSegment)
                     return;
 
-                _slots[i].ScoreSum = ApplyScoreDeltaNonNegative(_slots[i].ScoreSum, ScoreEightBeatBonus);
+                _slots[i].ScoreSum = ApplyScoreDeltaNonNegative(_slots[i].ScoreSum, scoreEightBeatBonus);
+                PlayScorePopup(i, ScorePopupKind.Bonus);
                 RefreshScoreLabel(i);
             });
         }
@@ -47,8 +48,9 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             _slots[slotIndex].SuccessesThisInput++;
             _slots[slotIndex].ScoreSum = ApplyScoreDeltaNonNegative(
                 _slots[slotIndex].ScoreSum,
-                ScoreSuccess);
+                scoreSuccess);
             SetSlotOutlineJudged(slotIndex, success: true);
+            PlayScorePopup(slotIndex, ScorePopupKind.Success);
             RefreshScoreLabel(slotIndex);
         }
 
@@ -57,8 +59,9 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             _slots[slotIndex].BeatState = BeatJudgment.Fail;
             _slots[slotIndex].ScoreSum = ApplyScoreDeltaNonNegative(
                 _slots[slotIndex].ScoreSum,
-                ScoreFail);
+                scoreFail);
             SetSlotOutlineJudged(slotIndex, success: false);
+            PlayScorePopup(slotIndex, ScorePopupKind.Fail);
             RefreshScoreLabel(slotIndex);
         }
     }

@@ -105,27 +105,29 @@ Input 구간·해당 박 윈도우가 열린 참가 슬롯만 읽는다. Reveal�
 
 한 박 = 비트클록 구간. **성공 / 실패**만. Perfect·Fast·Slow·Miss·Wrong·ms 창 없음.
 
+- **판정 박**: `floor((입력시각 + inputTimingBiasSeconds − 구간시작) / beatDurationSeconds)` (0~7). **클록 `_beatIndex`와 같을 때만** 성공/실패 처리(다르면 무시·오답 처리 안 함).
 - **성공**: 그 박의 **첫 입력이 정답**.
-- **실패**: 첫 입력이 **오답**, 또는 **박 종료까지 입력 없음**.
+- **실패**: (위 조건에서) 첫 입력이 **오답**, 또는 **박 종료까지 입력 없음**.
 - 같은 박의 둘째 입력부터 **무시**. Extra 점수·테두리 **없음**.
+- `Tick`: 비트클록 → 입력 순(박 경계 프레임 정합).
 
 ### 점수 · HP (레거시 숫자)
 
-| 항목 | 값 |
-|------|----|
-| 성공 | +10,000 |
-| 실패 | −10,000 |
-| 8박 전부 성공 | +30,000 |
-| 점수 하한 | 0 |
+| 항목 | Inspector |
+|------|-----------|
+| 성공 | `scoreSuccess` (기본 10,000) |
+| 실패 | `scoreFail` (기본 −10,000) |
+| 8박 전부 성공 | `scoreEightBeatBonus` (기본 30,000) |
+| 점수 하한 | 0 (코드) |
 
-이론 최대 (5 Input × (80,000+30,000)) = **550,000**.
+이론 최대 = `5 × (8×scoreSuccess + scoreEightBeatBonus)` (기본 **550,000**).
 
 HP (`RhythmButtonChallengeHpLossRules`, Result에서만 −1):
 
-1. `FinalScore < 500000`
+1. `FinalScore < hpLowScoreThreshold` (Inspector, 기본 **500000**)
 2. 참가 2명 이상 **하위 50%** (OR)
 
-500000 정확은 저점수 규칙 아님.
+threshold **정확히** 달성 시 저점수 규칙 아님.
 
 ### 판정 UI
 
@@ -137,6 +139,8 @@ HP (`RhythmButtonChallengeHpLossRules`, Result에서만 −1):
 - 실패 → 테두리 **빨간** → 같은 페이드
 
 검정으로 **즉시 바꾸지 않음**. 다음 박 판정이 나오면 그 색부터 페이드를 다시 시작한다. 비참가 슬롯은 숨김(Pigeon과 같은 취지).
+
+`RhythmButtonChallengeScorePanelBindings`: `ScoreText` · `PopupSuccess` · `PopupFail` · `PopupBonus`(Animator). 모듈 `scorePanels[4]`. 성공/실패/8박 보너스 시 해당 Animator `ScoreEffect` 재생. TMP 문구는 에디터. `scorePopupVisibleSeconds`.
 
 ### 비트클록
 
@@ -193,18 +197,20 @@ Minigame_RhythmButtonChallenge
 |------|------|
 | `RhythmButtonChallengeMinigameModule` | `BuiltInId`. Begin에서 Intro 클록 시작 |
 | `.BeatClock.cs` | 구간 8박 → 다음 Reveal/Input 또는 `CompleteSession` |
-| `.Hud.cs` | `preIntroDelaySeconds` · `beatDurationSeconds` · `phaseLabel` · `playerSlots` |
+| `.Hud.cs` | 클록·점수·HP · `phaseLabel` · `playerSlots` · `scorePanels` · `scorePopupVisibleSeconds` |
 | `.Board.cs` | `boardSquares` 8칸. `Icon` 자식 이름(A/B/X/Y/LB/RB/방향). Outline은 Input 현재 박 |
 | `.Pattern.cs` | Reveal 시작 때 `GeneratePatternForStage` |
 | `.Input.cs` | Input 구간만 10키. 한 박 첫 입력만 |
-| `.Judgment.cs` | 성공 +10000 · 실패 −10000 · 8박 보너스 +30000 |
-| `.SlotUi.cs` | 슬롯 Outline 녹/빨. 0.2초 검정 페이드. 점수 `{n}점` |
+| `.Judgment.cs` | `ApplySuccess`/`ApplyFail` · 8박 보너스 (`score*` 필드) |
+| `.SlotUi.cs` | 슬롯 Outline 녹/빨. 0.2초 검정 페이드. 총점 `{n}점` |
+| `.ScorePopup.cs` | 성공/실패/보너스 Animator `ScoreEffect` |
 | `.Audio.cs` | `musicSource` · `sessionTrack`. Begin Play / 종료 Stop |
 | `.ExitSequence.cs` | `exitScreenFader` 씬에 연결됨 |
 | `RhythmButtonChallengeSceneBootstrap` | `PartySession` → `Begin`/`Tick`. `FindObjectOfType` 없음 |
 | `RhythmButtonChallengeHpLossRules` | 50만 + 하위 50% |
 | `RhythmButtonChallengeResultMinigameFlavor` | ID 매칭만 |
-| `*BoardCellBindings` / `*ScorePanelBindings` | Inspector 필드만. 이름 AutoWire 없음 |
+| `RhythmButtonChallengeScorePanelBindings` | `ScoreText` · 팝업 Animator 3. 모듈 `scorePanels` |
+| `*BoardCellBindings` | Inspector 필드만. 이름 AutoWire 없음 |
 | `GameFlowDirector` | id → 씬, `practice = false` |
 
 **삭제됨**: `.AudioFlow.cs` · `.Gameplay.cs` · `.Ui.cs` (박마다 클립, 5단 판정, `GameObject.Find`)

@@ -57,7 +57,13 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             });
 
             if (!_ctx.IsPractice)
-                RhythmButtonChallengeHpLossRules.FillHpLost(report.FinalScore, participated, report.HpLostThisSession);
+            {
+                RhythmButtonChallengeHpLossRules.FillHpLost(
+                    report.FinalScore,
+                    participated,
+                    report.HpLostThisSession,
+                    hpLowScoreThreshold);
+            }
 
             return report;
         }

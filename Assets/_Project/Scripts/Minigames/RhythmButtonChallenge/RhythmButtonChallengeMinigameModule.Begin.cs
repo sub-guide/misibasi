@@ -27,6 +27,7 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
             ResolveBoard();
             ResolveSlotUi();
             ApplySlotParticipation();
+            HideAllScorePopups();
             RefreshAllScoreLabels();
             StartSessionAudio();
 

@@ -1,4 +1,5 @@
 using MiniParty.Input;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace MiniParty.Minigames.RhythmButtonChallenge
@@ -8,6 +9,11 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
         void TickInput()
         {
             if (_segmentKind != RbcSegmentKind.StageInput || !_clockStarted)
+                return;
+
+            double inputTime = Time.unscaledTimeAsDouble;
+            int judgedBeat = GetJudgedBeatIndexForInput(inputTime);
+            if (judgedBeat != _beatIndex)
                 return;
 
             ForEachSlot(i =>
@@ -22,11 +28,24 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 if (!pressed.HasValue)
                     return;
 
-                if (pressed.Value == _currentPattern[_beatIndex])
+                if (pressed.Value == _currentPattern[judgedBeat])
                     ApplySuccess(i);
                 else
                     ApplyFail(i);
             });
+        }
+
+        int GetJudgedBeatIndexForInput(double inputTimeUnscaled)
+        {
+            float duration = beatDurationSeconds;
+            if (duration <= 0f)
+                return _beatIndex;
+
+            double elapsed = inputTimeUnscaled + inputTimingBiasSeconds - _segmentStartTime;
+            return Mathf.Clamp(
+                Mathf.FloorToInt((float)(elapsed / duration)),
+                0,
+                BeatsPerSegment - 1);
         }
 
         static bool WasPressed(int slotIndex, Joystick pad, string path) =>
