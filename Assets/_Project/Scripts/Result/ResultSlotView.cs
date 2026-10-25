@@ -49,11 +49,30 @@ namespace MiniParty.Result
         [Tooltip("슬롯 자식 GameOver.")]
         [SerializeField] TMP_Text gameOverText;
 
+        [Header("Ready")]
+        [Tooltip("슬롯 자식 ReadyBanner.")]
+        [SerializeField] RectTransform readyBanner;
+
+        [Tooltip("READY ON/OFF 이동 시간(초).")]
+        [SerializeField] float readyBannerMoveSeconds = 0.5f;
+
+        [Tooltip("READY ON 목표 Y (Anchored).")]
+        [SerializeField] float readyBannerReadyY = 0f;
+
+        [Tooltip("READY OFF 목표 Y (Anchored).")]
+        [SerializeField] float readyBannerHiddenY = 1080f;
+
+        [Tooltip("0~1 시간 → 진행. 에디터에서 손맛.")]
+        [SerializeField] AnimationCurve readyBannerCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+        Coroutine _readyBannerMoveCo;
+
         public void SetupIntro(int slotIndex, bool participated)
         {
             SetGameOverVisible(false);
             SetRankScoreVisible(false);
             SetFadeVisible(true);
+            SnapReadyBannerHidden();
         }
 
         public void RevealRanking(int rank, int score, bool practice, bool hpLost = false)
@@ -84,6 +103,7 @@ namespace MiniParty.Result
             SetGameOverVisible(false);
             SetRankScoreVisible(false);
             SetFadeVisible(true);
+            SnapReadyBannerHidden();
         }
 
         /// <summary>카드 i: <c>i &gt;= (max - current)</c> 이면 앞면 idle 스냅.</summary>
@@ -161,6 +181,13 @@ namespace MiniParty.Result
 
         public void SetReadyBorder(bool on)
         {
+            if (readyBanner == null)
+                return;
+
+            float targetY = on ? readyBannerReadyY : readyBannerHiddenY;
+            if (_readyBannerMoveCo != null)
+                StopCoroutine(_readyBannerMoveCo);
+            _readyBannerMoveCo = StartCoroutine(CoMoveReadyBanner(targetY));
         }
 
         IEnumerator CoFlipCardToBack(Animator anim, float durationFallback)
@@ -214,6 +241,54 @@ namespace MiniParty.Result
         {
             if (fade != null)
                 fade.SetActive(visible);
+        }
+
+        void SnapReadyBannerHidden()
+        {
+            if (_readyBannerMoveCo != null)
+            {
+                StopCoroutine(_readyBannerMoveCo);
+                _readyBannerMoveCo = null;
+            }
+
+            SetReadyBannerY(readyBannerHiddenY);
+        }
+
+        IEnumerator CoMoveReadyBanner(float targetY)
+        {
+            float fromY = readyBanner.anchoredPosition.y;
+            float duration = Mathf.Max(0f, readyBannerMoveSeconds);
+
+            if (duration <= 0f)
+            {
+                SetReadyBannerY(targetY);
+                _readyBannerMoveCo = null;
+                yield break;
+            }
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                float u = readyBannerCurve.Evaluate(t);
+                SetReadyBannerY(Mathf.LerpUnclamped(fromY, targetY, u));
+                yield return null;
+            }
+
+            float endU = readyBannerCurve.Evaluate(1f);
+            SetReadyBannerY(Mathf.LerpUnclamped(fromY, targetY, endU));
+            _readyBannerMoveCo = null;
+        }
+
+        void SetReadyBannerY(float y)
+        {
+            if (readyBanner == null)
+                return;
+
+            Vector2 p = readyBanner.anchoredPosition;
+            p.y = y;
+            readyBanner.anchoredPosition = p;
         }
 
         void SetGameOverVisible(bool visible)
