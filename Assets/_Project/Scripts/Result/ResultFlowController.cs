@@ -190,6 +190,12 @@ namespace MiniParty.Result
                 }
 
                 view.SetupIntro(i, participated: true);
+
+                if (_session?.Slots != null)
+                {
+                    int maxHp = _session.StartingHp;
+                    view.SetHp(_session.Slots[i].HP, maxHp);
+                }
             }
 
             ApplyMinigameFlavorIntro();

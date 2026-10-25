@@ -136,6 +136,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2b66ac76be4bf14a80aaebb919b5e5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hpCardAnimators:
+  - {fileID: 1091238373047165510}
+  - {fileID: 4356707658878363689}
+  cardFlipWaitSeconds: 0.29
 --- !u!114 &3846917050170186989
 MonoBehaviour:
   m_ObjectHideFlags: 0
