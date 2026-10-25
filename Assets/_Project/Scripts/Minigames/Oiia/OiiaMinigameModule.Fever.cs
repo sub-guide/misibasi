@@ -41,6 +41,21 @@ namespace MiniParty.Minigames.Oiia
             RefreshFeverScreamAudio();
         }
 
+        void EnterTier2()
+        {
+            if (_tier2Active)
+                return;
+
+            _tier2Active = true;
+            UpdateGlobalTierFeverMode();
+            ForEachSlot(ApplySlotChrome);
+            ForEachSlot(i =>
+            {
+                if (_aliveMask[i])
+                    UpdateCatAnimationMode(i);
+            });
+        }
+
         void ResetGlobalTierFeverMode()
         {
             for (var i = 0; i < _baseFeverActive.Length; i++)

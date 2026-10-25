@@ -12,6 +12,9 @@ namespace MiniParty.Minigames.Oiia
         /// <summary>10키 전부 정답. 같은 프레임의 첫 입력 1회만 점수.</summary>
         void TickGameplay(int i)
         {
+            if (!_tier2Active)
+                return;
+
             if (!SlotGamepad.HasInput(i))
                 return;
 

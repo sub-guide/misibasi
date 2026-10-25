@@ -15,6 +15,10 @@ namespace MiniParty.Minigames.Oiia
 
         float _remainingMainTime;
 
+        float _roundElapsed;
+
+        bool _tier2Active;
+
         readonly bool[] _aliveMask = new bool[SlotCount];
 
         readonly Color[] _slotPanelBgRestColor = new Color[SlotCount];

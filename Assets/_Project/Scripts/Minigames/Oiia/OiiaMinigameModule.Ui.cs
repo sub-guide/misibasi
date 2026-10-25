@@ -15,7 +15,7 @@ namespace MiniParty.Minigames.Oiia
                 return;
 
             if (b.CatAnimator != null)
-                b.CatAnimator.gameObject.SetActive(_aliveMask[i]);
+                b.CatAnimator.gameObject.SetActive(_aliveMask[i] && _tier2Active);
         }
 
         void FlushUi(int i)

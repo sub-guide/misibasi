@@ -1,17 +1,17 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-10-25 — T3 연타에서 안 타던 연습·T1/T2·3키·3초 피버·Balance 티어 헬퍼 **삭제**. `Fever*` 이름·씬 오브젝트·T3 Inspector 필드명(`uiShakeTier3`·`speakerTier3`)은 유지.
+> **갱신**: 2026-10-26 — T1 빌드업 후 T2. Inspector `mainRoundDurationSeconds`(코드 기본 **26**)·`tier1DurationSeconds`·`bgmStartTimeSeconds`. 연출 필드명은 `uiShakeTier2`·`speakerTier2`.
 
 ---
 
 ## 0. 현재 상태
 
-> **상태**: T3 연타 개편 **코드 완료 · Play 미검증** (2026-10-25). 이전 디제잉 레이브(T1~T3)는 2026-07-18 Play 검증.
+> **상태**: T1 빌드업 후 T2 연타(26초·BGM 클립 위치) **Play 확인**(2026-10-26). 2~4P는 미검증.
 
 ### 한 줄 요약
 
-4명이 세로 4분할 슬롯에서 SNES **10키**를 **30초 동안 많이 누르는** 게임이다. 시작부터 끝까지 예전 T3 상태(클럽·전 키 정답·관중·스핀·빔·Scream)가 **기본 상태**이고, 입력마다 `oiiaiooiiiai` 패턴이 진행돼 12글자마다 보너스가 붙는다.
+4명이 세로 4분할 슬롯에서 SNES **10키**를 연타하는 게임이다. **T1**은 우주 배경만 있는 빌드업(입력·Highlight·연출 없음)이고, **T2**에서 `mainRoundDurationSeconds`(코드 기본 **26**초) 동안 클럽·전 키 정답·관중·스핀·빔·Scream으로 점수를 쌓는다. 입력마다 `oiiaiooiiiai`가 진행돼 12글자마다 보너스가 붙는다.
 
 ### 기본 상태 (예전 T3)
 
@@ -19,16 +19,10 @@
 
 | 항목 | 값 |
 |------|-----|
-| 본게임 길이 | `MainRoundDurationSeconds` = **30** |
-| 글로벌 티어 | 시간 티어 없음. 시작부터 클럽·전 키 정답 |
-| 전광판 | 시작 즉시 **Club(클럽 네온)** |
-| Beam | 상시 ON · 티어 예고 점멸(`IsBeamTierTeaseWindow`) **없음** |
-| 고양이 | 시작 즉시 `SpinLoop` |
-| 10키 | 전부 Highlight · **모든 입력 정답** (오답 없음) |
-| 관중 | 시작 시 상승 → 진동 유지 (`Crowd.cs`) |
-| Scream | `Scream.mp3` 판 내내 루프 · 재시작/세션 종료 시 정지 |
-| 떼창 | 입력마다 패턴 스텝 다중 레이어 (`FeverChant.cs`) |
-| BGM | 본게임 시작부터 `mainBgmClip` 단일 루프 |
+| 본게임 | T1 `tier1DurationSeconds`(코드 기본 **5**) 동안 타이머 정지 · 이후 T2에서 `mainRoundDurationSeconds`(코드 기본 **26**) 감소 |
+| T1 | 우주(`Bg_Space`)만. 입력 불가 · Highlight 없음 · 고양이·관중·빔·Scream·흔들림 없음 |
+| T2 | 클럽 · 10키 Highlight · 전부 정답 · 관중 · 고양이 SpinLoop · Beam · Scream · 떼창 |
+| BGM | 라운드 시작과 함께 `mainBgmClip` 루프. 재생 시작 위치는 `bgmStartTimeSeconds`(코드 기본 **0**, 곡의 처음) |
 
 ### 핵심 게임플레이
 
@@ -46,7 +40,7 @@
 
 ### 플레이어가 해야 할 일
 
-- **30초** 동안 10키를 최대한 많이 누른다.
+- **T1**이 끝난 뒤 `mainRoundDurationSeconds`(코드 기본 **26**초) 동안 10키를 최대한 많이 누른다.
 - 입력마다 패턴 `oiiaiooiiiai` 진행도가 오르고, 스피커·가이드·떼창이 반응한다.
 - 12글자를 채울 때마다 보너스 **+500**.
 
@@ -205,7 +199,7 @@ TickMeta (입력잠금 · TickFever)
 
 ### 입력
 
-1. 시작부터 10키 전부 Highlight.
+1. T2 시작부터 10키 전부 Highlight. T1에는 Highlight 없음.
 2. 어떤 키든 정답.
 3. 같은 프레임 다중 입력은 1회로 처리.
 
@@ -220,12 +214,12 @@ TickMeta (입력잠금 · TickFever)
 
 | 시스템 | 트리거·동작 |
 |--------|-------------|
-| UiShake | 정답 임펄스 `uiShakeTier3*` + 상시 `uiShakeIdle*` · 대상 HUD·DjBox·StageScreen |
-| Speakers | 패턴 스텝 → 우퍼 펄스 · O/I/A 글자 분출 · `speakerTier3` |
-| Spotlight | Fixture 상시 · Beam 상시(네온·스트로브) |
-| StageBackground | 시작 즉시 **Club** |
-| Crowd | 시작 Rising→Active(진동) 유지 |
-| CatAnimator | 시작 즉시 SpinLoop |
+| UiShake | T2 정답 임펄스 `uiShakeTier2` + 상시 `uiShakeIdleTier2` |
+| Speakers | T2 패턴 스텝 → 우퍼 펄스 · O/I/A 글자 분출 · `speakerTier2` |
+| Spotlight | T2만 Fixture·Beam |
+| StageBackground | T1 **Space** · T2 **Club** |
+| Crowd | T2 시작 Rising→Active |
+| CatAnimator | T1 숨김 · T2 SpinLoop |
 | Slot clip | 패널 `RectMask2D` |
 
 ---
@@ -321,20 +315,23 @@ BurstText · ShuffleEffect · ButtonShuffle · GuideFeedback · GaugeSlider 드�
 
 | 그룹 | 값 |
 |------|-----|
-| UiShake 정답 | `uiShakeTier3` 씬 값 (코드 기본 20 / 0.25s / 64Hz) |
-| UiShake 상시 | `uiShakeIdleTier3` 씬 값 (코드 기본 8px / 32Hz) |
+| UiShake 정답 | `uiShakeTier2` (옛 `uiShakeTier3` 씬 값) |
+| UiShake 상시 | `uiShakeIdleTier2` (옛 `uiShakeIdleTier3` 씬 값) |
 | FeverChant | Layer **12** · Pool **32** · Pitch **0.98~1.02** · Vol **0.5~1** · Delay **0.15s** |
 | Crowd | Rise 120 · Rise/Fade 0.35/0.4 · Shake Amp **10** · Freq **3** · AutoPlace **OFF** |
-| Speaker T3 | `speakerTier3` 씬 값. T1/T2 필드는 삭제 |
+| Speaker | `speakerTier2` (옛 `speakerTier3` 씬 값) |
+| 본게임 시간 | `mainRoundDurationSeconds` 코드 기본 **26**. 씬에 없으면 코드 값. 최소 `MainRoundMinSeconds` **1** |
+| T1 | `tier1DurationSeconds` 코드 기본 **5**. 씬에 없으면 코드 값 |
+| BGM 시작 위치 | `bgmStartTimeSeconds` 코드 기본 **0**(초). 클립 길이보다 크면 끝 0.05초 전으로 맞춤 |
 | Spotlight | `spotlightBeamAlpha` **0.15** |
-| Stage BG | 시작 즉시 Club. 크로스페이드 필드 삭제 |
+| Stage BG | T1 Space · T2 Club. 크로스페이드 필드 삭제 |
 | DjPad | ABXY Unpressed 명도 **100** · L/R Highlight black 스프라이트 연결 |
 | BGM | `tierBgmVolume` **0.85** · `tierBgmSource` 비움(런타임 생성) |
 | Cat | Idle / SpinOnce / SpinLoop |
 
-코드 상수: `MainRoundDurationSeconds` **30** · `DjHitScore` **100** · `PatternCompleteBonusScore` **500** · HP 컷 **8000**.
+코드 상수: `DjHitScore` **100** · `PatternCompleteBonusScore` **500** · HP 컷 **8000**. 본게임 시간은 Inspector `mainRoundDurationSeconds`.
 
-`uiShakeTier1/2`·`speakerTier1/2`·`stageBgCrossfadeSeconds` 필드는 삭제했다. 씬 YAML에 옛 값이 남아 있어도 Unity는 무시한다. 플레이에 쓰는 값은 `uiShakeTier3`·`speakerTier3` 씬 저장값이다.
+`uiShakeTier2`·`uiShakeIdleTier2`·`speakerTier2`는 예전 `*Tier3` 씬 저장값을 `FormerlySerializedAs`로 읽는다.
 
 ---
 
@@ -374,15 +371,14 @@ CollectDjPadPressed → OnDjHit
 
 ### 완료
 
-- T3 연타 기본 상태 · 연습 없음 · 30초 · +100 · 패턴 완성 +500 · **Play 확인**(2026-10-25, 삭제 전)
-- 연습·T1/T2·3키·3초 피버·Balance 티어 헬퍼 **삭제** (코드 · 삭제 후 Play **미검증**)
+- T1 우주 빌드업(입력·Highlight 없음) 후 T2 연타 · `mainRoundDurationSeconds` **26** · `bgmStartTimeSeconds` · **Play 확인**(2026-10-26)
+- 연습·옛 시간 티어·3키·3초 피버·Balance 티어 헬퍼 **삭제**
 - SubPatternGuide · Speakers · Crowd · UiShake · Scream · FeverChant
 - 슬롯 RectMask2D 클리핑 · ABXY Unpressed 명도 · Result/HP
 
 ### 미완·후속
 
-- 삭제 후 Play 확인 · HP 컷 8000 조정
-- 배경음악 시작 시점 — 사용자 후속
+- HP 컷 8000 조정
 - 2~4P·부스 다패드 재검증
 - `buzzClip` / `sessionEndClip` 연결 여부
 - `OiiaVideoEffectController` 사용처 정리(선택)

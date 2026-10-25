@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MiniParty.Minigames.Oiia
 {
@@ -51,7 +52,8 @@ namespace MiniParty.Minigames.Oiia
         [SerializeField] bool speakerLetterOverrideFontSizeFromTier = true;
 
         [Header("스피커 연출")]
-        [SerializeField] SpeakerTierFxSettings speakerTier3 = new SpeakerTierFxSettings
+        [FormerlySerializedAs("speakerTier3")]
+        [SerializeField] SpeakerTierFxSettings speakerTier2 = new SpeakerTierFxSettings
         {
             WooferPulseScale = 1.55f,
             WooferPulseSeconds = 0.14f,
@@ -95,7 +97,7 @@ namespace MiniParty.Minigames.Oiia
         readonly SpeakerLetterFx[][] _speakerLetters = new SpeakerLetterFx[SlotCount][];
         readonly Transform[] _speakerLetterParents = new Transform[SlotCount];
 
-        SpeakerTierFxSettings GetSpeakerTierFx() => speakerTier3;
+        SpeakerTierFxSettings GetSpeakerTierFx() => speakerTier2;
 
         void ResetSpeakersAtBegin(int i)
         {
@@ -228,7 +230,7 @@ namespace MiniParty.Minigames.Oiia
                 tmp = go.AddComponent<TextMeshProUGUI>();
                 tmp.alignment = TextAlignmentOptions.Center;
                 tmp.fontStyle = FontStyles.Bold;
-                tmp.fontSize = Mathf.Max(8f, speakerTier3.LetterFontSize);
+                tmp.fontSize = Mathf.Max(8f, speakerTier2.LetterFontSize);
                 tmp.color = Color.white;
                 tmp.raycastTarget = false;
                 tmp.richText = false;

@@ -39,7 +39,7 @@ namespace MiniParty.Minigames.Oiia
 
             _devGodModeEnabled = !_devGodModeEnabled;
 
-            if (_devGodModeEnabled && _aliveMask[0] && _slots != null)
+            if (_devGodModeEnabled && _tier2Active && _aliveMask[0] && _slots != null)
                 ActivateAllDjTargets(0);
 
             Debug.Log(

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MiniParty.Minigames.Oiia
 {
@@ -29,8 +30,9 @@ namespace MiniParty.Minigames.Oiia
         }
 
         [Header("슬롯 UI 흔들림 — 정답 임펄스")]
-        [Tooltip("정답 시 HUD·DjBox·StageScreen 임펄스.")]
-        [SerializeField] UiShakeTierSettings uiShakeTier3 = new UiShakeTierSettings
+        [Tooltip("T2 정답 시 HUD·DjBox·StageScreen 임펄스.")]
+        [FormerlySerializedAs("uiShakeTier3")]
+        [SerializeField] UiShakeTierSettings uiShakeTier2 = new UiShakeTierSettings
         {
             Amplitude = 20f,
             Duration = 0.25f,
@@ -38,8 +40,9 @@ namespace MiniParty.Minigames.Oiia
         };
 
         [Header("슬롯 UI 흔들림 — 상시 진동")]
-        [Tooltip("상시 진동. 정답 임펄스와 독립·합산.")]
-        [SerializeField] UiShakeIdleTierSettings uiShakeIdleTier3 = new UiShakeIdleTierSettings
+        [Tooltip("T2 상시 진동. 정답 임펄스와 독립·합산.")]
+        [FormerlySerializedAs("uiShakeIdleTier3")]
+        [SerializeField] UiShakeIdleTierSettings uiShakeIdleTier2 = new UiShakeIdleTierSettings
         {
             Amplitude = 8f,
             Frequency = 32f
@@ -63,9 +66,9 @@ namespace MiniParty.Minigames.Oiia
         readonly float[] _uiShakeActiveDuration = new float[SlotCount];
         readonly float[] _uiShakeActiveFrequency = new float[SlotCount];
 
-        UiShakeTierSettings GetUiShakeTierSettings() => uiShakeTier3;
+        UiShakeTierSettings GetUiShakeTierSettings() => uiShakeTier2;
 
-        UiShakeIdleTierSettings GetUiShakeIdleTierSettings() => uiShakeIdleTier3;
+        UiShakeIdleTierSettings GetUiShakeIdleTierSettings() => uiShakeIdleTier2;
 
         void ResetAllSlotUiShake()
         {
@@ -183,6 +186,9 @@ namespace MiniParty.Minigames.Oiia
 
         void UpdateSlotUiShake(int i)
         {
+            if (!_tier2Active)
+                return;
+
             CaptureSlotUiShakeTargets(i);
 
             UiShakeTarget[] targets = _uiShakeTargets[i];

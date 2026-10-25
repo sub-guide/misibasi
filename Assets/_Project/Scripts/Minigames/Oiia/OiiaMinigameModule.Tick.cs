@@ -20,17 +20,23 @@ namespace MiniParty.Minigames.Oiia
 
             if (!IsDevGodModeActive())
             {
-                _remainingMainTime -= Time.deltaTime;
+                _roundElapsed += Time.deltaTime;
 
-                if (_remainingMainTime <= 0f)
+                if (!_tier2Active && _roundElapsed >= tier1DurationSeconds)
+                    EnterTier2();
+
+                if (_tier2Active)
                 {
-                    UpdateMainTimerUi();
-                    CompleteSession();
-                    return;
+                    _remainingMainTime -= Time.deltaTime;
+
+                    if (_remainingMainTime <= 0f)
+                    {
+                        UpdateMainTimerUi();
+                        CompleteSession();
+                        return;
+                    }
                 }
             }
-
-            UpdateGlobalTierFeverMode();
 
             ForEachSlot(i =>
             {

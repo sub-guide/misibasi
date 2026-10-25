@@ -16,7 +16,11 @@ namespace MiniParty.Minigames.Oiia
                 return;
             }
 
-            SetStageBackgroundAlphasImmediate(ui, chroma: 0f, space: 0f, club: 1f);
+            SetStageBackgroundAlphasImmediate(
+                ui,
+                chroma: 0f,
+                space: _tier2Active ? 0f : 1f,
+                club: _tier2Active ? 1f : 0f);
         }
 
         void TickStageBackground(int i)
@@ -30,7 +34,11 @@ namespace MiniParty.Minigames.Oiia
                 return;
             }
 
-            SetStageBackgroundAlphasImmediate(ui, chroma: 0f, space: 0f, club: 1f);
+            SetStageBackgroundAlphasImmediate(
+                ui,
+                chroma: 0f,
+                space: _tier2Active ? 0f : 1f,
+                club: _tier2Active ? 1f : 0f);
         }
 
         static void SetStageBackgroundAlphasImmediate(SlotUiBindings ui, float chroma, float space, float club)

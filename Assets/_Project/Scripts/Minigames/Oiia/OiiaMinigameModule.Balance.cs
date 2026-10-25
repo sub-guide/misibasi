@@ -2,8 +2,6 @@ namespace MiniParty.Minigames.Oiia
 {
     public sealed partial class OiiaMinigameModule
     {
-        public const float MainRoundDurationSeconds = 30f;
-
         /// <summary>버튼 입력 1회 점수.</summary>
         const int DjHitScore = 100;
 

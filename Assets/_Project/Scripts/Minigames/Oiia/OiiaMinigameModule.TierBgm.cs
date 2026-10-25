@@ -4,6 +4,19 @@ namespace MiniParty.Minigames.Oiia
 {
     public sealed partial class OiiaMinigameModule
     {
+        [Header("티어")]
+        [Tooltip("T2에서 줄어드는 본게임 시간(초). T1 동안에는 이 숫자가 화면에 멈춘 채로 보인다.")]
+        [SerializeField, Min(MainRoundMinSeconds)]
+        float mainRoundDurationSeconds = 26f;
+
+        [Tooltip("T1 빌드업 길이(초). 우주 배경만 보이고 입력·Highlight·연출은 없다. 끝나면 T2에서 본게임 타이머가 줄어든다. 0이면 T1 없이 바로 T2.")]
+        [SerializeField, Min(0f)]
+        float tier1DurationSeconds = 5f;
+
+        [Tooltip("BGM 클립에서 재생을 시작할 위치(초). 0이면 곡의 처음. 라운드가 시작되면 바로 이 지점부터 루프한다.")]
+        [SerializeField, Min(0f)]
+        float bgmStartTimeSeconds = 0f;
+
         void EnsureTierBgmAudioSource()
         {
             if (_tierBgmRuntime != null)
@@ -40,9 +53,7 @@ namespace MiniParty.Minigames.Oiia
             s.pitch = 1f;
         }
 
-        /// <summary>
-        /// 원작 밈 트랙 단일 BGM. 본게임 시작부터 루프. 티어와 무관.
-        /// </summary>
+        /// <summary>라운드가 돌아가는 동안 <see cref="mainBgmClip"/>을 <see cref="bgmStartTimeSeconds"/> 지점부터 루프.</summary>
         void UpdateTierBgm()
         {
             if (!_running)
@@ -72,6 +83,15 @@ namespace MiniParty.Minigames.Oiia
             _tierBgmRuntime.clip = want;
             _tierBgmRuntime.loop = true;
             _tierBgmRuntime.Play();
+            _tierBgmRuntime.time = ClampBgmStartTime(want);
+        }
+
+        float ClampBgmStartTime(AudioClip clip)
+        {
+            if (clip == null || clip.length <= 0.05f)
+                return 0f;
+
+            return Mathf.Clamp(bgmStartTimeSeconds, 0f, clip.length - 0.05f);
         }
     }
 }

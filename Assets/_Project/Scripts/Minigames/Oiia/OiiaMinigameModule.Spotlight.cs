@@ -72,7 +72,7 @@ namespace MiniParty.Minigames.Oiia
             if (ui.SpotlightLRoot == null && ui.SpotlightRRoot == null)
                 return;
 
-            if (!_aliveMask[i])
+            if (!_aliveMask[i] || !_tier2Active)
             {
                 SetSpotlightRootsActive(ui, active: false);
                 return;

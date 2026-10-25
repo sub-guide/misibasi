@@ -1352,7 +1352,6 @@ MonoBehaviour:
   feverChantVolumeMax: 1
   feverChantMaxStartDelay: 0.15
   sfxSource: {fileID: 2068533488}
-  buzzClip: {fileID: 0}
   mainBgmClip: {fileID: 8300000, guid: 35c188a391fe5ba4ea6b0fd7ac805fcf, type: 3}
   tierBgmSource: {fileID: 0}
   tierBgmVolume: 0.85
@@ -1379,27 +1378,7 @@ MonoBehaviour:
   speakerLetterSpawnJitter: 18
   speakerLetterTemplate: {fileID: 594064463}
   speakerLetterOverrideFontSizeFromTier: 1
-  speakerTier1:
-    WooferPulseScale: 1.2
-    WooferPulseSeconds: 0.1
-    LetterDuration: 0.5
-    LetterFontSize: 50
-    LetterFlyDistance: 50
-    LetterShakeAmplitude: 5
-    LetterShakeFrequency: 10
-    LetterScaleStart: 0
-    LetterScalePeak: 1
   speakerTier2:
-    WooferPulseScale: 1.2
-    WooferPulseSeconds: 0.3
-    LetterDuration: 1
-    LetterFontSize: 80
-    LetterFlyDistance: 100
-    LetterShakeAmplitude: 0
-    LetterShakeFrequency: 0
-    LetterScaleStart: 0
-    LetterScalePeak: 1
-  speakerTier3:
     WooferPulseScale: 2
     WooferPulseSeconds: 0.1
     LetterDuration: 0.5
@@ -1410,27 +1389,14 @@ MonoBehaviour:
     LetterScaleStart: 0
     LetterScalePeak: 2
   spotlightBeamAlpha: 0.15
-  stageBgCrossfadeSeconds: 0.4
+  tier1DurationSeconds: 6.5
+  bgmStartTimeSeconds: 27
   mainRoundTimerCentralTop: {fileID: 919785934}
-  uiShakeTier1:
-    Amplitude: 0
-    Duration: 0
-    Frequency: 0
   uiShakeTier2:
-    Amplitude: 8
-    Duration: 1
-    Frequency: 5
-  uiShakeTier3:
     Amplitude: 20
     Duration: 0.25
     Frequency: 64
-  uiShakeIdleTier1:
-    Amplitude: 0
-    Frequency: 0
   uiShakeIdleTier2:
-    Amplitude: 10
-    Frequency: 1
-  uiShakeIdleTier3:
     Amplitude: 8
     Frequency: 32
 --- !u!82 &2068533488

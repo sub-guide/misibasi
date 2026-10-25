@@ -17,8 +17,10 @@ namespace MiniParty.Minigames.Oiia
 
             _slots = new SlotRuntime[SlotCount];
             ResetGlobalTierFeverMode();
+            _roundElapsed = 0f;
+            _tier2Active = false;
 
-            _remainingMainTime = Mathf.Max(MainRoundMinSeconds, MainRoundDurationSeconds);
+            _remainingMainTime = Mathf.Max(MainRoundMinSeconds, mainRoundDurationSeconds);
 
             if (mainRoundTimerCentralTop == null && !_warnedTimerMissing)
             {
@@ -35,12 +37,8 @@ namespace MiniParty.Minigames.Oiia
             StopFeverScreamAudio();
             StopFeverChantAudio();
 
-            UpdateGlobalTierFeverMode();
-            ForEachSlot(i =>
-            {
-                if (_aliveMask[i])
-                    UpdateCatAnimationMode(i);
-            });
+            if (tier1DurationSeconds <= 0f)
+                EnterTier2();
 
             UpdateMainTimerUi();
             ForEachSlot(FlushUi);
@@ -73,9 +71,6 @@ namespace MiniParty.Minigames.Oiia
                 ResetStageBackgroundAtBegin(i);
                 ResetSpeakersAtBegin(i);
                 ResetCrowdAtBegin(i);
-
-                if (play)
-                    ActivateAllDjTargets(i);
             }
             else
             {
