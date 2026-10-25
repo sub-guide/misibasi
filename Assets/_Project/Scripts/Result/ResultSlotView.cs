@@ -11,6 +11,7 @@ namespace MiniParty.Result
         const string StateFaceUp = "FaceUp";
         const string StateFaceDown = "FaceDown";
         const string PracticeDash = "-";
+        const string FailLabel = "FAIL";
 
         static readonly int FaceUpHash = Animator.StringToHash("FaceUp");
 
@@ -18,6 +19,7 @@ namespace MiniParty.Result
         static readonly Color RankSilver = new Color(0.75f, 0.75f, 0.78f, 1f);
         static readonly Color RankBronze = new Color(0.80f, 0.50f, 0.20f, 1f);
         static readonly Color RankGray = new Color(0.72f, 0.72f, 0.74f, 1f);
+        static readonly Color RankFail = new Color32(0xC8, 0xC8, 0xC8, 0xFF);
 
         [Header("HP 카드 (0=왼쪽, 1=오른쪽)")]
         [Tooltip("Card_0 · Card_1 의 Animator. Controller = Card_Flip.")]
@@ -34,19 +36,32 @@ namespace MiniParty.Result
         [Tooltip("슬롯 자식 ScoreText.")]
         [SerializeField] TMP_Text scoreText;
 
+        [Header("등장")]
+        [Tooltip("슬롯 자식 Fade. Intro·빈 슬롯 ON, 등수 공개 시 OFF.")]
+        [SerializeField] GameObject fade;
+
         public void SetupIntro(int slotIndex, bool participated)
         {
             SetRankScoreVisible(false);
+            SetFadeVisible(true);
         }
 
-        public void RevealRanking(int rank, int score, bool practice)
+        public void RevealRanking(int rank, int score, bool practice, bool hpLost = false)
         {
+            SetFadeVisible(false);
             SetRankScoreVisible(true);
 
             if (practice)
             {
                 ApplyRank(PracticeDash, Color.white);
                 ApplyScore(PracticeDash);
+                return;
+            }
+
+            if (hpLost)
+            {
+                ApplyRank(FailLabel, RankFail);
+                ApplyScore(score.ToString());
                 return;
             }
 
@@ -57,6 +72,7 @@ namespace MiniParty.Result
         public void SetEmptySlotLook()
         {
             SetRankScoreVisible(false);
+            SetFadeVisible(true);
         }
 
         /// <summary>카드 i: <c>i &gt;= (max - current)</c> 이면 앞면 idle 스냅.</summary>
@@ -160,6 +176,12 @@ namespace MiniParty.Result
                 rankText.gameObject.SetActive(visible);
             if (scoreText != null)
                 scoreText.gameObject.SetActive(visible);
+        }
+
+        void SetFadeVisible(bool visible)
+        {
+            if (fade != null)
+                fade.SetActive(visible);
         }
 
         void ApplyRank(string label, Color color)

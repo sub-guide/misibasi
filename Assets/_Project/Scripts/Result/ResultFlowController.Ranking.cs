@@ -88,7 +88,11 @@ namespace MiniParty.Result
                     ? _report.FinalScore[slot]
                     : 0;
 
-                view.RevealRanking(group.Rank, score, practice: false);
+                bool hpLost = _report?.HpLostThisSession != null &&
+                              slot < _report.HpLostThisSession.Length &&
+                              _report.HpLostThisSession[slot];
+
+                view.RevealRanking(group.Rank, score, practice: false, hpLost);
             }
         }
 
