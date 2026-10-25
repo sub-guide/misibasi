@@ -212,7 +212,6 @@ Minigame_RhythmButtonChallenge
 | `.ExitSequence.cs` | `exitScreenFader` 씬에 연결됨 |
 | `RhythmButtonChallengeSceneBootstrap` | `PartySession` → `Begin`/`Tick`. `FindObjectOfType` 없음 |
 | `RhythmButtonChallengeHpLossRules` | 1인 skip · 2인+ 하위 50% |
-| `RhythmButtonChallengeResultMinigameFlavor` | ID 매칭만 |
 | `RhythmButtonChallengeScorePanelBindings` | `ScoreText` · 팝업 Animator 3. 모듈 `scorePanels` |
 | `*BoardCellBindings` | Inspector 필드만. 이름 AutoWire 없음 |
 | `GameFlowDirector` | id → 씬, `practice = false` |

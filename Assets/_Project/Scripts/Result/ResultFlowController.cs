@@ -2,9 +2,6 @@ using System.Collections;
 using MiniParty.Flow;
 using MiniParty.Input;
 using MiniParty.Minigames;
-using MiniParty.Minigames.CoffinDance;
-using MiniParty.Minigames.Oiia;
-using MiniParty.Minigames.RhythmButtonChallenge;
 using UnityEngine;
 
 namespace MiniParty.Result
@@ -23,19 +20,7 @@ namespace MiniParty.Result
 
         [SerializeField] ResultSlotView[] slotViews = new ResultSlotView[4];
 
-        [Header("페이드")]
-        [SerializeField] ScreenFader screenFader;
-
-        [Header("타이밍")]
-        [SerializeField] float introFadeInSeconds = 1f;
-
-        [SerializeField] float exitFadeOutSeconds = 1f;
-
-        [Header("미니게임별 장식 (선택)")]
-        [SerializeField] MonoBehaviour[] minigameFlavorProviders;
-
         readonly OperatorInputService _operatorInput = new();
-        IResultMinigameFlavor[] _flavors;
 
         PartySession _session;
         MinigameSessionReport _report;
@@ -70,36 +55,7 @@ namespace MiniParty.Result
                 _willGameOver[i] = false;
 
             ResolveSlotViews();
-            ResolveMinigameFlavors();
             StartCoroutine(CoRunFlow());
-        }
-
-        void ResolveMinigameFlavors()
-        {
-            if (minigameFlavorProviders == null || minigameFlavorProviders.Length == 0)
-            {
-                _flavors = new IResultMinigameFlavor[]
-                {
-                    new OiiaResultMinigameFlavor(),
-                    new RhythmButtonChallengeResultMinigameFlavor(),
-                    new CoffinDanceResultMinigameFlavor()
-                };
-                return;
-            }
-
-            var list = new System.Collections.Generic.List<IResultMinigameFlavor>();
-            for (var i = 0; i < minigameFlavorProviders.Length; i++)
-            {
-                if (minigameFlavorProviders[i] is IResultMinigameFlavor flavor)
-                    list.Add(flavor);
-            }
-
-            _flavors = list.Count > 0 ? list.ToArray() : new IResultMinigameFlavor[]
-            {
-                new OiiaResultMinigameFlavor(),
-                new RhythmButtonChallengeResultMinigameFlavor(),
-                new CoffinDanceResultMinigameFlavor()
-            };
         }
 
         void ResolveSlotViews()
@@ -164,12 +120,7 @@ namespace MiniParty.Result
         {
             _phase = ResultPhase.IntroFade;
             ApplyIntroSlotUi();
-
-            if (screenFader != null)
-            {
-                screenFader.SetInstant(1f);
-                yield return screenFader.FadeTo(0f, introFadeInSeconds);
-            }
+            yield break;
         }
 
         void ApplyIntroSlotUi()
@@ -197,29 +148,12 @@ namespace MiniParty.Result
                     view.SetHp(_session.Slots[i].HP, maxHp);
                 }
             }
-
-            ApplyMinigameFlavorIntro();
-        }
-
-        void ApplyMinigameFlavorIntro()
-        {
-            if (_flavors == null || _report == null)
-                return;
-
-            string id = _report.MinigameId;
-            for (var f = 0; f < _flavors.Length; f++)
-            {
-                if (_flavors[f].TryApplyIntro(id, slotViews, _playedMask, _report, _practice))
-                    break;
-            }
         }
 
         IEnumerator CoExitToMainMenu()
         {
-            if (screenFader != null && exitFadeOutSeconds > 0f)
-                yield return screenFader.FadeTo(1f, exitFadeOutSeconds);
-
             ReturnToMainMenuImmediate();
+            yield break;
         }
 
         void ReturnToMainMenuImmediate()

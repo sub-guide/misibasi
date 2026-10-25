@@ -312,7 +312,6 @@ TickMeta (입력잠금 · TickFever)
 | 파일 | 역할 |
 |------|------|
 | `OiiaHpLossRules.cs` | Result HP 감소 대상 |
-| `OiiaResultMinigameFlavor.cs` | Result ID 매칭만 (장식 미구현) |
 | `OiiaVideoEffectController.cs` | 크로마키 MP4 유틸 · **모듈에서 미호출(고아)** · 정리 후보 |
 
 ### 제거된 레거시 (문서·코드 기준)
@@ -401,7 +400,7 @@ START → READY · Confirm → PrepareRound(false) → Begin(본게임 ctx)
 |------|------|
 | Report | `MinigameId = "oiia"` · `FinalScore` · `HpLostThisSession` |
 | HP | `OiiaHpLossRules.FillHpLost` |
-| Flavor | `OiiaResultMinigameFlavor` — ID 매칭만 |
+| Result UI | 전 미니게임 **공통** `Results` 씬 |
 
 ---
 
@@ -417,7 +416,6 @@ START → READY · Confirm → PrepareRound(false) → Begin(본게임 ctx)
 ### 미완·후속
 
 - 2~4P·부스 다패드 재검증
-- `OiiaResultMinigameFlavor` 전용 비주얼
 - `buzzClip` / `sessionEndClip` 연결 여부
 - `Balance.cs` 레거시 헬퍼 정리(선택)
 - `OiiaVideoEffectController` 사용처 정리(선택)

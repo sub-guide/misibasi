@@ -125,11 +125,6 @@ namespace MiniParty.Result
             yield return CoFlipCardToBack(anim, duration);
         }
 
-        public IEnumerator PlayWinnerSpotlight(float duration)
-        {
-            yield break;
-        }
-
         public void SetDimmed(bool on)
         {
         }

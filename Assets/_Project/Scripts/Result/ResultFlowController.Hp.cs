@@ -7,9 +7,10 @@ namespace MiniParty.Result
     public sealed partial class ResultFlowController
     {
         [Header("HP 연출 (3단계)")]
-        [SerializeField] float loserHitDurationSeconds = 0.45f;
+        [Tooltip("등수 공개가 끝난 뒤, 첫 카드 뒤집기까지 대기(초).")]
+        [SerializeField] float hpFlipDelayAfterRevealSeconds = 1f;
 
-        [SerializeField] float spotlightDurationSeconds = 0.55f;
+        [SerializeField] float loserHitDurationSeconds = 0.45f;
 
         [SerializeField] float hpStepDelaySeconds = 0.12f;
 
@@ -30,6 +31,30 @@ namespace MiniParty.Result
             PlayerSlotModel[] models = _session.Slots;
 
             InitHpDisplays(maxHp, models);
+
+            bool anyLost = false;
+            for (var i = 0; i < 4; i++)
+            {
+                if (!_playedMask[i])
+                    continue;
+
+                if (_report?.HpLostThisSession != null &&
+                    i < _report.HpLostThisSession.Length &&
+                    _report.HpLostThisSession[i])
+                {
+                    anyLost = true;
+                    break;
+                }
+            }
+
+            if (!anyLost)
+            {
+                Debug.Log("[ResultFlowController] 3단계 HpProcess 완료.");
+                yield break;
+            }
+
+            if (hpFlipDelayAfterRevealSeconds > 0f)
+                yield return new WaitForSecondsRealtime(hpFlipDelayAfterRevealSeconds);
 
             for (var i = 0; i < 4; i++)
             {
@@ -58,25 +83,6 @@ namespace MiniParty.Result
 
                 if (hpStepDelaySeconds > 0f)
                     yield return new WaitForSecondsRealtime(hpStepDelaySeconds);
-            }
-
-            for (var i = 0; i < 4; i++)
-            {
-                if (!_playedMask[i])
-                    continue;
-
-                bool lost = _report?.HpLostThisSession != null &&
-                            i < _report.HpLostThisSession.Length &&
-                            _report.HpLostThisSession[i];
-
-                if (lost)
-                    continue;
-
-                ResultSlotView view = GetSlotView(i);
-                if (view == null)
-                    continue;
-
-                yield return view.PlayWinnerSpotlight(spotlightDurationSeconds);
             }
 
             Debug.Log("[ResultFlowController] 3단계 HpProcess 완료.");

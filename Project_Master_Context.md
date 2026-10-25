@@ -347,7 +347,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ### 지금 포커스
 
-1. **Results** — GAME OVER **Play 확인**. Ready 비주얼 미착수
+1. **Results** — 뒤집기 전 대기 **Play 확인**(씬 0.5s). Ready 비주얼 미착수
 2. **Pigeon** — 1P HP 안 깎임 Play 확인. 2~4P 하위 50% 미검증
 3. **OIIA** — 개편 후 2~4P·부스 다패드 재검증
 
@@ -360,7 +360,6 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | C-10 `debugRouteAllToOiia` | **보류** | 출시 전 false + id별 씬 분기. 현재 false 운용 |
 | OIIA `buzzClip` / `sessionEndClip` | 의도적 미연결 | 연결 여부 **미결정** |
 | Result `rankRevealClip` / `hpHitClip` | 선택 | Inspector 오디오 연결 여부 |
-| C-11 `OiiaResultMinigameFlavor` | 미착수 | 현재 ID 매칭만 |
 | 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
 | 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |
 

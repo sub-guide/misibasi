@@ -230,7 +230,6 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `CoffinDanceSceneBootstrap` | Begin/Tick |
 | `CoffinDanceSlotBindings` | `Pallbearers[6]` · 가운데 `[1]`/`[4]` 2점 자세(`TryComputeCoffinSupportLocalPose`) · PrepareAllPoses / ApplySideExtension / SoftResetAllPallbearers / `SetCoffinShoulderCollisionsIgnored` / `SetSideShoulderCollidersEnabled` / `ApplyUpwardShoulderDepenetration` |
 | `CoffinDanceHpLossRules` | HP 판정 |
-| `CoffinDanceResultMinigameFlavor` | Result ID 매칭 |
 | Editor `CoffinDancePallbearerAnimatorSetup` | Controller 생성 메뉴 (ExtensionBlend만) |
 
 `BuiltInId` = `"coffin_dance"` · DisplayName 기본 `"관짝춤"`.

@@ -980,13 +980,10 @@ MonoBehaviour:
   - {fileID: 273360206}
   - {fileID: 1392864021}
   - {fileID: 1188421282}
-  screenFader: {fileID: 1406192809}
-  introFadeInSeconds: 1
-  exitFadeOutSeconds: 1
-  minigameFlavorProviders: []
-  gameOverDelaySeconds: 2
+  gameOverFadeSeconds: 0.5
+  gameOverFadeAlpha: 250
+  hpFlipDelayAfterRevealSeconds: 0.5
   loserHitDurationSeconds: 0.45
-  spotlightDurationSeconds: 0.55
   hpStepDelaySeconds: 0.12
   hpHitClip: {fileID: 8300000, guid: 7245fb2905cf58442b5dca243a24d705, type: 3}
   rankingRevealIntervalSeconds: 1
@@ -1014,7 +1011,7 @@ Transform:
   m_GameObject: {fileID: 1422545607}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 906.77185, y: 598.90326, z: -7.8989944}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1160,6 +1157,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 681277230}
+  - {fileID: 1422545610}
   - {fileID: 707533122}
   - {fileID: 1384754578}
-  - {fileID: 1422545610}
