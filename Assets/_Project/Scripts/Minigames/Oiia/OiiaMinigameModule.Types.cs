@@ -30,20 +30,11 @@ namespace MiniParty.Minigames.Oiia
         {
             public int ScoreSum;
             public int Combo;
-            public float InputLockTimer;
 
-            /// <summary>피버 남은 시간(초). &gt;0 이면 전 버튼 정답.</summary>
-            public float FeverRemaining;
-
-            /// <summary>레거시 루프 티어 호환(Cat/BGM). 글로벌 티어 도입 전 0 유지.</summary>
-            public int ConsecutiveLoopSuccesses;
-
-            /// <summary>길이 <see cref="DjPadButtonCount"/>. true = 활성 타겟(Highlight).</summary>
+            /// <summary>길이 <see cref="DjPadButtonCount"/>. true = Highlight.</summary>
             public bool[] DjActive;
 
-            /// <summary>
-            /// SubPatternGuide 진행도(0~12). 비피버 정답마다 +1 · 피버 진입/종료/미스 시 0.
-            /// </summary>
+            /// <summary>SubPatternGuide 진행도(0~12). 12글자 완성 시 0.</summary>
             public int SubPatternMatched;
         }
 

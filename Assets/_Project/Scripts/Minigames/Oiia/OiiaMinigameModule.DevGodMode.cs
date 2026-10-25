@@ -39,13 +39,8 @@ namespace MiniParty.Minigames.Oiia
 
             _devGodModeEnabled = !_devGodModeEnabled;
 
-            if (_aliveMask[0] && _slots != null)
-            {
-                if (_devGodModeEnabled)
-                    ActivateAllDjTargets(0);
-                else if (!IsFeverActive(0))
-                    SeedDjActiveTargets(0);
-            }
+            if (_devGodModeEnabled && _aliveMask[0] && _slots != null)
+                ActivateAllDjTargets(0);
 
             Debug.Log(
                 $"[OiiaMinigameModule] Dev God Mode (1P: all buttons highlighted, any key = hit, timer paused): " +

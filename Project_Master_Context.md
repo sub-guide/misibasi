@@ -314,7 +314,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | 씬 | 상태 (한 줄) |
 |----|----------------|
 | `MainMenu` | 로비·카탈로그·시작 |
-| `Minigame_O.I.I.A.` | **T3 연타** 개편 코드 완료 · **Play 미검증** · 2~4P·다패드 재검증 남음 |
+| `Minigame_O.I.I.A.` | **T3 연타** Play 확인 후 레거시 삭제 · 삭제 후 Play 미검증 · 2~4P·다패드 재검증 남음 |
 | `Minigame_RhythmButtonChallenge` | **1차 완료** · 1P Play 확인 · 유지보수 |
 | `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
 | `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. HP 1인 skip · 2인+ 하위 50% |
@@ -348,7 +348,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 ### 지금 포커스
 
 1. **Pigeon** — 1P HP 안 깎임 Play 확인. 2~4P 하위 50% 미검증
-2. **OIIA** — T3 연타 **Play 확인**. 배경음악 시작 시점은 사용자 후속 언급. 2~4P·다패드 재검증 남음
+2. **OIIA** — 레거시 삭제 후 Play 재확인. 배경음악 시작 시점은 사용자 후속. 2~4P·다패드 재검증 남음
 
 ### 열린 결정 / 보류
 
@@ -357,9 +357,8 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 | ID / 주제 | 상태 | 메모 |
 |-----------|------|------|
 | C-10 `debugRouteAllToOiia` | **보류** | 출시 전 false + id별 씬 분기. 현재 false 운용 |
-| OIIA `buzzClip` / `sessionEndClip` | 의도적 미연결 | 연결 여부 **미결정** |
+| OIIA `sessionEndClip` | 의도적 미연결 | 연결 여부 **미결정**. `buzzClip` 필드는 삭제 |
 | OIIA HP 컷 `HpLowScoreThreshold` | **보류** | 연타 규칙에서 8000 유지 중. Play 후 조정 |
-| OIIA 레거시 삭제 | **보류** | 연습·T1/T2·3키·3초 피버·`Fever*` 명칭. 사용자가 동작 확인 후 요청 |
 | Result `rankRevealClip` / `hpHitClip` | **보류** | Results 리메이크 범위 밖. 연결 여부 미정 |
 | 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
 | 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |

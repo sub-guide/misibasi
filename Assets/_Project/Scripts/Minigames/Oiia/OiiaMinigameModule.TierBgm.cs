@@ -45,7 +45,7 @@ namespace MiniParty.Minigames.Oiia
         /// </summary>
         void UpdateTierBgm()
         {
-            if (!_running || _ctx.IsPractice)
+            if (!_running)
             {
                 StopTierBgm();
                 return;

@@ -1,7 +1,7 @@
 # 05_OIIA
 
 > 문서 기준일: 코드·씬 파일 직접 분석 (추측 없음). **에디터 조작 가이드·플레이 검증 체크리스트는 본 문서에 두지 않는다** (`Project_Master_Context.md` §2·§3). 검증 타임라인은 `02_개발_진행_일지.md`.  
-> **갱신**: 2026-10-25 — **T3 연타 기본 상태** 개편(연습 없음 · 30초 · +100 · 패턴 완성 +500). 이전 T1/T2/연습 규칙은 코드에 레거시로 남아 있으나 본 판에서 타지 않는다.
+> **갱신**: 2026-10-25 — T3 연타에서 안 타던 연습·T1/T2·3키·3초 피버·Balance 티어 헬퍼 **삭제**. `Fever*` 이름·씬 오브젝트·T3 Inspector 필드명(`uiShakeTier3`·`speakerTier3`)은 유지.
 
 ---
 
@@ -15,12 +15,12 @@
 
 ### 기본 상태 (예전 T3)
 
-판 전체가 예전 「강제 피버」와 같다. 화면·문서에서는 피버라는 모드 이름을 쓰지 않는다. 코드의 `Fever*` 이름은 레거시로 유지.
+판 전체가 예전 「강제 피버」와 같다. 화면에서는 피버라는 모드 이름을 쓰지 않는다. 코드의 `Fever*` 이름은 관중·Scream·떼창에 그대로 쓴다.
 
 | 항목 | 값 |
 |------|-----|
 | 본게임 길이 | `MainRoundDurationSeconds` = **30** |
-| 글로벌 티어 | `ResolveGlobalTier()` 본게임 항상 **3**. 시간 티어 전환 없음 |
+| 글로벌 티어 | 시간 티어 없음. 시작부터 클럽·전 키 정답 |
 | 전광판 | 시작 즉시 **Club(클럽 네온)** |
 | Beam | 상시 ON · 티어 예고 점멸(`IsBeamTierTeaseWindow`) **없음** |
 | 고양이 | 시작 즉시 `SpinLoop` |
@@ -61,7 +61,7 @@
 
 ### 연습
 
-씬 안 연습 **없음**. Pigeon·RBC처럼 메인 메뉴 JOIN/READY/Enter 후 바로 본게임 (`GameFlowDirector`에서 OIIA `_sessionPractice = false`). `PracticeFlow.cs`·`PartySession`의 OIIA 연습 큐는 레거시로 남아 있으나 호출되지 않는다.
+씬 안 연습 **없음**. Pigeon·RBC처럼 메인 메뉴 JOIN/READY/Enter 후 바로 본게임 (`GameFlowDirector`에서 OIIA `_sessionPractice = false`).
 
 ---
 
@@ -157,7 +157,7 @@ TickMeta (입력잠금 · TickFever)
 | `DjBox` | 디제잉 박스 · HudDisplay(Score · Fever는 숨김) · Combo · FeverGauge×2(패턴 진행) · SubPatternGuide · Speakers · Crowd |
 | `SpeakerL` / `SpeakerR` | Body · WooferTop · WooferBottom (스크린샷 L/R 캐비닛) |
 | `Crowd` / `CrowdPeople` | 관중 실루엣 (판 내내) |
-| `Ready` / `Waiting` | 연습 READY(레거시 · 미표시) · 비참가 WAITING |
+| `Ready` / `Waiting` | Ready 텍스트는 항상 숨김 · 비참가 WAITING |
 | 슬롯 배경 Image | `SlotPanelBackgroundImage` |
 
 ---
@@ -197,7 +197,7 @@ TickMeta (입력잠금 · TickFever)
 | Escape | 세션 조기 종료 |
 | Backspace | Dev God Mode (1P) |
 
-무시: EMPTY 슬롯. (연습 READY·입력 잠금 경로는 레거시로 남아 있으나 본 판에서는 걸리지 않는다.)
+무시: EMPTY 슬롯.
 
 ---
 
@@ -206,10 +206,8 @@ TickMeta (입력잠금 · TickFever)
 ### 입력
 
 1. 시작부터 10키 전부 Highlight.
-2. 어떤 키든 정답. 오답·미스 없음.
+2. 어떤 키든 정답.
 3. 같은 프레임 다중 입력은 1회로 처리.
-
-3키 활성 타겟·미스(`SeedDjActiveTargets` · `OnDjMiss`)는 코드에 남아 있으나 본 판에서 타지 않는다.
 
 ### SubPattern `oiiaiooiiiai`
 
@@ -239,7 +237,7 @@ TickMeta (입력잠금 · TickFever)
 | 입력 1회 (`OnDjHit`) | **+100** (`DjHitScore`) |
 | 패턴 12글자 완성 | 추가 **+500** (`PatternCompleteBonusScore`) → 완성 입력은 +600 |
 
-`Balance.cs`의 티어별 글자점수·루프보너스·게이지 드레인 헬퍼는 **판정 경로에서 미사용**(레거시 잔존).
+`Balance.cs`에는 `DjHitScore`·`PatternCompleteBonusScore`·`HpLowScoreThreshold`만 있다.
 
 ---
 
@@ -251,7 +249,8 @@ TickMeta (입력잠금 · TickFever)
 | `patternStepSfx[12]` | 본게임: `PlayFeverChantStep`(떼창) |
 | FeverChant | 원본 레이어 + 피치/볼륨/지연 분산 레이어 · 풀 런타임 생성 |
 | `feverScreamClip` | 본게임 내내 루프 · 전용 AudioSource |
-| `buzzClip` · `sessionEndClip` | 씬 **미연결**(의도적 가능) |
+| `buzzClip` | **필드 삭제** (2026-10-25). 미스 사운드 경로 없음 |
+| `sessionEndClip` | 씬 **미연결**(의도적 가능) |
 
 ---
 
@@ -270,15 +269,15 @@ TickMeta (입력잠금 · TickFever)
 | 파일 | 역할 |
 |------|------|
 | `Begin` / `Tick` / `ExitSequence` | 수명주기 |
-| `PracticeFlow` | READY · 본게임 전환 (레거시 · 미호출) |
+| `PracticeFlow` | Escape 조기 종료만 |
 | `Gameplay` / `DjPadInput` / `DjPadVisual` | 판정·입력·L/R·ABXY Unpressed |
-| `Fever` / `FeverAudio` / `FeverChant` | 기본 상태(전 키 정답·관중)·Scream·떼창. 3초 피버는 레거시 |
+| `Fever` / `FeverAudio` / `FeverChant` | 기본 상태(전 키 정답·관중)·Scream·떼창 |
 | `SubPatternGuide` | 패턴 진행·가이드 UI |
 | `Speakers` / `Crowd` / `UiShake` | 연출 |
 | `Spotlight` / `StageBackground` / `CatAnimator` | 전광판·조명·고양이 |
 | `TierBgm` / `PatternAudio` | BGM·스텝 SFX |
 | `Ui` / `SlotPanels` / `SlotEmptyUi` / `SlotHelpers` | UI·클리핑 |
-| `GlobalTier` / `Timer` / `Balance` / `Constants` / `Types` / `Config` / `State` / `DevGodMode` | 공통 |
+| `Timer` / `Balance` / `Constants` / `Types` / `Config` / `State` / `DevGodMode` | 공통. `GlobalTier.cs`는 삭제 |
 
 ### 기타
 
@@ -289,7 +288,7 @@ TickMeta (입력잠금 · TickFever)
 
 ### 제거된 레거시 (문서·코드 기준)
 
-BurstText · ShuffleEffect · ButtonShuffle · GuideFeedback · GaugeSlider 드레인 룰 · SequenceText 커서 입력 · BlurFx · CatMovement · OiiaPhysicalButton MapO/I/A.
+BurstText · ShuffleEffect · ButtonShuffle · GuideFeedback · GaugeSlider 드레인 · SequenceText · BlurFx · CatMovement · MapO/I/A · 연습 큐 · T1/T2 시간표 · 3키 판정·미스 · 3초 피버 · `GlobalTier.cs` · `buzzClip` · Balance 티어 헬퍼 (2026-10-25).
 
 ---
 
@@ -322,22 +321,20 @@ BurstText · ShuffleEffect · ButtonShuffle · GuideFeedback · GaugeSlider 드�
 
 | 그룹 | 값 |
 |------|-----|
-| UiShake Hit T1/T2/T3 | OFF · **8/1s/5Hz** · **20/0.25s/64Hz** |
-| UiShake Idle T1/T2/T3 | OFF · **10px/1Hz** · **8px/32Hz** |
+| UiShake 정답 | `uiShakeTier3` 씬 값 (코드 기본 20 / 0.25s / 64Hz) |
+| UiShake 상시 | `uiShakeIdleTier3` 씬 값 (코드 기본 8px / 32Hz) |
 | FeverChant | Layer **12** · Pool **32** · Pitch **0.98~1.02** · Vol **0.5~1** · Delay **0.15s** |
 | Crowd | Rise 120 · Rise/Fade 0.35/0.4 · Shake Amp **10** · Freq **3** · AutoPlace **OFF** |
-| Speaker T1 | Pulse 1.2/0.1 · Dur 0.5 · Size 50 · Fly 50 · Shake 5/10 · Scale 0→1 |
-| Speaker T2 | Pulse 1.2/0.3 · Dur 1 · Size 80 · Fly 100 · Shake 0 · Scale 0→1 |
-| Speaker T3 | Pulse 2/0.1 · Dur 0.5 · Size 100 · Fly 200 · Shake 20/40 · Scale 0→2 |
+| Speaker T3 | `speakerTier3` 씬 값. T1/T2 필드는 삭제 |
 | Spotlight | `spotlightBeamAlpha` **0.15** |
-| Stage BG | `stageBgCrossfadeSeconds` **0.4** |
+| Stage BG | 시작 즉시 Club. 크로스페이드 필드 삭제 |
 | DjPad | ABXY Unpressed 명도 **100** · L/R Highlight black 스프라이트 연결 |
 | BGM | `tierBgmVolume` **0.85** · `tierBgmSource` 비움(런타임 생성) |
 | Cat | Idle / SpinOnce / SpinLoop |
 
-코드 상수: `MainRoundDurationSeconds` **30** · `DjHitScore` **100** · `PatternCompleteBonusScore` **500** · HP 컷 **8000**. (레거시: `FeverDurationSeconds` 3 · `InputLockAfterMissSeconds` 0.35)
+코드 상수: `MainRoundDurationSeconds` **30** · `DjHitScore` **100** · `PatternCompleteBonusScore` **500** · HP 컷 **8000**.
 
-T1·T2 전용 튜닝(UiShake T1/T2 · Speaker T1/T2 · 크로마키/우주 배경)은 씬에 남아 있으나 본 판에서는 T3 값만 쓰인다.
+`uiShakeTier1/2`·`speakerTier1/2`·`stageBgCrossfadeSeconds` 필드는 삭제했다. 씬 YAML에 옛 값이 남아 있어도 Unity는 무시한다. 플레이에 쓰는 값은 `uiShakeTier3`·`speakerTier3` 씬 저장값이다.
 
 ---
 
@@ -377,14 +374,15 @@ CollectDjPadPressed → OnDjHit
 
 ### 완료
 
-- T3 연타 기본 상태 · 연습 없음 · 30초 · +100 · 패턴 완성 +500 (코드 · **Play 미검증**, 2026-10-25)
+- T3 연타 기본 상태 · 연습 없음 · 30초 · +100 · 패턴 완성 +500 · **Play 확인**(2026-10-25, 삭제 전)
+- 연습·T1/T2·3키·3초 피버·Balance 티어 헬퍼 **삭제** (코드 · 삭제 후 Play **미검증**)
 - SubPatternGuide · Speakers · Crowd · UiShake · Scream · FeverChant
 - 슬롯 RectMask2D 클리핑 · ABXY Unpressed 명도 · Result/HP
 
 ### 미완·후속
 
-- T3 연타 Play 검증 · HP 컷 8000 조정
-- 레거시 삭제(연습·T1/T2·3키 판정·3초 피버·`Fever*` 명칭·`Balance.cs` 헬퍼) — 사용자 요청 시
+- 삭제 후 Play 확인 · HP 컷 8000 조정
+- 배경음악 시작 시점 — 사용자 후속
 - 2~4P·부스 다패드 재검증
 - `buzzClip` / `sessionEndClip` 연결 여부
 - `OiiaVideoEffectController` 사용처 정리(선택)
@@ -397,7 +395,7 @@ CollectDjPadPressed → OnDjHit
 
 - 패턴 문자열·`patternStepSfx` 길이(12) 동기화.
 - 패턴 완성 시 `SubPatternMatched` 리셋 → 스텝 SFX는 **`steppedPosition` 반환값** 사용.
-- 기본 상태(T3 강제 피버)는 `Begin`과 `Tick`에서 입력보다 **먼저** `UpdateGlobalTierFeverMode`.
+- 기본 상태는 `Begin`과 `Tick`에서 입력보다 **먼저** `UpdateGlobalTierFeverMode`.
 - 점수 경로: `DjHitScore` + `PatternCompleteBonusScore`만. `ScorePerCorrectStepForTier` 등은 호출하지 않음.
 - 에디터 Step-by-Step 가이드는 **채팅에만** (`Project_Master_Context.md` §2).
 
@@ -406,7 +404,7 @@ CollectDjPadPressed → OnDjHit
 | 증상 | 확인 |
 |------|------|
 | 입력 무반응 | `DjPadInput` · `BoothUsbSlotInput` · `_aliveMask` |
-| 시작 연출 안 켜짐 | `Begin` → `UpdateGlobalTierFeverMode` · `_tier3ForcedFever` · `_ctx.IsPractice` |
+| 시작 연출 안 켜짐 | `Begin` → `UpdateGlobalTierFeverMode` · `_baseFeverActive` |
 | 보너스 안 붙음 | `AdvanceSubPatternOnHit` `patternCompleted` → `OnDjHit` |
 | 마지막 I 무음 | `AdvanceSubPatternOnHit` 반환값 → `PlayPatternStepSfx` |
 | 옆 슬롯 침범 | `clipSlotContentToPanel` · `RectMask2D` |

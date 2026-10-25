@@ -7,19 +7,14 @@ namespace MiniParty.Minigames.Oiia
     {
         const float SpotlightNeonLerpSpeed = 0.35f;
 
-        /// <summary>피버·티어전환 예고 Beam 스트로보 간격(동일 속도).</summary>
-        const float SpotlightTeaseStrobeIntervalSeconds = 0.05f;
+        const float SpotlightStrobeIntervalSeconds = 0.05f;
 
         [Header("Spotlight")]
         [Tooltip("Beam Image 알파 (0–1). Inspector에서 조절. 기본 ≈15/255.")]
         [SerializeField, Range(0f, 1f)]
         float spotlightBeamAlpha = 15f / 255f;
 
-        const float SpotlightMissFlashSeconds = 0.35f;
-
         static readonly Color SpotlightFixtureColor = Color.white;
-
-        static readonly Color SpotlightMissRed = new(1f, 0.12f, 0.12f, 1f);
 
         static readonly Color[] SpotlightNeonColors =
         {
@@ -28,19 +23,12 @@ namespace MiniParty.Minigames.Oiia
             new(0.65f, 0.25f, 1f, 1f),
         };
 
-        readonly float[] _spotlightMissFlashRemaining = new float[SlotCount];
-        readonly bool[] _spotlightMissWasLit = new bool[SlotCount];
-
         void ResetSpotlightAtBegin(int i)
         {
-            _spotlightMissFlashRemaining[i] = 0f;
-            _spotlightMissWasLit[i] = false;
-
             if (!TryGetBinding(i, out SlotUiBindings ui))
                 return;
 
             EnsureSlotStageClipMask(ui);
-            // 회전 없음 — 에디터 rest 각도 유지. Fixture ON · Beam OFF.
             SetSpotlightRootsActive(ui, active: true);
             ApplySpotlightVisuals(ui, beamRgb: Color.white, beamVisible: false);
         }
@@ -76,21 +64,6 @@ namespace MiniParty.Minigames.Oiia
                 rt.gameObject.AddComponent<RectMask2D>();
         }
 
-        void TriggerSpotlightMissFlash(int slotIndex)
-        {
-            if (slotIndex < 0 || slotIndex >= SlotCount)
-                return;
-
-            bool fever = IsFeverActive(slotIndex);
-            int tier = ResolveGlobalTier();
-            bool tease = IsBeamTierTeaseWindow();
-            // Beam이 켜져 있었는지 (정상 T3·피버·티어예고·미스).
-            bool beamLit = fever || tier >= 3 || tease;
-
-            _spotlightMissWasLit[slotIndex] = beamLit;
-            _spotlightMissFlashRemaining[slotIndex] = SpotlightMissFlashSeconds;
-        }
-
         void TickSpotlight(int i)
         {
             if (!TryGetBinding(i, out SlotUiBindings ui))
@@ -106,42 +79,10 @@ namespace MiniParty.Minigames.Oiia
             }
 
             EnsureSlotStageClipMask(ui);
-
-            if (_spotlightMissFlashRemaining[i] > 0f)
-                _spotlightMissFlashRemaining[i] -= Time.deltaTime;
-
-            bool fever = IsFeverActive(i);
-            int globalTier = ResolveGlobalTier();
-            bool missFlash = _spotlightMissFlashRemaining[i] > 0f;
-            bool tierTease = IsBeamTierTeaseWindow();
-
             SetSpotlightRootsActive(ui, active: true);
 
-            // 오답 빨강 (운동/회전 없음)
-            if (missFlash)
-            {
-                ApplySpotlightVisuals(ui, beamRgb: SpotlightMissRed, beamVisible: true);
-                return;
-            }
-
-            // 티어 전환 예고: 흰색 Beam 초고속 점멸 (15→27, 32→33.5)
-            if (tierTease)
-            {
-                bool on = EvaluateStrobeOn(SpotlightTeaseStrobeIntervalSeconds);
-                ApplySpotlightVisuals(ui, beamRgb: Color.white, beamVisible: on);
-                return;
-            }
-
-            // T2: Beam 상시 OFF. T3 또는 피버만 Beam.
-            bool wantSteadyBeam = fever || globalTier >= 3;
-            if (!wantSteadyBeam)
-            {
-                ApplySpotlightVisuals(ui, beamRgb: Color.white, beamVisible: false);
-                return;
-            }
-
             Color neon = EvaluateSpotlightNeonColor();
-            bool strobeOn = !fever || EvaluateStrobeOn(SpotlightTeaseStrobeIntervalSeconds);
+            bool strobeOn = EvaluateStrobeOn(SpotlightStrobeIntervalSeconds);
             ApplySpotlightVisuals(ui, beamRgb: neon, beamVisible: strobeOn);
         }
 

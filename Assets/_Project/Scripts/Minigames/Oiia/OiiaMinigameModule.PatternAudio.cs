@@ -6,7 +6,6 @@ namespace MiniParty.Minigames.Oiia
     {
         [Header("오디오·연출")]
         [SerializeField] AudioSource sfxSource;
-        [SerializeField] AudioClip buzzClip;
 
         [Tooltip("본게임 단일 BGM (원작 밈 트랙). 비우면 무음. 권장: W&W - OIIA OIIA (Spinning Cat).")]
         [SerializeField] AudioClip mainBgmClip;
@@ -18,10 +17,10 @@ namespace MiniParty.Minigames.Oiia
         [Range(0f, 1f)]
         [SerializeField] float tierBgmVolume = 0.85f;
 
-        [Tooltip("패턴 스텝 SFX 12개(oiiaiooiiiai). 일반 입력은 OneShot, T1/T3 피버는 FeverChant 떼창.")]
+        [Tooltip("패턴 스텝 SFX 12개(oiiaiooiiiai). 입력마다 FeverChant 떼창.")]
         [SerializeField] AudioClip[] patternStepSfx = new AudioClip[0];
 
-        void PlayPatternStepSfx(int stepIndexZeroBased, bool feverChant)
+        void PlayPatternStepSfx(int stepIndexZeroBased)
         {
             if (patternStepSfx == null)
                 return;
@@ -33,22 +32,7 @@ namespace MiniParty.Minigames.Oiia
             if (clip == null)
                 return;
 
-            if (feverChant)
-            {
-                PlayFeverChantStep(clip);
-                return;
-            }
-
-            if (sfxSource != null)
-                sfxSource.PlayOneShot(clip);
-        }
-
-        void PlayBuzz()
-        {
-            if (sfxSource == null || buzzClip == null)
-                return;
-
-            sfxSource.PlayOneShot(buzzClip);
+            PlayFeverChantStep(clip);
         }
     }
 }

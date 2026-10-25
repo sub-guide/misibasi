@@ -6,39 +6,13 @@ namespace MiniParty.Minigames.Oiia
     public sealed partial class OiiaMinigameModule
     {
         /// <summary>
-        /// 레거시 SequenceText A안과 동일: 맞춘 접두만 대문자로 표시.
-        /// 폰트 크기·색·다음 글자 미리보기 없음.
-        /// 완성 시 피버 진입. 피버 종료/미스 시 진행도를 초기화.
-        /// 반환값: 이번 입력으로 진행한 글자의 1-based 위치(스텝 SFX 인덱스용). 진행 없으면 0.
-        /// 완성으로 <see cref="SlotRuntime.SubPatternMatched"/>가 0으로 리셋돼도
-        /// 반환값으로 마지막 글자 SFX를 재생할 수 있다.
-        /// <paramref name="patternCompleted"/>: 피버 중 12글자를 채운 입력이면 true (보너스 점수용).
+        /// 맞춘 접두만 대문자로 표시. 12글자를 채우면 보너스 후 진행도 0.
+        /// 반환값: 이번 입력의 1-based 위치(스텝 SFX). 진행 없으면 0.
+        /// 리셋 후에도 반환값으로 마지막 글자 SFX를 재생한다.
         /// </summary>
         int AdvanceSubPatternOnHit(int slotIndex, ref SlotRuntime sr, out bool patternCompleted)
         {
             patternCompleted = false;
-
-            if (sr.FeverRemaining > 0f)
-            {
-                int feverLen = SubPatternLower.Length;
-                if (feverLen <= 0)
-                {
-                    sr.SubPatternMatched = 0;
-                    return 0;
-                }
-
-                sr.SubPatternMatched++;
-                int feverStep = sr.SubPatternMatched;
-                NotifySubPatternStepFromMatched(slotIndex, ref sr);
-
-                if (sr.SubPatternMatched >= feverLen)
-                {
-                    patternCompleted = true;
-                    sr.SubPatternMatched = 0;
-                }
-
-                return feverStep;
-            }
 
             int len = SubPatternLower.Length;
             if (len <= 0)
@@ -47,40 +21,17 @@ namespace MiniParty.Minigames.Oiia
                 return 0;
             }
 
-            // T2는 피버 없이 입력 패턴·가이드·스피커·SFX만 1~12로 계속 반복.
-            if (ResolveGlobalTier() == 2)
-            {
-                sr.SubPatternMatched++;
-                if (sr.SubPatternMatched > len)
-                    sr.SubPatternMatched = 1;
-
-                NotifySubPatternStepFromMatched(slotIndex, ref sr);
-                return sr.SubPatternMatched;
-            }
-
-            if (sr.SubPatternMatched >= len)
-                return 0;
-
             sr.SubPatternMatched++;
-            int steppedPosition = sr.SubPatternMatched;
+            int step = sr.SubPatternMatched;
+            NotifySubPatternStepFromMatched(slotIndex, ref sr);
+
             if (sr.SubPatternMatched >= len)
             {
-                sr.SubPatternMatched = len;
-                steppedPosition = len;
-                NotifySubPatternStepFromMatched(slotIndex, ref sr);
-                TryBeginFeverOnPatternComplete(slotIndex);
-            }
-            else
-            {
-                NotifySubPatternStepFromMatched(slotIndex, ref sr);
+                patternCompleted = true;
+                sr.SubPatternMatched = 0;
             }
 
-            return steppedPosition;
-        }
-
-        void ResetSubPatternProgress(ref SlotRuntime sr)
-        {
-            sr.SubPatternMatched = 0;
+            return step;
         }
 
         void FlushSubPatternGuideUi(SlotUiBindings ui, ref SlotRuntime sr)

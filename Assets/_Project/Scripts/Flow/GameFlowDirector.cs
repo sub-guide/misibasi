@@ -396,7 +396,6 @@ namespace MiniParty.Flow
 
             if (!runRbc && !runCoffin && !runOiia && !runPigeon)
             {
-                partySession?.ResetOiiaCycleAfterMainSession();
                 partySession?.ResetCoffinDanceCycleAfterMainSession();
 
                 if (detailBody != null)
@@ -467,10 +466,6 @@ namespace MiniParty.Flow
             PartySession psNotify = partySession;
             if (psNotify != null)
             {
-                bool oiiaSession = string.Equals(_lastStartedMinigameId, OiiaMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
-                if (oiiaSession)
-                    psNotify.ResetOiiaCycleAfterMainSession();
-
                 bool coffinSession = string.Equals(_lastStartedMinigameId, CoffinDanceMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
                 if (coffinSession)
                 {

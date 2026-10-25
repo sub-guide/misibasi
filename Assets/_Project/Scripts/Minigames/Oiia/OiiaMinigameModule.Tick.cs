@@ -18,10 +18,7 @@ namespace MiniParty.Minigames.Oiia
 
             TickDevGodModeToggle();
 
-            if (_ctx.IsPractice)
-                TickPracticeReadyAndMaybeStartMain();
-
-            if (!_ctx.IsPractice && !IsDevGodModeActive())
+            if (!IsDevGodModeActive())
             {
                 _remainingMainTime -= Time.deltaTime;
 
@@ -37,17 +34,11 @@ namespace MiniParty.Minigames.Oiia
 
             ForEachSlot(i =>
             {
-                TickMeta(i);
-
                 if (_aliveMask[i])
                     TickGameplay(i);
 
-                if (!_ctx.IsPractice)
-                {
-                    UpdateCatAnimationMode(i);
-                    UpdateSlotUiShake(i);
-                }
-
+                UpdateCatAnimationMode(i);
+                UpdateSlotUiShake(i);
                 TickSpotlight(i);
                 TickStageBackground(i);
                 TickSpeakers(i);

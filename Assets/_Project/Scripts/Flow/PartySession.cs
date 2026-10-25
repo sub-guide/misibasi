@@ -53,28 +53,8 @@ namespace MiniParty.Flow
 
         public bool HasPendingReport => _hasPending;
 
-        /// <summary>
-        /// Oiia: 연습 세션이 끝나면 true로 설정. 다음 메뉴에서 Enter로 진입할 때 본게임 1회로 소비된다.
-        /// 본게임까지 끝나면 <see cref="ResetOiiaCycleAfterMainSession"/> 으로 다시 연습부터.
-        /// </summary>
-        bool _oiiaMainRoundQueuedAfterPractice;
-
-        /// <summary>관짝춤: Oiia와 동일 — 연습 Result 후 본게임 1회 예약.</summary>
+        /// <summary>관짝춤: 연습 Result 후 본게임 1회 예약.</summary>
         bool _coffinMainRoundQueuedAfterPractice;
-
-        /// <summary>다음 Oiia 로드가 연습이면 true, 본게임이면 false. 본게임 예약이 있으면 큐를 소비한다.</summary>
-        public bool TakeOiiaNextRoundIsPractice()
-        {
-            if (!_oiiaMainRoundQueuedAfterPractice)
-                return true;
-
-            _oiiaMainRoundQueuedAfterPractice = false;
-            return false;
-        }
-
-        public void QueueOiiaMainRoundAfterPracticeEnded() => _oiiaMainRoundQueuedAfterPractice = true;
-
-        public void ResetOiiaCycleAfterMainSession() => _oiiaMainRoundQueuedAfterPractice = false;
 
         public bool TakeCoffinDanceNextRoundIsPractice()
         {

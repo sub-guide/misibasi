@@ -9,75 +9,14 @@ namespace MiniParty.Minigames.Oiia
     {
         readonly bool[] _djPressedScratch = new bool[DjPadButtonCount];
 
-        void TickMeta(int i)
-        {
-            ref SlotRuntime sr = ref _slots[i];
-
-            if (sr.InputLockTimer > 0f)
-                sr.InputLockTimer -= Time.deltaTime;
-
-            TickFever(i);
-        }
-
-        /// <summary>
-        /// 상시 활성 타겟 3개. 피버(패턴 완성/3초) 중에는 전 키 정답.
-        /// 스포트라이트·글로벌 티어는 후속.
-        /// </summary>
+        /// <summary>10키 전부 정답. 같은 프레임의 첫 입력 1회만 점수.</summary>
         void TickGameplay(int i)
         {
-            ref SlotRuntime sr = ref _slots[i];
-
             if (!SlotGamepad.HasInput(i))
                 return;
 
             Joystick pad = SlotGamepad.Get(i);
-
-            if (sr.InputLockTimer > 0f)
-                return;
-
-            if (_ctx.IsPractice && _practiceReady[i])
-                return;
-
-            EnsureDjActiveArray(ref sr);
-
-            if (IsAllKeysCorrectMode(i))
-            {
-                TickGameplayAllKeysCorrectDj(i, pad);
-                return;
-            }
-
-            if (!CollectDjPadPressedThisFrame(i, pad, _djPressedScratch))
-                return;
-
-            var anyWrong = false;
-            var anyCorrect = false;
-            var firstCorrect = -1;
-
-            for (var k = 0; k < DjPadButtonCount; k++)
-            {
-                if (!_djPressedScratch[k])
-                    continue;
-
-                if (sr.DjActive[k])
-                {
-                    anyCorrect = true;
-                    if (firstCorrect < 0)
-                        firstCorrect = k;
-                }
-                else
-                {
-                    anyWrong = true;
-                }
-            }
-
-            if (anyWrong)
-            {
-                OnDjMiss(i);
-                return;
-            }
-
-            if (anyCorrect)
-                OnDjHit(i, firstCorrect);
+            TickGameplayAllKeysCorrectDj(i, pad);
         }
 
         void TickGameplayAllKeysCorrectDj(int slotIndex, Joystick pad)
@@ -109,133 +48,31 @@ namespace MiniParty.Minigames.Oiia
             ref SlotRuntime sr = ref _slots[i];
             EnsureDjActiveArray(ref sr);
 
-            bool allKeys = IsAllKeysCorrectMode(i);
-
-            if (!allKeys && !sr.DjActive[buttonIndex])
-                return;
-
-            if (!allKeys)
-            {
-                sr.DjActive[buttonIndex] = false;
-                ReplenishOneDjActive(ref sr);
-                ApplyDjPadHighlights(i);
-            }
-            else if (!sr.DjActive[buttonIndex])
-            {
+            if (!sr.DjActive[buttonIndex])
                 ActivateAllDjTargets(i);
-            }
 
             sr.Combo++;
             int steppedPosition = AdvanceSubPatternOnHit(i, ref sr, out bool patternCompleted);
 
-            if (!_ctx.IsPractice)
-            {
-                sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, DjHitScore);
-                if (patternCompleted)
-                    sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, PatternCompleteBonusScore);
-            }
+            sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, DjHitScore);
+            if (patternCompleted)
+                sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, PatternCompleteBonusScore);
 
-            if (!_ctx.IsPractice)
-            {
-                PlayCatSingleCycleIfIdle(i);
-                TriggerSlotUiShakeOnCorrect(i, ref sr);
-            }
+            PlayCatSingleCycleIfIdle(i);
+            TriggerSlotUiShakeOnCorrect(i, ref sr);
 
-            // 실제 입력마다 스텝 SFX 재생. steppedPosition은 피버 진입 리셋과 무관한 진행 위치.
             if (steppedPosition > 0 &&
                 patternStepSfx != null &&
                 patternStepSfx.Length > 0)
             {
-                PlayPatternStepSfx(
-                    (steppedPosition - 1) % patternStepSfx.Length,
-                    IsFeverActive(i));
+                PlayPatternStepSfx((steppedPosition - 1) % patternStepSfx.Length);
             }
-        }
-
-        void OnDjMiss(int i)
-        {
-            ref SlotRuntime sr = ref _slots[i];
-            sr.Combo = 0;
-            sr.InputLockTimer = InputLockAfterMissSeconds;
-
-            if (sr.FeverRemaining > 0f)
-                EndFever(i);
-            else
-                ResetSubPatternProgress(ref sr);
-
-            TriggerSpotlightMissFlash(i);
-            PlayBuzz();
         }
 
         static void EnsureDjActiveArray(ref SlotRuntime sr)
         {
             if (sr.DjActive == null || sr.DjActive.Length != DjPadButtonCount)
                 sr.DjActive = new bool[DjPadButtonCount];
-        }
-
-        void SeedDjActiveTargets(int slotIndex)
-        {
-            ref SlotRuntime sr = ref _slots[slotIndex];
-            EnsureDjActiveArray(ref sr);
-
-            for (var k = 0; k < DjPadButtonCount; k++)
-                sr.DjActive[k] = false;
-
-            var picked = 0;
-            var guard = 0;
-            while (picked < DjActiveTargetCount && guard++ < 64)
-            {
-                int idx = Random.Range(0, DjPadButtonCount);
-                if (sr.DjActive[idx])
-                    continue;
-
-                sr.DjActive[idx] = true;
-                picked++;
-            }
-
-            ApplyDjPadHighlights(slotIndex);
-        }
-
-        static void ReplenishOneDjActive(ref SlotRuntime sr)
-        {
-            int inactiveCount = 0;
-            for (var k = 0; k < DjPadButtonCount; k++)
-            {
-                if (!sr.DjActive[k])
-                    inactiveCount++;
-            }
-
-            if (inactiveCount <= 0)
-                return;
-
-            int pick = Random.Range(0, inactiveCount);
-            for (var k = 0; k < DjPadButtonCount; k++)
-            {
-                if (sr.DjActive[k])
-                    continue;
-
-                if (pick == 0)
-                {
-                    sr.DjActive[k] = true;
-                    return;
-                }
-
-                pick--;
-            }
-        }
-
-        static int FindFirstDjActiveIndex(ref SlotRuntime sr)
-        {
-            if (sr.DjActive == null)
-                return -1;
-
-            for (var k = 0; k < sr.DjActive.Length; k++)
-            {
-                if (sr.DjActive[k])
-                    return k;
-            }
-
-            return -1;
         }
 
         void ApplyDjPadHighlights(int slotIndex)

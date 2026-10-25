@@ -20,7 +20,7 @@ namespace MiniParty.Minigames.Oiia
 
             _remainingMainTime = Mathf.Max(MainRoundMinSeconds, MainRoundDurationSeconds);
 
-            if (!_ctx.IsPractice && mainRoundTimerCentralTop == null && !_warnedTimerMissing)
+            if (mainRoundTimerCentralTop == null && !_warnedTimerMissing)
             {
                 _warnedTimerMissing = true;
                 Debug.LogWarning("[OiiaMinigameModule] 본게임 타이머용 TMP(mainRoundTimerCentralTop)가 비었습니다. Inspector에서 연결하세요.", this);
@@ -28,26 +28,19 @@ namespace MiniParty.Minigames.Oiia
 
             ForEachSlot(ResetSlotAtBegin);
             ForEachSlot(ApplySlotChrome);
-
-            if (!_ctx.IsPractice)
-            {
-                ResetAllCatAnimatorsToIdle();
-                ResetAllSlotUiShake();
-            }
+            ResetAllCatAnimatorsToIdle();
+            ResetAllSlotUiShake();
 
             StopTierBgm();
             StopFeverScreamAudio();
             StopFeverChantAudio();
 
-            if (!_ctx.IsPractice)
+            UpdateGlobalTierFeverMode();
+            ForEachSlot(i =>
             {
-                UpdateGlobalTierFeverMode();
-                ForEachSlot(i =>
-                {
-                    if (_aliveMask[i])
-                        UpdateCatAnimationMode(i);
-                });
-            }
+                if (_aliveMask[i])
+                    UpdateCatAnimationMode(i);
+            });
 
             UpdateMainTimerUi();
             ForEachSlot(FlushUi);
@@ -61,11 +54,7 @@ namespace MiniParty.Minigames.Oiia
             ref SlotRuntime sr = ref _slots[i];
             sr.ScoreSum = 0;
             sr.Combo = 0;
-            sr.InputLockTimer = 0f;
-            sr.FeverRemaining = 0f;
-            sr.ConsecutiveLoopSuccesses = 0;
             sr.SubPatternMatched = 0;
-            _practiceReady[i] = false;
 
             if (TryGetBinding(i, out SlotUiBindings b))
             {
@@ -86,12 +75,7 @@ namespace MiniParty.Minigames.Oiia
                 ResetCrowdAtBegin(i);
 
                 if (play)
-                {
-                    if (IsDevGodModeSlot(i))
-                        ActivateAllDjTargets(i);
-                    else
-                        SeedDjActiveTargets(i);
-                }
+                    ActivateAllDjTargets(i);
             }
             else
             {

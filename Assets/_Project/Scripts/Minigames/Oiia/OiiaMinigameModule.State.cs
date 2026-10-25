@@ -1,5 +1,4 @@
 using MiniParty.Core;
-using MiniParty.Input;
 using MiniParty.Minigames;
 using UnityEngine;
 
@@ -18,11 +17,7 @@ namespace MiniParty.Minigames.Oiia
 
         readonly bool[] _aliveMask = new bool[SlotCount];
 
-        readonly bool[] _practiceReady = new bool[SlotCount];
-
         readonly Color[] _slotPanelBgRestColor = new Color[SlotCount];
-
-        readonly OperatorInputService _operatorInput = new();
 
         AudioSource _tierBgmRuntime;
 

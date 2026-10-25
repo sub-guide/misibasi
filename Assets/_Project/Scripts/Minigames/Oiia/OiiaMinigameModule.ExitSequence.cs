@@ -67,11 +67,10 @@ namespace MiniParty.Minigames.Oiia
             ForEachSlot(i =>
             {
                 participated[i] = _aliveMask[i];
-                report.FinalScore[i] = !_ctx.IsPractice ? Mathf.Max(0, _slots[i].ScoreSum) : 0;
+                report.FinalScore[i] = Mathf.Max(0, _slots[i].ScoreSum);
             });
 
-            if (!_ctx.IsPractice)
-                OiiaHpLossRules.FillHpLost(
+            OiiaHpLossRules.FillHpLost(
                     report.FinalScore,
                     participated,
                     report.HpLostThisSession,

@@ -50,36 +50,7 @@ namespace MiniParty.Minigames.Oiia
         [Tooltip("켜면 티어 LetterFontSize로 템플릿 fontSize를 덮어씀. 끄면 템플릿 크기 유지.")]
         [SerializeField] bool speakerLetterOverrideFontSizeFromTier = true;
 
-        [Header("스피커 연출 — 티어별 (Inspector)")]
-        [Tooltip("글로벌 T1 수치.")]
-        [SerializeField] SpeakerTierFxSettings speakerTier1 = new SpeakerTierFxSettings
-        {
-            WooferPulseScale = 1.2f,
-            WooferPulseSeconds = 0.12f,
-            LetterDuration = 0.45f,
-            LetterFontSize = 64f,
-            LetterFlyDistance = 70f,
-            LetterShakeAmplitude = 4f,
-            LetterShakeFrequency = 22f,
-            LetterScaleStart = 0.35f,
-            LetterScalePeak = 1.2f
-        };
-
-        [Tooltip("글로벌 T2 수치.")]
-        [SerializeField] SpeakerTierFxSettings speakerTier2 = new SpeakerTierFxSettings
-        {
-            WooferPulseScale = 1.35f,
-            WooferPulseSeconds = 0.12f,
-            LetterDuration = 0.45f,
-            LetterFontSize = 80f,
-            LetterFlyDistance = 95f,
-            LetterShakeAmplitude = 8f,
-            LetterShakeFrequency = 28f,
-            LetterScaleStart = 0.35f,
-            LetterScalePeak = 1.4f
-        };
-
-        [Tooltip("글로벌 T3 수치.")]
+        [Header("스피커 연출")]
         [SerializeField] SpeakerTierFxSettings speakerTier3 = new SpeakerTierFxSettings
         {
             WooferPulseScale = 1.55f,
@@ -124,15 +95,7 @@ namespace MiniParty.Minigames.Oiia
         readonly SpeakerLetterFx[][] _speakerLetters = new SpeakerLetterFx[SlotCount][];
         readonly Transform[] _speakerLetterParents = new Transform[SlotCount];
 
-        SpeakerTierFxSettings GetSpeakerTierFx()
-        {
-            int tier = ResolveGlobalTier();
-            if (tier >= 3)
-                return speakerTier3;
-            if (tier >= 2)
-                return speakerTier2;
-            return speakerTier1;
-        }
+        SpeakerTierFxSettings GetSpeakerTierFx() => speakerTier3;
 
         void ResetSpeakersAtBegin(int i)
         {
@@ -265,7 +228,7 @@ namespace MiniParty.Minigames.Oiia
                 tmp = go.AddComponent<TextMeshProUGUI>();
                 tmp.alignment = TextAlignmentOptions.Center;
                 tmp.fontStyle = FontStyles.Bold;
-                tmp.fontSize = Mathf.Max(8f, speakerTier1.LetterFontSize);
+                tmp.fontSize = Mathf.Max(8f, speakerTier3.LetterFontSize);
                 tmp.color = Color.white;
                 tmp.raycastTarget = false;
                 tmp.richText = false;
@@ -320,9 +283,6 @@ namespace MiniParty.Minigames.Oiia
         void NotifySubPatternStep(int slotIndex, char letterUpper)
         {
             if (slotIndex < 0 || slotIndex >= SlotCount)
-                return;
-
-            if (_ctx.IsPractice)
                 return;
 
             if (_speakerWoofers[slotIndex] == null)

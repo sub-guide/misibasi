@@ -28,24 +28,8 @@ namespace MiniParty.Minigames.Oiia
             public float Frequency;
         }
 
-        [Header("슬롯 UI 흔들림 — 정답 임펄스 (티어별)")]
-        [Tooltip("글로벌 T1 정답 시 HUD·DjBox·StageScreen 임펄스.")]
-        [SerializeField] UiShakeTierSettings uiShakeTier1 = new UiShakeTierSettings
-        {
-            Amplitude = 0f,
-            Duration = 0f,
-            Frequency = 0f
-        };
-
-        [Tooltip("글로벌 T2 정답 시 HUD·DjBox·StageScreen 임펄스.")]
-        [SerializeField] UiShakeTierSettings uiShakeTier2 = new UiShakeTierSettings
-        {
-            Amplitude = 8f,
-            Duration = 1f,
-            Frequency = 5f
-        };
-
-        [Tooltip("글로벌 T3 정답 시 HUD·DjBox·StageScreen 임펄스.")]
+        [Header("슬롯 UI 흔들림 — 정답 임펄스")]
+        [Tooltip("정답 시 HUD·DjBox·StageScreen 임펄스.")]
         [SerializeField] UiShakeTierSettings uiShakeTier3 = new UiShakeTierSettings
         {
             Amplitude = 20f,
@@ -53,22 +37,8 @@ namespace MiniParty.Minigames.Oiia
             Frequency = 64f
         };
 
-        [Header("슬롯 UI 흔들림 — 상시 진동 (티어별)")]
-        [Tooltip("글로벌 T1 상시 진동. 정답 임펄스와 독립·합산.")]
-        [SerializeField] UiShakeIdleTierSettings uiShakeIdleTier1 = new UiShakeIdleTierSettings
-        {
-            Amplitude = 0f,
-            Frequency = 0f
-        };
-
-        [Tooltip("글로벌 T2 상시 진동.")]
-        [SerializeField] UiShakeIdleTierSettings uiShakeIdleTier2 = new UiShakeIdleTierSettings
-        {
-            Amplitude = 10f,
-            Frequency = 1f
-        };
-
-        [Tooltip("글로벌 T3 상시 진동.")]
+        [Header("슬롯 UI 흔들림 — 상시 진동")]
+        [Tooltip("상시 진동. 정답 임펄스와 독립·합산.")]
         [SerializeField] UiShakeIdleTierSettings uiShakeIdleTier3 = new UiShakeIdleTierSettings
         {
             Amplitude = 8f,
@@ -93,25 +63,9 @@ namespace MiniParty.Minigames.Oiia
         readonly float[] _uiShakeActiveDuration = new float[SlotCount];
         readonly float[] _uiShakeActiveFrequency = new float[SlotCount];
 
-        UiShakeTierSettings GetUiShakeTierSettings()
-        {
-            int tier = ResolveGlobalTier();
-            if (tier >= 3)
-                return uiShakeTier3;
-            if (tier >= 2)
-                return uiShakeTier2;
-            return uiShakeTier1;
-        }
+        UiShakeTierSettings GetUiShakeTierSettings() => uiShakeTier3;
 
-        UiShakeIdleTierSettings GetUiShakeIdleTierSettings()
-        {
-            int tier = ResolveGlobalTier();
-            if (tier >= 3)
-                return uiShakeIdleTier3;
-            if (tier >= 2)
-                return uiShakeIdleTier2;
-            return uiShakeIdleTier1;
-        }
+        UiShakeIdleTierSettings GetUiShakeIdleTierSettings() => uiShakeIdleTier3;
 
         void ResetAllSlotUiShake()
         {
@@ -213,9 +167,6 @@ namespace MiniParty.Minigames.Oiia
 
         void TriggerSlotUiShakeOnCorrect(int i, ref SlotRuntime sr)
         {
-            if (_ctx.IsPractice)
-                return;
-
             UiShakeTierSettings fx = GetUiShakeTierSettings();
             if (fx.Amplitude <= 0f)
                 return;
@@ -232,9 +183,6 @@ namespace MiniParty.Minigames.Oiia
 
         void UpdateSlotUiShake(int i)
         {
-            if (_ctx.IsPractice)
-                return;
-
             CaptureSlotUiShakeTargets(i);
 
             UiShakeTarget[] targets = _uiShakeTargets[i];

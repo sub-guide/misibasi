@@ -51,13 +51,9 @@ namespace MiniParty.Minigames.Oiia
 
         bool HasAnyActiveFever()
         {
-            if (_slots == null)
-                return false;
-
-            int count = Mathf.Min(SlotCount, _slots.Length);
-            for (var i = 0; i < count; i++)
+            for (var i = 0; i < SlotCount; i++)
             {
-                if (_slots[i].FeverRemaining > 0f)
+                if (IsFeverActive(i))
                     return true;
             }
 

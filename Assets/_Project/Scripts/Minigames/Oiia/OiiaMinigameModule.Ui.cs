@@ -6,15 +6,6 @@ namespace MiniParty.Minigames.Oiia
 {
     public sealed partial class OiiaMinigameModule
     {
-        /// <summary>이 시간(초) 이하로 남으면 FEVER! 펄스.</summary>
-        const float FeverEndPulseWindowSeconds = 1f;
-
-        const float FeverPulseSpeed = 14f;
-
-        const float FeverPulseAlphaMin = 0.35f;
-
-        const float FeverPulseScaleMax = 1.12f;
-
         /// <summary>콤보 라벨(`COMBO`) 상대 크기(%). 숫자는 기본 fontSize.</summary>
         const float ComboLabelRelativeSizePercent = 55f;
 
@@ -23,15 +14,8 @@ namespace MiniParty.Minigames.Oiia
             if (!TryGetBinding(i, out SlotUiBindings b))
                 return;
 
-            if (_ctx.IsPractice)
-            {
-                if (b.CatAnimator != null)
-                    b.CatAnimator.gameObject.SetActive(false);
-            }
-            else if (b.CatAnimator != null)
-            {
-                b.CatAnimator.gameObject.SetActive(true);
-            }
+            if (b.CatAnimator != null)
+                b.CatAnimator.gameObject.SetActive(_aliveMask[i]);
         }
 
         void FlushUi(int i)
@@ -49,59 +33,24 @@ namespace MiniParty.Minigames.Oiia
 
         void FlushHudUi(int i, SlotUiBindings ui, ref SlotRuntime sr)
         {
-            // 피버가 기본 상태이므로 HudDisplay는 항상 Score만.
-            FlushHudDisplayExclusive(ui, ref sr, fever: false);
+            FlushHudScore(ui, ref sr);
             FlushComboHud(ui, ref sr);
             FlushFeverGauge(ui, ref sr);
 
-            if (ui.PracticeReadyText == null)
-                return;
+            if (ui.HudFeverText != null)
+                ui.HudFeverText.gameObject.SetActive(false);
 
-            bool show = _ctx.IsPractice && _aliveMask[i] && _practiceReady[i];
-            ui.PracticeReadyText.gameObject.SetActive(show);
-            if (show)
-                ui.PracticeReadyText.text = "READY";
+            if (ui.PracticeReadyText != null)
+                ui.PracticeReadyText.gameObject.SetActive(false);
         }
 
-        /// <summary>
-        /// HudDisplay — 피버 중 FEVER!만, 아니면 Score만.
-        /// </summary>
-        void FlushHudDisplayExclusive(SlotUiBindings ui, ref SlotRuntime sr, bool fever)
+        static void FlushHudScore(SlotUiBindings ui, ref SlotRuntime sr)
         {
-            if (ui.HudScoreText != null)
-            {
-                ui.HudScoreText.gameObject.SetActive(!fever);
-                if (!fever)
-                    ui.HudScoreText.text = _ctx.IsPractice ? "-" : $"{sr.ScoreSum}";
-            }
-
-            if (ui.HudFeverText == null)
+            if (ui.HudScoreText == null)
                 return;
 
-            ui.HudFeverText.gameObject.SetActive(fever);
-            if (!fever)
-            {
-                ResetFeverHudVisual(ui.HudFeverText);
-                return;
-            }
-
-            ui.HudFeverText.text = "FEVER!";
-
-            bool pulse = sr.FeverRemaining <= FeverEndPulseWindowSeconds;
-            if (!pulse)
-            {
-                ResetFeverHudVisual(ui.HudFeverText);
-                return;
-            }
-
-            float t = Mathf.Abs(Mathf.Sin(Time.unscaledTime * FeverPulseSpeed));
-            float alpha = Mathf.Lerp(FeverPulseAlphaMin, 1f, t);
-            Color c = ui.HudFeverText.color;
-            c.a = alpha;
-            ui.HudFeverText.color = c;
-
-            float scale = Mathf.Lerp(1f, FeverPulseScaleMax, t);
-            ui.HudFeverText.rectTransform.localScale = new Vector3(scale, scale, 1f);
+            ui.HudScoreText.gameObject.SetActive(true);
+            ui.HudScoreText.text = $"{sr.ScoreSum}";
         }
 
         /// <summary>
@@ -139,17 +88,6 @@ namespace MiniParty.Minigames.Oiia
         {
             if (gauge != null)
                 gauge.fillAmount = fill;
-        }
-
-        static void ResetFeverHudVisual(TMP_Text fever)
-        {
-            if (fever == null)
-                return;
-
-            Color c = fever.color;
-            c.a = 1f;
-            fever.color = c;
-            fever.rectTransform.localScale = Vector3.one;
         }
 
         void FlushWaitingUi(int i, SlotUiBindings ui)

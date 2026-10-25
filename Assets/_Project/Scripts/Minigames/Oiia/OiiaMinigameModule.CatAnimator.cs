@@ -18,17 +18,14 @@ namespace MiniParty.Minigames.Oiia
 
         bool ShouldCatLoopInMain(ref SlotRuntime sr, int i)
         {
-            if (_ctx.IsPractice)
-                return false;
-
-            if (!_aliveMask[i])
-                return false;
-
-            // 글로벌 3티어: 미스·입력 잠금과 무관하게 SpinLoop 유지 (원작 밈).
-            return ResolveGlobalTier() >= 3;
+            return _aliveMask[i];
         }
 
         static int CatStateHash(string stateName) => Animator.StringToHash(stateName);
+
+        /// <summary>꺼진 슬롯 고양이에 Play하면 Unity가 inactive 경고를 낸다.</summary>
+        static bool CanDriveCatAnimator(Animator a) =>
+            a != null && a.isActiveAndEnabled;
 
         void ResetAllCatAnimatorsToIdle()
         {
@@ -38,7 +35,7 @@ namespace MiniParty.Minigames.Oiia
                     return;
 
                 Animator a = b.CatAnimator;
-                if (a == null)
+                if (!CanDriveCatAnimator(a))
                     return;
 
                 ConfigureCatAnimator(a);
@@ -65,7 +62,7 @@ namespace MiniParty.Minigames.Oiia
                 return;
 
             Animator a = b.CatAnimator;
-            if (a == null)
+            if (!CanDriveCatAnimator(a))
                 return;
 
             ref SlotRuntime sr = ref _slots[i];
@@ -97,7 +94,7 @@ namespace MiniParty.Minigames.Oiia
                 return;
 
             Animator a = b.CatAnimator;
-            if (a == null)
+            if (!CanDriveCatAnimator(a))
                 return;
 
             ConfigureCatAnimator(a);
@@ -110,7 +107,7 @@ namespace MiniParty.Minigames.Oiia
                 return;
 
             Animator a = b.CatAnimator;
-            if (a == null)
+            if (!CanDriveCatAnimator(a))
                 return;
 
             ref SlotRuntime sr = ref _slots[i];
