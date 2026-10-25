@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using MiniParty.Input;
 using UnityEngine;
 
 namespace MiniParty.Result
@@ -114,21 +113,6 @@ namespace MiniParty.Result
                 return;
 
             sfxSource.PlayOneShot(rankRevealClip);
-        }
-
-        /// <summary>Ready 전까지 START·운영자 Enter 무시.</summary>
-        bool IsPlayerAndOperatorInputLocked() =>
-            _phase is not ResultPhase.Ready;
-
-        void DrainLockedInputThisFrame()
-        {
-            if (!IsPlayerAndOperatorInputLocked())
-                return;
-
-            for (var i = 0; i < 4; i++)
-                _ = SlotGamepad.StartPressed(i);
-
-            _ = _operatorInput.Confirm;
         }
     }
 }
