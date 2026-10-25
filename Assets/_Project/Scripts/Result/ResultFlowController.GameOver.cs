@@ -7,7 +7,11 @@ namespace MiniParty.Result
     public sealed partial class ResultFlowController
     {
         [Header("GAME OVER (4단계)")]
-        [SerializeField] float gameOverDelaySeconds = 2f;
+        [Tooltip("카드 뒤집기 후 Fade 알파 0→목표까지 시간(초).")]
+        [SerializeField] float gameOverFadeSeconds = 0.5f;
+
+        [Tooltip("Fade 목표 알파 0~255.")]
+        [SerializeField] int gameOverFadeAlpha = 250;
 
         IEnumerator CoGameOverSequence()
         {
@@ -34,8 +38,9 @@ namespace MiniParty.Result
 
             _phase = ResultPhase.GameOver;
 
-            if (gameOverDelaySeconds > 0f)
-                yield return new WaitForSecondsRealtime(gameOverDelaySeconds);
+            float fadeSeconds = Mathf.Max(0f, gameOverFadeSeconds);
+            float targetAlpha = Mathf.Clamp(gameOverFadeAlpha, 0, 255) / 255f;
+            int remaining = 0;
 
             for (var i = 0; i < 4; i++)
             {
@@ -48,11 +53,27 @@ namespace MiniParty.Result
                 models[i].EnterGameOver();
 
                 ResultSlotView view = GetSlotView(i);
-                view?.SetDimmed(true);
-                view?.ShowGameOver(i);
+                if (view == null)
+                    continue;
+
+                remaining++;
+                StartCoroutine(CoPlayGameOverView(view, fadeSeconds, targetAlpha, () => remaining--));
             }
 
+            while (remaining > 0)
+                yield return null;
+
             Debug.Log("[ResultFlowController] 4단계 GameOver 완료.");
+        }
+
+        IEnumerator CoPlayGameOverView(
+            ResultSlotView view,
+            float fadeSeconds,
+            float targetAlpha,
+            System.Action onDone)
+        {
+            yield return view.PlayGameOver(fadeSeconds, targetAlpha);
+            onDone?.Invoke();
         }
     }
 }

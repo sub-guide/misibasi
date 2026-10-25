@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MiniParty.Result
 {
@@ -12,6 +14,9 @@ namespace MiniParty.Result
         const string StateFaceDown = "FaceDown";
         const string PracticeDash = "-";
         const string FailLabel = "FAIL";
+        const float GameOverLetterDurationSeconds = 0.15f;
+        const float GameOverLetterStaggerSeconds = 0.08f;
+        const float GameOverLetterFlyDistance = 80f;
 
         static readonly int FaceUpHash = Animator.StringToHash("FaceUp");
 
@@ -40,8 +45,13 @@ namespace MiniParty.Result
         [Tooltip("슬롯 자식 Fade. Intro·빈 슬롯 ON, 등수 공개 시 OFF.")]
         [SerializeField] GameObject fade;
 
+        [Header("GAME OVER")]
+        [Tooltip("슬롯 자식 GameOver.")]
+        [SerializeField] TMP_Text gameOverText;
+
         public void SetupIntro(int slotIndex, bool participated)
         {
+            SetGameOverVisible(false);
             SetRankScoreVisible(false);
             SetFadeVisible(true);
         }
@@ -71,6 +81,7 @@ namespace MiniParty.Result
 
         public void SetEmptySlotLook()
         {
+            SetGameOverVisible(false);
             SetRankScoreVisible(false);
             SetFadeVisible(true);
         }
@@ -123,8 +134,34 @@ namespace MiniParty.Result
         {
         }
 
-        public void ShowGameOver(int slotIndex)
+        /// <summary>Fade를 알파 0으로 켠 뒤 목표 알파까지 보간, 끝나면 GameOver 텍스트 ON.</summary>
+        public IEnumerator PlayGameOver(float fadeSeconds, float targetAlpha)
         {
+            SetGameOverVisible(false);
+
+            Image fadeImage = fade != null ? fade.GetComponent<Image>() : null;
+            SetFadeVisible(true);
+            if (fadeImage != null)
+                SetImageAlpha(fadeImage, 0f);
+
+            float duration = Mathf.Max(0f, fadeSeconds);
+            float endAlpha = Mathf.Clamp01(targetAlpha);
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = duration <= 0f ? 1f : Mathf.Clamp01(elapsed / duration);
+                if (fadeImage != null)
+                    SetImageAlpha(fadeImage, Mathf.Lerp(0f, endAlpha, t));
+                yield return null;
+            }
+
+            if (fadeImage != null)
+                SetImageAlpha(fadeImage, endAlpha);
+
+            SetGameOverVisible(true);
+            yield return CoFlyInGameOverLetters();
         }
 
         public void SetReadyBorder(bool on)
@@ -182,6 +219,155 @@ namespace MiniParty.Result
         {
             if (fade != null)
                 fade.SetActive(visible);
+        }
+
+        void SetGameOverVisible(bool visible)
+        {
+            if (gameOverText != null)
+                gameOverText.gameObject.SetActive(visible);
+        }
+
+        IEnumerator CoFlyInGameOverLetters()
+        {
+            if (gameOverText == null)
+                yield break;
+
+            gameOverText.ForceMeshUpdate();
+            TMP_TextInfo textInfo = gameOverText.textInfo;
+            if (textInfo == null || textInfo.characterCount <= 0)
+                yield break;
+
+            int visibleCount = 0;
+            for (var c = 0; c < textInfo.characterCount; c++)
+            {
+                if (textInfo.characterInfo[c].isVisible)
+                    visibleCount++;
+            }
+
+            if (visibleCount <= 0)
+                yield break;
+
+            var fromOffsets = new Vector3[visibleCount];
+            var materialIndex = new int[visibleCount];
+            var vertexIndex = new int[visibleCount];
+            float distance = GameOverLetterFlyDistance;
+            int vi = 0;
+            for (var c = 0; c < textInfo.characterCount; c++)
+            {
+                TMP_CharacterInfo ch = textInfo.characterInfo[c];
+                if (!ch.isVisible)
+                    continue;
+
+                float ang = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+                fromOffsets[vi] = new Vector3(Mathf.Cos(ang), Mathf.Sin(ang), 0f) * distance;
+                materialIndex[vi] = ch.materialReferenceIndex;
+                vertexIndex[vi] = ch.vertexIndex;
+                vi++;
+            }
+
+            var originalVerts = new Vector3[textInfo.meshInfo.Length][];
+            var originalCols = new Color32[textInfo.meshInfo.Length][];
+            for (var m = 0; m < textInfo.meshInfo.Length; m++)
+            {
+                originalVerts[m] = (Vector3[])textInfo.meshInfo[m].vertices.Clone();
+                originalCols[m] = (Color32[])textInfo.meshInfo[m].colors32.Clone();
+            }
+
+            float letterDur = GameOverLetterDurationSeconds;
+            float stagger = GameOverLetterStaggerSeconds;
+            float total = letterDur + stagger * (visibleCount - 1);
+            float elapsed = 0f;
+
+            ApplyGameOverLetterFrame(
+                textInfo, originalVerts, originalCols,
+                fromOffsets, materialIndex, vertexIndex, visibleCount,
+                elapsed, letterDur, stagger);
+            gameOverText.UpdateVertexData(TMP_VertexDataUpdateFlags.All);
+
+            if (total <= 0f)
+            {
+                RestoreGameOverMesh(textInfo, originalVerts, originalCols);
+                gameOverText.UpdateVertexData(TMP_VertexDataUpdateFlags.All);
+                yield break;
+            }
+
+            while (elapsed < total)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                ApplyGameOverLetterFrame(
+                    textInfo, originalVerts, originalCols,
+                    fromOffsets, materialIndex, vertexIndex, visibleCount,
+                    elapsed, letterDur, stagger);
+                gameOverText.UpdateVertexData(TMP_VertexDataUpdateFlags.All);
+                yield return null;
+            }
+
+            RestoreGameOverMesh(textInfo, originalVerts, originalCols);
+            gameOverText.UpdateVertexData(TMP_VertexDataUpdateFlags.All);
+        }
+
+        static void ApplyGameOverLetterFrame(
+            TMP_TextInfo textInfo,
+            Vector3[][] originalVerts,
+            Color32[][] originalCols,
+            Vector3[] fromOffsets,
+            int[] materialIndex,
+            int[] vertexIndex,
+            int visibleCount,
+            float elapsed,
+            float letterDur,
+            float stagger)
+        {
+            RestoreGameOverMesh(textInfo, originalVerts, originalCols);
+
+            for (var i = 0; i < visibleCount; i++)
+            {
+                float localT = letterDur <= 0f
+                    ? 1f
+                    : (elapsed - i * stagger) / letterDur;
+
+                int mesh = materialIndex[i];
+                int v0 = vertexIndex[i];
+                Vector3[] verts = textInfo.meshInfo[mesh].vertices;
+                Color32[] cols = textInfo.meshInfo[mesh].colors32;
+
+                if (localT <= 0f)
+                {
+                    for (var k = 0; k < 4; k++)
+                    {
+                        Color32 col = cols[v0 + k];
+                        col.a = 0;
+                        cols[v0 + k] = col;
+                    }
+
+                    continue;
+                }
+
+                float t = Mathf.Clamp01(localT);
+                float ease = 1f - (1f - t) * (1f - t) * (1f - t);
+                Vector3 offset = fromOffsets[i] * (1f - ease);
+                for (var k = 0; k < 4; k++)
+                    verts[v0 + k] += offset;
+            }
+        }
+
+        static void RestoreGameOverMesh(
+            TMP_TextInfo textInfo,
+            Vector3[][] originalVerts,
+            Color32[][] originalCols)
+        {
+            for (var m = 0; m < originalVerts.Length; m++)
+            {
+                Array.Copy(originalVerts[m], textInfo.meshInfo[m].vertices, originalVerts[m].Length);
+                Array.Copy(originalCols[m], textInfo.meshInfo[m].colors32, originalCols[m].Length);
+            }
+        }
+
+        static void SetImageAlpha(Image image, float alpha)
+        {
+            Color c = image.color;
+            c.a = alpha;
+            image.color = c;
         }
 
         void ApplyRank(string label, Color color)
