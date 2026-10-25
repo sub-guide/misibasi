@@ -39,6 +39,16 @@ namespace MiniParty.Minigames.Oiia
             StopFeverScreamAudio();
             StopFeverChantAudio();
 
+            if (!_ctx.IsPractice)
+            {
+                UpdateGlobalTierFeverMode();
+                ForEachSlot(i =>
+                {
+                    if (_aliveMask[i])
+                        UpdateCatAnimationMode(i);
+                });
+            }
+
             UpdateMainTimerUi();
             ForEachSlot(FlushUi);
         }

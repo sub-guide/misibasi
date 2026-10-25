@@ -29,34 +29,17 @@ namespace MiniParty.Minigames.Oiia
         }
 
         /// <summary>
-        /// 시간 기반 글로벌 티어. 1 = 0–27s, 2 = 27–33.5s, 3 = 33.5–60s.
-        /// 연습 모드에서는 1.
+        /// 본게임은 시작부터 끝까지 글로벌 3티어(클럽·전 키 정답). 연습 모드에서는 1.
         /// </summary>
         int ResolveGlobalTier()
         {
             if (!_running || _ctx.IsPractice)
                 return 1;
 
-            float elapsed = GetMainElapsedSeconds();
-            if (elapsed < GlobalTier2StartSeconds)
-                return 1;
-
-            if (elapsed < GlobalTier3StartSeconds)
-                return 2;
-
             return 3;
         }
 
-        /// <summary>티어 전환 예고: 흰색 Beam 초고속 점멸 구간.</summary>
-        bool IsBeamTierTeaseWindow()
-        {
-            if (!_running || _ctx.IsPractice)
-                return false;
-
-            float e = GetMainElapsedSeconds();
-            bool beforeT2 = e >= BeamTeaseBeforeTier2StartSeconds && e < GlobalTier2StartSeconds;
-            bool beforeT3 = e >= BeamTeaseBeforeTier3StartSeconds && e < GlobalTier3StartSeconds;
-            return beforeT2 || beforeT3;
-        }
+        /// <summary>티어 전환이 없으므로 흰색 Beam 예고 점멸도 없다.</summary>
+        bool IsBeamTierTeaseWindow() => false;
     }
 }

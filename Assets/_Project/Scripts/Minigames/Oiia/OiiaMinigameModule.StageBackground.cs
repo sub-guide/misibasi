@@ -21,8 +21,13 @@ namespace MiniParty.Minigames.Oiia
                 return;
             }
 
-            // Begin / 연습: T1 ChromaKey
-            SetStageBackgroundAlphasImmediate(ui, chroma: 1f, space: 0f, club: 0f);
+            if (_ctx.IsPractice)
+            {
+                SetStageBackgroundAlphasImmediate(ui, chroma: 1f, space: 0f, club: 0f);
+                return;
+            }
+
+            SetStageBackgroundAlphasImmediate(ui, chroma: 0f, space: 0f, club: 1f);
         }
 
         void TickStageBackground(int i)

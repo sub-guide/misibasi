@@ -49,9 +49,8 @@ namespace MiniParty.Minigames.Oiia
 
         void FlushHudUi(int i, SlotUiBindings ui, ref SlotRuntime sr)
         {
-            // 소형 디스플레이: Score ↔ FEVER! 상호 배타 (한 종류만).
-            bool fever = sr.FeverRemaining > 0f;
-            FlushHudDisplayExclusive(ui, ref sr, fever);
+            // 피버가 기본 상태이므로 HudDisplay는 항상 Score만.
+            FlushHudDisplayExclusive(ui, ref sr, fever: false);
             FlushComboHud(ui, ref sr);
             FlushFeverGauge(ui, ref sr);
 
@@ -124,30 +123,12 @@ namespace MiniParty.Minigames.Oiia
         }
 
         /// <summary>
-        /// DjBox 독립 피버 게이지 ×2.
-        /// 비피버: SubPattern 진행(matched/12) · 피버: 남은 시간 소모 · 종료 시 0.
+        /// DjBox 독립 게이지 ×2 — SubPattern 진행(matched/12). 패턴 완성 시 0으로 돌아간다.
         /// </summary>
         void FlushFeverGauge(SlotUiBindings ui, ref SlotRuntime sr)
         {
-            float fill;
-            int tier = ResolveGlobalTier();
-            if (tier == 2)
-            {
-                fill = 0f;
-            }
-            else if (tier >= 3 && sr.FeverRemaining > 0f)
-            {
-                fill = 1f;
-            }
-            else if (sr.FeverRemaining > 0f)
-            {
-                fill = sr.FeverRemaining / FeverDurationSeconds;
-            }
-            else
-            {
-                int len = SubPatternLower.Length;
-                fill = len > 0 ? sr.SubPatternMatched / (float)len : 0f;
-            }
+            int len = SubPatternLower.Length;
+            float fill = len > 0 ? sr.SubPatternMatched / (float)len : 0f;
 
             fill = Mathf.Clamp01(fill);
             SetFeverGaugeFill(ui.FeverGaugeImage, fill);

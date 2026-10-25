@@ -422,7 +422,7 @@ namespace MiniParty.Flow
             else if (runCoffin)
                 _sessionPractice = partySession.TakeCoffinDanceNextRoundIsPractice();
             else
-                _sessionPractice = partySession.TakeOiiaNextRoundIsPractice();
+                _sessionPractice = false;
 
             for (var i = 0; i < 4; i++)
                 _playedThisSession[i] = false;
@@ -469,12 +469,7 @@ namespace MiniParty.Flow
             {
                 bool oiiaSession = string.Equals(_lastStartedMinigameId, OiiaMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
                 if (oiiaSession)
-                {
-                    if (_sessionPractice)
-                        psNotify.QueueOiiaMainRoundAfterPracticeEnded();
-                    else
-                        psNotify.ResetOiiaCycleAfterMainSession();
-                }
+                    psNotify.ResetOiiaCycleAfterMainSession();
 
                 bool coffinSession = string.Equals(_lastStartedMinigameId, CoffinDanceMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
                 if (coffinSession)

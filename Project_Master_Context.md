@@ -306,15 +306,15 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - **플레이어 데이터**는 **플레이어 번호(0~3 = 1P~4P)** 에 귀속. 슬롯 UI는 게임마다 다름(OIIA만 세로 4분할).
 - **입력**: 운영자 `OperatorInputService`(키보드 ↑↓·Enter) · 플레이어 `SlotGamepad` → `Joystick.all[i]` · 개발 `DeveloperKeyboardGamepadDebug`(`Ctrl` 토글 1P).
 - **부스 USB 버튼**은 반드시 `BoothUsbGamepadLayout` 상수·`03_Booth_USB_Controller_매핑.md` 를 거침.  
-  OIIA: **O=Trigger(X), I=Button2(A), A=Button4(Y), B=Button3** — 루프 완주 시 3버튼 셔플 매핑.
-- **연습 → 본게임**은 기본 필수(스킵 없음). **예외 — Pigeon · RBC**: 메인 Enter → 바로 본게임 (`05_Pigeon.md` · `05_Rhythm_Button_Challenge.md`). HP는 **Result 씬에서만** −1.
+  OIIA: SNES **10키**(Face A/B/Y · X=Trigger · L/R · 스틱 4방향) 전부 정답 연타 (`05_OIIA.md` §5).
+- **연습 → 본게임**은 기본 필수(스킵 없음). **예외 — Pigeon · RBC · OIIA**: 메인 Enter → 바로 본게임 (`05_Pigeon.md` · `05_Rhythm_Button_Challenge.md` · `05_OIIA.md`). HP는 **Result 씬에서만** −1.
 
 **주요 씬** (Build Settings·Inspector 문자열 = 파일명과 동일):
 
 | 씬 | 상태 (한 줄) |
 |----|----------------|
 | `MainMenu` | 로비·카탈로그·시작 |
-| `Minigame_O.I.I.A.` | 디제잉 레이브 개편 **완료** · **2~4P·다패드 재검증** 남음 |
+| `Minigame_O.I.I.A.` | **T3 연타** 개편 코드 완료 · **Play 미검증** · 2~4P·다패드 재검증 남음 |
 | `Minigame_RhythmButtonChallenge` | **1차 완료** · 1P Play 확인 · 유지보수 |
 | `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
 | `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. HP 1인 skip · 2인+ 하위 50% |
@@ -348,7 +348,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 ### 지금 포커스
 
 1. **Pigeon** — 1P HP 안 깎임 Play 확인. 2~4P 하위 50% 미검증
-2. **OIIA** — 개편 후 2~4P·부스 다패드 재검증
+2. **OIIA** — T3 연타 **Play 확인**. 배경음악 시작 시점은 사용자 후속 언급. 2~4P·다패드 재검증 남음
 
 ### 열린 결정 / 보류
 
@@ -358,6 +358,8 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 |-----------|------|------|
 | C-10 `debugRouteAllToOiia` | **보류** | 출시 전 false + id별 씬 분기. 현재 false 운용 |
 | OIIA `buzzClip` / `sessionEndClip` | 의도적 미연결 | 연결 여부 **미결정** |
+| OIIA HP 컷 `HpLowScoreThreshold` | **보류** | 연타 규칙에서 8000 유지 중. Play 후 조정 |
+| OIIA 레거시 삭제 | **보류** | 연습·T1/T2·3키·3초 피버·`Fever*` 명칭. 사용자가 동작 확인 후 요청 |
 | Result `rankRevealClip` / `hpHitClip` | **보류** | Results 리메이크 범위 밖. 연결 여부 미정 |
 | 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
 | 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |

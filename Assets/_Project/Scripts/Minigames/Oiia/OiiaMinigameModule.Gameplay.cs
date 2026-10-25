@@ -126,10 +126,14 @@ namespace MiniParty.Minigames.Oiia
             }
 
             sr.Combo++;
-            int steppedPosition = AdvanceSubPatternOnHit(i, ref sr);
+            int steppedPosition = AdvanceSubPatternOnHit(i, ref sr, out bool patternCompleted);
 
             if (!_ctx.IsPractice)
+            {
                 sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, DjHitScore);
+                if (patternCompleted)
+                    sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, PatternCompleteBonusScore);
+            }
 
             if (!_ctx.IsPractice)
             {

@@ -10,11 +10,14 @@ namespace MiniParty.Minigames.Oiia
         /// 폰트 크기·색·다음 글자 미리보기 없음.
         /// 완성 시 피버 진입. 피버 종료/미스 시 진행도를 초기화.
         /// 반환값: 이번 입력으로 진행한 글자의 1-based 위치(스텝 SFX 인덱스용). 진행 없으면 0.
-        /// 완성 → 피버 진입으로 <see cref="SlotRuntime.SubPatternMatched"/>가 0으로 리셋돼도
+        /// 완성으로 <see cref="SlotRuntime.SubPatternMatched"/>가 0으로 리셋돼도
         /// 반환값으로 마지막 글자 SFX를 재생할 수 있다.
+        /// <paramref name="patternCompleted"/>: 피버 중 12글자를 채운 입력이면 true (보너스 점수용).
         /// </summary>
-        int AdvanceSubPatternOnHit(int slotIndex, ref SlotRuntime sr)
+        int AdvanceSubPatternOnHit(int slotIndex, ref SlotRuntime sr, out bool patternCompleted)
         {
+            patternCompleted = false;
+
             if (sr.FeverRemaining > 0f)
             {
                 int feverLen = SubPatternLower.Length;
@@ -25,11 +28,16 @@ namespace MiniParty.Minigames.Oiia
                 }
 
                 sr.SubPatternMatched++;
-                if (sr.SubPatternMatched > feverLen)
-                    sr.SubPatternMatched = 1;
-
+                int feverStep = sr.SubPatternMatched;
                 NotifySubPatternStepFromMatched(slotIndex, ref sr);
-                return sr.SubPatternMatched;
+
+                if (sr.SubPatternMatched >= feverLen)
+                {
+                    patternCompleted = true;
+                    sr.SubPatternMatched = 0;
+                }
+
+                return feverStep;
             }
 
             int len = SubPatternLower.Length;

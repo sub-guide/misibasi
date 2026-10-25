@@ -2,7 +2,7 @@ namespace MiniParty.Minigames.Oiia
 {
     public sealed partial class OiiaMinigameModule
     {
-        public const float MainRoundDurationSeconds = 60f;
+        public const float MainRoundDurationSeconds = 30f;
 
         public const int TargetSuccessScore = 100_000;
 
@@ -18,8 +18,11 @@ namespace MiniParty.Minigames.Oiia
 
         const int Tier3ScorePerChar = 800;
 
-        /// <summary>2단계: 글로벌 티어 전 — 정답 1회 점수(1티어 글자 점수와 동일).</summary>
-        const int DjHitScore = Tier1ScorePerChar;
+        /// <summary>버튼 입력 1회 점수.</summary>
+        const int DjHitScore = 100;
+
+        /// <summary>`oiiaiooiiiai` 12글자를 채운 입력에 추가로 더하는 점수.</summary>
+        const int PatternCompleteBonusScore = 500;
 
         const int Tier1LoopBonus = 1_000;
 
