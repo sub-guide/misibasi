@@ -22,6 +22,7 @@ namespace MiniParty.Minigames.Pigeon
             }
 
             TickPour(dt);
+            TickRandomSfx(dt);
             TickRoundTimer(dt);
         }
 

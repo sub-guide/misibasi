@@ -38,7 +38,9 @@ namespace MiniParty.Minigames.Pigeon
 
             _peckPhase[slotIndex] = PeckPhase.Forward;
             _peckElapsed[slotIndex] = 0f;
-            _peckClipDuration[slotIndex] = ResolvePeckDuration(anim);
+            float speed = peckSpeed > 0f ? peckSpeed : 1f;
+            anim.speed = speed;
+            _peckClipDuration[slotIndex] = ResolvePeckDuration(anim) / speed;
             _peckFromRight[slotIndex] = IsCursorRightOfScreenCenter(slotIndex);
 
             SetPeckVisuals(slotIndex, pigeonOn: true, mouthOn: false);
@@ -95,6 +97,9 @@ namespace MiniParty.Minigames.Pigeon
         void EndPeck(int slotIndex)
         {
             _peckPhase[slotIndex] = PeckPhase.Idle;
+            Animator anim = GetPeckAnimator(slotIndex);
+            if (anim != null)
+                anim.speed = 1f;
             SetPeckVisuals(slotIndex, pigeonOn: false, mouthOn: false);
         }
 

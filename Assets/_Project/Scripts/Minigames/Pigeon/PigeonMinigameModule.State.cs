@@ -53,5 +53,6 @@ namespace MiniParty.Minigames.Pigeon
         float _roundElapsed;
         float _bufferSeconds;
         float _bufferJumpAt;
+        float _randomSfxWait;
     }
 }

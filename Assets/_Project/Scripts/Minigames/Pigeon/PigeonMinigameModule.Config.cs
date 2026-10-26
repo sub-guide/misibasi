@@ -74,6 +74,9 @@ namespace MiniParty.Minigames.Pigeon
         [Tooltip("정방향·거꾸로 각각 초. 0이면 Peck 클립 길이.")]
         [SerializeField] float peckDuration;
 
+        [Tooltip("쪽기 재생 배율. 1이 클립 속도. 정방향·역재생 모두. 0 이하는 1.")]
+        [SerializeField] float peckSpeed = 1f;
+
         [Tooltip("적중 1개 점수.")]
         [SerializeField] int scorePerPile = DefaultScorePerPile;
 
@@ -85,6 +88,15 @@ namespace MiniParty.Minigames.Pigeon
 
         [Tooltip("컵라면 쏟기 시작마다 한 번. 재생은 Peck Sfx Source. 비어 있으면 생략.")]
         [SerializeField] AudioClip pourSfxClip;
+
+        [Tooltip("라운드 중 이 클립 하나. 재생이 끝난 뒤 간격만큼 쉬었다가 다시. 비어 있으면 생략.")]
+        [SerializeField] AudioClip randomSfxClip;
+
+        [Tooltip("랜덤 클립을 다시 틀기 전 쉬는 초. 최소.")]
+        [SerializeField] float randomSfxIntervalMinSeconds = 4f;
+
+        [Tooltip("랜덤 클립을 다시 틀기 전 쉬는 초. 최대.")]
+        [SerializeField] float randomSfxIntervalMaxSeconds = 8f;
 
         [Header("점수 HUD")]
         [Tooltip("Canvas Score_P1 … Score_P4 TMP. 인덱스 0=1P.")]
