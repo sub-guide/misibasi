@@ -13,7 +13,6 @@ namespace MiniParty.Minigames.Oiia
     public sealed class OiiaSlotPanelBindings : MonoBehaviour
     {
         [Header("공통")]
-        public TMP_Text PracticeReadyText;
         public Animator CatAnimator;
         public Image SlotPanelBackgroundImage;
         public TMP_Text WaitingText;
@@ -25,9 +24,8 @@ namespace MiniParty.Minigames.Oiia
         public SnesPlayerShoulderButtons DjShoulderButtons;
         public SnesControllerButtonVisual[] DjPadButtons;
 
-        [Header("소형 가변 디스플레이 (Score ↔ FEVER 상호 배타)")]
+        [Header("점수")]
         public TMP_Text HudScoreText;
-        public TMP_Text HudFeverText;
 
         [Header("콤보 (HudDisplay 밖 · 독립)")]
         public TMP_Text HudComboText;
@@ -51,7 +49,6 @@ namespace MiniParty.Minigames.Oiia
 
         [Header("전광판 스크린")]
         public RectTransform StageScreenRoot;
-        public Graphic StageBackgroundChromaKey;
         public Graphic StageBackgroundSpace;
         public Graphic StageBackgroundClub;
 
@@ -73,7 +70,6 @@ namespace MiniParty.Minigames.Oiia
 
             return new()
             {
-                PracticeReadyText = PracticeReadyText,
                 CatAnimator = CatAnimator,
                 SlotPanelBackgroundImage = SlotPanelBackgroundImage,
                 WaitingText = WaitingText,
@@ -84,7 +80,6 @@ namespace MiniParty.Minigames.Oiia
                 DjPadButtons = DjPadButtons,
                 HudScoreText = HudScoreText,
                 HudComboText = HudComboText,
-                HudFeverText = HudFeverText,
                 FeverGaugeImage = FeverGaugeImage,
                 FeverGaugeImageB = FeverGaugeImageB,
                 SubPatternGuideText = SubPatternGuideText,
@@ -97,7 +92,6 @@ namespace MiniParty.Minigames.Oiia
                 SpeakerRWooferTop = SpeakerRWooferTop,
                 SpeakerRWooferBottom = SpeakerRWooferBottom,
                 StageScreenRoot = StageScreenRoot,
-                StageBackgroundChromaKey = StageBackgroundChromaKey,
                 StageBackgroundSpace = StageBackgroundSpace,
                 StageBackgroundClub = StageBackgroundClub,
                 CrowdRoot = CrowdRoot,
@@ -119,7 +113,6 @@ namespace MiniParty.Minigames.Oiia
         {
             Transform root = transform;
 
-            PracticeReadyText = GetDirectChildComponent<TMP_Text>(root, "Ready");
             WaitingText = GetDirectChildComponent<TMP_Text>(root, "Waiting");
             SlotPanelBackgroundImage = GetComponent<Image>();
 
@@ -151,23 +144,14 @@ namespace MiniParty.Minigames.Oiia
             if (DjShoulderButtons == null)
                 DjShoulderButtons = djBox.GetComponentInChildren<SnesPlayerShoulderButtons>(true);
 
-            // HudDisplay: Score / Fever만 (한 화면 · 상호 배타).
             Transform hud = djBox.Find("HudDisplay");
             if (hud == null)
                 hud = djBox.Find("Hud");
 
             if (hud != null)
-            {
                 HudScoreText = FindTmp(hud, "Score", "HudScore");
-                HudFeverText = FindTmp(hud, "Fever", "HudFever");
-            }
-            else
-            {
-                if (HudScoreText == null)
-                    HudScoreText = FindTmp(djBox, "Score", "HudScore");
-                if (HudFeverText == null)
-                    HudFeverText = FindTmp(djBox, "Fever", "HudFever");
-            }
+            else if (HudScoreText == null)
+                HudScoreText = FindTmp(djBox, "Score", "HudScore");
 
             // Combo: HudDisplay 밖. DjBox 직속 `Combo` 권장.
             HudComboText = FindTmp(djBox, "Combo", "HudCombo");
@@ -280,9 +264,6 @@ namespace MiniParty.Minigames.Oiia
             Transform bgParent = stage.Find("Mask");
             if (bgParent == null)
                 bgParent = stage;
-
-            if (StageBackgroundChromaKey == null)
-                StageBackgroundChromaKey = FindGraphic(bgParent, "Bg_ChromaKey", "BgChromaKey", "ChromaKey");
 
             if (StageBackgroundSpace == null)
                 StageBackgroundSpace = FindGraphic(bgParent, "Bg_Space", "BgSpace", "Space");

@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,12 +35,6 @@ namespace MiniParty.Minigames.Oiia
             FlushHudScore(ui, ref sr);
             FlushComboHud(ui, ref sr);
             FlushFeverGauge(ui, ref sr);
-
-            if (ui.HudFeverText != null)
-                ui.HudFeverText.gameObject.SetActive(false);
-
-            if (ui.PracticeReadyText != null)
-                ui.PracticeReadyText.gameObject.SetActive(false);
         }
 
         static void FlushHudScore(SlotUiBindings ui, ref SlotRuntime sr)

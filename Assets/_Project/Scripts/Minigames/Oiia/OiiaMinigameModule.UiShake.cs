@@ -87,16 +87,6 @@ namespace MiniParty.Minigames.Oiia
             _uiShakeTargets[i] = null;
         }
 
-        void StopSlotUiShake(int i)
-        {
-            RestoreSlotUiShakeRestPositions(i);
-            _uiShakeRemaining[i] = 0f;
-            _uiShakeIntensity[i] = 0f;
-            _uiShakeActiveDuration[i] = 0f;
-            _uiShakeActiveFrequency[i] = 0f;
-            _uiShakeAppliedLastFrame[i] = false;
-        }
-
         void RestoreSlotUiShakeRestPositions(int i)
         {
             UiShakeTarget[] targets = _uiShakeTargets[i];
@@ -124,7 +114,6 @@ namespace MiniParty.Minigames.Oiia
             var list = new List<UiShakeTarget>(8);
             TryAddUiShakeTarget(list, b.HudScoreText);
             TryAddUiShakeTarget(list, b.HudComboText);
-            TryAddUiShakeTarget(list, b.HudFeverText);
             TryAddUiShakeTarget(list, b.FeverGaugeImage);
             TryAddUiShakeTarget(list, b.FeverGaugeImageB);
             TryAddUiShakeTarget(list, b.SubPatternGuideText);

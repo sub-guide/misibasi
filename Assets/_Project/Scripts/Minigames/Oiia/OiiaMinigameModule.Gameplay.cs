@@ -61,7 +61,6 @@ namespace MiniParty.Minigames.Oiia
             if (patternCompleted)
                 sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, PatternCompleteBonusScore);
 
-            PlayCatSingleCycleIfIdle(i);
             TriggerSlotUiShakeOnCorrect(i, ref sr);
 
             if (steppedPosition > 0 &&

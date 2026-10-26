@@ -12,13 +12,12 @@ namespace MiniParty.Minigames.Oiia
 
             if (!_aliveMask[i])
             {
-                SetStageBackgroundAlphasImmediate(ui, chroma: 0f, space: 0f, club: 0f);
+                SetStageBackgroundAlphasImmediate(ui, space: 0f, club: 0f);
                 return;
             }
 
             SetStageBackgroundAlphasImmediate(
                 ui,
-                chroma: 0f,
                 space: _tier2Active ? 0f : 1f,
                 club: _tier2Active ? 1f : 0f);
         }
@@ -30,20 +29,18 @@ namespace MiniParty.Minigames.Oiia
 
             if (!_aliveMask[i])
             {
-                SetStageBackgroundAlphasImmediate(ui, chroma: 0f, space: 0f, club: 0f);
+                SetStageBackgroundAlphasImmediate(ui, space: 0f, club: 0f);
                 return;
             }
 
             SetStageBackgroundAlphasImmediate(
                 ui,
-                chroma: 0f,
                 space: _tier2Active ? 0f : 1f,
                 club: _tier2Active ? 1f : 0f);
         }
 
-        static void SetStageBackgroundAlphasImmediate(SlotUiBindings ui, float chroma, float space, float club)
+        static void SetStageBackgroundAlphasImmediate(SlotUiBindings ui, float space, float club)
         {
-            SetGraphicAlpha(ui.StageBackgroundChromaKey, chroma);
             SetGraphicAlpha(ui.StageBackgroundSpace, space);
             SetGraphicAlpha(ui.StageBackgroundClub, club);
         }

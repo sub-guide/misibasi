@@ -42,9 +42,6 @@ namespace MiniParty.Minigames.Oiia
         public sealed class SlotUiBindings
         {
             [Header("공통")]
-            [Tooltip("연습 READY 문구.")]
-            public TMP_Text PracticeReadyText;
-
             [Tooltip("고양이 Animator. StageScreen/Cat 권장.")]
             public Animator CatAnimator;
 
@@ -63,9 +60,8 @@ namespace MiniParty.Minigames.Oiia
             [Tooltip("길이 10. 인덱스 = OiiaDjPadButtonId.")]
             public SnesControllerButtonVisual[] DjPadButtons;
 
-            [Header("소형 가변 디스플레이 (Score ↔ FEVER 상호 배타)")]
+            [Header("점수")]
             public TMP_Text HudScoreText;
-            public TMP_Text HudFeverText;
 
             [Header("콤보 (HudDisplay 밖 · 독립)")]
             public TMP_Text HudComboText;
@@ -89,7 +85,6 @@ namespace MiniParty.Minigames.Oiia
 
             [Header("전광판 스크린")]
             public RectTransform StageScreenRoot;
-            public Graphic StageBackgroundChromaKey;
             public Graphic StageBackgroundSpace;
             public Graphic StageBackgroundClub;
 

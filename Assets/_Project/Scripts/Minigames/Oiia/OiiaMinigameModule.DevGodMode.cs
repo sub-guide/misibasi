@@ -9,19 +9,7 @@ namespace MiniParty.Minigames.Oiia
         bool _devGodModeEnabled;
 #endif
 
-        /// <summary>
-        /// Dev God Mode: 1P 전 버튼 Highlight + 아무 키나 정답 · 본게임 타이머 정지.
-        /// Editor·Development Build 에서만 Backspace 토글.
-        /// </summary>
-        bool IsDevGodModeSlot(int slotIndex)
-        {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            return _devGodModeEnabled && slotIndex == 0 && _aliveMask[slotIndex];
-#else
-            return false;
-#endif
-        }
-
+        /// <summary>Editor·Development Build에서 Backspace. 켜면 본게임 타이머가 멈춘다.</summary>
         bool IsDevGodModeActive()
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

@@ -9,8 +9,7 @@ namespace MiniParty.Minigames.Oiia
         {
             Hidden,
             Rising,
-            Active,
-            Fading
+            Active
         }
 
         [Header("관중 이펙트 (피버)")]
@@ -19,9 +18,6 @@ namespace MiniParty.Minigames.Oiia
 
         [Tooltip("상승·페이드인 시간(초).")]
         [SerializeField] float crowdRiseSeconds = 0.35f;
-
-        [Tooltip("피버 종료 후 페이드아웃 시간(초).")]
-        [SerializeField] float crowdFadeSeconds = 0.4f;
 
         [Tooltip("피버 중 관중 진동 진폭(px).")]
         [SerializeField] float crowdShakeAmplitude = 8f;
@@ -39,7 +35,6 @@ namespace MiniParty.Minigames.Oiia
         {
             public CrowdPhase Phase;
             public float PhaseElapsed;
-            public float FadeStartAlpha;
             public Vector2 EditorAnchored;
             public Vector2 RestAnchored;
             public Color RestColor;
@@ -180,22 +175,6 @@ namespace MiniParty.Minigames.Oiia
             _crowd[slotIndex].ShakePhaseY = Random.Range(0f, 1000f);
         }
 
-        void EndCrowdFever(int slotIndex)
-        {
-            if (_crowd[slotIndex].Phase == CrowdPhase.Hidden)
-                return;
-
-            if (!TryGetBinding(slotIndex, out SlotUiBindings b) || b.CrowdImage == null)
-            {
-                HideCrowdImmediate(slotIndex);
-                return;
-            }
-
-            _crowd[slotIndex].FadeStartAlpha = Mathf.Max(b.CrowdImage.color.a, 0.01f);
-            _crowd[slotIndex].Phase = CrowdPhase.Fading;
-            _crowd[slotIndex].PhaseElapsed = 0f;
-        }
-
         void TickCrowd(int i)
         {
             CrowdPhase phase = _crowd[i].Phase;
@@ -212,9 +191,6 @@ namespace MiniParty.Minigames.Oiia
                     break;
                 case CrowdPhase.Active:
                     TickCrowdActive(i, b);
-                    break;
-                case CrowdPhase.Fading:
-                    TickCrowdFading(i, b);
                     break;
             }
         }
@@ -259,33 +235,6 @@ namespace MiniParty.Minigames.Oiia
 
             if (b.CrowdImage != null)
                 b.CrowdImage.color = _crowd[i].RestColor;
-        }
-
-        void TickCrowdFading(int i, SlotUiBindings b)
-        {
-            float dur = Mathf.Max(0.05f, crowdFadeSeconds);
-            _crowd[i].PhaseElapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(_crowd[i].PhaseElapsed / dur);
-            float life = 1f - t;
-
-            float amp = Mathf.Max(0f, crowdShakeAmplitude) * life;
-            float hz = Mathf.Max(1f, crowdShakeFrequency);
-            float time = Time.unscaledTime * hz;
-            float ox = (Mathf.PerlinNoise(_crowd[i].ShakePhaseX, time) - 0.5f) * 2f * amp;
-            float oy = (Mathf.PerlinNoise(_crowd[i].ShakePhaseY, time + 2.3f) - 0.5f) * 2f * amp;
-            b.CrowdRoot.anchoredPosition = _crowd[i].RestAnchored + new Vector2(ox, oy);
-
-            if (b.CrowdImage != null)
-            {
-                Color c = _crowd[i].RestColor;
-                c.a = Mathf.Lerp(0f, _crowd[i].FadeStartAlpha, life);
-                b.CrowdImage.color = c;
-            }
-
-            if (t < 1f)
-                return;
-
-            HideCrowdImmediate(i);
         }
     }
 }
