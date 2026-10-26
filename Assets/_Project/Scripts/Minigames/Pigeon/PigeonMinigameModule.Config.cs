@@ -80,7 +80,8 @@ namespace MiniParty.Minigames.Pigeon
         [Tooltip("구~. 없어도 됨.")]
         [SerializeField] AudioSource peckSfxSource;
 
-        [SerializeField] AudioClip peckSfxClip;
+        [Tooltip("비둘기 등장마다 이 중 하나를 PlayOneShot. 빈 칸은 건너뜀.")]
+        [SerializeField] AudioClip[] peckSfxClips = new AudioClip[5];
 
         [Header("점수 HUD")]
         [Tooltip("Canvas Score_P1 … Score_P4 TMP. 인덱스 0=1P.")]

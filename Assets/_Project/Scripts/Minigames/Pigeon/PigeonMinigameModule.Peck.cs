@@ -44,9 +44,37 @@ namespace MiniParty.Minigames.Pigeon
             SetPeckVisuals(slotIndex, pigeonOn: true, mouthOn: false);
             anim.Play(_peckFromRight[slotIndex] ? PeckRightForwardState : PeckForwardState, 0, 0f);
             anim.Update(0f);
+            PlayPeckAppearSfx();
+        }
 
-            if (peckSfxSource != null && peckSfxClip != null)
-                peckSfxSource.PlayOneShot(peckSfxClip);
+        void PlayPeckAppearSfx()
+        {
+            if (peckSfxSource == null || peckSfxClips == null)
+                return;
+
+            int available = 0;
+            for (var i = 0; i < peckSfxClips.Length; i++)
+            {
+                if (peckSfxClips[i] != null)
+                    available++;
+            }
+
+            if (available == 0)
+                return;
+
+            int pick = Random.Range(0, available);
+            for (var i = 0; i < peckSfxClips.Length; i++)
+            {
+                if (peckSfxClips[i] == null)
+                    continue;
+                if (pick == 0)
+                {
+                    peckSfxSource.PlayOneShot(peckSfxClips[i]);
+                    return;
+                }
+
+                pick--;
+            }
         }
 
         void StartPeckReverse(int slotIndex)
