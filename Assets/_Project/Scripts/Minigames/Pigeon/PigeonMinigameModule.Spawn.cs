@@ -57,6 +57,15 @@ namespace MiniParty.Minigames.Pigeon
             cupNoodle.SetActive(true);
             cupAnimator.Play(CupPourForwardState, 0, 0f);
             cupAnimator.Update(0f);
+            PlayPourSfx();
+        }
+
+        void PlayPourSfx()
+        {
+            if (peckSfxSource == null || pourSfxClip == null)
+                return;
+
+            peckSfxSource.PlayOneShot(pourSfxClip);
         }
 
         void FinishForwardAndBeginPileWave()

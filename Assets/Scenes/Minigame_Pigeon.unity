@@ -3306,6 +3306,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 9028808f879347d4abe2b0f7d02adf52, type: 3}
   - {fileID: 8300000, guid: e034f5f7f0b372d42a81e13c75d8f45e, type: 3}
   - {fileID: 8300000, guid: 6bf70590a7bc8ab4c94fcf3e63789a1b, type: 3}
+  pourSfxClip: {fileID: 8300000, guid: 1fd7dcdcc6051c941a1d6fbbb86f5a9e, type: 3}
   scoreLabels:
   - {fileID: 947697946}
   - {fileID: 1098659563}

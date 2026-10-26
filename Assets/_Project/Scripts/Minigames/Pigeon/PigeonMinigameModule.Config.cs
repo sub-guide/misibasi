@@ -83,6 +83,9 @@ namespace MiniParty.Minigames.Pigeon
         [Tooltip("비둘기 등장마다 이 중 하나를 PlayOneShot. 빈 칸은 건너뜀.")]
         [SerializeField] AudioClip[] peckSfxClips = new AudioClip[5];
 
+        [Tooltip("컵라면 쏟기 시작마다 한 번. 재생은 Peck Sfx Source. 비어 있으면 생략.")]
+        [SerializeField] AudioClip pourSfxClip;
+
         [Header("점수 HUD")]
         [Tooltip("Canvas Score_P1 … Score_P4 TMP. 인덱스 0=1P.")]
         [SerializeField] TMP_Text[] scoreLabels = new TMP_Text[SlotCount];
