@@ -30,7 +30,7 @@ namespace MiniParty.Minigames.Oiia
         }
 
         [Header("슬롯 UI 흔들림 — 정답 임펄스")]
-        [Tooltip("T2 정답 시 HUD·DjBox·StageScreen 임펄스.")]
+        [Tooltip("T2 정답 시 HUD·DjBox·StageScreen/Mask의 Bg 자식 임펄스. StageScreen과 Mask는 흔들지 않는다.")]
         [FormerlySerializedAs("uiShakeTier3")]
         [SerializeField] UiShakeTierSettings uiShakeTier2 = new UiShakeTierSettings
         {
@@ -129,10 +129,27 @@ namespace MiniParty.Minigames.Oiia
             TryAddUiShakeTarget(list, b.FeverGaugeImageB);
             TryAddUiShakeTarget(list, b.SubPatternGuideText);
             TryAddUiShakeTarget(list, b.DjBoxRoot);
-            TryAddUiShakeTarget(list, b.StageScreenRoot);
+            AddStageBackgroundShakeTargets(list, b.StageScreenRoot);
 
             _uiShakeTargets[i] = list.ToArray();
             _uiShakeTargetsCaptured[i] = true;
+        }
+
+        static void AddStageBackgroundShakeTargets(List<UiShakeTarget> list, RectTransform stage)
+        {
+            if (stage == null)
+                return;
+
+            Transform mask = stage.Find("Mask");
+            Transform bgParent = mask != null ? mask : stage;
+            for (var c = 0; c < bgParent.childCount; c++)
+            {
+                Transform child = bgParent.GetChild(c);
+                if (child == null || !child.name.StartsWith("Bg"))
+                    continue;
+
+                TryAddUiShakeTarget(list, child);
+            }
         }
 
         static void TryAddUiShakeTarget(List<UiShakeTarget> list, Component component)

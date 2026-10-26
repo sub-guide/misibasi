@@ -277,15 +277,18 @@ namespace MiniParty.Minigames.Oiia
                 return;
 
             StageScreenRoot = stage as RectTransform;
+            Transform bgParent = stage.Find("Mask");
+            if (bgParent == null)
+                bgParent = stage;
 
             if (StageBackgroundChromaKey == null)
-                StageBackgroundChromaKey = FindGraphic(stage, "Bg_ChromaKey", "BgChromaKey", "ChromaKey");
+                StageBackgroundChromaKey = FindGraphic(bgParent, "Bg_ChromaKey", "BgChromaKey", "ChromaKey");
 
             if (StageBackgroundSpace == null)
-                StageBackgroundSpace = FindGraphic(stage, "Bg_Space", "BgSpace", "Space");
+                StageBackgroundSpace = FindGraphic(bgParent, "Bg_Space", "BgSpace", "Space");
 
             if (StageBackgroundClub == null)
-                StageBackgroundClub = FindGraphic(stage, "Bg_Club", "BgClub", "Club");
+                StageBackgroundClub = FindGraphic(bgParent, "Bg_Club", "BgClub", "Club");
 
             if (CatAnimator == null)
             {

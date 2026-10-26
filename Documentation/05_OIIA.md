@@ -147,7 +147,7 @@ TickMeta (입력잠금 · TickFever)
 
 | 이름 | 역할 |
 |------|------|
-| `StageScreen` | 전광판 루트 · Bg_ChromaKey / Bg_Space / Bg_Club · Cat · SpotlightL/R |
+| `StageScreen` | 전광판 루트 · `Mask`(Bg_Space / Bg_Club) · Cat · SpotlightL/R |
 | `DjBox` | 디제잉 박스 · HudDisplay(Score · Fever는 숨김) · Combo · FeverGauge×2(패턴 진행) · SubPatternGuide · Speakers · Crowd |
 | `SpeakerL` / `SpeakerR` | Body · WooferTop · WooferBottom (스크린샷 L/R 캐비닛) |
 | `Crowd` / `CrowdPeople` | 관중 실루엣 (판 내내) |
@@ -214,7 +214,7 @@ TickMeta (입력잠금 · TickFever)
 
 | 시스템 | 트리거·동작 |
 |--------|-------------|
-| UiShake | T2 정답 임펄스 `uiShakeTier2` + 상시 `uiShakeIdleTier2` |
+| UiShake | T2 정답 임펄스 `uiShakeTier2` + 상시 `uiShakeIdleTier2`. 대상은 HUD·DjBox·`StageScreen/Mask`의 `Bg*` 자식. `StageScreen`과 `Mask`는 고정 |
 | Speakers | T2 패턴 스텝 → 우퍼 펄스 · O/I/A 글자 분출 · `speakerTier2` |
 | Spotlight | T2만 Fixture·Beam |
 | StageBackground | T1 **Space** · T2 **Club** |
@@ -373,6 +373,7 @@ CollectDjPadPressed → OnDjHit
 
 - T1 우주 빌드업(입력·Highlight 없음) 후 T2 연타 · `mainRoundDurationSeconds` **26** · `bgmStartTimeSeconds` · **Play 확인**(2026-10-26)
 - 연습·옛 시간 티어·3키·3초 피버·Balance 티어 헬퍼 **삭제**
+- `StageScreen/Mask` 아래 `Bg_Space`·`Bg_Club`만 UiShake · **Play 확인**(2026-10-26)
 - SubPatternGuide · Speakers · Crowd · UiShake · Scream · FeverChant
 - 슬롯 RectMask2D 클리핑 · ABXY Unpressed 명도 · Result/HP
 
