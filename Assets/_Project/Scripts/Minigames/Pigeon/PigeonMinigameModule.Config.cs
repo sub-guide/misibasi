@@ -96,6 +96,9 @@ namespace MiniParty.Minigames.Pigeon
         [Tooltip("Canvas 하단 채움 Image. Type=Filled, Horizontal, Origin Left. 빨간 경과.")]
         [SerializeField] Image roundTimerFill;
 
+        [Tooltip("경과/전체. 예: 0:05/0:30. Timer 자식 Text. 비어 있으면 글자 없음.")]
+        [SerializeField] TMP_Text roundTimerLabel;
+
         [Tooltip("경과 바 뒤의 하얀 로드. 비어 있으면 빨강 타이머만. Type=Filled, Horizontal, Origin Left.")]
         [SerializeField] Image roundTimerBuffer;
 

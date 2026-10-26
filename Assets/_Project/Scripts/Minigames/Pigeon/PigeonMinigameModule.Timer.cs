@@ -97,12 +97,23 @@ namespace MiniParty.Minigames.Pigeon
                     : Mathf.Clamp01(_roundElapsed / duration);
             }
 
-            if (roundTimerBuffer == null)
-                return;
+            if (roundTimerBuffer != null)
+            {
+                roundTimerBuffer.fillAmount = duration <= 0f
+                    ? 0f
+                    : Mathf.Clamp01(_bufferSeconds / duration);
+            }
 
-            roundTimerBuffer.fillAmount = duration <= 0f
-                ? 0f
-                : Mathf.Clamp01(_bufferSeconds / duration);
+            if (roundTimerLabel != null)
+                roundTimerLabel.text = FormatRoundClock(_roundElapsed) + "/" + FormatRoundClock(duration);
+        }
+
+        static string FormatRoundClock(float seconds)
+        {
+            int total = Mathf.Max(0, Mathf.FloorToInt(seconds));
+            int minutes = total / 60;
+            int secs = total % 60;
+            return $"{minutes}:{secs:00}";
         }
     }
 }
