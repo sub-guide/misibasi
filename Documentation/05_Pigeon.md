@@ -1,6 +1,6 @@
 # 05_Pigeon (비둘기야 먹자)
 
-> **문서 기준일**: 2026-09-13 — HP −1: 1인 없음 · 2인+ 하위 50%. 2~4P Play 미검증.  
+> **문서 기준일**: 2026-10-26 — 하단 바: 빨간 경과 + 그 뒤 하얀 로드(점프) **1P Play 확인**. HP −1: 1인 없음 · 2인+ 하위 50%. 2~4P Play 미검증.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.
 
 ---
@@ -13,7 +13,7 @@
 | C# (`IMinigameModule`) | **1P Play 확인** | 커서·쏟기·쪽기·HUD 슬롯·30초 바·Fade→Results. 2~4P 미검증 |
 | 메뉴 카탈로그·씬 로드 | **Play 확인** | catalog `id` = `pigeon` · `pigeonSceneName` = `Minigame_Pigeon` |
 | 점수 HUD | **1P Play 확인** | 비참가는 `Player1`…`Player4` 슬롯 전체 Off |
-| 제한시간 | **1P Play 확인** | Canvas 바 경과 fill 30초 → Results |
+| 제한시간 | **1P Play 확인** | 30초. 빨간 경과 + 하얀 로드 점프 |
 | HP −1 | **구현** | 1인 안 깎음. 2인+ 하위 50%. Results에서만 −1. 2~4P 미검증 |
 
 ### 헷갈리기 쉬운 점
@@ -31,7 +31,7 @@
 | 쪽기 역재생 | 왼쪽 `PeckReverse`, 오른쪽 `PeckRightReverse` (각 클립, Speed -1). `Play(..., 0)`. 컴포넌트 speed −1 **아님** |
 | 쪽기 좌우 | 커서 월드 X가 `playCamera.position.x`보다 크면 오른쪽 클립. 같거나 작으면 왼쪽. 런타임 스케일 반전 **아님** |
 | 국물 | 쏟기당 **한 번**. 컵 정방향이 끝난 뒤 **첫 면**과 함께 `Play(Soup)`. 더미 5개마다 아님 |
-| 제한시간 바 | Canvas 하단 Image **Filled**. 빈 칸에서 왼쪽부터 참 (경과). 숫자 없음 |
+| 제한시간 바 | `BG` 위 `TimerBuffer`(하양 로드) 위 `TimerFill`(빨간 경과). 둘 다 Image **Filled**, 왼쪽부터. 하양은 경과보다 앞서 멈췄다 점프. 숫자 없음 |
 | HP −1 | 1인 없음. 2인+ 하위 50%. 미니게임 안에서는 하트 안 깎음 |
 
 ---
@@ -75,7 +75,7 @@
 
 - 메인 메뉴에서 참가자가 READY → 운영자 Enter → `PrepareRound(false)` → `Minigame_Pigeon` 로드.
 - 씬 `Begin` 시점이 곧 본게임: 쏟기·쪽기. 점수는 `_score`와 `Score_P*` `{n}점`. 씬 안 Start 레디·`Begin` 재호출 없음.
-- 제한시간 **30초**(`roundDuration`). 바 `fillAmount` = 경과/30. 0초 → 쪽기 중단 · `FadeOverlay` Fade Out → `Results`.
+- 제한시간 **30초**(`roundDuration`). 빨강 `roundTimerFill.fillAmount` = 경과/30. 하양 `roundTimerBuffer`는 그보다 앞선 로드 초/30. 0초 → 쪽기 중단 · `FadeOverlay` Fade Out → `Results`.
 - HP −1: **1인 안 깎음**. **2인 이상** 하위 50%(2→1, 3→1, 4→2). 컷 점수 없음. 미니게임 안이 아니라 Results `HpProcess`.
 
 ### 예외
@@ -110,7 +110,13 @@ Minigame_Pigeon
 │   ├── PlayerSlot
 │   │   └── Player1 … Player4     비참가 시 슬롯 전체 Off
 │   │       └── Score_P1 … Score_P4   TMP `{n}점`
-│   ├── TimerTrack / TimerFill    하단 경과 바. Image Filled
+│   ├── YoutubeOverlay
+│   │   ├── Blur0
+│   │   ├── Blur1
+│   │   ├── BG                 트랙
+│   │   ├── TimerBuffer        하얀 로드. Image Filled
+│   │   ├── TimerFill          빨간 경과. Image Filled
+│   │   └── Timer
 │   └── FadeOverlay
 └── EventSystem
 ```
@@ -126,7 +132,8 @@ Minigame_Pigeon
 | `Pigeon/Noodle` | 적중 후 **PeckReverse 동안만**. **시작 비활성** |
 | `Score_P*` | 슬롯 점수 TMP. 형식 `{점수}점` |
 | `Player1`…`Player4` | 점수 HUD 슬롯. 비참가 시 **슬롯 전체** 비활성 |
-| `TimerFill` | 경과 바. `roundTimerFill`. 시작 fill 0 |
+| `TimerFill` | 빨간 경과. `roundTimerFill`. 시작 fill 0 |
+| `TimerBuffer` | 하얀 로드. `roundTimerBuffer`. `BG`와 `TimerFill` 사이. 씬 색 약 **0.887** 회색, Anchored Y **-410**, **1800×10**. 시작은 첫 덩어리 **3**초 |
 | `FadeOverlay` | `Canvas` 자식. `ScreenFader.canvasGroup` 연결됨 |
 
 `FadeOverlay`의 `ScreenFader.canvasGroup` 은 연결됨.
@@ -145,12 +152,12 @@ Minigame_Pigeon
 | `TickPour` / `SpawnNextPile` | 화면 안 무작위 `NoodlePosition` → 정방향 → 첫 면 때 `PlaySoupOnce` → 월드 스폰 → 역재생 |
 | `PigeonMinigameModule.Peck.cs` | `TickPeck` · 좌 `Peck` / 우 `PeckRight` · `ResolvePeckHit` |
 | `PigeonMinigameModule.Hud.cs` | `{n}점`. 비참가는 `scoreHudSlots`(Player1…4) Off |
-| `PigeonMinigameModule.Timer.cs` | 경과 `fillAmount`. `roundDuration` **30** |
+| `PigeonMinigameModule.Timer.cs` | 빨강 경과/30. 하양 로드는 점프 후 `fillAmount`. `roundDuration` **30** |
 | `PigeonMinigameModule.ExitSequence.cs` | hold 0.35 + Fade Out 1 → `OnComplete` |
 | `PigeonHpLossRules` | 1인 skip. 2인+ `count/2`명 `HpLostThisSession` |
 | `ClampToCamera` | `playCamera` Orthographic 뷰를 커서 부모 로컬로 Clamp |
 
-Inspector: `cursors[4]` · `cursorSpeed` **120** · `playCamera`. 스폰: `noodlePrefab` · `cupNoodle` · `cupAnimator` · `noodlePosition` · `pileParent` · `pilesPerPour` **5** · `spawnJitterRadius` **30** · `pileSpawnStagger` **0.15** · `pourCooldown` **4** · `cupPourDuration` **0** · `soup` · `soupAnimator`. 쪽기: `peckPigeons[4]` · `peckAnimators[4]` · `mouthNoodles[4]` · `peckCursorColliders[4]` · `peckDuration` **0** · `scorePerPile` **100** · `peckSfxSource` · `peckSfxClip`. HUD: `scoreLabels[4]` · `scoreHudSlots[4]`. 타이머: `roundDuration` **30** · `roundTimerFill` · `exitScreenFader` · `sessionEndHoldSeconds` **0.35** · `exitFadeOutSeconds` **1**.
+Inspector: `cursors[4]` · `cursorSpeed` **120** · `playCamera`. 스폰: `noodlePrefab` · `cupNoodle` · `cupAnimator` · `noodlePosition` · `pileParent` · `pilesPerPour` **5** · `spawnJitterRadius` **30** · `pileSpawnStagger` **0.15** · `pourCooldown` **4** · `cupPourDuration` **0** · `soup` · `soupAnimator`. 쪽기: `peckPigeons[4]` · `peckAnimators[4]` · `mouthNoodles[4]` · `peckCursorColliders[4]` · `peckDuration` **0** · `scorePerPile` **100** · `peckSfxSource` · `peckSfxClip`. HUD: `scoreLabels[4]` · `scoreHudSlots[4]`. 타이머: `roundDuration` **30** · `roundTimerFill` · `roundTimerBuffer` · `bufferFirstChunkSeconds` **3** · `bufferChunkMinSeconds` **1.5** · `bufferChunkMaxSeconds` **4** · `bufferJumpIntervalMinSeconds` **0.6** · `bufferJumpIntervalMaxSeconds` **1.8** · `exitScreenFader` · `sessionEndHoldSeconds` **0.35** · `exitFadeOutSeconds` **1**.
 
 **이번 슬라이스에 없음**: 2~4P 부스 검증.
 
@@ -163,4 +170,4 @@ Inspector: `cursors[4]` · `cursorSpeed` **120** · `playCamera`. 스폰: `noodl
 | 4P 커서 마젠타 | 씬 값 |
 | 비둘기 진입 방향 | 에디터 `Peck` / `PeckRight` |
 
-문서 갱신: **2026-09-13** (HP −1 1인 skip·2인+ 하위 50%) · **2026-09-13** (타이머·HUD·Results 1P Play 확인) · **2026-09-13** (HUD 슬롯 단위 On/Off) · **2026-09-13** (제한시간 바·Results) · **2026-09-13** (1P Play 확인) · **2026-09-13** (점수 HUD) · **2026-09-12** (국물 Soup 1회) · **2026-09-12** (좌 Peck / 우 PeckRight) · **2026-09-10** (쪽기 Peck→판정→PeckReverse) · **2026-09-10** (NoodlePosition 화면 무작위·면 월드 스폰) · **2026-09-10** (중앙부터 차례 스폰) · **2026-09-10** (역재생 정규화 0) · **2026-09-09** (`CupNoodleReverse` Play) · **2026-09-09** (면 스폰) · **2026-09-09** (playCamera·id Play 확인) · **2026-09-09** (커서 이동 Play 확인) · **2026-09-09** (커서 이동) · **2026-09-09** (연습 없음) · **2026-09-07** (사용자 씬이 계약) · **2026-09-06** (초안 Hierarchy, 폐기)
+문서 갱신: **2026-10-26** (하단 바 하얀 로드 1P Play 확인) · **2026-10-26** (하단 바 하얀 로드 점프) · **2026-09-13** (HP −1 1인 skip·2인+ 하위 50%) · **2026-09-13** (타이머·HUD·Results 1P Play 확인) · **2026-09-13** (HUD 슬롯 단위 On/Off) · **2026-09-13** (제한시간 바·Results) · **2026-09-13** (1P Play 확인) · **2026-09-13** (점수 HUD) · **2026-09-12** (국물 Soup 1회) · **2026-09-12** (좌 Peck / 우 PeckRight) · **2026-09-10** (쪽기 Peck→판정→PeckReverse) · **2026-09-10** (NoodlePosition 화면 무작위·면 월드 스폰) · **2026-09-10** (중앙부터 차례 스폰) · **2026-09-10** (역재생 정규화 0) · **2026-09-09** (`CupNoodleReverse` Play) · **2026-09-09** (면 스폰) · **2026-09-09** (playCamera·id Play 확인) · **2026-09-09** (커서 이동 Play 확인) · **2026-09-09** (커서 이동) · **2026-09-09** (연습 없음) · **2026-09-07** (사용자 씬이 계약) · **2026-09-06** (초안 Hierarchy, 폐기)

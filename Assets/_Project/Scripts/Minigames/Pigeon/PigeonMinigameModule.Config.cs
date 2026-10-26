@@ -93,8 +93,26 @@ namespace MiniParty.Minigames.Pigeon
         [Tooltip("본게임 초. 0 이하면 타이머 없음.")]
         [SerializeField] float roundDuration = DefaultRoundDuration;
 
-        [Tooltip("Canvas 하단 채움 Image. Type=Filled, Horizontal, Origin Left.")]
+        [Tooltip("Canvas 하단 채움 Image. Type=Filled, Horizontal, Origin Left. 빨간 경과.")]
         [SerializeField] Image roundTimerFill;
+
+        [Tooltip("경과 바 뒤의 하얀 로드. 비어 있으면 빨강 타이머만. Type=Filled, Horizontal, Origin Left.")]
+        [SerializeField] Image roundTimerBuffer;
+
+        [Tooltip("시작 시 하양이 미리 차 있는 초.")]
+        [SerializeField] float bufferFirstChunkSeconds = 3f;
+
+        [Tooltip("한 번에 뛰는 로드 초. 최소.")]
+        [SerializeField] float bufferChunkMinSeconds = 1.5f;
+
+        [Tooltip("한 번에 뛰는 로드 초. 최대.")]
+        [SerializeField] float bufferChunkMaxSeconds = 4f;
+
+        [Tooltip("다음 점프까지 기다리는 초. 최소.")]
+        [SerializeField] float bufferJumpIntervalMinSeconds = 0.6f;
+
+        [Tooltip("다음 점프까지 기다리는 초. 최대.")]
+        [SerializeField] float bufferJumpIntervalMaxSeconds = 1.8f;
 
         [Header("종료 → Result 씬")]
         [Tooltip("Canvas FadeOverlay 의 ScreenFader.")]

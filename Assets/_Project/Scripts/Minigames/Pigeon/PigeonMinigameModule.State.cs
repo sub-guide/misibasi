@@ -51,5 +51,7 @@ namespace MiniParty.Minigames.Pigeon
 
         bool _completing;
         float _roundElapsed;
+        float _bufferSeconds;
+        float _bufferJumpAt;
     }
 }

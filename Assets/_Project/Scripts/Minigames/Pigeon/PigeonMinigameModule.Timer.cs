@@ -14,25 +14,95 @@ namespace MiniParty.Minigames.Pigeon
             if (_roundElapsed >= duration)
                 _roundElapsed = duration;
 
+            AdvanceRoundBuffer();
             RefreshRoundTimer();
 
             if (_roundElapsed >= duration)
                 CompleteSession();
         }
 
-        void RefreshRoundTimer()
+        void ResetRoundBuffer()
         {
-            if (roundTimerFill == null)
-                return;
+            float duration = Mathf.Max(0f, roundDuration);
+            _bufferSeconds = duration <= 0f
+                ? 0f
+                : Mathf.Min(Mathf.Max(0f, bufferFirstChunkSeconds), duration);
+            _bufferJumpAt = _roundElapsed + NextBufferJumpInterval();
+        }
 
+        void AdvanceRoundBuffer()
+        {
             float duration = Mathf.Max(0f, roundDuration);
             if (duration <= 0f)
             {
-                roundTimerFill.fillAmount = 0f;
+                _bufferSeconds = 0f;
                 return;
             }
 
-            roundTimerFill.fillAmount = Mathf.Clamp01(_roundElapsed / duration);
+            if (_roundElapsed >= duration)
+            {
+                _bufferSeconds = duration;
+                return;
+            }
+
+            for (var guard = 0; guard < 8 && _bufferSeconds < duration; guard++)
+            {
+                bool jumpDue = _roundElapsed >= _bufferJumpAt;
+                bool caught = _roundElapsed >= _bufferSeconds;
+                if (!jumpDue && !caught)
+                    break;
+
+                float chunk = NextBufferChunkSeconds();
+                if (chunk <= 0f)
+                    break;
+
+                _bufferSeconds = Mathf.Min(duration, _bufferSeconds + chunk);
+                _bufferJumpAt = _roundElapsed + NextBufferJumpInterval();
+            }
+        }
+
+        float NextBufferChunkSeconds()
+        {
+            float min = bufferChunkMinSeconds;
+            float max = bufferChunkMaxSeconds;
+            if (max < min)
+                (min, max) = (max, min);
+            if (max <= 0f)
+                return 0f;
+            min = Mathf.Max(0f, min);
+            return Random.Range(min, max);
+        }
+
+        float NextBufferJumpInterval()
+        {
+            float min = bufferJumpIntervalMinSeconds;
+            float max = bufferJumpIntervalMaxSeconds;
+            if (max < min)
+                (min, max) = (max, min);
+            min = Mathf.Max(0f, min);
+            max = Mathf.Max(min, max);
+            return Random.Range(min, max);
+        }
+
+        void RefreshRoundTimer()
+        {
+            float duration = Mathf.Max(0f, roundDuration);
+            if (duration > 0f && _roundElapsed >= duration)
+                _bufferSeconds = duration;
+
+            if (roundTimerFill != null)
+            {
+                roundTimerFill.fillAmount = duration <= 0f
+                    ? 0f
+                    : Mathf.Clamp01(_roundElapsed / duration);
+            }
+
+            if (roundTimerBuffer == null)
+                return;
+
+            roundTimerBuffer.fillAmount = duration <= 0f
+                ? 0f
+                : Mathf.Clamp01(_bufferSeconds / duration);
         }
     }
 }

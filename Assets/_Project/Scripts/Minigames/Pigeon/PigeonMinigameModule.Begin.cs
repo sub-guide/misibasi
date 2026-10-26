@@ -13,6 +13,7 @@ namespace MiniParty.Minigames.Pigeon
             _running = true;
             _completing = false;
             _roundElapsed = 0f;
+            ResetRoundBuffer();
 
             for (var i = 0; i < SlotCount; i++)
             {
