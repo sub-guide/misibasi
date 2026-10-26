@@ -99,6 +99,15 @@ namespace MiniParty.Minigames.Pigeon
         [Tooltip("경과/전체. 예: 0:05/0:30. Timer 자식 Text. 비어 있으면 글자 없음.")]
         [SerializeField] TMP_Text roundTimerLabel;
 
+        [Tooltip("Bar의 Circle. 게임 시간 동안 X만 Start→End. Y는 유지. 비어 있으면 안 움직임.")]
+        [SerializeField] RectTransform roundTimerPlayhead;
+
+        [Tooltip("재생 머리 Anchored X. 시작.")]
+        [SerializeField] float playheadStartX = -900f;
+
+        [Tooltip("재생 머리 Anchored X. 종료.")]
+        [SerializeField] float playheadEndX = 900f;
+
         [Tooltip("경과 바 뒤의 하얀 로드. 비어 있으면 빨강 타이머만. Type=Filled, Horizontal, Origin Left.")]
         [SerializeField] Image roundTimerBuffer;
 

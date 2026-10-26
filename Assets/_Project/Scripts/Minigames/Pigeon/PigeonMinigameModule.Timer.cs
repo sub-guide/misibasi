@@ -106,6 +106,20 @@ namespace MiniParty.Minigames.Pigeon
 
             if (roundTimerLabel != null)
                 roundTimerLabel.text = FormatRoundClock(_roundElapsed) + "/" + FormatRoundClock(duration);
+
+            MovePlayheadAlongRound();
+        }
+
+        void MovePlayheadAlongRound()
+        {
+            if (roundTimerPlayhead == null)
+                return;
+
+            float duration = Mathf.Max(0f, roundDuration);
+            float t = duration <= 0f ? 0f : Mathf.Clamp01(_roundElapsed / duration);
+            Vector2 pos = roundTimerPlayhead.anchoredPosition;
+            pos.x = Mathf.Lerp(playheadStartX, playheadEndX, t);
+            roundTimerPlayhead.anchoredPosition = pos;
         }
 
         static string FormatRoundClock(float seconds)

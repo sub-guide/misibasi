@@ -3263,7 +3263,7 @@ MonoBehaviour:
   - {fileID: 1559389162}
   - {fileID: 1343334614}
   - {fileID: 7994677}
-  cursorSpeed: 120
+  cursorSpeed: 150
   playCamera: {fileID: 1573283618}
   noodlePrefab: {fileID: 8287524467600553144, guid: 64147fbef41e6ae4dbf3fb178f5f56cd, type: 3}
   cupNoodle: {fileID: 1813455847}
@@ -3273,7 +3273,7 @@ MonoBehaviour:
   pilesPerPour: 5
   spawnJitterRadius: 30
   pileSpawnStagger: 0.15
-  pourCooldown: 4
+  pourCooldown: 2
   cupPourDuration: 0
   soup: {fileID: 315504511}
   soupAnimator: {fileID: 315504513}
@@ -3311,9 +3311,12 @@ MonoBehaviour:
   - {fileID: 309080860}
   - {fileID: 1705268295}
   - {fileID: 463123314}
-  roundDuration: 30
+  roundDuration: 60
   roundTimerFill: {fileID: 893564112}
   roundTimerLabel: {fileID: 575599513}
+  roundTimerPlayhead: {fileID: 962550944}
+  playheadStartX: -900
+  playheadEndX: 900
   roundTimerBuffer: {fileID: 1026009963}
   bufferFirstChunkSeconds: 3
   bufferChunkMinSeconds: 1.5
