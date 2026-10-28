@@ -40,6 +40,8 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
             }
 
+            ForEachSlot(i => GetBindings(i)?.SceneryScroll?.Tick(dt));
+
             ForEachSlot(i =>
             {
                 if (!_aliveMask[i])

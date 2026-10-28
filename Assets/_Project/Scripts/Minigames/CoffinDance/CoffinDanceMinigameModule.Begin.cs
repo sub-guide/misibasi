@@ -88,6 +88,8 @@ namespace MiniParty.Minigames.CoffinDance
             if (disableMainCameraOnBegin && slotCameras.Count > 0)
                 DisableSceneMainCamera(slotCameras);
 
+            ForEachSlot(i => GetBindings(i)?.SceneryScroll?.ResetScroll());
+
             RefreshPhaseParameters();
             FlushAllUi();
         }

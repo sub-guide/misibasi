@@ -29,6 +29,9 @@ namespace MiniParty.Minigames.CoffinDance
 
         public Camera SlotCamera;
 
+        [Tooltip("바닥 UV·옆 배경 순환. 비우면 스크롤 없음.")]
+        public CoffinDanceSceneryScroll SceneryScroll;
+
         [Header("UI")]
         public TMP_Text ScoreText;
         public TMP_Text EliminatedText;

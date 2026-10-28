@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-10-29 — 씬 안 연습 제거 **Play 확인**. 메인 Enter 후 바로 60초 본게임. 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-10-29 — 배경 스크롤은 일정 속도 `scrollSpeed`(코드·프리팹 **1**). 씬 안 연습 제거 **Play 확인**. 메인 Enter 후 바로 60초 본게임. 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -215,6 +215,20 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 
 ---
 
+## 8-B. 배경 스크롤
+
+플레이 중(`CdFlowState.Playing`)에만 `CoffinDanceSceneryScroll.Tick`. `Begin`의 `ResetScroll`은 이동량을 0으로 두고 옆 배경을 배치 위치로 되돌린다. 종료 대기에서는 `Tick`을 호출하지 않아 그 자리에 멈춘다. 사람·관·`FailFloor`·카메라는 움직이지 않는다.
+
+| 항목 | 동작 |
+|------|------|
+| 속도 | `scrollSpeed` 초당 로컬 Z. 코드·`Slot_1P` **1**. 커브·주기 반복은 제거 |
+| 방향 | 줄마다 스프라이트 긴 변(로컬 +X)을 부모 공간으로 둔 축. +Z 성분이 화면 안쪽. `SideL` Y 95° · `SideR` Y 85°라 서로 평행하지 않음 |
+| 옆 배경 | `strips[]`. 그 축으로 밀고, 간격(`spacing`, 0이면 축 위 배치 간격) × 장수 길이로 순환. 복제본은 같은 축 위에 둔다. `SideL (1)` `(-3.893, 2.4, -21.637)` · `SideR (1)` `(3.893, 2.4, -21.637)` |
+| 바닥 | `floorRenderer`의 `floorTextureProperty`(기본 `_MainTex`) UV에 `floorUvPerMeter × 속도`. 코드 기본 `(0, 0.05)`. `Toil` Wrap **Repeat** |
+| 물리 | `FailFloor` Transform·콜라이더는 그대로. 보이는 바닥만 UV |
+
+---
+
 ## 9. 주요 타입·파일
 
 | 파일 | 역할 |
@@ -225,6 +239,7 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `CoffinDanceFailFloor` | 바닥 마커 (탈락 아님) |
 | `CoffinDanceSceneBootstrap` | Begin/Tick |
 | `CoffinDanceSlotBindings` | `Pallbearers[6]` · 가운데 `[1]`/`[4]` 2점 자세(`TryComputeCoffinSupportLocalPose`) · PrepareAllPoses / ApplySideExtension / SoftResetAllPallbearers / `SetCoffinShoulderCollisionsIgnored` / `SetSideShoulderCollidersEnabled` / `ApplyUpwardShoulderDepenetration` |
+| `CoffinDanceSceneryScroll` | 바닥 UV · 옆 배경 로컬 Z 순환. 일정 `scrollSpeed` |
 | `CoffinDanceHpLossRules` | HP 판정 |
 | Editor `CoffinDancePallbearerAnimatorSetup` | Controller 생성 메뉴 (ExtensionBlend만) |
 
@@ -281,6 +296,7 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `Coffin` / `CoffinBody` | 관 Transform · `CoffinDanceCoffinBody` |
 | `Pallbearers[6]` | [0..2]=좌 · [3..5]=우. 2점 스냅은 가운데 `[1]`/`[4]` |
 | `SlotCamera` | 세로 1/4 |
+| `SceneryScroll` | `CoffinDanceSceneryScroll`. 비우면 스크롤 없음 |
 | HUD | Score · Eliminated (Begin에서 탈락 UI 숨김 · 플레이 중 탈락 UI 없음). `PracticeReadyText` 오브젝트는 프리팹에 남아 있고 비활성. 코드 참조는 제거 |
 
 ### CoffinBody
