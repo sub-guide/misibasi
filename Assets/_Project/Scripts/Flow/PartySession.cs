@@ -53,22 +53,6 @@ namespace MiniParty.Flow
 
         public bool HasPendingReport => _hasPending;
 
-        /// <summary>관짝춤: 연습 Result 후 본게임 1회 예약.</summary>
-        bool _coffinMainRoundQueuedAfterPractice;
-
-        public bool TakeCoffinDanceNextRoundIsPractice()
-        {
-            if (!_coffinMainRoundQueuedAfterPractice)
-                return true;
-
-            _coffinMainRoundQueuedAfterPractice = false;
-            return false;
-        }
-
-        public void QueueCoffinDanceMainRoundAfterPracticeEnded() => _coffinMainRoundQueuedAfterPractice = true;
-
-        public void ResetCoffinDanceCycleAfterMainSession() => _coffinMainRoundQueuedAfterPractice = false;
-
         /// <summary>
         /// Result 연출 직후·메인 씬 로드 전에 호출. DontDestroyOnLoad 슬롯에 로비 상태를 반영한다.
         /// </summary>

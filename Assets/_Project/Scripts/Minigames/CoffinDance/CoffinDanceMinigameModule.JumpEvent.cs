@@ -9,7 +9,7 @@ namespace MiniParty.Minigames.CoffinDance
         /// </summary>
         void RefreshPhaseParameters()
         {
-            float t = _ctx.IsPractice ? 0f : _elapsedMainTime;
+            float t = _elapsedMainTime;
             CdPhase phase;
 
             if (t < Phase1EndSeconds)

@@ -38,7 +38,7 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>개발 무적(1P) 미입력 시 bias·x가 0.5로 돌아오는 속도(초당).</summary>
         public const float DefaultDevGodReturnSpeed = 3f;
 
-        /// <summary>FailFloor 접촉 1회당 본게임 감점. 연습은 0.</summary>
+        /// <summary>FailFloor 접촉 1회당 감점.</summary>
         public const int DefaultFailFloorPenaltyScore = 500;
 
         /// <summary>FailFloor 복구 목표 로컬 Y. 프리팹 Coffin rest(2.2) 플레이스홀더. Play에서 조절.</summary>

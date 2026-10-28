@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace MiniParty.Minigames.CoffinDance
 {
@@ -19,9 +20,6 @@ namespace MiniParty.Minigames.CoffinDance
 
             float dt = Time.deltaTime;
 
-            if (_ctx.IsPractice)
-                TickPracticeReadyAndMaybeStartMain();
-
             if (_flowState == CdFlowState.Ending)
             {
                 _endDelayRemain -= dt;
@@ -31,22 +29,15 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
             }
 
-            if (!_ctx.IsPractice)
-            {
-                _elapsedMainTime += dt;
-                _remainingMainTime = Mathf.Max(0f, MainDurationSeconds - _elapsedMainTime);
-                RefreshPhaseParameters();
+            _elapsedMainTime += dt;
+            _remainingMainTime = Mathf.Max(0f, MainDurationSeconds - _elapsedMainTime);
+            RefreshPhaseParameters();
 
-                if (_remainingMainTime <= 0f)
-                {
-                    BeginEndDelay();
-                    FlushAllUi();
-                    return;
-                }
-            }
-            else
+            if (_remainingMainTime <= 0f)
             {
-                RefreshPhaseParameters();
+                BeginEndDelay();
+                FlushAllUi();
+                return;
             }
 
             ForEachSlot(i =>
@@ -90,6 +81,14 @@ namespace MiniParty.Minigames.CoffinDance
 
             _flowState = CdFlowState.Ending;
             _endDelayRemain = SessionEndDelaySeconds;
+        }
+
+        static bool EscapePressed()
+        {
+            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+                return true;
+
+            return UnityEngine.Input.GetKeyDown(KeyCode.Escape);
         }
     }
 }

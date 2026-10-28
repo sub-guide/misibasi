@@ -30,7 +30,6 @@ namespace MiniParty.Minigames.CoffinDance
 
                 _participatedMask[i] = play;
                 _aliveMask[i] = play;
-                _practiceReady[i] = false;
 
                 ref SlotRuntime sr = ref _slots[i];
                 sr = default;

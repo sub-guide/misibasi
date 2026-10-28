@@ -1,4 +1,3 @@
-using MiniParty.Input;
 using MiniParty.Minigames;
 using UnityEngine;
 
@@ -17,10 +16,6 @@ namespace MiniParty.Minigames.CoffinDance
 
         /// <summary>현재 플레이 가능(미참가 슬롯 false). FailFloor로 끄지 않음.</summary>
         readonly bool[] _aliveMask = new bool[SlotCount];
-
-        readonly bool[] _practiceReady = new bool[SlotCount];
-
-        readonly OperatorInputService _operatorInput = new();
 
         float _elapsedMainTime;
         float _remainingMainTime;

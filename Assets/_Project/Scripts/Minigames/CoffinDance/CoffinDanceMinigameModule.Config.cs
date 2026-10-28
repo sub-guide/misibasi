@@ -41,8 +41,8 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("DanceWave 진폭. x = Clamp01(bias + wave×Amp).")]
         [SerializeField] float noiseAmp = DefaultNoiseAmp;
 
-        [Header("FailFloor (접촉 1회 복구 · 본게임 감점)")]
-        [Tooltip("본게임 FailFloor 접촉 1회당 감점. 0 미만으로 내려가지 않음. 연습은 감점 없음.")]
+        [Header("FailFloor (접촉 1회 복구 · 감점)")]
+        [Tooltip("FailFloor 접촉 1회당 감점. 0 미만으로 내려가지 않음.")]
         [SerializeField] int failFloorPenaltyScore = DefaultFailFloorPenaltyScore;
 
         [Tooltip("FailFloor 접촉 시 관이 SmoothStep으로 이동하는 로컬 Y. 1~4P 공통. Play에서 조절.")]

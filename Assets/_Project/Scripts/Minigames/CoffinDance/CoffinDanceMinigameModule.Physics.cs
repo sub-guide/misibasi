@@ -71,9 +71,6 @@ namespace MiniParty.Minigames.CoffinDance
 
             BeginFailFloorRecover(i, ref sr, body);
 
-            if (_ctx.IsPractice)
-                return;
-
             sr.ScoreExact = Mathf.Max(0f, sr.ScoreExact - Mathf.Max(0, failFloorPenaltyScore));
             sr.ScoreSum = Mathf.FloorToInt(sr.ScoreExact);
         }

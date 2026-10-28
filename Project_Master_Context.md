@@ -18,7 +18,7 @@
 
 # Project Master Context — Mini Party (바이블 코딩)
 
-> **갱신 기준일**: 2026-10-25  
+> **갱신 기준일**: 2026-10-29  
 > **상세 기술 문서**: `Documentation/` 폴더 (본 파일은 AI·협업 **행동 규칙 + 지금 포커스·열린 결정** 전용)  
 > **완료 이력·검증 상세·다음 후보**: `Documentation/02_개발_진행_일지.md` 만. §6에 되풀이하지 않는다.
 
@@ -307,7 +307,7 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 - **입력**: 운영자 `OperatorInputService`(키보드 ↑↓·Enter) · 플레이어 `SlotGamepad` → `Joystick.all[i]` · 개발 `DeveloperKeyboardGamepadDebug`(`Ctrl` 토글 1P).
 - **부스 USB 버튼**은 반드시 `BoothUsbGamepadLayout` 상수·`03_Booth_USB_Controller_매핑.md` 를 거침.  
   OIIA: SNES **10키**(Face A/B/Y · X=Trigger · L/R · 스틱 4방향) 전부 정답 연타 (`05_OIIA.md` §5).
-- **연습 → 본게임**은 기본 필수(스킵 없음). **예외 — Pigeon · RBC · OIIA**: 메인 Enter → 바로 본게임 (`05_Pigeon.md` · `05_Rhythm_Button_Challenge.md` · `05_OIIA.md`). HP는 **Result 씬에서만** −1.
+- **연습 → 본게임** 경로는 구현된 미니게임에 없다. 메인 Enter → 바로 본게임 (`05_Pigeon.md` · `05_Rhythm_Button_Challenge.md` · `05_OIIA.md` · `05_Coffin_Dance.md`). HP는 **Result 씬에서만** −1.
 
 **주요 씬** (Build Settings·Inspector 문자열 = 파일명과 동일):
 
@@ -342,13 +342,14 @@ AI는 **단계별 에디터 가이드(§2)** 를 **채팅 응답에만** 제공�
 
 ## 6. 지금 포커스 · 열린 결정
 
-> **마지막 갱신**: 2026-10-26  
+> **마지막 갱신**: 2026-10-29  
 > 완료 이력·To-Do·최근 완료는 **쓰지 않는다** (§3). 상세는 `02_개발_진행_일지.md`.
 
 ### 지금 포커스
 
-1. **Pigeon** — 1P HP 안 깎임 Play 확인. 2~4P 하위 50% 미검증
-2. **OIIA** — 현재 규칙은 `05_OIIA.md`. 미사용 코드 삭제 후 Play 미검증. 2~4P·다패드 남음
+1. **관짝춤** — 슬롯 바닥·옆 배경이 `+Z`로 흐르는 연출
+2. **Pigeon** — 1P HP 안 깎임 Play 확인. 2~4P 하위 50% 미검증
+3. **OIIA** — 현재 규칙은 `05_OIIA.md`. 미사용 코드 삭제 후 Play 미검증. 2~4P·다패드 남음
 
 ### 열린 결정 / 보류
 

@@ -70,7 +70,6 @@ namespace MiniParty.Flow
 
         readonly bool[] _playedThisSession = new bool[4];
         bool _sessionPractice;
-        string _lastStartedMinigameId;
 
         int _selectedCatalogIndex;
         PartyGamePhase _phase = PartyGamePhase.MainMenu;
@@ -396,8 +395,6 @@ namespace MiniParty.Flow
 
             if (!runRbc && !runCoffin && !runOiia && !runPigeon)
             {
-                partySession?.ResetCoffinDanceCycleAfterMainSession();
-
                 if (detailBody != null)
                     detailBody.text = "This minigame is not available yet.";
 
@@ -407,21 +404,7 @@ namespace MiniParty.Flow
             if (partySession == null)
                 return;
 
-            if (runRbc)
-                _lastStartedMinigameId = RhythmButtonChallengeMinigameModule.BuiltInId;
-            else if (runCoffin)
-                _lastStartedMinigameId = CoffinDanceMinigameModule.BuiltInId;
-            else if (runPigeon)
-                _lastStartedMinigameId = PigeonMinigameModule.BuiltInId;
-            else
-                _lastStartedMinigameId = OiiaMinigameModule.BuiltInId;
-
-            if (runRbc || runPigeon)
-                _sessionPractice = false;
-            else if (runCoffin)
-                _sessionPractice = partySession.TakeCoffinDanceNextRoundIsPractice();
-            else
-                _sessionPractice = false;
+            _sessionPractice = false;
 
             for (var i = 0; i < 4; i++)
                 _playedThisSession[i] = false;
@@ -462,19 +445,6 @@ namespace MiniParty.Flow
 
             if (!fromResultScene)
                 PostProcessScoresAndStates(report);
-
-            PartySession psNotify = partySession;
-            if (psNotify != null)
-            {
-                bool coffinSession = string.Equals(_lastStartedMinigameId, CoffinDanceMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
-                if (coffinSession)
-                {
-                    if (_sessionPractice)
-                        psNotify.QueueCoffinDanceMainRoundAfterPracticeEnded();
-                    else
-                        psNotify.ResetCoffinDanceCycleAfterMainSession();
-                }
-            }
 
             _phase = PartyGamePhase.MainMenu;
 

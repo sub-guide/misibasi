@@ -31,7 +31,6 @@ namespace MiniParty.Minigames.CoffinDance
 
         [Header("UI")]
         public TMP_Text ScoreText;
-        public TMP_Text PracticeReadyText;
         public TMP_Text EliminatedText;
         public TMP_Text PlayerLabelText;
 

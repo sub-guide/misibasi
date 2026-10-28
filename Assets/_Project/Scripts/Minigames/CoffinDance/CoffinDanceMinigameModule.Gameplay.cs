@@ -29,9 +29,6 @@ namespace MiniParty.Minigames.CoffinDance
 
         void AccruePassiveScore(int i, ref SlotRuntime sr, float dt)
         {
-            if (_ctx.IsPractice)
-                return;
-
             float mul = _scoreMultiplier;
             float gain = SurvivalScorePerSecond * mul * dt;
             if (IsCenterBalanceActive(i, ref sr))

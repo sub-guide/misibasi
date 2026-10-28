@@ -18,7 +18,6 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
 
             bool participated = _participatedMask[i];
-            bool alive = _aliveMask[i];
 
             if (bind.PlayerLabelText != null)
                 bind.PlayerLabelText.text = $"{i + 1}P";
@@ -27,18 +26,8 @@ namespace MiniParty.Minigames.CoffinDance
             {
                 if (!participated)
                     bind.ScoreText.text = string.Empty;
-                else if (_ctx.IsPractice)
-                    bind.ScoreText.text = "-";
                 else
                     bind.ScoreText.text = $"{_slots[i].ScoreSum}";
-            }
-
-            if (bind.PracticeReadyText != null)
-            {
-                bool show = _ctx.IsPractice && alive && _practiceReady[i];
-                bind.PracticeReadyText.gameObject.SetActive(show);
-                if (show)
-                    bind.PracticeReadyText.text = "READY";
             }
         }
 
@@ -46,13 +35,6 @@ namespace MiniParty.Minigames.CoffinDance
         {
             if (mainRoundTimerCentralTop == null)
                 return;
-
-            if (_ctx.IsPractice)
-            {
-                mainRoundTimerCentralTop.gameObject.SetActive(true);
-                mainRoundTimerCentralTop.text = "PRACTICE";
-                return;
-            }
 
             mainRoundTimerCentralTop.gameObject.SetActive(true);
             int sec = Mathf.CeilToInt(_remainingMainTime);
@@ -63,12 +45,6 @@ namespace MiniParty.Minigames.CoffinDance
         {
             if (phaseLabelText == null)
                 return;
-
-            if (_ctx.IsPractice)
-            {
-                phaseLabelText.text = "PRACTICE";
-                return;
-            }
 
             phaseLabelText.text = _phase switch
             {

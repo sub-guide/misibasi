@@ -58,17 +58,16 @@ namespace MiniParty.Minigames.CoffinDance
             ForEachSlot(i =>
             {
                 participated[i] = _participatedMask[i];
-                report.FinalScore[i] = !_ctx.IsPractice && _participatedMask[i]
+                report.FinalScore[i] = _participatedMask[i]
                     ? Mathf.Max(0, _slots[i].ScoreSum)
                     : 0;
             });
 
-            if (!_ctx.IsPractice)
-                CoffinDanceHpLossRules.FillHpLost(
-                    report.FinalScore,
-                    participated,
-                    report.HpLostThisSession,
-                    hpLowScoreThreshold);
+            CoffinDanceHpLossRules.FillHpLost(
+                report.FinalScore,
+                participated,
+                report.HpLostThisSession,
+                hpLowScoreThreshold);
 
             return report;
         }

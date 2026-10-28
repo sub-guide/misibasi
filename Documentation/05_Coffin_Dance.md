@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-08-28 — 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-10-29 — 씬 안 연습 제거 **Play 확인**. 메인 Enter 후 바로 60초 본게임. 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -16,7 +16,7 @@
 | 개발 무적 | **Play 검증** (카메라 테스트에 사용) | Editor·Development Build만. Backspace 토글 **1P**. 미입력·동시 입력이면 `x`가 0.5로 복귀 (`devGodReturnSpeed` 씬 **3**) |
 | 점프 | **제거·Play 검증** | A로 점프 안 됨 (사용자, 2026-08-15) |
 | Animator | **ExtensionBlend만** | Jump 상태 에디터 삭제 완료 (사용자, 2026-08-15) |
-| Flow·Result 연동 | **60초 종료 검증** | 연습 READY→본 · FailFloor 탈락 경로 없음. 60초 → Results (사용자, 2026-08-15) |
+| Flow·Result 연동 | **연습 제거 · Play 확인** (2026-10-29) · 60초 종료는 2026-08-15 검증 | 메인 Enter → 바로 본게임 60초 → Results. 씬 안 READY·연습 판 없음. FailFloor 탈락 경로 없음 |
 | 운구인 에셋 | **완료·검증** | `Pallbearer.fbx` + UAL1 · **우어깨만** SphereCollider(**Radius 27**) · 반대편 **Scale X=-1** · **루트 RB·발 Collider 없음**(사용자, 2026-08-15) |
 | 씬·슬롯 프리팹 | **완료·검증** | `Pallbearers[6]`만 (`Left/Right Pose` 배열 **없음**) |
 | Build Settings | **등록·검증** | 사용자 확인 |
@@ -66,8 +66,7 @@
 |------|-------------------------|---------------------------|------|
 | LB (L) | `ShoulderL` (`button5`) | `Q` | `x_bias`↑ → `Y_L`↑ · `Y_R`↓ (홀드 시 가속) |
 | RB (R) | `ShoulderR` (`button6`) | `E` | `x_bias`↓ → `Y_R`↑ · `Y_L`↓ (홀드 시 가속) |
-| 연습 READY | Start | `B` | — |
-| 본게임 전환 | 운영자 Enter | — | — |
+| 본게임 전환 | 메인 메뉴 운영자 Enter | — | 씬 로드와 함께 60초 시작 |
 | 개발 무적 | — | **Backspace** 토글 (Editor·Development Build, 1P) | ON이면 미입력 시 `x=0.5`로 복귀. LB/RB는 기존 조작 |
 
 키를 떼면 `x_bias`는 중립으로 스냅되지 않는다. 미입력(또는 LB·RB 동시)이면 **현재 기울기 방향 중력형 미세 도치**가 들어가고, 중앙 이탈 시 **비선형 풀**이 더해진다.  
@@ -85,7 +84,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - `Freeze Rotation`: **X, Y** (Z만 회전)
 - `centerOfMass` 로컬 **(0,0,0)** = 기하 중심 (Inspector `centerOfMassLocal`)
 - 기울기: `transform` 로컬 Z 각(도) (`GetTiltZDegrees`). **점수 판정에는 쓰지 않음**
-- **FailFloor 접촉** (`OnCollisionEnter` 1회): 관을 kinematic으로 두고 로컬 Y → `failFloorRecoverLocalY`, 로컬 Z → 0을 `failFloorRecoverDuration` 동안 SmoothStep. 같은 시간 `x_bias`·`x`도 0.5로 SmoothStep(LB/RB·노이즈 없음). 관↔어깨 `IgnoreCollision`. 끝나면 시소는 0.5에서 재개·물리 낙하. 복구 중 재접촉은 무시(재감점 없음). 본게임만 `failFloorPenaltyScore` 감점. **탈락·연습 SoftReset 없음**. +Y Impulse **폐기**
+- **FailFloor 접촉** (`OnCollisionEnter` 1회): 관을 kinematic으로 두고 로컬 Y → `failFloorRecoverLocalY`, 로컬 Z → 0을 `failFloorRecoverDuration` 동안 SmoothStep. 같은 시간 `x_bias`·`x`도 0.5로 SmoothStep(LB/RB·노이즈 없음). 관↔어깨 `IgnoreCollision`. 끝나면 시소는 0.5에서 재개·물리 낙하. 복구 중 재접촉은 무시(재감점 없음). `failFloorPenaltyScore` 감점. **탈락 없음**. +Y Impulse **폐기**
 - **어깨 부착 (A안)**: 시소가 최대가 아니고 FailFloor 복구가 아니며 **낙하 잠금이 아니고** 관이 활성 어깨와 접촉하면 `CoffinShoulderAttached`. 이후 매 `LateUpdate`에 좌 `Pallbearers[1]` · 우 `[4]` 어깨 Sphere 꼭대기로 강체 로컬 Y·Z를 **즉시** 맞춤. 메시 변형 **없음**. 부착 중 +Y 분리 **끔**
 - **낙하 잠금**: 부착 중 `x_bias` 0/1이 되면 `CoffinFallLockedUntilFloor`. 어깨 `IgnoreCollision`. FailFloor에 닿을 때까지 재부착·+Y 분리 없음. 복구 시작 시 잠금 해제
 - **겹침 분리 (A)**: 미부착이고 잠금·시소 최대·Ignore가 아닐 때만 +Y (`shoulderDepenetrationMaxY`)
@@ -147,7 +146,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 | 생존 | 초당 **100** (`SurvivalScorePerSecond`) |
 | 정중앙 유지 | 초당 **150** 추가 (`centerBonusScorePerSec`). 시소 정중앙 **그리고** 어깨 부착일 때만. 둘 다이면 생존과 합쳐 초당 **250** |
 | Phase4 (50~60초) | **획득 ×2.0** (FailFloor 패널티에는 배율 없음). 정중앙 유지 시 초당 **500** |
-| FailFloor 접촉 1회 | **−500** (`failFloorPenaltyScore`, Inspector). 0 미만 clamp. **연습 감점 없음** |
+| FailFloor 접촉 1회 | **−500** (`failFloorPenaltyScore`, Inspector). 0 미만 clamp |
 
 정중앙 **보너스**만 아래 둘을 모두 만족해야 가산한다. 생존 초당 100은 지지·시소와 무관.
 
@@ -156,13 +155,11 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
    기본 `centerZoneThreshold` **0.05** → `0.45 ≤ x ≤ 0.55`.
 2. 지지: `CoffinShoulderAttached` (시소 최대·FailFloor 복구가 아니고 어깨 접촉 후 2점 스냅 중). `ShoulderIgnoreRemain>0`이면 보너스 없음. 관 Z 각은 쓰지 않음.
 
-연습 UI 점수는 `-`, Report `FinalScore`는 0. 연습은 생존·보너스 가산 없음.
-
 ---
 
 ## 4-B. 정중앙 카메라 연출
 
-발동은 점수 정중앙 보너스와 같다(`IsCenterBalanceActive`). **연습에서도 카메라만** 동작하고, 연습 점수 가산은 없다. 참가 슬롯의 `SlotCamera`만 독립 갱신. 새 카메라 오브젝트는 없다.
+발동은 점수 정중앙 보너스와 같다(`IsCenterBalanceActive`). 참가 슬롯의 `SlotCamera`만 독립 갱신. 새 카메라 오브젝트는 없다.
 
 | 항목 | 동작 |
 |------|------|
@@ -212,10 +209,9 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 
 ---
 
-## 8. 연습 → 본게임
+## 8. 입장
 
-OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Begin` 재호출.  
-메뉴 첫 진입: `PartySession.TakeCoffinDanceNextRoundIsPractice()`.
+메인 메뉴 READY 후 운영자 Enter → `PrepareRound(false)` → 씬 로드 → `Begin`. 60초 본게임만 있다. 씬 안 연습·READY 대기·`TakeCoffinDanceNextRoundIsPractice` 는 **제거**(2026-10-29).
 
 ---
 
@@ -251,7 +247,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `pullCoefficient` | 2.0 | 중앙 이탈 비선형 가속 계수 |
 | `danceSineHz` | 1.2 | DanceWave Sine 주파수 (씬 **2**) |
 | `noiseAmp` | 0.12 | 고정 노이즈 진폭 (씬 **0.03**) |
-| `failFloorPenaltyScore` | 500 | 본게임 접촉 1회 감점 (연습 0). **수치 보류** |
+| `failFloorPenaltyScore` | 500 | 접촉 1회 감점. **수치 보류** |
 | `failFloorRecoverLocalY` | 2.2 | FailFloor 복구 목표 로컬 Y. 1~4P 공통. **Play 확인**(씬 2.2) |
 | `failFloorRecoverDuration` | 0.5 | 복구 SmoothStep 시간(초) = 어깨 Ignore 시간. **Play 확인**(씬 0.5) |
 | `shoulderDepenetrationMaxY` | 0.5 | 미부착·시소 최대가 아닐 때 어깨 겹침 +Y 분리 한 프레임 최대 |
@@ -285,7 +281,7 @@ OIIA와 동일: START READY → 운영자 Enter → `PrepareRound(false)` + `Beg
 | `Coffin` / `CoffinBody` | 관 Transform · `CoffinDanceCoffinBody` |
 | `Pallbearers[6]` | [0..2]=좌 · [3..5]=우. 2점 스냅은 가운데 `[1]`/`[4]` |
 | `SlotCamera` | 세로 1/4 |
-| HUD | Score · PracticeReady · Eliminated (Begin에서 숨김 · 플레이 중 탈락 UI 없음) |
+| HUD | Score · Eliminated (Begin에서 탈락 UI 숨김 · 플레이 중 탈락 UI 없음). `PracticeReadyText` 오브젝트는 프리팹에 남아 있고 비활성. 코드 참조는 제거 |
 
 ### CoffinBody
 
@@ -317,4 +313,4 @@ Minigame_CoffinDance
 
 ---
 
-문서 갱신: **2026-08-17** (정중앙 보너스 Play 검증 · 디버그 로그 삭제)
+문서 갱신: **2026-10-29** (관짝춤 씬 안 연습 제거) · **2026-08-17** (정중앙 보너스 Play 검증 · 디버그 로그 삭제)
