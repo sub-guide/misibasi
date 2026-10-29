@@ -12,7 +12,7 @@ namespace MiniParty.Minigames.CoffinDance
         [System.Serializable]
         public sealed class Strip
         {
-            [Tooltip("같은 기울기의 복사본. 옆 배경은 2장. 긴 변 위에 둔다.")]
+            [Tooltip("같은 기울기의 복사본. 긴 변 위에 두고, 카메라 쪽에 한 장 더 둔다.")]
             public Transform[] pieces;
 
             [Tooltip("다음 복사본까지의 거리. 스프라이트 긴 변 방향. 0이면 배치된 간격으로 계산한다.")]
@@ -24,12 +24,12 @@ namespace MiniParty.Minigames.CoffinDance
         [SerializeField] float scrollSpeed = 1f;
 
         [Header("옆 배경")]
-        [Tooltip("0 = 왼쪽, 1 = 오른쪽. 각 줄에 복사본 2장.")]
+        [Tooltip("0 = 왼쪽, 1 = 오른쪽. 각 줄은 카메라 쪽 1장과 안쪽 복사본.")]
         [SerializeField] Strip[] strips = { new Strip(), new Strip() };
 
         [Header("바닥")]
-        [Tooltip("UV를 밀 렌더러. FailFloor 콜라이더와 분리된 보이는 바닥.")]
-        [SerializeField] Renderer floorRenderer;
+        [Tooltip("UV를 밀 바닥 렌더러. 멀리까지 이어 붙인 복사본을 모두 넣는다. FailFloor 콜라이더와 분리.")]
+        [SerializeField] Renderer[] floorRenderers;
 
         [Tooltip("속도 1일 때 초당 UV. 흙이 옆으로 흐르면 X/Y를 바꾼다.")]
         [SerializeField] Vector2 floorUvPerMeter = new Vector2(0f, 0.05f);
@@ -47,6 +47,33 @@ namespace MiniParty.Minigames.CoffinDance
         float[] _span;
         int _floorStId;
         string _cachedProperty;
+
+        /// <summary>
+        /// strips[0]은 왼쪽, strips[1]은 오른쪽.
+        /// 맨 왼쪽 슬롯의 왼쪽과 맨 오른쪽 슬롯의 오른쪽만 켠다.
+        /// </summary>
+        public void SetOuterSidesOnly(int slotIndex, int slotCount)
+        {
+            SetStripActive(0, slotIndex == 0);
+            SetStripActive(1, slotCount > 0 && slotIndex == slotCount - 1);
+        }
+
+        void SetStripActive(int stripIndex, bool active)
+        {
+            if (strips == null || stripIndex < 0 || stripIndex >= strips.Length)
+                return;
+
+            Strip strip = strips[stripIndex];
+            Transform[] pieces = strip != null ? strip.pieces : null;
+            if (pieces == null)
+                return;
+
+            for (var i = 0; i < pieces.Length; i++)
+            {
+                if (pieces[i] != null)
+                    pieces[i].gameObject.SetActive(active);
+            }
+        }
 
         public void ResetScroll()
         {
@@ -186,10 +213,19 @@ namespace MiniParty.Minigames.CoffinDance
 
         void ApplyFloor()
         {
-            if (floorRenderer == null)
+            if (floorRenderers == null)
                 return;
 
-            Material shared = floorRenderer.sharedMaterial;
+            for (var i = 0; i < floorRenderers.Length; i++)
+                ApplyFloorRenderer(floorRenderers[i]);
+        }
+
+        void ApplyFloorRenderer(Renderer renderer)
+        {
+            if (renderer == null)
+                return;
+
+            Material shared = renderer.sharedMaterial;
             if (shared == null || string.IsNullOrEmpty(floorTextureProperty))
                 return;
 
@@ -203,9 +239,9 @@ namespace MiniParty.Minigames.CoffinDance
             }
 
             Vector2 scale = shared.GetTextureScale(floorTextureProperty);
-            floorRenderer.GetPropertyBlock(_block);
+            renderer.GetPropertyBlock(_block);
             _block.SetVector(_floorStId, new Vector4(scale.x, scale.y, _uvOffset.x, _uvOffset.y));
-            floorRenderer.SetPropertyBlock(_block);
+            renderer.SetPropertyBlock(_block);
         }
     }
 }

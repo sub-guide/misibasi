@@ -196,7 +196,7 @@ MonoBehaviour:
   camReturnSpringDamping: 1
   devGodReturnSpeed: 3
   hpLowScoreThreshold: 3000
-  slotWorldSpacing: 40
+  slotWorldSpacing: 400
   disableMainCameraOnBegin: 1
   bindSlotCanvasesToSlotCamera: 1
   exitScreenFader: {fileID: 989538419}
@@ -519,6 +519,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.9839341
       objectReference: {fileID: 0}
+    - target: {fileID: 1755896020060707784, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1847290775250368241, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.6354319
@@ -535,6 +539,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.16239703
       objectReference: {fileID: 0}
+    - target: {fileID: 1964199847498690983, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2104993683377201703, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.98877716
@@ -550,6 +558,10 @@ PrefabInstance:
     - target: {fileID: 2104993683377201703, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.09688817
+      objectReference: {fileID: 0}
+    - target: {fileID: 2179770310481024777, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2276523592002940622, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -743,6 +755,22 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.13673103
       objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[0].pieces.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[0].pieces.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[1].pieces.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[1].pieces.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5499248171756492974, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_Name
       value: SlotCamera_2P
@@ -802,6 +830,10 @@ PrefabInstance:
     - target: {fileID: 5708778879121579783, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.27365467
+      objectReference: {fileID: 0}
+    - target: {fileID: 6096715951798919591, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6566144615186854293, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1020,7 +1052,11 @@ PrefabInstance:
       value: 0.9692725
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1755896020060707784, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+    - {fileID: 2179770310481024777, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+    - {fileID: 1964199847498690983, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+    - {fileID: 6096715951798919591, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
@@ -1347,6 +1383,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.9839341
       objectReference: {fileID: 0}
+    - target: {fileID: 1755896020060707784, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1847290775250368241, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.6354319
@@ -1363,6 +1403,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.16239703
       objectReference: {fileID: 0}
+    - target: {fileID: 1964199847498690983, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2104993683377201703, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.98877716
@@ -1378,6 +1422,10 @@ PrefabInstance:
     - target: {fileID: 2104993683377201703, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.09688817
+      objectReference: {fileID: 0}
+    - target: {fileID: 2179770310481024777, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2276523592002940622, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1571,6 +1619,22 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.13673103
       objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[0].pieces.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[0].pieces.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[1].pieces.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[1].pieces.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5499248171756492974, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_Name
       value: SlotCamera_3P
@@ -1630,6 +1694,10 @@ PrefabInstance:
     - target: {fileID: 5708778879121579783, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.27365467
+      objectReference: {fileID: 0}
+    - target: {fileID: 6096715951798919591, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6566144615186854293, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1856,7 +1924,11 @@ PrefabInstance:
       value: 9.64998
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1755896020060707784, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+    - {fileID: 2179770310481024777, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+    - {fileID: 1964199847498690983, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+    - {fileID: 6096715951798919591, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
@@ -2238,6 +2310,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.16239703
       objectReference: {fileID: 0}
+    - target: {fileID: 1964199847498690983, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2104993683377201703, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.98877716
@@ -2446,6 +2522,14 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.13673103
       objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[0].pieces.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[0].pieces.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5499248171756492974, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_Name
       value: SlotCamera_4P
@@ -2505,6 +2589,10 @@ PrefabInstance:
     - target: {fileID: 5708778879121579783, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.27365467
+      objectReference: {fileID: 0}
+    - target: {fileID: 6096715951798919591, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6566144615186854293, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2731,7 +2819,9 @@ PrefabInstance:
       value: 9.64998
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1964199847498690983, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+    - {fileID: 6096715951798919591, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
@@ -2754,6 +2844,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1755896020060707784, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2179770310481024777, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3036969344439301831, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_Name
       value: Slot_1P
@@ -2814,6 +2912,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[1].pieces.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[1].pieces.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8845855590235995057, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.22442266
@@ -2823,7 +2929,9 @@ PrefabInstance:
       value: 9.650114
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1755896020060707784, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+    - {fileID: 2179770310481024777, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
