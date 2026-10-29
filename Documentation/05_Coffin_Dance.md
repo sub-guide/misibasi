@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-10-29 — 배경 스크롤은 일정 속도 `scrollSpeed`(코드·프리팹 **1**). 씬 안 연습 제거 **Play 확인**. 메인 Enter 후 바로 60초 본게임. 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-10-30 — 옆 배경 기울기 스크롤·바닥 UV **Play 확인**. `scrollSpeed` 코드·프리팹 **1**. 씬 안 연습 제거 **Play 확인**. 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -17,6 +17,7 @@
 | 점프 | **제거·Play 검증** | A로 점프 안 됨 (사용자, 2026-08-15) |
 | Animator | **ExtensionBlend만** | Jump 상태 에디터 삭제 완료 (사용자, 2026-08-15) |
 | Flow·Result 연동 | **연습 제거 · Play 확인** (2026-10-29) · 60초 종료는 2026-08-15 검증 | 메인 Enter → 바로 본게임 60초 → Results. 씬 안 READY·연습 판 없음. FailFloor 탈락 경로 없음 |
+| 배경 스크롤 | **Play 확인** (2026-10-30) | `scrollSpeed` **1**. `SideL` Y 95° · `SideR` Y 85° 각자 긴 변. 바닥 UV `floorUvPerMeter` (0, 0.05) |
 | 운구인 에셋 | **완료·검증** | `Pallbearer.fbx` + UAL1 · **우어깨만** SphereCollider(**Radius 27**) · 반대편 **Scale X=-1** · **루트 RB·발 Collider 없음**(사용자, 2026-08-15) |
 | 씬·슬롯 프리팹 | **완료·검증** | `Pallbearers[6]`만 (`Left/Right Pose` 배열 **없음**) |
 | Build Settings | **등록·검증** | 사용자 확인 |
@@ -217,11 +218,11 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 
 ## 8-B. 배경 스크롤
 
-플레이 중(`CdFlowState.Playing`)에만 `CoffinDanceSceneryScroll.Tick`. `Begin`의 `ResetScroll`은 이동량을 0으로 두고 옆 배경을 배치 위치로 되돌린다. 종료 대기에서는 `Tick`을 호출하지 않아 그 자리에 멈춘다. 사람·관·`FailFloor`·카메라는 움직이지 않는다.
+플레이 중(`CdFlowState.Playing`)에만 `CoffinDanceSceneryScroll.Tick`. **Play 확인**(2026-10-30). `Begin`의 `ResetScroll`은 이동량을 0으로 두고 옆 배경을 배치 위치로 되돌린다. 종료 대기에서는 `Tick`을 호출하지 않아 그 자리에 멈춘다. 사람·관·`FailFloor`·카메라는 움직이지 않는다.
 
 | 항목 | 동작 |
 |------|------|
-| 속도 | `scrollSpeed` 초당 로컬 Z. 코드·`Slot_1P` **1**. 커브·주기 반복은 제거 |
+| 속도 | `scrollSpeed` 초당, 각 줄의 긴 변 방향. 코드·`Slot_1P` **1**. 커브·주기 반복은 제거 |
 | 방향 | 줄마다 스프라이트 긴 변(로컬 +X)을 부모 공간으로 둔 축. +Z 성분이 화면 안쪽. `SideL` Y 95° · `SideR` Y 85°라 서로 평행하지 않음 |
 | 옆 배경 | `strips[]`. 그 축으로 밀고, 간격(`spacing`, 0이면 축 위 배치 간격) × 장수 길이로 순환. 복제본은 같은 축 위에 둔다. `SideL (1)` `(-3.893, 2.4, -21.637)` · `SideR (1)` `(3.893, 2.4, -21.637)` |
 | 바닥 | `floorRenderer`의 `floorTextureProperty`(기본 `_MainTex`) UV에 `floorUvPerMeter × 속도`. 코드 기본 `(0, 0.05)`. `Toil` Wrap **Repeat** |
