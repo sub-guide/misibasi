@@ -83,6 +83,11 @@ namespace MiniParty.Minigames.CoffinDance
 
             _flowState = CdFlowState.Ending;
             _endDelayRemain = SessionEndDelaySeconds;
+            ForEachSlot(i =>
+            {
+                _slots[i].FailFallActive = false;
+                ResetFailFallVisual(GetBindings(i));
+            });
         }
 
         static bool EscapePressed()

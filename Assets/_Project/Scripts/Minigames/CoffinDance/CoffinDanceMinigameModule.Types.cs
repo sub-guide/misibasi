@@ -35,6 +35,9 @@ namespace MiniParty.Minigames.CoffinDance
             public float FailFloorRecoverStartZ;
             public float FailFloorRecoverStartSeesaw;
 
+            /// <summary>FailFloor 복구와 같이 켜지는 낙하 연출. 시간은 FailFloorRecoverElapsed.</summary>
+            public bool FailFallActive;
+
             /// <summary>시소 최대·FailFloor가 아니고 어깨 접촉 후, 관을 가운데 어깨 2점에 붙인 상태.</summary>
             public bool CoffinShoulderAttached;
 

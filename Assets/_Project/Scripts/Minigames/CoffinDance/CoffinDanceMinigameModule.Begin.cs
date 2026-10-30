@@ -42,6 +42,7 @@ namespace MiniParty.Minigames.CoffinDance
 
                 CaptureSlotCameraRestIfNeeded(i, slotCam);
                 SetupSlotView(i, bind, slotCam);
+                ResetFailFallVisual(bind);
 
                 if (!play)
                 {

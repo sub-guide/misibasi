@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-10-30 — 슬롯 UI Screen Space Overlay · `SlotUiColumn` 칸 앵커 **Play 확인**. 옆 배경 `SideL` Y **110°** · `SideR` Y **70°**, 카메라 쪽 1장 포함 **5장**, 바닥 타일 **4장** **Play 확인**. `scrollSpeed` 코드·프리팹 **1**. 씬 안 연습 제거 **Play 확인**. 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-10-31 — `FailSprite` X 등속·복구 `failFloorRecoverDuration`과 같은 시계 **Play 확인**(2026-10-31). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 `SideL` Y **110°** · `SideR` Y **70°**, 카메라 쪽 1장 포함 **5장**, 바닥 타일 **4장** **Play 확인**. `scrollSpeed` 코드·프리팹 **1**. 씬 안 연습 제거 **Play 확인**. 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -86,6 +86,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - `centerOfMass` 로컬 **(0,0,0)** = 기하 중심 (Inspector `centerOfMassLocal`)
 - 기울기: `transform` 로컬 Z 각(도) (`GetTiltZDegrees`). **점수 판정에는 쓰지 않음**
 - **FailFloor 접촉** (`OnCollisionEnter` 1회): 관을 kinematic으로 두고 로컬 Y → `failFloorRecoverLocalY`, 로컬 Z → 0을 `failFloorRecoverDuration` 동안 SmoothStep. 같은 시간 `x_bias`·`x`도 0.5로 SmoothStep(LB/RB·노이즈 없음). 관↔어깨 `IgnoreCollision`. 끝나면 시소는 0.5에서 재개·물리 낙하. 복구 중 재접촉은 무시(재감점 없음). `failFloorPenaltyScore` 감점. **탈락 없음**. +Y Impulse **폐기**
+- **낙하 연출 `FailFall`**: **Play 확인**(2026-10-31). 복구와 같이 시작·종료. 시간은 `failFloorRecoverDuration`(코드·씬 **0.5**). `FailSprite` anchored X는 1716.5에서 −1716.5로 `Lerp` 등속. `u`는 복구 경과/복구 시간. 복구가 끝나면 끄고 X를 1716.5로 되돌린다
 - **어깨 부착 (A안)**: 시소가 최대가 아니고 FailFloor 복구가 아니며 **낙하 잠금이 아니고** 관이 활성 어깨와 접촉하면 `CoffinShoulderAttached`. 이후 매 `LateUpdate`에 좌 `Pallbearers[1]` · 우 `[4]` 어깨 Sphere 꼭대기로 강체 로컬 Y·Z를 **즉시** 맞춤. 메시 변형 **없음**. 부착 중 +Y 분리 **끔**
 - **낙하 잠금**: 부착 중 `x_bias` 0/1이 되면 `CoffinFallLockedUntilFloor`. 어깨 `IgnoreCollision`. FailFloor에 닿을 때까지 재부착·+Y 분리 없음. 복구 시작 시 잠금 해제
 - **겹침 분리 (A)**: 미부착이고 잠금·시소 최대·Ignore가 아닐 때만 +Y (`shoulderDepenetrationMaxY`)
@@ -265,7 +266,8 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `noiseAmp` | 0.12 | 고정 노이즈 진폭 (씬 **0.03**) |
 | `failFloorPenaltyScore` | 500 | 접촉 1회 감점. **수치 보류** |
 | `failFloorRecoverLocalY` | 2.2 | FailFloor 복구 목표 로컬 Y. 1~4P 공통. **Play 확인**(씬 2.2) |
-| `failFloorRecoverDuration` | 0.5 | 복구 SmoothStep 시간(초) = 어깨 Ignore 시간. **Play 확인**(씬 0.5) |
+| `failFloorRecoverDuration` | 0.5 | 복구 SmoothStep 시간(초) = 어깨 Ignore 시간. `FailSprite` 등속 X도 이 시간. **Play 확인**(씬 0.5, 스프라이트 연출 2026-10-31) |
+| ~~`failFallDuration`~~ | **제거** (2026-10-31) | 복구 시간과 별도 시계를 두지 않음 |
 | `shoulderDepenetrationMaxY` | 0.5 | 미부착·시소 최대가 아닐 때 어깨 겹침 +Y 분리 한 프레임 최대 |
 | `centerZoneThreshold` | 0.05 | 최종 시소 `x`가 0.5에서 이 값 이내면 정중앙 보너스 |
 | `centerBonusScorePerSec` | 150 | 정중앙 유지 시 초당 추가 점수. Phase4 배율은 생존과 같이 적용 |

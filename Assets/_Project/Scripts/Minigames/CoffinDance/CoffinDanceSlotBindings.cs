@@ -37,6 +37,9 @@ namespace MiniParty.Minigames.CoffinDance
         public TMP_Text EliminatedText;
         public TMP_Text PlayerLabelText;
 
+        [Tooltip("낙하 연출 스프라이트. 평소 비활성. FailFloor 접촉 중에만 켠다.")]
+        public RectTransform FailSprite;
+
         public CoffinDanceCoffinBody ResolveCoffinBody()
         {
             if (CoffinBody != null)

@@ -90,6 +90,7 @@ namespace MiniParty.Minigames.CoffinDance
             body.BeginKinematicHold();
             sr.CoffinShoulderAttached = false;
             sr.CoffinFallLockedUntilFloor = false;
+            BeginFailFall(i, ref sr);
 
             if (dur <= 0f)
             {
@@ -117,6 +118,7 @@ namespace MiniParty.Minigames.CoffinDance
                 sr.FailFloorRecoverActive = false;
                 sr.ShoulderIgnoreRemain = 0f;
                 sr.CoffinFallLockedUntilFloor = false;
+                EndFailFall(i, ref sr);
                 return;
             }
 
@@ -124,6 +126,7 @@ namespace MiniParty.Minigames.CoffinDance
             float dur = sr.FailFloorRecoverDuration;
             float u = dur <= 0f ? 1f : Mathf.Clamp01(sr.FailFloorRecoverElapsed / dur);
             ApplyFailFloorRecoverPose(body, u, ref sr);
+            ApplyFailFallAlongRecover(i, ref sr);
             sr.ShoulderIgnoreRemain = Mathf.Max(0f, dur - sr.FailFloorRecoverElapsed);
 
             if (u < 1f)
@@ -163,6 +166,7 @@ namespace MiniParty.Minigames.CoffinDance
             sr.ShoulderIgnoreRemain = 0f;
             sr.CoffinShoulderAttached = false;
             sr.CoffinFallLockedUntilFloor = false;
+            EndFailFall(i, ref sr);
         }
 
         static bool IsSeesawBiasAtExtreme(float bias)

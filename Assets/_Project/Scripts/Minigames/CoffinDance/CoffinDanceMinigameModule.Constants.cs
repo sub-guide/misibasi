@@ -47,6 +47,9 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>FailFloor 복구 SmoothStep 시간(초). 어깨 Ignore와 동일. Play에서 조절.</summary>
         public const float DefaultFailFloorRecoverDuration = 0.5f;
 
+        public const float FailSpriteStartX = 1716.5f;
+        public const float FailSpriteEndX = -1716.5f;
+
         /// <summary>어깨와 겹칠 때 관을 +Y로만 밀어 올리는 한 프레임 최대량.</summary>
         public const float DefaultShoulderDepenetrationMaxY = 0.5f;
 
