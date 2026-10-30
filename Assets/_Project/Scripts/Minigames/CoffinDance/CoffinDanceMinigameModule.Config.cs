@@ -97,8 +97,5 @@ namespace MiniParty.Minigames.CoffinDance
 
         [Tooltip("Begin 시 Main Camera 비활성화 (슬롯 카메라만 사용).")]
         [SerializeField] bool disableMainCameraOnBegin = true;
-
-        [Tooltip("슬롯 자식 Canvas를 Screen Space - Camera 로 바꿔 해당 슬롯 viewport에만 그림.")]
-        [SerializeField] bool bindSlotCanvasesToSlotCamera = true;
     }
 }

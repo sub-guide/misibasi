@@ -127,9 +127,6 @@ namespace MiniParty.Minigames.CoffinDance
             root.position = p;
 
             ApplyCameraViewport(slotIndex, slotCam);
-
-            if (bindSlotCanvasesToSlotCamera)
-                BindSlotCanvasesToCamera(bind, slotCam);
         }
 
         void ApplyCameraViewport(int slotIndex, Camera cam)
@@ -146,39 +143,6 @@ namespace MiniParty.Minigames.CoffinDance
             var listener = cam.GetComponent<AudioListener>();
             if (listener != null)
                 listener.enabled = false;
-        }
-
-        void BindSlotCanvasesToCamera(CoffinDanceSlotBindings bind, Camera slotCam)
-        {
-            if (bind == null || slotCam == null)
-                return;
-
-            Canvas[] canvases = bind.GetComponentsInChildren<Canvas>(true);
-            for (var c = 0; c < canvases.Length; c++)
-            {
-                Canvas canvas = canvases[c];
-                if (canvas == null)
-                    continue;
-
-                canvas.renderMode = RenderMode.ScreenSpaceCamera;
-                canvas.worldCamera = slotCam;
-                canvas.planeDistance = Mathf.Max(1f, slotCam.nearClipPlane + 0.5f);
-                canvas.sortingOrder = 20 + (10 * ArrayIndexOfBindings(bind));
-            }
-        }
-
-        int ArrayIndexOfBindings(CoffinDanceSlotBindings bind)
-        {
-            if (slotBindings == null)
-                return 0;
-
-            for (var i = 0; i < slotBindings.Length; i++)
-            {
-                if (slotBindings[i] == bind)
-                    return i;
-            }
-
-            return 0;
         }
 
         static void DisableSceneMainCamera(System.Collections.Generic.HashSet<Camera> keepEnabled)

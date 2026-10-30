@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-10-30 — 옆 배경 `SideL` Y **110°** · `SideR` Y **70°**, 카메라 쪽 1장 포함 **5장**, 바닥 타일 **4장** **Play 확인**. `scrollSpeed` 코드·프리팹 **1**. 씬 안 연습 제거 **Play 확인**. 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-10-30 — 슬롯 UI Screen Space Overlay · `SlotUiColumn` 칸 앵커 **Play 확인**. 옆 배경 `SideL` Y **110°** · `SideR` Y **70°**, 카메라 쪽 1장 포함 **5장**, 바닥 타일 **4장** **Play 확인**. `scrollSpeed` 코드·프리팹 **1**. 씬 안 연습 제거 **Play 확인**. 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -281,7 +281,7 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | ~~`presentationYawDegrees`~~ | — | **제거** · TiltRoot 회전은 프리팹 값 사용 |
 | `slotWorldSpacing` | 40 | 슬롯 X 분리 |
 | `disableMainCameraOnBegin` | true | Main Camera off |
-| `bindSlotCanvasesToSlotCamera` | true | 슬롯 Canvas → SSC |
+| ~~`bindSlotCanvasesToSlotCamera`~~ | **제거** (2026-10-30) | 슬롯 Canvas는 Screen Space Overlay. 칸은 `SlotUiColumn` 앵커 |
 | `exitScreenFader` | — | FadeOverlay |
 | `coffinDanceSceneName` (GameFlow) | `Minigame_CoffinDance` | 로드 씬명 |
 
@@ -298,7 +298,7 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `Pallbearers[6]` | [0..2]=좌 · [3..5]=우. 2점 스냅은 가운데 `[1]`/`[4]` |
 | `SlotCamera` | 세로 1/4 |
 | `SceneryScroll` | `CoffinDanceSceneryScroll`. 비우면 스크롤 없음 |
-| HUD | Score · Eliminated (Begin에서 탈락 UI 숨김 · 플레이 중 탈락 UI 없음). `PracticeReadyText` 오브젝트는 프리팹에 남아 있고 비활성. 코드 참조는 제거 |
+| HUD | **Play 확인**(2026-10-30). Score · PlayerLabel · `FailSprite`는 `Canvas_SlotUI_1P` / `SlotUiColumn` 안. Canvas는 Screen Space Overlay. 칸 앵커 X는 1P 0~0.25, 2P 0.25~0.5, 3P 0.5~0.75, 4P 0.75~1. `Begin`은 캔버스를 카메라에 다시 붙이지 않는다. EliminatedText 참조는 비어 있음 |
 
 ### CoffinBody
 

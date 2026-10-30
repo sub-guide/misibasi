@@ -198,7 +198,6 @@ MonoBehaviour:
   hpLowScoreThreshold: 3000
   slotWorldSpacing: 400
   disableMainCameraOnBegin: 1
-  bindSlotCanvasesToSlotCamera: 1
   exitScreenFader: {fileID: 989538419}
   sessionEndHoldSeconds: 0.35
   exitFadeOutSeconds: 1
@@ -599,6 +598,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Slot_2P
       objectReference: {fileID: 0}
+    - target: {fileID: 881100100000000102, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 881100100000000102, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3205234136957708473, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.22442229
@@ -653,7 +660,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 20
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -764,11 +771,19 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[0].pieces.Array.data[2]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: strips.Array.data[1].pieces.Array.data[0]
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: strips.Array.data[1].pieces.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[1].pieces.Array.data[2]
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5499248171756492974, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
@@ -1463,6 +1478,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Slot_3P
       objectReference: {fileID: 0}
+    - target: {fileID: 881100100000000102, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 881100100000000102, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 3205234136957708473, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.22477545
@@ -1517,7 +1540,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 40
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1628,11 +1651,19 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[0].pieces.Array.data[2]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: strips.Array.data[1].pieces.Array.data[0]
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: strips.Array.data[1].pieces.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[1].pieces.Array.data[2]
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5499248171756492974, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
@@ -2366,6 +2397,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Slot_4P
       objectReference: {fileID: 0}
+    - target: {fileID: 881100100000000102, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 881100100000000102, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3205234136957708473, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.22477545
@@ -2420,7 +2459,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 60
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 3597066478872003964, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2528,6 +2567,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: strips.Array.data[0].pieces.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[0].pieces.Array.data[2]
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5499248171756492974, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
@@ -2918,6 +2961,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
       propertyPath: strips.Array.data[1].pieces.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5040427378769891138, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
+      propertyPath: strips.Array.data[1].pieces.Array.data[2]
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8845855590235995057, guid: f1d6c45b2bcb2fa498223e4e9c396fc1, type: 3}
