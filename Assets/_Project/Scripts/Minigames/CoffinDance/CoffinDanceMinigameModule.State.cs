@@ -8,6 +8,7 @@ namespace MiniParty.Minigames.CoffinDance
         MinigameContext _ctx;
 
         SlotRuntime[] _slots;
+        CoffinDanceFailFloorLaunchState[] _failLaunch;
         bool _running;
         bool _completing;
 

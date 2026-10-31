@@ -317,7 +317,7 @@
 | `MainMenu` | 로비·카탈로그·시작 |
 | `Minigame_O.I.I.A.` | T1(씬 6.5초) 후 T2 **Play 확인** · BGM 27초 지점 · 2~4P 미검증 |
 | `Minigame_RhythmButtonChallenge` | **1차 완료** · 1P Play 확인 · 유지보수 |
-| `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스(시소 `x` + 어깨 부착) · 어깨 2점 스냅 **Play 검증** · 낙하 잠금·복구 시소 0.5 **Play 검증** · FailFloor SmoothStep 복구 **Play 검증** |
+| `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스 · 어깨 2점 스냅 **Play 검증** · FailFloor 낙하·복귀·depenet · `FailSprite` 랜덤 X·페이드 **Play 확인**(2026-11-01) |
 | `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. HP 1인 skip · 2인+ 하위 50% |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
@@ -343,7 +343,7 @@
 
 ## 6. 지금 포커스 · 열린 결정
 
-> **마지막 갱신**: 2026-10-31  
+> **마지막 갱신**: 2026-11-01  
 > 완료 이력·To-Do·최근 완료는 **쓰지 않는다** (§3). 상세는 `02_개발_진행_일지.md`.
 
 ### 지금 포커스

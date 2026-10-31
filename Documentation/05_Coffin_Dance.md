@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-10-31 — `FailSprite` X 등속·복구 `failFloorRecoverDuration`과 같은 시계 **Play 확인**(2026-10-31). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 `SideL` Y **110°** · `SideR` Y **70°**, 카메라 쪽 1장 포함 **5장**, 바닥 타일 **4장** **Play 확인**. `scrollSpeed` 코드·프리팹 **1**. 씬 안 연습 제거 **Play 확인**. 시소 최대 낙하 잠금 + 복구 중 시소 0.5 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. FailFloor SmoothStep 복구 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-11-01 — FailFloor **낙하·등속 복귀·Capsule depenet** · `FailSprite` **랜덤 X + Image 페이드** **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 `SideL` Y **110°** · `SideR` Y **70°**, 카메라 쪽 1장 포함 **5장**, 바닥 타일 **4장** **Play 확인**. `scrollSpeed` 코드·프리팹 **1**. 씬 안 연습 제거 **Play 확인**. 시소 최대 낙하 잠금 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -45,8 +45,8 @@
 | Edit Mode 미리보기 | **의도적 비활성** · Play에서만 블렌드 |
 | 어깨 Collider | **RightArm만** · `Pallbearer.prefab` SphereCollider **Radius 27** (25→27, 2026-08-07) · 반대편 Scale 반전 |
 | Slot 연결 | `Pallbearers[0..2]`=←쪽 · `[3..5]`=→쪽 |
-| 실패 | 탈락 없음 · FailFloor 접촉 1회 → 로컬 Y·Z=0 SmoothStep 복구 후 중력 낙하 |
-| 관 운동 | 부착 중: 가운데 어깨 2점에 Y+Z 즉시 스냅. 시소 최대면 `CoffinFallLockedUntilFloor` + 어깨 Ignore → FailFloor까지 재부착 없음. 복구 중 관·시소 SmoothStep(시소 0.5). 복구 후 낙하 → 어깨 접촉 시 재부착 |
+| 실패 | 탈락 없음 · FailFloor 접촉 1회 → 낙하 연출(랜덤 날림 → 후반 등속 복귀) 후 중력 낙하 |
+| 관 운동 | 부착 중: 가운데 어깨 2점에 Y+Z 즉시 스냅. 시소 최대면 `CoffinFallLockedUntilFloor` + 어깨 Ignore → FailFloor까지 재부착 없음. 복구 중 LB/RB·노이즈 없음 · 낙하 0~90% Transform 날림 · 90~100% 등속 복귀(관 Y/Z·시소 0.5·운구인 rest). 복구 후 낙하 → 어깨 접촉 시 재부착 |
 | 점수 정중앙 | 노이즈 포함 최종 `x` **그리고** `CoffinShoulderAttached`. FailFloor Ignore·공중·바닥은 보너스 없음. 관 Z 각 **아님** |
 | 정중앙 카메라 | 점수와 **같은 발동**. FOV는 시간 블렌드+SmoothStep. Z는 √추종(`GetTiltZDegrees` × `centerCamTiltRatio`). rest FOV·로컬 XY는 첫 Begin만 캡처. 로우앵글 X는 유지 |
 | 개발 무적 | Backspace 토글 · **1P만** · Editor/Development Build만. 출시 빌드에서는 키 무시. LB/RB는 먹고, 손 떼면 `devGodReturnSpeed`로 0.5 복귀. 어깨는 가짜 지지 없음 |
@@ -85,8 +85,8 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - `Freeze Rotation`: **X, Y** (Z만 회전)
 - `centerOfMass` 로컬 **(0,0,0)** = 기하 중심 (Inspector `centerOfMassLocal`)
 - 기울기: `transform` 로컬 Z 각(도) (`GetTiltZDegrees`). **점수 판정에는 쓰지 않음**
-- **FailFloor 접촉** (`OnCollisionEnter` 1회): 관을 kinematic으로 두고 로컬 Y → `failFloorRecoverLocalY`, 로컬 Z → 0을 `failFloorRecoverDuration` 동안 SmoothStep. 같은 시간 `x_bias`·`x`도 0.5로 SmoothStep(LB/RB·노이즈 없음). 관↔어깨 `IgnoreCollision`. 끝나면 시소는 0.5에서 재개·물리 낙하. 복구 중 재접촉은 무시(재감점 없음). `failFloorPenaltyScore` 감점. **탈락 없음**. +Y Impulse **폐기**
-- **낙하 연출 `FailFall`**: **Play 확인**(2026-10-31). 복구와 같이 시작·종료. 시간은 `failFloorRecoverDuration`(코드·씬 **0.5**). `FailSprite` anchored X는 1716.5에서 −1716.5로 `Lerp` 등속. `u`는 복구 경과/복구 시간. 복구가 끝나면 끄고 X를 1716.5로 되돌린다
+- **FailFloor 접촉** (`OnCollisionEnter` 1회): 관 kinematic · 관·운구인 6명 랜덤 로컬 속도/각속도 날림(`failFloorRecoverReturnPhaseStart` 전까지, 기본 **0.9**). 날림 중 FailFloor Box와 **Capsule/Box** `ComputePenetration`(+ bounds lift). 운구인 Capsule 평소 Trigger → 연출 중만 off. 마지막 구간 등속 복귀: 관 → `failFloorRecoverLocalY`·Z=0 · 시소 0.5 · 운구인 rest. `failFloorRecoverDuration` = 어깨 Ignore. 복구 중 LB/RB·노이즈 없음. 재접촉 무시. `failFloorPenaltyScore` 감점. **탈락 없음**
+- **낙하 연출 `FailFall` / `FailSprite`**: **Play 확인**(2026-11-01). 복구와 동일 시계(`failFloorRecoverDuration`). X는 7앵커 중 랜덤 1개 고정. `failSpriteFadeStartNormalized`(기본 **0.5**) 이후 `Image` α 등속 1→0. CanvasGroup 없음. 종료 시 rest 색·비활성
 - **어깨 부착 (A안)**: 시소가 최대가 아니고 FailFloor 복구가 아니며 **낙하 잠금이 아니고** 관이 활성 어깨와 접촉하면 `CoffinShoulderAttached`. 이후 매 `LateUpdate`에 좌 `Pallbearers[1]` · 우 `[4]` 어깨 Sphere 꼭대기로 강체 로컬 Y·Z를 **즉시** 맞춤. 메시 변형 **없음**. 부착 중 +Y 분리 **끔**
 - **낙하 잠금**: 부착 중 `x_bias` 0/1이 되면 `CoffinFallLockedUntilFloor`. 어깨 `IgnoreCollision`. FailFloor에 닿을 때까지 재부착·+Y 분리 없음. 복구 시작 시 잠금 해제
 - **겹침 분리 (A)**: 미부착이고 잠금·시소 최대·Ignore가 아닐 때만 +Y (`shoulderDepenetrationMaxY`)
@@ -97,7 +97,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - **슬롯 프리팹 자식**으로 둔다 (씬 공용 Floor 금지 — 슬롯 X 분리)
 - BoxCollider + 마커 컴포넌트 · 관이 넘어지면 닿는 높이
 - 접촉이 유지되는 동안 복구는 재시작하지 않음. 복구가 **끝난 뒤** 다시 떨어지면 다시 복구·감점
-- 복구 시간 = `failFloorRecoverDuration`(어깨 Ignore와 동일). 복구 중 시소 0.5 SmoothStep. 만료 시 충돌·물리 복구·시소 0.5. `Begin`에서도 복구
+- 복구 시간 = `failFloorRecoverDuration`(어깨 Ignore와 동일). 복구 중 시소는 날림 구간 고정 → 후반 등속 0.5. 만료 시 충돌·물리 복구. `Begin`에서도 복구
 
 ### 시소 제어 (Module · A안)
 
@@ -266,8 +266,16 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `noiseAmp` | 0.12 | 고정 노이즈 진폭 (씬 **0.03**) |
 | `failFloorPenaltyScore` | 500 | 접촉 1회 감점. **수치 보류** |
 | `failFloorRecoverLocalY` | 2.2 | FailFloor 복구 목표 로컬 Y. 1~4P 공통. **Play 확인**(씬 2.2) |
-| `failFloorRecoverDuration` | 0.5 | 복구 SmoothStep 시간(초) = 어깨 Ignore 시간. `FailSprite` 등속 X도 이 시간. **Play 확인**(씬 0.5, 스프라이트 연출 2026-10-31) |
+| `failFloorRecoverDuration` | 0.5 | 연출 총 시간(초) = 어깨 Ignore = `FailSprite` 시계. 씬 튜닝값(예: **3**) 가능. **Play 확인**(2026-11-01) |
+| `failFloorRecoverReturnPhaseStart` | 0.9 | normalized · 이후 등속 복귀 |
+| `failFloorLaunchSpeedMin` / `Max` | 6 / 12 | 날림 속력 |
+| `failFloorLaunchGravity` | 18 | 날림 -Y |
+| `failFloorLaunchSpinDegPerSec` | 420 | 날림 각속도 상한 |
+| `failFloorLaunchFloorClearance` | 0.03 | FailFloor depenet 여유 |
+| `failFloorLaunchDepenetPassCount` | 2 | depenet 패스/프레임 |
+| `failSpriteFadeStartNormalized` | 0.5 | FailSprite α 페이드 시작 |
 | ~~`failFallDuration`~~ | **제거** (2026-10-31) | 복구 시간과 별도 시계를 두지 않음 |
+| ~~`FailSpriteEndX` · X Lerp~~ | **제거** (2026-11-01) | 랜덤 X + 페이드 |
 | `shoulderDepenetrationMaxY` | 0.5 | 미부착·시소 최대가 아닐 때 어깨 겹침 +Y 분리 한 프레임 최대 |
 | `centerZoneThreshold` | 0.05 | 최종 시소 `x`가 0.5에서 이 값 이내면 정중앙 보너스 |
 | `centerBonusScorePerSec` | 150 | 정중앙 유지 시 초당 추가 점수. Phase4 배율은 생존과 같이 적용 |

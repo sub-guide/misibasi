@@ -31,8 +31,6 @@ namespace MiniParty.Minigames.CoffinDance
             public bool FailFloorRecoverActive;
             public float FailFloorRecoverDuration;
             public float FailFloorRecoverElapsed;
-            public float FailFloorRecoverStartY;
-            public float FailFloorRecoverStartZ;
             public float FailFloorRecoverStartSeesaw;
 
             /// <summary>FailFloor 복구와 같이 켜지는 낙하 연출. 시간은 FailFloorRecoverElapsed.</summary>

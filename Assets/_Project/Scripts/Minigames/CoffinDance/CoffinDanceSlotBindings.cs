@@ -51,6 +51,68 @@ namespace MiniParty.Minigames.CoffinDance
             return CoffinBody;
         }
 
+        /// <summary>낙하 연출 바닥. FailFloor BoxCollider(비 Trigger).</summary>
+        public Collider ResolveFailFloorCollider()
+        {
+            CoffinDanceFailFloor marker = GetComponentInChildren<CoffinDanceFailFloor>(true);
+            if (marker == null)
+                return null;
+
+            Collider col = marker.GetComponent<Collider>();
+            return col != null && col.enabled && !col.isTrigger ? col : null;
+        }
+
+        /// <summary>운구인 낙하 연출 콜(Capsule 우선, Box). 어깨 Sphere 제외. 연출 중 Trigger off.</summary>
+        public Collider GetPallbearerLaunchFloorCollider(int pallbearerIndex)
+        {
+            if (Pallbearers == null || pallbearerIndex < 0 || pallbearerIndex >= Pallbearers.Length)
+                return null;
+
+            Transform root = Pallbearers[pallbearerIndex];
+            if (root == null)
+                return null;
+
+            Collider col = FindLaunchFloorColliderOnTransform(root);
+            if (col == null)
+                col = FindLaunchFloorColliderInChildren(root);
+
+            return col != null && col.enabled ? col : null;
+        }
+
+        static Collider FindLaunchFloorColliderOnTransform(Transform root)
+        {
+            Collider capsule = root.GetComponent<CapsuleCollider>();
+            if (IsLaunchFloorCollider(capsule))
+                return capsule;
+
+            Collider box = root.GetComponent<BoxCollider>();
+            return IsLaunchFloorCollider(box) ? box : null;
+        }
+
+        static Collider FindLaunchFloorColliderInChildren(Transform root)
+        {
+            CapsuleCollider[] capsules = root.GetComponentsInChildren<CapsuleCollider>(true);
+            for (var i = 0; i < capsules.Length; i++)
+            {
+                if (IsLaunchFloorCollider(capsules[i]))
+                    return capsules[i];
+            }
+
+            BoxCollider[] boxes = root.GetComponentsInChildren<BoxCollider>(true);
+            for (var i = 0; i < boxes.Length; i++)
+            {
+                if (IsLaunchFloorCollider(boxes[i]))
+                    return boxes[i];
+            }
+
+            return null;
+        }
+
+        static bool IsLaunchFloorCollider(Collider col)
+        {
+            return col != null && col.enabled && col is not SphereCollider;
+        }
+
         public void PrepareAllPoses()
         {
             for (var i = 0; i < 6; i++)
@@ -290,6 +352,11 @@ namespace MiniParty.Minigames.CoffinDance
                 if (pose != null)
                     action(pose);
             }
+        }
+
+        public CoffinDancePallbearerPose GetPallbearerPose(int pallbearerIndex)
+        {
+            return GetOrAddPoseAt(pallbearerIndex);
         }
 
         CoffinDancePallbearerPose GetOrAddPoseAt(int pallbearerIndex)

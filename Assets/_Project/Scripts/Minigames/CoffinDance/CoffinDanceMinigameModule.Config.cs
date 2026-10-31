@@ -45,11 +45,33 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("FailFloor 접촉 1회당 감점. 0 미만으로 내려가지 않음.")]
         [SerializeField] int failFloorPenaltyScore = DefaultFailFloorPenaltyScore;
 
-        [Tooltip("FailFloor 접촉 시 관이 SmoothStep으로 이동하는 로컬 Y. 1~4P 공통. Play에서 조절.")]
+        [Tooltip("FailFloor 접촉 후 등속 복귀 목표 로컬 Y. 1~4P 공통. Play에서 조절.")]
         [SerializeField] float failFloorRecoverLocalY = DefaultFailFloorRecoverLocalY;
 
-        [Tooltip("FailFloor 복구 시간(초). 같은 시간 동안 관↔어깨 충돌을 무시. 0이면 그 프레임에 목표로 붙인 뒤 중력. Play에서 조절.")]
+        [Tooltip("FailFloor 연출 총 시간(초). 앞 구간 날림·뒤 구간 등속 복귀. 어깨 Ignore 동일. 0이면 즉시 목표.")]
         [SerializeField] float failFloorRecoverDuration = DefaultFailFloorRecoverDuration;
+
+        [Tooltip("총 시간 대비 등속 복귀 시작 비율. 기본 0.9 → 마지막 10%만 복귀.")]
+        [SerializeField] float failFloorRecoverReturnPhaseStart = DefaultFailFloorRecoverReturnPhaseStart;
+
+        [Tooltip("관·운구인 날림 속력(로컬) 랜덤 범위.")]
+        [SerializeField] float failFloorLaunchSpeedMin = DefaultFailFloorLaunchSpeedMin;
+        [SerializeField] float failFloorLaunchSpeedMax = DefaultFailFloorLaunchSpeedMax;
+
+        [Tooltip("날림 구간 로컬 -Y 가속(중력 연출).")]
+        [SerializeField] float failFloorLaunchGravity = DefaultFailFloorLaunchGravity;
+
+        [Tooltip("날림 시 로컬 각속도(deg/s) 랜덤 크기 상한.")]
+        [SerializeField] float failFloorLaunchSpinDegPerSec = DefaultFailFloorLaunchSpinDegPerSec;
+
+        [Tooltip("날림 중 FailFloor 침범 보정 시 바닥 위 여유(월드).")]
+        [SerializeField] float failFloorLaunchFloorClearance = DefaultFailFloorLaunchFloorClearance;
+
+        [Tooltip("날림 프레임당 FailFloor depenet 반복(관+운구인).")]
+        [SerializeField] int failFloorLaunchDepenetPassCount = DefaultFailFloorLaunchDepenetPassCount;
+
+        [Tooltip("FailSprite Image 알파 페이드 시작 비율(복구 duration 대비). 기본 0.5.")]
+        [SerializeField] float failSpriteFadeStartNormalized = DefaultFailSpriteFadeStartNormalized;
 
         [Header("어깨 겹침")]
         [Tooltip("시소가 최대(0/1)가 아닐 때, 관이 어깨와 겹치면 +Y로만 밀어 올리는 한 프레임 최대량.")]

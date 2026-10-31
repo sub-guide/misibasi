@@ -141,6 +141,33 @@ namespace MiniParty.Minigames.CoffinDance
             return z;
         }
 
+        public void GetRestLocal(out Vector3 localPos, out Quaternion localRot)
+        {
+            EnsureConfigured();
+            localPos = _restLocalPosition;
+            localRot = _restLocalRotation;
+        }
+
+        public void SetLocalPose(Vector3 localPos, Quaternion localRot)
+        {
+            Transform t = transform;
+            Transform parent = t.parent;
+            Vector3 worldPos = parent != null ? parent.TransformPoint(localPos) : localPos;
+            Quaternion worldRot = parent != null ? parent.rotation * localRot : localRot;
+
+            Rigidbody rb = Body;
+            if (rb != null)
+            {
+                rb.MovePosition(worldPos);
+                rb.MoveRotation(worldRot);
+            }
+            else
+            {
+                t.localPosition = localPos;
+                t.localRotation = localRot;
+            }
+        }
+
         void OnCollisionEnter(Collision collision)
         {
             if (collision == null || collision.collider == null)

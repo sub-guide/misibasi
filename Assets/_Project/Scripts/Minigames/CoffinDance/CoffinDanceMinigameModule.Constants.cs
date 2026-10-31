@@ -44,11 +44,22 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>FailFloor 복구 목표 로컬 Y. 프리팹 Coffin rest(2.2) 플레이스홀더. Play에서 조절.</summary>
         public const float DefaultFailFloorRecoverLocalY = 2.2f;
 
-        /// <summary>FailFloor 복구 SmoothStep 시간(초). 어깨 Ignore와 동일. Play에서 조절.</summary>
+        /// <summary>FailFloor 복구 총 시간(초). 어깨 Ignore와 동일. Play에서 조절.</summary>
         public const float DefaultFailFloorRecoverDuration = 0.5f;
 
-        public const float FailSpriteStartX = 1716.5f;
-        public const float FailSpriteEndX = -1716.5f;
+        /// <summary>복구 구간 중 등속 복귀가 시작되는 normalized 시점(0~1).</summary>
+        public const float DefaultFailFloorRecoverReturnPhaseStart = 0.9f;
+
+        public const float DefaultFailFloorLaunchSpeedMin = 6f;
+        public const float DefaultFailFloorLaunchSpeedMax = 12f;
+        public const float DefaultFailFloorLaunchGravity = 18f;
+        public const float DefaultFailFloorLaunchSpinDegPerSec = 420f;
+
+        public const float DefaultFailFloorLaunchFloorClearance = 0.03f;
+        public const int DefaultFailFloorLaunchDepenetPassCount = 2;
+
+        /// <summary>FailSprite 페이드 시작 normalized 시점(0~1). 기본 0.5 → 후반 50%만 페이드.</summary>
+        public const float DefaultFailSpriteFadeStartNormalized = 0.5f;
 
         /// <summary>어깨와 겹칠 때 관을 +Y로만 밀어 올리는 한 프레임 최대량.</summary>
         public const float DefaultShoulderDepenetrationMaxY = 0.5f;

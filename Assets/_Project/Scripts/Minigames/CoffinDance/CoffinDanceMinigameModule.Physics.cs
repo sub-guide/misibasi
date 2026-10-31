@@ -53,7 +53,9 @@ namespace MiniParty.Minigames.CoffinDance
             if (bind == null)
                 return;
 
-            float x = Mathf.Clamp01(sr.SeesawXCurrent);
+            float x = sr.FailFloorRecoverActive
+                ? Mathf.Clamp01(sr.SeesawBias)
+                : Mathf.Clamp01(sr.SeesawXCurrent);
             bind.ApplySideExtension(leftSide: true, x);
             bind.ApplySideExtension(leftSide: false, 1f - x);
         }
@@ -81,8 +83,6 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
 
             float dur = Mathf.Max(0f, failFloorRecoverDuration);
-            sr.FailFloorRecoverStartY = body.transform.localPosition.y;
-            sr.FailFloorRecoverStartZ = body.GetTiltZDegrees();
             sr.FailFloorRecoverStartSeesaw = sr.SeesawBias;
             sr.FailFloorRecoverDuration = dur;
             sr.FailFloorRecoverElapsed = 0f;
@@ -92,14 +92,16 @@ namespace MiniParty.Minigames.CoffinDance
             sr.CoffinFallLockedUntilFloor = false;
             BeginFailFall(i, ref sr);
 
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            BeginFailFloorLaunch(i, bind, body);
+
             if (dur <= 0f)
             {
-                ApplyFailFloorRecoverPose(body, 1f, ref sr);
+                ApplyFailFloorReturnLerp(bind, body, GetFailLaunch(i), 1f, ref sr);
                 EndFailFloorRecover(i, ref sr, body);
                 return;
             }
 
-            CoffinDanceSlotBindings bind = GetBindings(i);
             bind?.SetCoffinShoulderCollisionsIgnored(true);
             body.ClearShoulderContacts();
             sr.FailFloorRecoverActive = true;
@@ -115,6 +117,7 @@ namespace MiniParty.Minigames.CoffinDance
             CoffinDanceCoffinBody body = bind != null ? bind.ResolveCoffinBody() : null;
             if (body == null)
             {
+                RestorePallLaunchColliderTriggers(GetFailLaunch(i));
                 sr.FailFloorRecoverActive = false;
                 sr.ShoulderIgnoreRemain = 0f;
                 sr.CoffinFallLockedUntilFloor = false;
@@ -125,9 +128,31 @@ namespace MiniParty.Minigames.CoffinDance
             sr.FailFloorRecoverElapsed += Mathf.Max(0f, dt);
             float dur = sr.FailFloorRecoverDuration;
             float u = dur <= 0f ? 1f : Mathf.Clamp01(sr.FailFloorRecoverElapsed / dur);
-            ApplyFailFloorRecoverPose(body, u, ref sr);
-            ApplyFailFallAlongRecover(i, ref sr);
+            TickFailFallVisual(i, ref sr);
             sr.ShoulderIgnoreRemain = Mathf.Max(0f, dur - sr.FailFloorRecoverElapsed);
+
+            CoffinDanceFailFloorLaunchState launch = GetFailLaunch(i);
+            float returnStart = Mathf.Clamp(failFloorRecoverReturnPhaseStart, 0.01f, 0.999f);
+
+            if (u < returnStart)
+            {
+                TickFailFloorLaunchFly(i, bind, body, launch, dt);
+                if (u < 1f)
+                    return;
+
+                EndFailFloorRecover(i, ref sr, body);
+                return;
+            }
+
+            if (!launch.ReturnSnapshotted)
+            {
+                SnapshotFailFloorReturnStarts(bind, body, launch);
+                launch.ReturnSnapshotted = true;
+            }
+
+            float returnSpan = Mathf.Max(0.0001f, 1f - returnStart);
+            float returnT = (u - returnStart) / returnSpan;
+            ApplyFailFloorReturnLerp(bind, body, launch, returnT, ref sr);
 
             if (u < 1f)
                 return;
@@ -135,25 +160,15 @@ namespace MiniParty.Minigames.CoffinDance
             EndFailFloorRecover(i, ref sr, body);
         }
 
-        void ApplyFailFloorRecoverPose(CoffinDanceCoffinBody body, float linear01, ref SlotRuntime sr)
-        {
-            if (body == null)
-                return;
-
-            float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(linear01));
-            float y = Mathf.Lerp(sr.FailFloorRecoverStartY, failFloorRecoverLocalY, t);
-            float z = Mathf.Lerp(sr.FailFloorRecoverStartZ, 0f, t);
-            body.SetLocalYAndZDegrees(y, z);
-
-            float seesaw = Mathf.Lerp(sr.FailFloorRecoverStartSeesaw, 0.5f, t);
-            sr.SeesawBias = seesaw;
-            sr.SeesawXCurrent = seesaw;
-            sr.HoldTimer = 0f;
-        }
-
         void EndFailFloorRecover(int i, ref SlotRuntime sr, CoffinDanceCoffinBody body)
         {
-            ApplyFailFloorRecoverPose(body, 1f, ref sr);
+            CoffinDanceSlotBindings bind = GetBindings(i);
+            CoffinDanceFailFloorLaunchState launch = GetFailLaunch(i);
+            if (!launch.ReturnSnapshotted)
+                SnapshotFailFloorReturnStarts(bind, body, launch);
+            ApplyFailFloorReturnLerp(bind, body, launch, 1f, ref sr);
+            launch.ClearReturnSnapshot();
+            RestorePallLaunchColliderTriggers(launch);
             body?.EndKinematicHold();
             body?.ClearShoulderContacts();
             body?.ClearFailFloorContact();

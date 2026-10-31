@@ -81,6 +81,13 @@ namespace MiniParty.Minigames.CoffinDance
             Physics.SyncTransforms();
         }
 
+        public void GetRestLocal(out Vector3 localPos, out Quaternion localRot)
+        {
+            CacheRest();
+            localPos = _restLocalPos;
+            localRot = _restLocalRot;
+        }
+
         void EnsureAnimator()
         {
             if (animator == null)

@@ -86,7 +86,7 @@ namespace MiniParty.Minigames.CoffinDance
             ForEachSlot(i =>
             {
                 _slots[i].FailFallActive = false;
-                ResetFailFallVisual(GetBindings(i));
+                ResetFailFallVisual(i, GetBindings(i));
             });
         }
 
