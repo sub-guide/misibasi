@@ -29,6 +29,7 @@ namespace MiniParty.Minigames.CoffinDance
         readonly float[] _camRestFov = new float[SlotCount];
         readonly float[] _camRestEulerX = new float[SlotCount];
         readonly float[] _camRestEulerY = new float[SlotCount];
+        readonly Vector3[] _camRestLocalPos = new Vector3[SlotCount];
         readonly bool[] _camRestCaptured = new bool[SlotCount];
 
         AudioSource _mainBgmRuntime;

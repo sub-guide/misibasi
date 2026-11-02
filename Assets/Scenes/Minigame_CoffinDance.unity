@@ -207,6 +207,10 @@ MonoBehaviour:
   camTiltFollowGain: 10
   camReturnSpringHz: 5
   camReturnSpringDamping: 1
+  slotCameraBeatShakeEnabled: 1
+  slotCameraShakeMaxOffset: 0.2
+  slotCameraShakeBeatMoveFraction: 0.4
+  slotCameraShakeUseSmoothStep: 1
   devGodReturnSpeed: 3
   hpLowScoreThreshold: 3000
   slotWorldSpacing: 400

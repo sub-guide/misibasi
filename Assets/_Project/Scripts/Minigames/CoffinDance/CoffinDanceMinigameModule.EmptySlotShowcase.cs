@@ -16,7 +16,7 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("JOIN하지 않은 슬롯에서 4/4 박자 시소 쇼케이스.")]
         [SerializeField] bool emptySlotShowcaseEnabled = true;
 
-        [Tooltip("4/4 quarter note BPM. BGM과 맞출 때 Inspector에서 조절.")]
+        [Tooltip("4/4 quarter BPM. 빈 슬롯 시소·슬롯 카메라 박자 흔들림 공통. BGM과 맞출 때 Inspector에서 조절.")]
         [SerializeField, Min(1f)]
         float emptySlotShowcaseBpm = DefaultEmptySlotShowcaseBpm;
 
@@ -105,25 +105,7 @@ namespace MiniParty.Minigames.CoffinDance
 
         float GetEmptySlotShowcaseBeatPhase()
         {
-            float bpm = Mathf.Max(1f, emptySlotShowcaseBpm);
-            float musicTime = GetEmptySlotShowcaseMusicTime();
-            float beats = musicTime * bpm / 60f;
-            float phase = beats % 4f;
-            if (phase < 0f)
-                phase += 4f;
-            return phase;
-        }
-
-        float GetEmptySlotShowcaseMusicTime()
-        {
-            if (emptySlotShowcaseSyncToBgm)
-            {
-                AudioSource source = mainBgmSource != null ? mainBgmSource : _mainBgmRuntime;
-                if (source != null && source.isPlaying && mainBgmClip != null)
-                    return source.time;
-            }
-
-            return _elapsedMainTime;
+            return GetBeatShowcaseBarBeatPhase();
         }
     }
 }

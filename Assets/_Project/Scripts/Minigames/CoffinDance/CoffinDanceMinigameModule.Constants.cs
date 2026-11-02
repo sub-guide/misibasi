@@ -66,6 +66,9 @@ namespace MiniParty.Minigames.CoffinDance
         public const float DefaultEmptySlotShowcaseBpm = 128f;
         public const float DefaultEmptySlotShowcaseAmplitude = 0.25f;
 
+        public const float DefaultSlotCameraShakeMaxOffset = 0.12f;
+        public const float DefaultSlotCameraShakeBeatMoveFraction = 1f;
+
         /// <summary>어깨와 겹칠 때 관을 +Y로만 밀어 올리는 한 프레임 최대량.</summary>
         public const float DefaultShoulderDepenetrationMaxY = 0.5f;
 

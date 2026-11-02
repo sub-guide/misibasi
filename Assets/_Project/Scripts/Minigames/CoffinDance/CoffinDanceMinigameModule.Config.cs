@@ -106,6 +106,21 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("정중앙 이탈 시 Z 스프링 감쇠비. 1이면 탄력 없음, 작을수록 더 출렁.")]
         [SerializeField] float camReturnSpringDamping = DefaultCamReturnSpringDamping;
 
+        [Header("슬롯 카메라 4/4 박자 흔들림 (B안: 로컬 XY)")]
+        [Tooltip("Playing 중 4슬롯 카메라 quarter note마다 랜덤 XY. BPM은 아래 빈 슬롯 시소와 동일(`emptySlotShowcaseBpm`).")]
+        [SerializeField] bool slotCameraBeatShakeEnabled = true;
+
+        [Tooltip("로컬 XY 튕김 크기(유닛). 매 박 피크 = 이 값(방향만 슬롯·박마다 랜덤). Z는 0.")]
+        [SerializeField, Min(0f)]
+        float slotCameraShakeMaxOffset = DefaultSlotCameraShakeMaxOffset;
+
+        [Tooltip("한 quarter 박(60÷BPM 초) 중 rest→랜덤→rest 왕복 펄스 길이 비율. 1=박 전체. 0.5=절반 안에 왕복 후 rest 고정.")]
+        [SerializeField, Range(0.05f, 1f)]
+        float slotCameraShakeBeatMoveFraction = DefaultSlotCameraShakeBeatMoveFraction;
+
+        [Tooltip("왕복 펄스 진행(0→1)에 SmoothStep. 끄면 선형 phase.")]
+        [SerializeField] bool slotCameraShakeUseSmoothStep = true;
+
         [Header("개발 무적 (Editor / Development Build)")]
         [Tooltip("Backspace 무적 ON일 때 1P가 LB/RB를 안 누르면 bias·최종 x가 0.5로 돌아오는 속도(초당). Play에서 조절.")]
         [SerializeField] float devGodReturnSpeed = DefaultDevGodReturnSpeed;

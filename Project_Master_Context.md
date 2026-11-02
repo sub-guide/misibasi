@@ -363,6 +363,7 @@
 | Result `rankRevealClip` / `hpHitClip` | **보류** | Results 리메이크 범위 밖. 연결 여부 미정 |
 | 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
 | 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |
+| 관짝춤 FailFloor 카메라 연출 | **별도 기획** | 박자 XY 흔들림과 분리. 구현 전 |
 
 ---
 

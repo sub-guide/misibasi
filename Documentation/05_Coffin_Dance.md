@@ -169,11 +169,23 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 | FOV 이탈 | 같은 SmoothStep. 시간 = 줌인 시간 ÷ `camZoomOutSpeedMul`(코드 3 · **씬 5**). FOV 스프링·오버슈트 **없음** |
 | Z 유지 | 목표 = `GetTiltZDegrees()` × `centerCamTiltRatio`(0.5). 이동량 = `camTiltFollowGain`(코드 20 · **씬 10**) × √\|오차\| × dt |
 | Z 이탈 | 목표 0° 부족감쇠 스프링(`camReturnSpringHz` 5, `camReturnSpringDamping` 코드 0.4 · **씬 1** = 오버슈트 없음) |
-| 보존 | rest 로컬 X/Y(로우앵글 약 −10°)는 그대로. 원복 Z는 0 |
-| rest 캡처 | 슬롯당 첫 `Begin`만 FOV·로컬 XY 저장. 매 `Begin` 시작 때 블렌드·Z·속도를 0으로 리셋하고 rest 포즈 적용 |
+| 보존 | rest 로컬 회전 X/Y(로우앵글 약 −10°)는 그대로. 원복 Z는 0 |
+| rest 캡처 | 슬롯당 첫 `Begin`만 FOV·**로컬 position**·로컬 XY euler 저장. 매 `Begin` 시작 때 블렌드·Z·속도·박자 흔들림을 0으로 리셋하고 rest 포즈 적용 |
 | Ending | 기존처럼 게임플레이 Tick이 멈추면 카메라도 그 프레임에 고정 |
 
 구현: `CoffinDanceMinigameModule.CameraFx.cs` · `TickCenterBalanceCameraFx`. 수치는 Module Inspector.
+
+### 슬롯 카메라 4/4 박자 흔들림 (B안)
+
+| 항목 | 동작 |
+|------|------|
+| 대상 | **4슬롯 전부** (`Playing`만). Ending부터 정지 |
+| 방식 | rest **로컬 position** 기준. quarter note마다 **고정 크기**(`slotCameraShakeMaxOffset`) + **랜덤 방향** 피크 → 박 안 **나갔다 rest**(sin 왕복). **Z·회전 없음** |
+| BPM | `emptySlotShowcaseBpm` · `emptySlotShowcaseSyncToBgm`과 **동일 시계** (`BeatShowcase.cs`) |
+| FailFloor | 접촉 시 카메라 연출은 **별도 기획 예정**. 본 흔들림은 복구 중에도 **끊지 않음** |
+| 검증 | **Play 확인** (2026-11-02, 사용자) |
+
+구현: `SlotCameraBeatShake.cs` · `BeatShowcase.cs` · `Tick`에서 박자 갱신 후 참가 생존은 `TickCenterBalanceCameraFx`가 포즈 적용, 그 외 슬롯은 `ApplySlotCameraPoseForNonGameplaySlot`.
 
 ---
 
@@ -239,7 +251,7 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 
 | 파일 | 역할 |
 |------|------|
-| `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 · BGM(`Bgm`) · 정중앙 카메라(`CameraFx`) · 개발 무적(`DevGodMode`) |
+| `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 · BGM(`Bgm`) · 정중앙 카메라(`CameraFx`) · 박자 시계(`BeatShowcase`) · 슬롯 카메라 박자 흔들림(`SlotCameraBeatShake`) · 빈 슬롯 시소(`EmptySlotShowcase`) · 개발 무적(`DevGodMode`) |
 | `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·FailFloor 감지 · kinematic 홀드(`BeginKinematicHold` / `SetLocalYAndZDegrees`) · 어깨 접촉 카운트(`IsTouchingShoulder`) |
 | `CoffinDancePallbearerPose` | ExtensionBlend · `SoftResetTransform` (운구인 RB 없음) |
 | `CoffinDanceFailFloor` | 바닥 마커 (탈락 아님) |
@@ -299,9 +311,13 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `mainBgmVolume` | 0.85 | BGM 볼륨 |
 | `bgmStartTimeSeconds` | 0 | 클립 재생 시작 위치(초). Begin 후 루프. **Play 확인**(씬 **24.5**) |
 | `emptySlotShowcaseEnabled` | true | 미참가 슬롯 4/4 시소 연출 |
-| `emptySlotShowcaseBpm` | 128 | 4/4 quarter BPM (BGM에 맞춰 조절) |
+| `emptySlotShowcaseBpm` | 128 | 4/4 quarter BPM — **빈 슬롯 시소 + 슬롯 카메라 박자 흔들림 공통** |
 | `emptySlotShowcaseSyncToBgm` | true | BGM `time` 기준, 아니면 경과 시간 |
 | `emptySlotShowcaseAmplitude` | 0.25 | 0.5 ± 진폭 |
+| `slotCameraBeatShakeEnabled` | true | 4슬롯 카메라 quarter 박자 XY 흔들림 |
+| `slotCameraShakeMaxOffset` | 0.12 | 로컬 XY 튕김 크기(고정, 유닛) |
+| `slotCameraShakeBeatMoveFraction` | 1 | 한 quarter 박 중 rest 왕복 펄스 길이(1=박 전체) |
+| `slotCameraShakeUseSmoothStep` | true | 왕복 phase SmoothStep(끄면 선형) |
 | `disableMainCameraOnBegin` | true | Main Camera off |
 | ~~`bindSlotCanvasesToSlotCamera`~~ | **제거** (2026-10-30) | 슬롯 Canvas는 Screen Space Overlay. 칸은 `SlotUiColumn` 앵커 |
 | `exitScreenFader` | — | FadeOverlay |

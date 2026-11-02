@@ -10,6 +10,7 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
 
             _camRestFov[i] = cam.fieldOfView;
+            _camRestLocalPos[i] = cam.transform.localPosition;
             Vector3 euler = cam.transform.localEulerAngles;
             _camRestEulerX[i] = NormalizeSignedEuler(euler.x);
             _camRestEulerY[i] = NormalizeSignedEuler(euler.y);
@@ -25,6 +26,7 @@ namespace MiniParty.Minigames.CoffinDance
             sr.CamFovBlend = 0f;
             sr.CamZ = 0f;
             sr.CamZVelocity = 0f;
+            ResetSlotCameraBeatShake(i);
             ApplySlotCameraPose(i, cam, ref sr);
         }
 
@@ -128,6 +130,9 @@ namespace MiniParty.Minigames.CoffinDance
                 _camRestEulerX[i],
                 _camRestEulerY[i],
                 sr.CamZ);
+
+            Vector3 restPos = _camRestLocalPos[i];
+            cam.transform.localPosition = restPos + new Vector3(_camShakeCurrentX[i], _camShakeCurrentY[i], 0f);
         }
 
         static float NormalizeSignedEuler(float degrees)

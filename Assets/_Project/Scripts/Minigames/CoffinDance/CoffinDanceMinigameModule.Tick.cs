@@ -44,6 +44,8 @@ namespace MiniParty.Minigames.CoffinDance
 
             ForEachSlot(i => GetBindings(i)?.SceneryScroll?.Tick(dt));
 
+            ForEachSlot(i => UpdateSlotCameraBeatShake(i));
+
             ForEachSlot(i =>
             {
                 if (_participatedMask[i])
@@ -55,6 +57,8 @@ namespace MiniParty.Minigames.CoffinDance
 
                 TickEmptySlotShowcase(i, dt);
             });
+
+            ForEachSlot(i => ApplySlotCameraPoseForNonGameplaySlot(i));
 
             FlushAllUi();
         }
