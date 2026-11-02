@@ -215,6 +215,8 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 
 메인 메뉴 READY 후 운영자 Enter → `PrepareRound(false)` → 씬 로드 → `Begin`. 60초 본게임만 있다. 씬 안 연습·READY 대기·`TakeCoffinDanceNextRoundIsPractice` 는 **제거**(2026-10-29).
 
+**BGM**: `Begin` 후 `Tick` → `UpdateMainBgm`. `mainBgmClip`을 `bgmStartTimeSeconds` 지점부터 **루프**. 종료 코루틴에서 `StopMainBgm`. OIIA `UpdateTierBgm`과 동일 패턴. **Play 확인**(2026-11-02, 씬 `bgmStartTimeSeconds` **24.5**).
+
 ---
 
 ## 8-B. 배경 스크롤
@@ -235,7 +237,7 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 
 | 파일 | 역할 |
 |------|------|
-| `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 · 정중앙 카메라(`CameraFx`) · 개발 무적(`DevGodMode`) |
+| `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 · BGM(`Bgm`) · 정중앙 카메라(`CameraFx`) · 개발 무적(`DevGodMode`) |
 | `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·FailFloor 감지 · kinematic 홀드(`BeginKinematicHold` / `SetLocalYAndZDegrees`) · 어깨 접촉 카운트(`IsTouchingShoulder`) |
 | `CoffinDancePallbearerPose` | ExtensionBlend · `SoftResetTransform` (운구인 RB 없음) |
 | `CoffinDanceFailFloor` | 바닥 마커 (탈락 아님) |
@@ -290,6 +292,10 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `hpLowScoreThreshold` | 3000 | 1P 저점수 컷 |
 | ~~`presentationYawDegrees`~~ | — | **제거** · TiltRoot 회전은 프리팹 값 사용 |
 | `slotWorldSpacing` | 40 | 슬롯 X 분리 |
+| `mainBgmClip` | — | 본게임 BGM. 비우면 무음 |
+| `mainBgmSource` | — | BGM 전용 AudioSource. 비우면 런타임 생성 |
+| `mainBgmVolume` | 0.85 | BGM 볼륨 |
+| `bgmStartTimeSeconds` | 0 | 클립 재생 시작 위치(초). Begin 후 루프. **Play 확인**(씬 **24.5**) |
 | `disableMainCameraOnBegin` | true | Main Camera off |
 | ~~`bindSlotCanvasesToSlotCamera`~~ | **제거** (2026-10-30) | 슬롯 Canvas는 Screen Space Overlay. 칸은 `SlotUiColumn` 앵커 |
 | `exitScreenFader` | — | FadeOverlay |

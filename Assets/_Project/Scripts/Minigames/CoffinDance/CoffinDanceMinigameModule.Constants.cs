@@ -61,6 +61,8 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>FailSprite 페이드 시작 normalized 시점(0~1). 기본 0.5 → 후반 50%만 페이드.</summary>
         public const float DefaultFailSpriteFadeStartNormalized = 0.5f;
 
+        public const float DefaultMainBgmVolume = 0.85f;
+
         /// <summary>어깨와 겹칠 때 관을 +Y로만 밀어 올리는 한 프레임 최대량.</summary>
         public const float DefaultShoulderDepenetrationMaxY = 0.5f;
 

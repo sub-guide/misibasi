@@ -10,6 +10,8 @@ namespace MiniParty.Minigames.CoffinDance
             if (!_running || _completing)
                 return;
 
+            UpdateMainBgm();
+
             if (EscapePressed())
             {
                 CompleteSession();

@@ -317,7 +317,7 @@
 | `MainMenu` | 로비·카탈로그·시작 |
 | `Minigame_O.I.I.A.` | T1(씬 6.5초) 후 T2 **Play 확인** · BGM 27초 지점 · 2~4P 미검증 |
 | `Minigame_RhythmButtonChallenge` | **1차 완료** · 1P Play 확인 · 유지보수 |
-| `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스 · 어깨 2점 스냅 **Play 검증** · FailFloor·`FailSprite` **Play 확인**(2026-11-01) · 바깥 사이드 **Play 확인**(2026-11-02) |
+| `Minigame_CoffinDance` | LB/RB 시소 · 정중앙 보너스 · 어깨 2점 스냅 **Play 검증** · FailFloor·`FailSprite` **Play 확인**(2026-11-01) · 바깥 사이드 · BGM(`bgmStartTimeSeconds`) **Play 확인**(2026-11-02) |
 | `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. HP 1인 skip · 2인+ 하위 50% |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
