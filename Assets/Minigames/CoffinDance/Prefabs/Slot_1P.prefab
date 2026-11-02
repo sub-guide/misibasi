@@ -1208,6 +1208,7 @@ GameObject:
   - component: {fileID: 4567821117626813885}
   - component: {fileID: 3401080020437629794}
   - component: {fileID: 6372072692193073551}
+  - component: {fileID: 6217366667244573564}
   m_Layer: 0
   m_Name: SlotCamera_1P
   m_TagString: Untagged
@@ -1289,6 +1290,27 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5499248171756492974}
   m_Enabled: 0
+--- !u!135 &6217366667244573564
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5499248171756492974}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5525564246274406345
 GameObject:
   m_ObjectHideFlags: 0

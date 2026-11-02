@@ -196,6 +196,10 @@ MonoBehaviour:
   failFloorLaunchSpinDegPerSec: 420
   failFloorLaunchFloorClearance: 0.03
   failFloorLaunchDepenetPassCount: 2
+  failCameraLaunchEnabled: 1
+  failCameraSpinDegPerSec: 25
+  failCameraGravity: 32
+  failCameraInitialDownSpeed: 2.5
   failSpriteFadeStartNormalized: 0
   shoulderDepenetrationMaxY: 0.5
   centerZoneThreshold: 0.2

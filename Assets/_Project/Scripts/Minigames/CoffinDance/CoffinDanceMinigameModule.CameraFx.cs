@@ -43,6 +43,15 @@ namespace MiniParty.Minigames.CoffinDance
             if (!_camRestCaptured[i])
                 CaptureSlotCameraRestIfNeeded(i, cam);
 
+            if (failCameraLaunchEnabled && sr.FailFloorRecoverActive)
+            {
+                sr.CamFovBlend = 0f;
+                sr.CamZ = 0f;
+                sr.CamZVelocity = 0f;
+                cam.fieldOfView = _camRestFov[i];
+                return;
+            }
+
             bool active = IsCenterBalanceActive(i, ref sr);
             TickCamFovBlend(ref sr, dt, active);
             TickCamZ(bind, ref sr, dt, active);
@@ -122,6 +131,9 @@ namespace MiniParty.Minigames.CoffinDance
         void ApplySlotCameraPose(int i, Camera cam, ref SlotRuntime sr)
         {
             if (cam == null || !_camRestCaptured[i])
+                return;
+
+            if (failCameraLaunchEnabled && sr.FailFloorRecoverActive)
                 return;
 
             float eased = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(sr.CamFovBlend));

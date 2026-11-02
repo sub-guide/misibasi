@@ -24,7 +24,7 @@ namespace MiniParty.Minigames.CoffinDance
         {
             CoffinDanceFailFloorLaunchState launch = GetFailLaunch(i);
             launch.ClearReturnSnapshot();
-            RestorePallLaunchColliderTriggers(launch);
+            RestoreFailFloorLaunchColliderModes(launch);
 
             float speedMin = Mathf.Min(failFloorLaunchSpeedMin, failFloorLaunchSpeedMax);
             float speedMax = Mathf.Max(failFloorLaunchSpeedMin, failFloorLaunchSpeedMax);
@@ -33,6 +33,7 @@ namespace MiniParty.Minigames.CoffinDance
             launch.CoffinLocalVel = RandomLaunchLocalVelocity(speedMin, speedMax);
             launch.CoffinLocalAngularVelDeg = RandomLaunchAngularVelocityDeg(spinMax);
             CacheFailFloorLaunchColliders(bind, body, launch);
+            BeginFailCameraLaunch(i, bind, launch);
 
             body.GetRestLocal(out Vector3 coffinRestPos, out Quaternion coffinRestRot);
             launch.CoffinTargetLocalPos = new Vector3(coffinRestPos.x, failFloorRecoverLocalY, coffinRestPos.z);
@@ -103,22 +104,78 @@ namespace MiniParty.Minigames.CoffinDance
                 body.SetLocalPose(lp, lr);
             }
 
-            if (bind?.Pallbearers == null)
-                return;
-
-            for (var p = 0; p < CoffinDanceFailFloorLaunchState.PallCount; p++)
+            if (bind?.Pallbearers != null)
             {
-                Transform root = p < bind.Pallbearers.Length ? bind.Pallbearers[p] : null;
-                if (root == null)
-                    continue;
+                for (var p = 0; p < CoffinDanceFailFloorLaunchState.PallCount; p++)
+                {
+                    Transform root = p < bind.Pallbearers.Length ? bind.Pallbearers[p] : null;
+                    if (root == null)
+                        continue;
 
-                launch.PallLocalVel[p] += grav * dt;
-                root.localPosition += launch.PallLocalVel[p] * dt;
-                root.localRotation *= Quaternion.Euler(launch.PallLocalAngularVelDeg[p] * dt);
+                    launch.PallLocalVel[p] += grav * dt;
+                    root.localPosition += launch.PallLocalVel[p] * dt;
+                    root.localRotation *= Quaternion.Euler(launch.PallLocalAngularVelDeg[p] * dt);
+                }
             }
+
+            float camG = Mathf.Max(0f, failCameraGravity);
+            Vector3 camGrav = Vector3.down * camG;
+            TickFailCameraLaunchFly(bind, launch, camGrav, dt);
 
             Physics.SyncTransforms();
             ApplyFailFloorLaunchDepenet(bind, body, launch);
+        }
+
+        void BeginFailCameraLaunch(int i, CoffinDanceSlotBindings bind, CoffinDanceFailFloorLaunchState launch)
+        {
+            float down = Mathf.Max(0f, failCameraInitialDownSpeed);
+            launch.CamLocalVel = down > 0f ? Vector3.down * down : Vector3.zero;
+            launch.CamLocalAngularVelDeg = Vector3.zero;
+            launch.CamTargetLocalPos = Vector3.zero;
+            launch.CamTargetLocalRot = Quaternion.identity;
+
+            if (!failCameraLaunchEnabled || bind == null)
+                return;
+
+            Camera cam = ResolveSlotCamera(bind);
+            if (cam == null)
+                return;
+
+            CaptureSlotCameraRestIfNeeded(i, cam);
+            if (!_camRestCaptured[i])
+                return;
+
+            launch.CamLocalAngularVelDeg = RandomFailCameraAngularVelocityDeg();
+            launch.CamTargetLocalPos = _camRestLocalPos[i];
+            launch.CamTargetLocalRot = Quaternion.Euler(_camRestEulerX[i], _camRestEulerY[i], 0f);
+        }
+
+        Vector3 RandomFailCameraAngularVelocityDeg()
+        {
+            float spinMax = Mathf.Max(0f, failCameraSpinDegPerSec);
+            if (spinMax <= 0f)
+                return Vector3.zero;
+
+            return Random.insideUnitSphere * Random.Range(0f, spinMax);
+        }
+
+        void TickFailCameraLaunchFly(
+            CoffinDanceSlotBindings bind,
+            CoffinDanceFailFloorLaunchState launch,
+            Vector3 grav,
+            float dt)
+        {
+            if (!failCameraLaunchEnabled || bind == null || launch.CamLaunchFloorCollider == null)
+                return;
+
+            Camera cam = ResolveSlotCamera(bind);
+            if (cam == null)
+                return;
+
+            Transform ct = cam.transform;
+            launch.CamLocalVel += grav * dt;
+            ct.localPosition += launch.CamLocalVel * dt;
+            ct.localRotation *= Quaternion.Euler(launch.CamLocalAngularVelDeg * dt);
         }
 
         void SnapshotFailFloorReturnStarts(
@@ -145,6 +202,17 @@ namespace MiniParty.Minigames.CoffinDance
                 launch.PallReturnStartLocalPos[p] = root.localPosition;
                 launch.PallReturnStartLocalRot[p] = root.localRotation;
             }
+
+            if (failCameraLaunchEnabled && bind != null)
+            {
+                Camera cam = ResolveSlotCamera(bind);
+                if (cam != null)
+                {
+                    Transform ct = cam.transform;
+                    launch.CamReturnStartLocalPos = ct.localPosition;
+                    launch.CamReturnStartLocalRot = ct.localRotation;
+                }
+            }
         }
 
         void ApplyFailFloorReturnLerp(
@@ -168,23 +236,39 @@ namespace MiniParty.Minigames.CoffinDance
             sr.SeesawXCurrent = seesaw;
             sr.HoldTimer = 0f;
 
-            if (bind?.Pallbearers == null)
-                return;
-
-            for (var p = 0; p < CoffinDanceFailFloorLaunchState.PallCount; p++)
+            if (bind?.Pallbearers != null)
             {
-                Transform root = p < bind.Pallbearers.Length ? bind.Pallbearers[p] : null;
-                if (root == null)
-                    continue;
+                for (var p = 0; p < CoffinDanceFailFloorLaunchState.PallCount; p++)
+                {
+                    Transform root = p < bind.Pallbearers.Length ? bind.Pallbearers[p] : null;
+                    if (root == null)
+                        continue;
 
-                root.localPosition = Vector3.Lerp(launch.PallReturnStartLocalPos[p], launch.PallTargetLocalPos[p], t);
-                root.localRotation = Quaternion.Slerp(
-                    launch.PallReturnStartLocalRot[p],
-                    launch.PallTargetLocalRot[p],
-                    t);
+                    root.localPosition = Vector3.Lerp(launch.PallReturnStartLocalPos[p], launch.PallTargetLocalPos[p], t);
+                    root.localRotation = Quaternion.Slerp(
+                        launch.PallReturnStartLocalRot[p],
+                        launch.PallTargetLocalRot[p],
+                        t);
+                }
             }
 
+            ApplyFailCameraReturnLerp(bind, launch, t);
+
             Physics.SyncTransforms();
+        }
+
+        void ApplyFailCameraReturnLerp(CoffinDanceSlotBindings bind, CoffinDanceFailFloorLaunchState launch, float t)
+        {
+            if (!failCameraLaunchEnabled || bind == null || launch.CamLaunchFloorCollider == null)
+                return;
+
+            Camera cam = ResolveSlotCamera(bind);
+            if (cam == null)
+                return;
+
+            Transform ct = cam.transform;
+            ct.localPosition = Vector3.Lerp(launch.CamReturnStartLocalPos, launch.CamTargetLocalPos, t);
+            ct.localRotation = Quaternion.Slerp(launch.CamReturnStartLocalRot, launch.CamTargetLocalRot, t);
         }
     }
 }

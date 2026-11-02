@@ -70,6 +70,22 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("날림 프레임당 FailFloor depenet 반복(관+운구인).")]
         [SerializeField] int failFloorLaunchDepenetPassCount = DefaultFailFloorLaunchDepenetPassCount;
 
+        [Header("FailFloor 카메라 낙하")]
+        [Tooltip("FailFloor 복구 날림 구간에서 슬롯 카메라를 중력 낙하(초기 속도 0)·약한 회전. SphereCollider 필요.")]
+        [SerializeField] bool failCameraLaunchEnabled = true;
+
+        [Tooltip("카메라 낙하 중 로컬 각속도(deg/s) 상한.")]
+        [SerializeField, Min(0f)]
+        float failCameraSpinDegPerSec = DefaultFailCameraSpinDegPerSec;
+
+        [Tooltip("카메라 Fail 낙하 전용 중력 가속(로컬 -Y). 관·운구인 `failFloorLaunchGravity`와 별도.")]
+        [SerializeField, Min(0f)]
+        float failCameraGravity = DefaultFailCameraGravity;
+
+        [Tooltip("Fail 시작 시 로컬 아래 방향 초기 속도(운구인 날림 없음). 0이면 중력만.")]
+        [SerializeField, Min(0f)]
+        float failCameraInitialDownSpeed = DefaultFailCameraInitialDownSpeed;
+
         [Tooltip("FailSprite Image 알파 페이드 시작 비율(복구 duration 대비). 기본 0.5.")]
         [SerializeField] float failSpriteFadeStartNormalized = DefaultFailSpriteFadeStartNormalized;
 

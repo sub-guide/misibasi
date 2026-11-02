@@ -85,7 +85,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - `Freeze Rotation`: **X, Y** (Z만 회전)
 - `centerOfMass` 로컬 **(0,0,0)** = 기하 중심 (Inspector `centerOfMassLocal`)
 - 기울기: `transform` 로컬 Z 각(도) (`GetTiltZDegrees`). **점수 판정에는 쓰지 않음**
-- **FailFloor 접촉** (`OnCollisionEnter` 1회): `BeginFailFloorRecover` → **`BeginFailFloorSfxScope`** … `EndFailFloorRecover` → **`EndFailFloorSfxScope`**(복구 끝나면 Stop, 클립이 길어도 잘림). 관 kinematic · 관·운구인 6명 랜덤 로컬 속도/각속도 날림(`failFloorRecoverReturnPhaseStart` 전까지, 기본 **0.9**). 날림 중 FailFloor Box와 **Capsule/Box** `ComputePenetration`(+ bounds lift). 운구인 Capsule 평소 Trigger → 연출 중만 off. 마지막 구간 등속 복귀: 관 → `failFloorRecoverLocalY`·Z=0 · 시소 0.5 · 운구인 rest. `failFloorRecoverDuration` = 어깨 Ignore. 복구 중 LB/RB·노이즈 없음. 재접촉 무시. `failFloorPenaltyScore` 감점. **탈락 없음**
+- **FailFloor 접촉** (`OnCollisionEnter` 1회): `BeginFailFloorRecover` → **`BeginFailFloorSfxScope`** … `EndFailFloorRecover` → **`EndFailFloorSfxScope`**. 관 kinematic · 관·운구인 6명 랜덤 날림 · **슬롯 카메라**는 **0+중력**·약한 회전·Sphere depenet → 후반 rest(FOV 줌·박자 XY는 복구 중 off)(`failFloorRecoverReturnPhaseStart` 전까지, 기본 **0.9**). 날림 중 FailFloor Box와 **Capsule/Box** `ComputePenetration`(+ bounds lift). 운구인 Capsule 평소 Trigger → 연출 중만 off. 마지막 구간 등속 복귀: 관 → `failFloorRecoverLocalY`·Z=0 · 시소 0.5 · 운구인 rest. `failFloorRecoverDuration` = 어깨 Ignore. 복구 중 LB/RB·노이즈 없음. 재접촉 무시. `failFloorPenaltyScore` 감점. **탈락 없음**
 - **낙하 연출 `FailFall` / `FailSprite`**: **Play 확인**(2026-11-01). 복구와 동일 시계(`failFloorRecoverDuration`). X는 7앵커 중 랜덤 1개 고정. `failSpriteFadeStartNormalized`(기본 **0.5**) 이후 `Image` α 등속 1→0. CanvasGroup 없음. 종료 시 rest 색·비활성
 - **어깨 부착 (A안)**: 시소가 최대가 아니고 FailFloor 복구가 아니며 **낙하 잠금이 아니고** 관이 활성 어깨와 접촉하면 `CoffinShoulderAttached`. 이후 매 `LateUpdate`에 좌 `Pallbearers[1]` · 우 `[4]` 어깨 Sphere 꼭대기로 강체 로컬 Y·Z를 **즉시** 맞춤. 메시 변형 **없음**. 부착 중 +Y 분리 **끔**
 - **낙하 잠금**: 부착 중 `x_bias` 0/1이 되면 `CoffinFallLockedUntilFloor`. 어깨 `IgnoreCollision`. FailFloor에 닿을 때까지 재부착·+Y 분리 없음. 복구 시작 시 잠금 해제
@@ -182,7 +182,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 | 대상 | **4슬롯 전부** (`Playing`만). Ending부터 정지 |
 | 방식 | rest **로컬 position** 기준. quarter note마다 **고정 크기**(`slotCameraShakeMaxOffset`) + **랜덤 방향** 피크 → 박 안 **나갔다 rest**(sin 왕복). **Z·회전 없음** |
 | BPM | `emptySlotShowcaseBpm` · `emptySlotShowcaseSyncToBgm`과 **동일 시계** (`BeatShowcase.cs`) |
-| FailFloor | 접촉 시 카메라 연출은 **별도 기획 예정**. 본 흔들림은 복구 중에도 **끊지 않음** |
+| FailFloor | 복구 **날림 구간** 카메라: **`failCameraInitialDownSpeed` + `failCameraGravity`**, **`failCameraSpinDegPerSec`** 약한 회전, Sphere depenet → 후반 rest Lerp. 복구 중 **정중앙 FOV·CamZ·박자 XY 포즈 적용 안 함** |
 | 검증 | **Play 확인** (2026-11-02, 사용자) |
 
 구현: `SlotCameraBeatShake.cs` · `BeatShowcase.cs` · `Tick`에서 박자 갱신 후 참가 생존은 `TickCenterBalanceCameraFx`가 포즈 적용, 그 외 슬롯은 `ApplySlotCameraPoseForNonGameplaySlot`.
@@ -289,6 +289,10 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `failFloorLaunchSpinDegPerSec` | 420 | 날림 각속도 상한 |
 | `failFloorLaunchFloorClearance` | 0.03 | FailFloor depenet 여유 |
 | `failFloorLaunchDepenetPassCount` | 2 | depenet 패스/프레임 |
+| `failCameraLaunchEnabled` | true | Fail 복구 날림 구간 슬롯 카메라 중력 낙하(SphereCollider). **Play 확인**(2026-11-03) |
+| `failCameraSpinDegPerSec` | 25 | 카메라 낙하 중 각속도 상한 |
+| `failCameraGravity` | 32 | 카메라 전용 중력(관·운구인 18과 별도) |
+| `failCameraInitialDownSpeed` | 2.5 | Fail 시작 로컬 아래 초기 속도 |
 | `failSpriteFadeStartNormalized` | 0.5 | FailSprite α 페이드 시작 |
 | ~~`failFallDuration`~~ | **제거** (2026-10-31) | 복구 시간과 별도 시계를 두지 않음 |
 | ~~`FailSpriteEndX` · X Lerp~~ | **제거** (2026-11-01) | 랜덤 X + 페이드 |

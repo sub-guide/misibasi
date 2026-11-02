@@ -10,6 +10,16 @@ namespace MiniParty.Minigames.CoffinDance
         public Vector3 CoffinLocalVel;
         public Vector3 CoffinLocalAngularVelDeg;
 
+        public Vector3 CamLocalVel;
+        public Vector3 CamLocalAngularVelDeg;
+        public Vector3 CamReturnStartLocalPos;
+        public Quaternion CamReturnStartLocalRot;
+        public Vector3 CamTargetLocalPos;
+        public Quaternion CamTargetLocalRot;
+        public Collider CamLaunchFloorCollider;
+        public bool CamLaunchColliderDepenetPrepared;
+        public bool CamLaunchColliderWasTrigger;
+
         public readonly Vector3[] PallLocalVel = new Vector3[PallCount];
         public readonly Vector3[] PallLocalAngularVelDeg = new Vector3[PallCount];
 

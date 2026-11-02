@@ -55,6 +55,10 @@ namespace MiniParty.Minigames.CoffinDance
         public const float DefaultFailFloorLaunchGravity = 18f;
         public const float DefaultFailFloorLaunchSpinDegPerSec = 420f;
 
+        public const float DefaultFailCameraSpinDegPerSec = 25f;
+        public const float DefaultFailCameraGravity = 32f;
+        public const float DefaultFailCameraInitialDownSpeed = 2.5f;
+
         public const float DefaultFailFloorLaunchFloorClearance = 0.03f;
         public const int DefaultFailFloorLaunchDepenetPassCount = 2;
 

@@ -4,7 +4,10 @@ namespace MiniParty.Minigames.CoffinDance
 {
     public sealed partial class CoffinDanceMinigameModule
     {
-        void CacheFailFloorLaunchColliders(CoffinDanceSlotBindings bind, CoffinDanceCoffinBody body, CoffinDanceFailFloorLaunchState launch)
+        void CacheFailFloorLaunchColliders(
+            CoffinDanceSlotBindings bind,
+            CoffinDanceCoffinBody body,
+            CoffinDanceFailFloorLaunchState launch)
         {
             launch.FailFloorCollider = bind != null ? bind.ResolveFailFloorCollider() : null;
 
@@ -19,10 +22,23 @@ namespace MiniParty.Minigames.CoffinDance
             for (var p = 0; p < CoffinDanceFailFloorLaunchState.PallCount; p++)
                 launch.PallLaunchFloorColliders[p] = bind != null ? bind.GetPallbearerLaunchFloorCollider(p) : null;
 
-            PreparePallLaunchCollidersForDepenet(launch);
+            launch.CamLaunchFloorCollider = ResolveSlotCameraLaunchFloorCollider(bind);
+            PrepareFailFloorLaunchCollidersForDepenet(launch);
         }
 
-        void PreparePallLaunchCollidersForDepenet(CoffinDanceFailFloorLaunchState launch)
+        static Collider ResolveSlotCameraLaunchFloorCollider(CoffinDanceSlotBindings bind)
+        {
+            if (bind == null || bind.SlotCamera == null)
+                return null;
+
+            SphereCollider sphere = bind.SlotCamera.GetComponent<SphereCollider>();
+            if (sphere == null || !sphere.enabled)
+                return null;
+
+            return sphere;
+        }
+
+        void PrepareFailFloorLaunchCollidersForDepenet(CoffinDanceFailFloorLaunchState launch)
         {
             launch.ResetPallLaunchColliderDepenet();
 
@@ -36,9 +52,17 @@ namespace MiniParty.Minigames.CoffinDance
                 launch.PallLaunchColliderDepenetPrepared[p] = true;
                 col.isTrigger = false;
             }
+
+            Collider camCol = launch.CamLaunchFloorCollider;
+            if (camCol == null)
+                return;
+
+            launch.CamLaunchColliderWasTrigger = camCol.isTrigger;
+            launch.CamLaunchColliderDepenetPrepared = true;
+            camCol.isTrigger = false;
         }
 
-        void RestorePallLaunchColliderTriggers(CoffinDanceFailFloorLaunchState launch)
+        void RestoreFailFloorLaunchColliderModes(CoffinDanceFailFloorLaunchState launch)
         {
             if (launch == null)
                 return;
@@ -54,6 +78,15 @@ namespace MiniParty.Minigames.CoffinDance
 
                 launch.PallLaunchColliderDepenetPrepared[p] = false;
             }
+
+            if (!launch.CamLaunchColliderDepenetPrepared)
+                return;
+
+            Collider camCol = launch.CamLaunchFloorCollider;
+            if (camCol != null)
+                camCol.isTrigger = launch.CamLaunchColliderWasTrigger;
+
+            launch.CamLaunchColliderDepenetPrepared = false;
         }
 
         void ApplyFailFloorLaunchDepenet(
@@ -67,6 +100,7 @@ namespace MiniParty.Minigames.CoffinDance
 
             float clearance = Mathf.Max(0f, failFloorLaunchFloorClearance);
             int passes = Mathf.Clamp(failFloorLaunchDepenetPassCount, 1, 4);
+            Vector3 floorUp = floor.transform.up;
 
             for (var pass = 0; pass < passes; pass++)
             {
@@ -76,14 +110,27 @@ namespace MiniParty.Minigames.CoffinDance
                     {
                         Transform ct = body.transform;
                         ct.position += worldDelta;
-                        ClampLaunchLocalVelocityUp(ref launch.CoffinLocalVel, ct.parent, worldDelta, floor.transform.up);
+                        ClampLaunchLocalVelocityUp(ref launch.CoffinLocalVel, ct.parent, worldDelta, floorUp);
+                    }
+                }
+
+                if (failCameraLaunchEnabled && launch.CamLaunchFloorCollider != null && bind?.SlotCamera != null)
+                {
+                    Collider camCol = launch.CamLaunchFloorCollider;
+                    Transform camRoot = bind.SlotCamera.transform;
+                    if (TryDepenetrateCollider(camCol, floor, clearance, out Vector3 camDelta))
+                    {
+                        camRoot.position += camDelta;
+                        ClampLaunchLocalVelocityUp(ref launch.CamLocalVel, camRoot.parent, camDelta, floorUp);
+                    }
+                    else
+                    {
+                        ApplyLaunchFloorBoundsLift(camCol, floor, clearance, camRoot, ref launch.CamLocalVel, floorUp);
                     }
                 }
 
                 if (bind?.Pallbearers == null)
                     continue;
-
-                Vector3 floorUp = floor.transform.up;
 
                 for (var p = 0; p < CoffinDanceFailFloorLaunchState.PallCount; p++)
                 {

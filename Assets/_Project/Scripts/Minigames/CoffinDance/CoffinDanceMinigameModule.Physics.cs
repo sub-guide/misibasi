@@ -119,7 +119,7 @@ namespace MiniParty.Minigames.CoffinDance
             CoffinDanceCoffinBody body = bind != null ? bind.ResolveCoffinBody() : null;
             if (body == null)
             {
-                RestorePallLaunchColliderTriggers(GetFailLaunch(i));
+                RestoreFailFloorLaunchColliderModes(GetFailLaunch(i));
                 sr.FailFloorRecoverActive = false;
                 sr.ShoulderIgnoreRemain = 0f;
                 sr.CoffinFallLockedUntilFloor = false;
@@ -173,7 +173,7 @@ namespace MiniParty.Minigames.CoffinDance
                 SnapshotFailFloorReturnStarts(bind, body, launch);
             ApplyFailFloorReturnLerp(bind, body, launch, 1f, ref sr);
             launch.ClearReturnSnapshot();
-            RestorePallLaunchColliderTriggers(launch);
+            RestoreFailFloorLaunchColliderModes(launch);
             body?.EndKinematicHold();
             body?.ClearShoulderContacts();
             body?.ClearFailFloorContact();
