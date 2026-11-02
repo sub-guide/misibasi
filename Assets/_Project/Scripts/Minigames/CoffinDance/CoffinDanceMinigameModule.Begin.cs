@@ -1,6 +1,7 @@
 using MiniParty.Core;
 using MiniParty.Minigames;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace MiniParty.Minigames.CoffinDance
 {
@@ -15,6 +16,7 @@ namespace MiniParty.Minigames.CoffinDance
             _flowState = CdFlowState.Playing;
             _endDelayRemain = 0f;
             StopFailFloorSfxImmediate();
+            ApplyStableEnvironmentLighting();
 
             _elapsedMainTime = 0f;
             _remainingMainTime = MainDurationSeconds;
@@ -47,8 +49,7 @@ namespace MiniParty.Minigames.CoffinDance
 
                 if (!play)
                 {
-                    if (slotCam != null)
-                        slotCam.backgroundColor = new Color(0.05f, 0.05f, 0.08f);
+                    ResetSlotCameraFx(i, slotCam);
                     SetEliminatedUi(i, false);
                     if (bind != null)
                     {
@@ -105,6 +106,16 @@ namespace MiniParty.Minigames.CoffinDance
 
             RefreshPhaseParameters();
             FlushAllUi();
+        }
+
+        /// <summary>
+        /// Skybox 앰비언트는 씬을 다시 로드하면 메뉴 쪽 값이 남을 수 있다. 매 Begin에 Flat으로 고정.
+        /// </summary>
+        static void ApplyStableEnvironmentLighting()
+        {
+            RenderSettings.ambientMode = AmbientMode.Flat;
+            RenderSettings.ambientLight = new Color(0.212f, 0.227f, 0.259f, 1f);
+            DynamicGI.UpdateEnvironment();
         }
 
         static Camera ResolveSlotCamera(CoffinDanceSlotBindings bind)

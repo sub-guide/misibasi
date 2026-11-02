@@ -227,9 +227,11 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 
 메인 메뉴 READY 후 운영자 Enter → `PrepareRound(false)` → 씬 로드 → `Begin`. 60초 본게임만 있다. 씬 안 연습·READY 대기·`TakeCoffinDanceNextRoundIsPractice` 는 **제거**(2026-10-29).
 
+**환경광**: `Begin`마다 `AmbientMode.Flat` `(0.212, 0.227, 0.259)` + `DynamicGI.UpdateEnvironment`. **Play 확인**(2026-11-03, 1·2판 밝기 일치).
+
 **BGM**: `Begin` 후 `Tick` → `UpdateMainBgm`. `mainBgmClip`을 `bgmStartTimeSeconds` 지점부터 **루프**. 종료 코루틴에서 `StopMainBgm`. OIIA `UpdateTierBgm`과 동일 패턴. **Play 확인**(2026-11-02, 씬 `bgmStartTimeSeconds` **24.5**).
 
-**빈 슬롯(미참가)**: `TickEmptySlotShowcase` — BGM 시계 + `emptySlotShowcaseBpm`으로 4/4(좌·우·좌·우) `x` · Extension. 관은 어깨 스냅만. `CdFlowState.Playing`에서만. **Play 확인**(2026-11-02).
+**빈 슬롯(미참가)**: `TickEmptySlotShowcase` — BGM 시계 + `emptySlotShowcaseBpm`으로 4/4(좌·우·좌·우) `x` · Extension. 관은 어깨 스냅만. `CdFlowState.Playing`에서만. 슬롯 카메라 **배경색은 참가 슬롯과 동일**(프리팹 `SlotCamera` 색). `Begin`마다 `ResetSlotCameraFx`. **Play 확인**(2026-11-03, 재입장 포함).
 
 ---
 
