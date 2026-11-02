@@ -211,6 +211,10 @@ MonoBehaviour:
   hpLowScoreThreshold: 3000
   slotWorldSpacing: 400
   disableMainCameraOnBegin: 1
+  emptySlotShowcaseEnabled: 1
+  emptySlotShowcaseBpm: 128
+  emptySlotShowcaseSyncToBgm: 1
+  emptySlotShowcaseAmplitude: 0.49
   exitScreenFader: {fileID: 989538419}
   sessionEndHoldSeconds: 0.35
   exitFadeOutSeconds: 1

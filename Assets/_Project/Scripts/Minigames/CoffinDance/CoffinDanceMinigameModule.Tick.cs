@@ -46,10 +46,14 @@ namespace MiniParty.Minigames.CoffinDance
 
             ForEachSlot(i =>
             {
-                if (!_aliveMask[i])
+                if (_participatedMask[i])
+                {
+                    if (_aliveMask[i])
+                        TickSlotGameplay(i, dt);
                     return;
+                }
 
-                TickSlotGameplay(i, dt);
+                TickEmptySlotShowcase(i, dt);
             });
 
             FlushAllUi();
@@ -65,10 +69,17 @@ namespace MiniParty.Minigames.CoffinDance
 
             ForEachSlot(i =>
             {
-                if (!_aliveMask[i])
-                    return;
+                if (_participatedMask[i])
+                {
+                    if (!_aliveMask[i])
+                        return;
 
-                SnapAttachedCoffinToShoulders(i, ref _slots[i]);
+                    SnapAttachedCoffinToShoulders(i, ref _slots[i]);
+                    return;
+                }
+
+                if (IsEmptySlotShowcaseActive(i))
+                    SnapAttachedCoffinToShoulders(i, ref _slots[i]);
             });
         }
 

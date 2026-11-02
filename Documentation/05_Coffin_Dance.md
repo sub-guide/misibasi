@@ -217,6 +217,8 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 
 **BGM**: `Begin` 후 `Tick` → `UpdateMainBgm`. `mainBgmClip`을 `bgmStartTimeSeconds` 지점부터 **루프**. 종료 코루틴에서 `StopMainBgm`. OIIA `UpdateTierBgm`과 동일 패턴. **Play 확인**(2026-11-02, 씬 `bgmStartTimeSeconds` **24.5**).
 
+**빈 슬롯(미참가)**: `TickEmptySlotShowcase` — BGM 시계 + `emptySlotShowcaseBpm`으로 4/4(좌·우·좌·우) `x` · Extension. 관은 어깨 스냅만. `CdFlowState.Playing`에서만. **Play 확인**(2026-11-02).
+
 ---
 
 ## 8-B. 배경 스크롤
@@ -296,6 +298,10 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `mainBgmSource` | — | BGM 전용 AudioSource. 비우면 런타임 생성 |
 | `mainBgmVolume` | 0.85 | BGM 볼륨 |
 | `bgmStartTimeSeconds` | 0 | 클립 재생 시작 위치(초). Begin 후 루프. **Play 확인**(씬 **24.5**) |
+| `emptySlotShowcaseEnabled` | true | 미참가 슬롯 4/4 시소 연출 |
+| `emptySlotShowcaseBpm` | 128 | 4/4 quarter BPM (BGM에 맞춰 조절) |
+| `emptySlotShowcaseSyncToBgm` | true | BGM `time` 기준, 아니면 경과 시간 |
+| `emptySlotShowcaseAmplitude` | 0.25 | 0.5 ± 진폭 |
 | `disableMainCameraOnBegin` | true | Main Camera off |
 | ~~`bindSlotCanvasesToSlotCamera`~~ | **제거** (2026-10-30) | 슬롯 Canvas는 Screen Space Overlay. 칸은 `SlotUiColumn` 앵커 |
 | `exitScreenFader` | — | FadeOverlay |

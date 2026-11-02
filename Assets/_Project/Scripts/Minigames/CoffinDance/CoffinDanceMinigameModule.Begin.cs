@@ -54,7 +54,10 @@ namespace MiniParty.Minigames.CoffinDance
                         bind.SetCoffinShoulderCollisionsIgnored(false);
                         bind.SetSideShoulderCollidersEnabled(leftSide: true, enabled: true);
                         bind.SetSideShoulderCollidersEnabled(leftSide: false, enabled: true);
-                        bind.ResolveCoffinBody()?.SetSimulationActive(false);
+                        if (emptySlotShowcaseEnabled)
+                            SetupEmptySlotShowcaseAtBegin(i, bind, ref sr);
+                        else
+                            bind.ResolveCoffinBody()?.SetSimulationActive(false);
                     }
                     return;
                 }
