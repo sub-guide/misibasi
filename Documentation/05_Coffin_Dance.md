@@ -85,7 +85,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - `Freeze Rotation`: **X, Y** (Z만 회전)
 - `centerOfMass` 로컬 **(0,0,0)** = 기하 중심 (Inspector `centerOfMassLocal`)
 - 기울기: `transform` 로컬 Z 각(도) (`GetTiltZDegrees`). **점수 판정에는 쓰지 않음**
-- **FailFloor 접촉** (`OnCollisionEnter` 1회): 관 kinematic · 관·운구인 6명 랜덤 로컬 속도/각속도 날림(`failFloorRecoverReturnPhaseStart` 전까지, 기본 **0.9**). 날림 중 FailFloor Box와 **Capsule/Box** `ComputePenetration`(+ bounds lift). 운구인 Capsule 평소 Trigger → 연출 중만 off. 마지막 구간 등속 복귀: 관 → `failFloorRecoverLocalY`·Z=0 · 시소 0.5 · 운구인 rest. `failFloorRecoverDuration` = 어깨 Ignore. 복구 중 LB/RB·노이즈 없음. 재접촉 무시. `failFloorPenaltyScore` 감점. **탈락 없음**
+- **FailFloor 접촉** (`OnCollisionEnter` 1회): `BeginFailFloorRecover` → **`BeginFailFloorSfxScope`** … `EndFailFloorRecover` → **`EndFailFloorSfxScope`**(복구 끝나면 Stop, 클립이 길어도 잘림). 관 kinematic · 관·운구인 6명 랜덤 로컬 속도/각속도 날림(`failFloorRecoverReturnPhaseStart` 전까지, 기본 **0.9**). 날림 중 FailFloor Box와 **Capsule/Box** `ComputePenetration`(+ bounds lift). 운구인 Capsule 평소 Trigger → 연출 중만 off. 마지막 구간 등속 복귀: 관 → `failFloorRecoverLocalY`·Z=0 · 시소 0.5 · 운구인 rest. `failFloorRecoverDuration` = 어깨 Ignore. 복구 중 LB/RB·노이즈 없음. 재접촉 무시. `failFloorPenaltyScore` 감점. **탈락 없음**
 - **낙하 연출 `FailFall` / `FailSprite`**: **Play 확인**(2026-11-01). 복구와 동일 시계(`failFloorRecoverDuration`). X는 7앵커 중 랜덤 1개 고정. `failSpriteFadeStartNormalized`(기본 **0.5**) 이후 `Image` α 등속 1→0. CanvasGroup 없음. 종료 시 rest 색·비활성
 - **어깨 부착 (A안)**: 시소가 최대가 아니고 FailFloor 복구가 아니며 **낙하 잠금이 아니고** 관이 활성 어깨와 접촉하면 `CoffinShoulderAttached`. 이후 매 `LateUpdate`에 좌 `Pallbearers[1]` · 우 `[4]` 어깨 Sphere 꼭대기로 강체 로컬 Y·Z를 **즉시** 맞춤. 메시 변형 **없음**. 부착 중 +Y 분리 **끔**
 - **낙하 잠금**: 부착 중 `x_bias` 0/1이 되면 `CoffinFallLockedUntilFloor`. 어깨 `IgnoreCollision`. FailFloor에 닿을 때까지 재부착·+Y 분리 없음. 복구 시작 시 잠금 해제
@@ -251,7 +251,7 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 
 | 파일 | 역할 |
 |------|------|
-| `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 · BGM(`Bgm`) · 정중앙 카메라(`CameraFx`) · 박자 시계(`BeatShowcase`) · 슬롯 카메라 박자 흔들림(`SlotCameraBeatShake`) · 빈 슬롯 시소(`EmptySlotShowcase`) · 개발 무적(`DevGodMode`) |
+| `CoffinDanceMinigameModule` (+ partial) | `IMinigameModule` · 시소·노이즈 · BGM(`Bgm`) · FailFloor SFX(`FailFloorSfx`) · 정중앙 카메라(`CameraFx`) · 박자 시계(`BeatShowcase`) · 슬롯 카메라 박자 흔들림(`SlotCameraBeatShake`) · 빈 슬롯 시소(`EmptySlotShowcase`) · 개발 무적(`DevGodMode`) |
 | `CoffinDanceCoffinBody` | 관 Rigidbody·CoM·FailFloor 감지 · kinematic 홀드(`BeginKinematicHold` / `SetLocalYAndZDegrees`) · 어깨 접촉 카운트(`IsTouchingShoulder`) |
 | `CoffinDancePallbearerPose` | ExtensionBlend · `SoftResetTransform` (운구인 RB 없음) |
 | `CoffinDanceFailFloor` | 바닥 마커 (탈락 아님) |
@@ -310,6 +310,10 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `mainBgmSource` | — | BGM 전용 AudioSource. 비우면 런타임 생성 |
 | `mainBgmVolume` | 0.85 | BGM 볼륨 |
 | `bgmStartTimeSeconds` | 0 | 클립 재생 시작 위치(초). Begin 후 루프. **Play 확인**(씬 **24.5**) |
+| `failFloorSfxClip` | — | FailFloor **복구 중만** 재생. 비우면 무음. **Play 확인**(2026-11-02) |
+| `failFloorSfxSource` | — | 전용 AudioSource. 비우면 BGM·`sfxSource` 제외 보조 Source |
+| `failFloorSfxVolume` | 1 | Fail SFX 볼륨 |
+| `failFloorSfxStartTimeSeconds` | 0 | 클립 재생 시작 위치(초). 루프 없음 |
 | `emptySlotShowcaseEnabled` | true | 미참가 슬롯 4/4 시소 연출 |
 | `emptySlotShowcaseBpm` | 128 | 4/4 quarter BPM — **빈 슬롯 시소 + 슬롯 카메라 박자 흔들림 공통** |
 | `emptySlotShowcaseSyncToBgm` | true | BGM `time` 기준, 아니면 경과 시간 |

@@ -14,6 +14,7 @@ namespace MiniParty.Minigames.CoffinDance
             _completing = false;
             _flowState = CdFlowState.Playing;
             _endDelayRemain = 0f;
+            StopFailFloorSfxImmediate();
 
             _elapsedMainTime = 0f;
             _remainingMainTime = MainDurationSeconds;

@@ -31,6 +31,7 @@ namespace MiniParty.Minigames.CoffinDance
             _flowState = CdFlowState.Complete;
 
             StopMainBgm();
+            StopFailFloorSfxImmediate();
             PlaySessionEndSfx();
             FlushAllUi();
 

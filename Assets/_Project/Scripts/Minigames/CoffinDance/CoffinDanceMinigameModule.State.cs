@@ -33,5 +33,6 @@ namespace MiniParty.Minigames.CoffinDance
         readonly bool[] _camRestCaptured = new bool[SlotCount];
 
         AudioSource _mainBgmRuntime;
+        int _failFloorSfxScopeCount;
     }
 }

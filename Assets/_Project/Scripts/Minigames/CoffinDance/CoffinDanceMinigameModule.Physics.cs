@@ -82,6 +82,8 @@ namespace MiniParty.Minigames.CoffinDance
             if (body == null)
                 return;
 
+            BeginFailFloorSfxScope();
+
             float dur = Mathf.Max(0f, failFloorRecoverDuration);
             sr.FailFloorRecoverStartSeesaw = sr.SeesawBias;
             sr.FailFloorRecoverDuration = dur;
@@ -122,6 +124,7 @@ namespace MiniParty.Minigames.CoffinDance
                 sr.ShoulderIgnoreRemain = 0f;
                 sr.CoffinFallLockedUntilFloor = false;
                 EndFailFall(i, ref sr);
+                EndFailFloorSfxScope();
                 return;
             }
 
@@ -162,6 +165,8 @@ namespace MiniParty.Minigames.CoffinDance
 
         void EndFailFloorRecover(int i, ref SlotRuntime sr, CoffinDanceCoffinBody body)
         {
+            EndFailFloorSfxScope();
+
             CoffinDanceSlotBindings bind = GetBindings(i);
             CoffinDanceFailFloorLaunchState launch = GetFailLaunch(i);
             if (!launch.ReturnSnapshotted)

@@ -168,7 +168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainBgmClip: {fileID: 8300000, guid: a88513f4e7203d74795542170d0fd697, type: 3}
   mainBgmSource: {fileID: 101709105}
-  mainBgmVolume: 0.85
+  mainBgmVolume: 0.75
   bgmStartTimeSeconds: 24.5
   displayName: "\uAD00\uC9DD\uCDA4"
   slotBindings:
@@ -224,6 +224,10 @@ MonoBehaviour:
   exitFadeOutSeconds: 1
   sessionEndClip: {fileID: 0}
   sfxSource: {fileID: 101709105}
+  failFloorSfxClip: {fileID: 8300000, guid: 30e2c94bad27ec944bd03440ec624611, type: 3}
+  failFloorSfxSource: {fileID: 0}
+  failFloorSfxVolume: 1
+  failFloorSfxStartTimeSeconds: 6.5
 --- !u!4 &101709104
 Transform:
   m_ObjectHideFlags: 0

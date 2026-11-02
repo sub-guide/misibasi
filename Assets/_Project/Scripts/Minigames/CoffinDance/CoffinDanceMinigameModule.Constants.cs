@@ -62,6 +62,7 @@ namespace MiniParty.Minigames.CoffinDance
         public const float DefaultFailSpriteFadeStartNormalized = 0.5f;
 
         public const float DefaultMainBgmVolume = 0.85f;
+        public const float DefaultFailFloorSfxVolume = 1f;
 
         public const float DefaultEmptySlotShowcaseBpm = 128f;
         public const float DefaultEmptySlotShowcaseAmplitude = 0.25f;
