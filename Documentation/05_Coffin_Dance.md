@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-11-01 — FailFloor **낙하·등속 복귀·Capsule depenet** · `FailSprite` **랜덤 X + Image 페이드** **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 `SideL` Y **110°** · `SideR` Y **70°**, 카메라 쪽 1장 포함 **5장**, 바닥 타일 **4장** **Play 확인**. `scrollSpeed` 코드·프리팹 **1**. 씬 안 연습 제거 **Play 확인**. 시소 최대 낙하 잠금 **Play 검증**. 어깨 2점 즉시 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-11-02 — **`SetOuterSidesOnly`(1P `SideL`·4P `SideR`) Play 확인**. FailFloor 낙하·`FailSprite` **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 `SideL` Y **110°** · `SideR` Y **70°**, 카메라 쪽 1장 포함 **5장**, 바닥 타일 **4장** **Play 확인**. `scrollSpeed` 코드·프리팹 **1**. 시소 최대 낙하 잠금 · 어깨 2점 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -225,7 +225,7 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 |------|------|
 | 속도 | `scrollSpeed` 초당, 각 줄의 긴 변 방향. 코드·`Slot_1P` **1**. 커브·주기 반복은 제거 |
 | 방향 | 줄마다 스프라이트 긴 변(로컬 +X)을 부모 공간으로 둔 축. +Z 성분이 화면 안쪽. `SideL` Y **110°** · `SideR` Y **70°**. 먼 복제본은 같은 기울기를 따라 안쪽으로 모인다 |
-| 옆 배경 | `strips[0]` 왼쪽 5장 · `strips[1]` 오른쪽 5장. 맨 앞 장은 카메라 쪽(`SideL (-1)` · `SideR (-1)`). 간격 0이면 배치 간격(긴 변 약 32.58). **맨 왼쪽 슬롯의 왼쪽**과 **맨 오른쪽 슬롯의 오른쪽**만 `SetOuterSidesOnly`로 켠다. 2P·3P의 사이드와 1P 오른쪽·4P 왼쪽은 Begin에서 끈다. 프리팹 오브젝트는 슬롯이 같은 프리팹이라 삭제하지 않는다 |
+| 옆 배경 | `strips[0]` 왼쪽 5장 · `strips[1]` 오른쪽 5장. 맨 앞 장은 카메라 쪽(`SideL (-1)` · `SideR (-1)`). 간격 0이면 배치 간격(긴 변 약 32.58). **맨 왼쪽 슬롯의 왼쪽**과 **맨 오른쪽 슬롯의 오른쪽**만 `SetOuterSidesOnly`로 켠다. 2P·3P의 사이드와 1P 오른쪽·4P 왼쪽은 Begin에서 끈다. **Play 확인**(2026-11-02). 프리팹 오브젝트는 슬롯이 같은 프리팹이라 삭제하지 않는다 |
 | 바닥 | `floorRenderers` 4장의 `floorTextureProperty`(기본 `_MainTex`) UV에 `floorUvPerMeter × 속도`. 코드 기본 `(0, 0.05)`. 타일 중심 Z **0, 20, 40, 60**. 메쉬는 늘리고 UV만 민다. `Toil` Wrap **Repeat** |
 | 물리 | `FailFloor` Transform·콜라이더는 그대로. 원래 `GroundScroll` 콜라이더만 둔다. 바닥 복제본에는 콜라이더를 넣지 않는다 |
 
