@@ -177,9 +177,9 @@ MonoBehaviour:
   - {fileID: 1138433303}
   - {fileID: 2040863851}
   mainRoundTimerCentralTop: {fileID: 302712886}
-  mainDurationSeconds: 37
+  mainDurationSeconds: 29.5
   buildUpRect: {fileID: 1435554420}
-  buildUpDurationSeconds: 7
+  buildUpDurationSeconds: 7.5
   buildUpStartX: 996.78
   buildUpEndX: -996.5
   xSeesawNeutral: 0.5
