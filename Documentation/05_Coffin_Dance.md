@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-11-04 — **Phase 제거** · **`mainDurationSeconds` Inspector** **Play 확인**. **슬롯 카메라 박자 XY · FailFloor SFX · FailFloor 전용 카메라(=낙하) · 재입장 조명** **Play 확인**(2026-11-03). **`SetOuterSidesOnly`** · BGM · 빈 슬롯 4/4 쇼케이스 **Play 확인**(2026-11-02). FailFloor 낙하·`FailSprite` **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 **5장**·바닥 **4장** · `scrollSpeed` **1**. 시소 최대 낙하 잠금 · 어깨 2점 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-11-04 — **Phase 제거** · **`mainDurationSeconds`** · **FailFloor 복구 중 점수 정지** **Play 확인**. **슬롯 카메라 박자 XY · FailFloor SFX · FailFloor 전용 카메라(=낙하) · 재입장 조명** **Play 확인**(2026-11-03). **`SetOuterSidesOnly`** · BGM · 빈 슬롯 4/4 쇼케이스 **Play 확인**(2026-11-02). FailFloor 낙하·`FailSprite` **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 **5장**·바닥 **4장** · `scrollSpeed` **1**. 시소 최대 낙하 잠금 · 어깨 2점 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -85,7 +85,7 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 - `Freeze Rotation`: **X, Y** (Z만 회전)
 - `centerOfMass` 로컬 **(0,0,0)** = 기하 중심 (Inspector `centerOfMassLocal`)
 - 기울기: `transform` 로컬 Z 각(도) (`GetTiltZDegrees`). **점수 판정에는 쓰지 않음**
-- **FailFloor 접촉** (`OnCollisionEnter` 1회): `BeginFailFloorRecover` → **`BeginFailFloorSfxScope`** … `EndFailFloorRecover` → **`EndFailFloorSfxScope`**. 관 kinematic · 관·운구인 6명 랜덤 날림 · **전용 카메라 연출 = 슬롯 카메라 낙하**(`FailFloorLaunch`: **0+중력**·약한 회전·Sphere depenet → 후반 rest). FOV 줌·박자 XY는 복구 중 off (`failFloorRecoverReturnPhaseStart` 전까지, 기본 **0.9**). 날림 중 FailFloor Box와 **Capsule/Box** `ComputePenetration`(+ bounds lift). 운구인 Capsule 평소 Trigger → 연출 중만 off. 마지막 구간 등속 복귀: 관 → `failFloorRecoverLocalY`·Z=0 · 시소 0.5 · 운구인 rest. `failFloorRecoverDuration` = 어깨 Ignore. 복구 중 LB/RB·노이즈 없음. 재접촉 무시. `failFloorPenaltyScore` 감점. **탈락 없음**
+- **FailFloor 접촉** (`OnCollisionEnter` 1회): `BeginFailFloorRecover` → **`BeginFailFloorSfxScope`** … `EndFailFloorRecover` → **`EndFailFloorSfxScope`**. 관 kinematic · 관·운구인 6명 랜덤 날림 · **전용 카메라 연출 = 슬롯 카메라 낙하**(`FailFloorLaunch`: **0+중력**·약한 회전·Sphere depenet → 후반 rest). FOV 줌·박자 XY는 복구 중 off (`failFloorRecoverReturnPhaseStart` 전까지, 기본 **0.9**). 날림 중 FailFloor Box와 **Capsule/Box** `ComputePenetration`(+ bounds lift). 운구인 Capsule 평소 Trigger → 연출 중만 off. 마지막 구간 등속 복귀: 관 → `failFloorRecoverLocalY`·Z=0 · 시소 0.5 · 운구인 rest. `failFloorRecoverDuration` = 어깨 Ignore. 복구 중 LB/RB·노이즈·**점수 가산** 없음. 재접촉 무시. `failFloorPenaltyScore` 감점. **탈락 없음**
 - **낙하 연출 `FailFall` / `FailSprite`**: **Play 확인**(2026-11-01). 복구와 동일 시계(`failFloorRecoverDuration`). X는 7앵커 중 랜덤 1개 고정. `failSpriteFadeStartNormalized`(기본 **0.5**) 이후 `Image` α 등속 1→0. CanvasGroup 없음. 종료 시 rest 색·비활성
 - **어깨 부착 (A안)**: 시소가 최대가 아니고 FailFloor 복구가 아니며 **낙하 잠금이 아니고** 관이 활성 어깨와 접촉하면 `CoffinShoulderAttached`. 이후 매 `LateUpdate`에 좌 `Pallbearers[1]` · 우 `[4]` 어깨 Sphere 꼭대기로 강체 로컬 Y·Z를 **즉시** 맞춤. 메시 변형 **없음**. 부착 중 +Y 분리 **끔**
 - **낙하 잠금**: 부착 중 `x_bias` 0/1이 되면 `CoffinFallLockedUntilFloor`. 어깨 `IgnoreCollision`. FailFloor에 닿을 때까지 재부착·+Y 분리 없음. 복구 시작 시 잠금 해제
@@ -147,9 +147,10 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 |------|-----|
 | 생존 | 초당 **100** (`SurvivalScorePerSecond`) |
 | 정중앙 유지 | 초당 **150** 추가 (`centerBonusScorePerSec`). 시소 정중앙 **그리고** 어깨 부착일 때만. 둘 다이면 생존과 합쳐 초당 **250** |
+| FailFloor 복구 중 | **생존·정중앙 가산 없음** (`FailFloorRecoverActive`). **Play 확인**(2026-11-04) |
 | FailFloor 접촉 1회 | **−500** (`failFloorPenaltyScore`, Inspector). 0 미만 clamp |
 
-정중앙 **보너스**만 아래 둘을 모두 만족해야 가산한다. 생존 초당 100은 지지·시소와 무관.
+정중앙 **보너스**만 아래 둘을 모두 만족해야 가산한다. 생존 초당 100은 지지·시소와 무관(단, **FailFloor 복구 중**에는 생존·보너스 모두 정지).
 
 1. 시소: `bool isCenter = Mathf.Abs(x - 0.5f) <= centerZoneThreshold`  
    `x` = `SeesawXCurrent` = `Clamp01(x_bias + DanceWave × noiseAmp)`  
