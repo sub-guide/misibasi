@@ -317,7 +317,7 @@
 | `MainMenu` | 로비·카탈로그·시작 |
 | `Minigame_O.I.I.A.` | T1(씬 6.5초) 후 T2 **Play 확인** · BGM 27초 지점 · 2~4P 미검증 |
 | `Minigame_RhythmButtonChallenge` | **1차 완료** · 1P Play 확인 · 유지보수 |
-| `Minigame_CoffinDance` | 시소·어깨 스냅 **Play 검증** · FailFloor·`FailSprite`(2026-11-01) · 바깥 사이드·BGM·빈 슬롯 쇼케이스(2026-11-02) · **박자 카메라·Fail SFX·Fail 전용 카메라(낙하)·재입장 조명**(2026-11-03) **Play 확인** |
+| `Minigame_CoffinDance` | 시소·어깨 스냅 **Play 검증** · FailFloor·`FailSprite`(2026-11-01) · 바깥 사이드·BGM·쇼케이스(2026-11-02) · 박자·Fail SFX·Fail 카메라·재입장(2026-11-03) · **`mainDurationSeconds`·Phase 제거**(2026-11-04) **Play 확인** |
 | `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. HP 1인 skip · 2인+ 하위 50% |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
@@ -343,7 +343,7 @@
 
 ## 6. 지금 포커스 · 열린 결정
 
-> **마지막 갱신**: 2026-11-03  
+> **마지막 갱신**: 2026-11-04  
 > 완료 이력·To-Do·최근 완료는 **쓰지 않는다** (§3). 상세는 `02_개발_진행_일지.md`.
 
 ### 지금 포커스
@@ -362,7 +362,6 @@
 | OIIA HP 컷 `HpLowScoreThreshold` | **보류** | 연타 규칙에서 8000 유지 중. Play 후 조정 |
 | Result `rankRevealClip` / `hpHitClip` | **보류** | Results 리메이크 범위 밖. 연결 여부 미정 |
 | 관짝춤 `failFloorPenaltyScore` | **보류** | Play 검증에서 점수 수치는 나중 |
-| 관짝춤 Phase 난이도 | 후속 | Amp/Speed 재도입 여부·시기 미정. 현재는 고정 Sine |
 ---
 
 ## 7. AI 작업 체크리스트 (매 채팅 턴 · 작업 종료 시)

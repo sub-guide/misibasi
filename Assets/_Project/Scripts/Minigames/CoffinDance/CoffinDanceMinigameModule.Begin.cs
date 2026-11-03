@@ -19,7 +19,7 @@ namespace MiniParty.Minigames.CoffinDance
             ApplyStableEnvironmentLighting();
 
             _elapsedMainTime = 0f;
-            _remainingMainTime = MainDurationSeconds;
+            _remainingMainTime = GetMainDurationSeconds();
 
             _slots = new SlotRuntime[SlotCount];
 
@@ -104,7 +104,6 @@ namespace MiniParty.Minigames.CoffinDance
                 scroll.ResetScroll();
             });
 
-            RefreshPhaseParameters();
             FlushAllUi();
         }
 

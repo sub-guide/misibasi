@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-11-03 — **슬롯 카메라 박자 XY · FailFloor SFX · FailFloor 전용 카메라(=낙하) · 재입장 환경광·배경** 일괄 **Play 확인**. **`SetOuterSidesOnly`** · BGM · 빈 슬롯 4/4 쇼케이스 **Play 확인**(2026-11-02). FailFloor 낙하·`FailSprite` **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 **5장**·바닥 **4장** · `scrollSpeed` **1**. 시소 최대 낙하 잠금 · 어깨 2점 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-11-04 — **Phase 제거** · **`mainDurationSeconds` Inspector** **Play 확인**. **슬롯 카메라 박자 XY · FailFloor SFX · FailFloor 전용 카메라(=낙하) · 재입장 조명** **Play 확인**(2026-11-03). **`SetOuterSidesOnly`** · BGM · 빈 슬롯 4/4 쇼케이스 **Play 확인**(2026-11-02). FailFloor 낙하·`FailSprite` **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 **5장**·바닥 **4장** · `scrollSpeed` **1**. 시소 최대 낙하 잠금 · 어깨 2점 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -11,12 +11,12 @@
 | 영역 | 상태 | 비고 |
 |------|------|------|
 | C# 게임 로직 | **낙하 잠금 + 복구 시소 0.5 · Play 검증** | 시소 0/1로 떨어지면 FailFloor까지 어깨 Ignore·재부착 금지. 복구 중 운구인 SmoothStep 0.5 (사용자, 2026-08-28) |
-| 점수 | **시소 정중앙 + 어깨 부착 보너스** | 생존 100/초. `|x-0.5|≤centerZoneThreshold` **그리고** `CoffinShoulderAttached`. Phase4 획득 ×2 |
+| 점수 | **시소 정중앙 + 어깨 부착 보너스** | 생존 100/초. `|x-0.5|≤centerZoneThreshold` **그리고** `CoffinShoulderAttached` |
 | 정중앙 카메라 | **Play 검증** | 발동 = 점수 보너스와 동일. FOV SmoothStep. Z는 관 기울기×0.5 √추종. 수치 씬 확정 2026-08-24 (사용자). 뒤집힘 180° 접기 **제거·Play 검증**(2026-08-28) |
 | 개발 무적 | **Play 검증** (카메라 테스트에 사용) | Editor·Development Build만. Backspace 토글 **1P**. 미입력·동시 입력이면 `x`가 0.5로 복귀 (`devGodReturnSpeed` 씬 **3**) |
 | 점프 | **제거·Play 검증** | A로 점프 안 됨 (사용자, 2026-08-15) |
 | Animator | **ExtensionBlend만** | Jump 상태 에디터 삭제 완료 (사용자, 2026-08-15) |
-| Flow·Result 연동 | **연습 제거 · Play 확인** (2026-10-29) · 60초 종료는 2026-08-15 검증 | 메인 Enter → 바로 본게임 60초 → Results. 씬 안 READY·연습 판 없음. FailFloor 탈락 경로 없음 |
+| Flow·Result 연동 | **Play 확인** (2026-11-04) | 메인 Enter → 바로 본게임(`mainDurationSeconds`) → Results. **Phase 없음**. 씬 안 READY·연습 없음 |
 | 배경 스크롤 | **Play 확인** (2026-10-30). `SideL` Y 110° · `SideR` Y 70°, 옆 5장(카메라 쪽 1장 포함), 바닥 타일 4장 | `scrollSpeed` **1**. 1P `SideL` · 4P `SideR`만 활성. 바닥 UV `floorUvPerMeter` (0, 0.05) |
 | 운구인 에셋 | **완료·검증** | `Pallbearer.fbx` + UAL1 · **우어깨만** SphereCollider(**Radius 27**) · 반대편 **Scale X=-1** · **루트 RB·발 Collider 없음**(사용자, 2026-08-15) |
 | 씬·슬롯 프리팹 | **완료·검증** | `Pallbearers[6]`만 (`Left/Right Pose` 배열 **없음**) |
@@ -37,7 +37,7 @@
 | 시소 입력 | **LB/RB** (`button5`/`button6`). 개발 키보드 **Q/E**. 스틱 좌우는 안 씀 |
 | 점프 | **없음**. A(`button2`) 미사용 |
 | 운구인 물리 | **루트 Rigidbody 없음** · **발/Toe Collider 없음** · 어깨 SphereCollider만 (정적 Collider로 관을 받침) |
-| 자율 흔들림 | **Sine만** 즉시 반영 · 고정 `noiseAmp` (Phase별 난이도 후속) · Rate Limiter **없음** |
+| 자율 흔들림 | **Sine만** 즉시 반영 · 고정 `noiseAmp` · Rate Limiter **없음** |
 | FBX 클립명 | Unity에선 `Armature\|Walk_Formal_Loop` / `Armature\|Crouch_Fwd_Loop` (생성 메뉴가 `\|` 접미사도 매칭) |
 | Controller 재생성 | 메뉴가 **기존 에셋 재사용**(GUID 유지) · 프리팹 Animator 재연결 불필요 |
 | 클립 Loop | `Crouch_Fwd_Loop` · `Walk_Formal_Loop` **Loop Time ON** (사용자 수동, 2026-08-05 검증) |
@@ -147,7 +147,6 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 |------|-----|
 | 생존 | 초당 **100** (`SurvivalScorePerSecond`) |
 | 정중앙 유지 | 초당 **150** 추가 (`centerBonusScorePerSec`). 시소 정중앙 **그리고** 어깨 부착일 때만. 둘 다이면 생존과 합쳐 초당 **250** |
-| Phase4 (50~60초) | **획득 ×2.0** (FailFloor 패널티에는 배율 없음). 정중앙 유지 시 초당 **500** |
 | FailFloor 접촉 1회 | **−500** (`failFloorPenaltyScore`, Inspector). 0 미만 clamp |
 
 정중앙 **보너스**만 아래 둘을 모두 만족해야 가산한다. 생존 초당 100은 지지·시소와 무관.
@@ -203,27 +202,15 @@ C#은 `ExtensionBlend`만 호출한다. `PallbearerPose.controller`의 Jump 상�
 
 ---
 
-## 6. Phase (본게임 60초)
+## 6. 종료 · HP
 
-| 구간 | Phase | 조작·노이즈 | 점수 |
-|------|-------|-------------|------|
-| 0~20초 | 1 | **고정** (`noiseAmp` · 시소 조작 파라미터) | ×1 |
-| 20~40초 | 2 | 동일 | ×1 |
-| 40~50초 | 3 | 동일 | ×1 |
-| 50~60초 | 4 | 동일 | ×2 |
+`mainDurationSeconds` 만료 → **1초**(`SessionEndDelaySeconds`) 후 Results. 전원 탈락 조기 종료 **없음**. FailFloor 접촉은 탈락이 아니라 복구·패널티. **Play 확인**(2026-11-04, Phase 제거·제한시간 Inspector).
 
-Phase는 **HUD 라벨 + Phase4 점수×2** 만. 단계별 Amp/Speed 난이도는 **제거**(후속 재도입 가능).  
-Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 SmoothStep 복구·패널티.
-
-**60초** → **1초**(`SessionEndDelaySeconds`) 후 Results. 전원 탈락 조기 종료 **없음**.
-
----
-
-## 7. HP (`CoffinDanceHpLossRules`)
+### HP (`CoffinDanceHpLossRules`)
 
 - **1인**: 총점 `< hpLowScoreThreshold`(기본 **3000**) → HP −1
 - **2인 이상**: 하위 50%만 −1
-- 참가자: 60초 만료 시점 점수로 순위 (`_participatedMask` 유지). 판 중 탈락 없음.
+- 참가자: `mainDurationSeconds` 만료 시점 점수로 순위 (`_participatedMask` 유지). 판 중 탈락 없음.
 
 ---
 
@@ -276,8 +263,8 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | 필드 | 기본 | 설명 |
 |------|------|------|
 | `slotBindings[4]` | — | `CoffinDanceSlotBindings` |
+| `mainDurationSeconds` | 60 | 본게임 길이(초). 코드 기본 `DefaultMainDurationSeconds`. **Play 확인**(2026-11-04) |
 | `mainRoundTimerCentralTop` | — | 중앙 타이머 TMP |
-| `phaseLabelText` | — | Phase TMP |
 | `xSeesawNeutral` | 0.5 | 시작·SoftReset 시소 x |
 | `seesawBaseSpeed` | 1.2 | LB/RB 기본 탭 이동 속도 |
 | `holdMaxMultiplier` | 3.0 | 홀드 최대 가속 배율 |
@@ -304,7 +291,7 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | ~~`FailSpriteEndX` · X Lerp~~ | **제거** (2026-11-01) | 랜덤 X + 페이드 |
 | `shoulderDepenetrationMaxY` | 0.5 | 미부착·시소 최대가 아닐 때 어깨 겹침 +Y 분리 한 프레임 최대 |
 | `centerZoneThreshold` | 0.05 | 최종 시소 `x`가 0.5에서 이 값 이내면 정중앙 보너스 |
-| `centerBonusScorePerSec` | 150 | 정중앙 유지 시 초당 추가 점수. Phase4 배율은 생존과 같이 적용 |
+| `centerBonusScorePerSec` | 150 | 정중앙 유지 시 초당 추가 점수 |
 | `centerFovMultiplier` | 0.85 | 정중앙 목표 FOV = rest FOV × 이 값 (**씬 0.75**) |
 | `centerCamTiltRatio` | 0.5 | 정중앙 목표 카메라 Z = 관 Z × 이 값 (씬 동일) |
 | `camZoomInDuration` | 0.45 | 줌인 SmoothStep 시간(초). **씬 3** |
@@ -337,7 +324,7 @@ Stumble(각도 한도) **제거**. FailFloor 접촉은 탈락이 아니라 Smoot
 | `exitScreenFader` | — | FadeOverlay |
 | `coffinDanceSceneName` (GameFlow) | `Minigame_CoffinDance` | 로드 씬명 |
 
-**제거됨**: `jumpImpulse` · `jumpAnimBlendSeconds` · `jumpStartAnimSpeed` · `jumpLandAnimSpeed` · `jumpLandYOffset` · `jumpLandYOffsetDuration` · `landingDriftMultiplier` · `landingDriftDuration` · `jumpHeight` · `jumpLockoutSeconds` · `seesawMoveSpeed` · `presentationYawDegrees` · `initialTiltDegrees` · `initialAngularSpeed` · `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `maxNoiseSpeed` · `dancePerlinHz` · **`landingTorqueImpulse` / `ApplyLandingImpulse`** · **`failFloorUpwardImpulse` / `ApplyUpwardImpulse`** · **`failFloorShoulderIgnoreSeconds`** · **`FoldCoffinZForCamera`** · FailFloor **탈락/`EliminateSlot`/연습 SoftReset**.
+**제거됨**: **Phase 1~4 · HUD · Phase4 점수×2** (2026-11-04) · `jumpImpulse` · `jumpAnimBlendSeconds` · `jumpStartAnimSpeed` · `jumpLandAnimSpeed` · `jumpLandYOffset` · `jumpLandYOffsetDuration` · `landingDriftMultiplier` · `landingDriftDuration` · `jumpHeight` · `jumpLockoutSeconds` · `seesawMoveSpeed` · `presentationYawDegrees` · `initialTiltDegrees` · `initialAngularSpeed` · `shoulderReturnSpeed` · `shoulderRaiseSpeed` · `neutralExtension` · `phase2/3/4ShoulderMul` · `noiseAmpPhase1~4` · `maxNoiseSpeedPhase1~4` · `maxNoiseSpeed` · `dancePerlinHz` · **`landingTorqueImpulse` / `ApplyLandingImpulse`** · **`failFloorUpwardImpulse` / `ApplyUpwardImpulse`** · **`failFloorShoulderIgnoreSeconds`** · **`FoldCoffinZForCamera`** · FailFloor **탈락/`EliminateSlot`/연습 SoftReset**.
 
 `Begin` SoftReset: rest 위치·회전 · `HoldTimer=0` · `x_bias=xSeesawNeutral` (초기 기울기/각속도 **없음**). 플레이 중 SoftReset **없음**.
 
@@ -376,7 +363,7 @@ Minigame_CoffinDance
 │   │   └── Coffin (Cube + Rigidbody + CoffinDanceCoffinBody)
 │   ├── FailFloor (BoxCollider + CoffinDanceFailFloor)
 │   └── SlotCamera (로우앵글)
-├── Canvas (Score·Timer·Phase)
+├── Canvas (Score·Timer)
 └── FadeOverlay (ScreenFader)
 ```
 

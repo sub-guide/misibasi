@@ -13,7 +13,10 @@ namespace MiniParty.Minigames.CoffinDance
 
         [Header("공용 HUD")]
         [SerializeField] TMP_Text mainRoundTimerCentralTop;
-        [SerializeField] TMP_Text phaseLabelText;
+
+        [Header("제한시간")]
+        [Tooltip("본게임 길이(초). 0 이하면 첫 Tick에서 종료 대기로 진입.")]
+        [SerializeField] float mainDurationSeconds = DefaultMainDurationSeconds;
 
         [Header("시소 (단일 x)")]
         [Tooltip("시작·중립 시소 위치. Y_L=x · Y_R=1-x. 기본 0.5=수평.")]
@@ -97,7 +100,7 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("노이즈 포함 최종 시소 x가 0.5에서 이 값 이내면 정중앙. 기본 0.05 → 0.45~0.55.")]
         [SerializeField] float centerZoneThreshold = DefaultCenterZoneThreshold;
 
-        [Tooltip("정중앙 유지 시 초당 추가 점수. 생존 100과 합쳐 250. Phase4에서는 획득 ×2.")]
+        [Tooltip("정중앙 유지 시 초당 추가 점수. 생존 100과 합쳐 250.")]
         [SerializeField] float centerBonusScorePerSec = DefaultCenterBonusScorePerSec;
 
         [Header("정중앙 카메라")]

@@ -4,14 +4,14 @@ namespace MiniParty.Minigames.CoffinDance
     {
         public const int SlotCount = 4;
 
-        public const float MainDurationSeconds = 60f;
+        public const float DefaultMainDurationSeconds = 60f;
 
         public const float SurvivalScorePerSecond = 100f;
 
         /// <summary>최종 시소 x가 0.5에서 이 값 이내면 정중앙 보너스. 기본 0.05 → 0.45~0.55.</summary>
         public const float DefaultCenterZoneThreshold = 0.05f;
 
-        /// <summary>정중앙 유지 시 초당 추가 점수. Phase4 배율은 생존 점수와 같이 적용.</summary>
+        /// <summary>정중앙 유지 시 초당 추가 점수.</summary>
         public const float DefaultCenterBonusScorePerSec = 150f;
 
         /// <summary>정중앙 카메라 목표 FOV = rest × 이 값.</summary>
@@ -77,10 +77,6 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>어깨와 겹칠 때 관을 +Y로만 밀어 올리는 한 프레임 최대량.</summary>
         public const float DefaultShoulderDepenetrationMaxY = 0.5f;
 
-        public const float Phase1EndSeconds = 20f;
-        public const float Phase2EndSeconds = 40f;
-        public const float Phase3EndSeconds = 50f;
-
         public const float SessionEndDelaySeconds = 1f;
 
         public const int DefaultLowScoreThreshold = 3000;
@@ -104,7 +100,7 @@ namespace MiniParty.Minigames.CoffinDance
         /// <summary>중앙(0.5) 이탈 시 비선형 가속 계수.</summary>
         public const float DefaultPullCoefficient = 2.0f;
 
-        /// <summary>고정 씰룩임 진폭 (Phase 난이도 없음 · 후속 재도입 가능).</summary>
+        /// <summary>고정 씰룩임 진폭.</summary>
         public const float DefaultNoiseAmp = 0.12f;
 
         public const float DefaultDanceSineHz = 1.2f;

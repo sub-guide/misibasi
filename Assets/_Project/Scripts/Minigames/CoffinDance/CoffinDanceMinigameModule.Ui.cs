@@ -7,7 +7,6 @@ namespace MiniParty.Minigames.CoffinDance
         void FlushAllUi()
         {
             UpdateCentralTimerUi();
-            UpdatePhaseLabelUi();
             ForEachSlot(FlushSlotUi);
         }
 
@@ -39,20 +38,6 @@ namespace MiniParty.Minigames.CoffinDance
             mainRoundTimerCentralTop.gameObject.SetActive(true);
             int sec = Mathf.CeilToInt(_remainingMainTime);
             mainRoundTimerCentralTop.text = $"{sec}";
-        }
-
-        void UpdatePhaseLabelUi()
-        {
-            if (phaseLabelText == null)
-                return;
-
-            phaseLabelText.text = _phase switch
-            {
-                CdPhase.Phase1 => "PHASE 1",
-                CdPhase.Phase2 => "PHASE 2",
-                CdPhase.Phase3 => "PHASE 3",
-                _ => "PHASE 4 ×2"
-            };
         }
 
         void SetEliminatedUi(int i, bool eliminated)

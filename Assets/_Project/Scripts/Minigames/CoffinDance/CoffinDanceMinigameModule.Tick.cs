@@ -32,8 +32,7 @@ namespace MiniParty.Minigames.CoffinDance
             }
 
             _elapsedMainTime += dt;
-            _remainingMainTime = Mathf.Max(0f, MainDurationSeconds - _elapsedMainTime);
-            RefreshPhaseParameters();
+            _remainingMainTime = Mathf.Max(0f, GetMainDurationSeconds() - _elapsedMainTime);
 
             if (_remainingMainTime <= 0f)
             {
@@ -62,6 +61,8 @@ namespace MiniParty.Minigames.CoffinDance
 
             FlushAllUi();
         }
+
+        float GetMainDurationSeconds() => Mathf.Max(0f, mainDurationSeconds);
 
         void LateUpdate()
         {
