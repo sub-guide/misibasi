@@ -1,12 +1,21 @@
+using UnityEngine;
+
 namespace MiniParty.Minigames.CoffinDance
 {
     public sealed partial class CoffinDanceMinigameModule
     {
         enum CdFlowState
         {
+            BuildUp,
             Playing,
             Ending,
             Complete
+        }
+
+        struct BuildUpUiRestoreEntry
+        {
+            public GameObject Root;
+            public bool WasActive;
         }
 
         struct SlotRuntime

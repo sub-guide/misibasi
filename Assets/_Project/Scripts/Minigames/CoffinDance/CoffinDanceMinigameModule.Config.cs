@@ -18,6 +18,19 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("본게임 길이(초). 0 이하면 첫 Tick에서 종료 대기로 진입.")]
         [SerializeField] float mainDurationSeconds = DefaultMainDurationSeconds;
 
+        [Header("빌드업 (시작 연출 · OIIA T1)")]
+        [Tooltip("공용 Canvas BuildUp RectTransform. 0초면 생략하고 바로 본게임.")]
+        [SerializeField] RectTransform buildUpRect;
+
+        [Tooltip("빌드업 길이(초). 이 구간 본게임 타이머·입력·스크롤 없음.")]
+        [SerializeField] float buildUpDurationSeconds = DefaultBuildUpDurationSeconds;
+
+        [Tooltip("BuildUp anchoredPosition.x 시작.")]
+        [SerializeField] float buildUpStartX = DefaultBuildUpStartX;
+
+        [Tooltip("BuildUp anchoredPosition.x 종료.")]
+        [SerializeField] float buildUpEndX = DefaultBuildUpEndX;
+
         [Header("시소 (단일 x)")]
         [Tooltip("시작·중립 시소 위치. Y_L=x · Y_R=1-x. 기본 0.5=수평.")]
         [SerializeField] [Range(0f, 1f)] float xSeesawNeutral = DefaultSeesawNeutral;

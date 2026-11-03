@@ -13,7 +13,6 @@ namespace MiniParty.Minigames.CoffinDance
             gameObject.SetActive(true);
             _running = true;
             _completing = false;
-            _flowState = CdFlowState.Playing;
             _endDelayRemain = 0f;
             StopFailFloorSfxImmediate();
             ApplyStableEnvironmentLighting();
@@ -105,6 +104,7 @@ namespace MiniParty.Minigames.CoffinDance
                 scroll.ResetScroll();
             });
 
+            ConfigureFlowStateAtBegin();
             FlushAllUi();
         }
 

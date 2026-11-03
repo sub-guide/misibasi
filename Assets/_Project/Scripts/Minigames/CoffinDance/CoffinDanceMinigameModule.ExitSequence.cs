@@ -32,6 +32,7 @@ namespace MiniParty.Minigames.CoffinDance
 
             StopMainBgm();
             StopFailFloorSfxImmediate();
+            ResetBuildUpVisual();
             PlaySessionEndSfx();
             FlushAllUi();
 

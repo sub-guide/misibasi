@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-11-04 — **정중앙 Focus UI**(줌 `CamFovBlend` 동기) · **Phase 제거** · **`mainDurationSeconds`** · **FailFloor 복구 중 점수 정지** **Play 확인**. **슬롯 카메라 박자 XY · FailFloor SFX · FailFloor 전용 카메라(=낙하) · 재입장 조명** **Play 확인**(2026-11-03). **`SetOuterSidesOnly`** · BGM · 빈 슬롯 4/4 쇼케이스 **Play 확인**(2026-11-02). FailFloor 낙하·`FailSprite` **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 **5장**·바닥 **4장** · `scrollSpeed` **1**. 시소 최대 낙하 잠금 · 어깨 2점 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-11-04 — **시작 빌드업**(UI 숨김) · **Focus UI** · **Phase 제거** · **`mainDurationSeconds`** · **Fail 중 점수 정지** **Play 확인**. **슬롯 카메라 박자 XY · FailFloor SFX · FailFloor 전용 카메라(=낙하) · 재입장 조명** **Play 확인**(2026-11-03). **`SetOuterSidesOnly`** · BGM · 빈 슬롯 4/4 쇼케이스 **Play 확인**(2026-11-02). FailFloor 낙하·`FailSprite` **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 **5장**·바닥 **4장** · `scrollSpeed` **1**. 시소 최대 낙하 잠금 · 어깨 2점 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -16,7 +16,7 @@
 | 개발 무적 | **Play 검증** (카메라 테스트에 사용) | Editor·Development Build만. Backspace 토글 **1P**. 미입력·동시 입력이면 `x`가 0.5로 복귀 (`devGodReturnSpeed` 씬 **3**) |
 | 점프 | **제거·Play 검증** | A로 점프 안 됨 (사용자, 2026-08-15) |
 | Animator | **ExtensionBlend만** | Jump 상태 에디터 삭제 완료 (사용자, 2026-08-15) |
-| Flow·Result 연동 | **Play 확인** (2026-11-04) | 메인 Enter → 바로 본게임(`mainDurationSeconds`) → Results. **Phase 없음**. 씬 안 READY·연습 없음 |
+| Flow·Result 연동 | **Play 확인** (2026-11-04) | Enter → **BuildUp** → 본게임(`mainDurationSeconds`) → Results. **Phase 없음** |
 | 배경 스크롤 | **Play 확인** (2026-10-30). `SideL` Y 110° · `SideR` Y 70°, 옆 5장(카메라 쪽 1장 포함), 바닥 타일 4장 | `scrollSpeed` **1**. 1P `SideL` · 4P `SideR`만 활성. 바닥 UV `floorUvPerMeter` (0, 0.05) |
 | 운구인 에셋 | **완료·검증** | `Pallbearer.fbx` + UAL1 · **우어깨만** SphereCollider(**Radius 27**) · 반대편 **Scale X=-1** · **루트 RB·발 Collider 없음**(사용자, 2026-08-15) |
 | 씬·슬롯 프리팹 | **완료·검증** | `Pallbearers[6]`만 (`Left/Right Pose` 배열 **없음**) |
@@ -229,7 +229,9 @@ C#은 `ExtensionBlend`만 호출한다. `PallbearerPose.controller`의 Jump 상�
 
 ## 8. 입장
 
-메인 메뉴 READY 후 운영자 Enter → `PrepareRound(false)` → 씬 로드 → `Begin`. 60초 본게임만 있다. 씬 안 연습·READY 대기·`TakeCoffinDanceNextRoundIsPractice` 는 **제거**(2026-10-29).
+메인 메뉴 READY 후 운영자 Enter → `PrepareRound(false)` → 씬 로드 → `Begin`. **빌드업**(`buildUpDurationSeconds`, OIIA T1과 같음) 후 `mainDurationSeconds` 본게임. 씬 안 연습·READY 대기·`TakeCoffinDanceNextRoundIsPractice` 는 **제거**(2026-10-29).
+
+**빌드업**: `CdFlowState.BuildUp` — 공용 `buildUpRect`만 활성 · anchored X **996.78 → −996.5** 등속. **그 외 UI 비활성** — `Canvas_Shared`에서 BuildUp 형제(`MainTimer`·`FadeOverlay` 등) · 슬롯 `Canvas_SlotUI_*` 전부. 끝나면 복구 후 `Playing`. **Play 확인**(2026-11-04). `buildUpDurationSeconds` **0** 또는 Rect 비우면 생략.
 
 **환경광**: `Begin`마다 `AmbientMode.Flat` `(0.212, 0.227, 0.259)` + `DynamicGI.UpdateEnvironment`. **Play 확인**(2026-11-03, 일괄·1·2판 밝기).
 
@@ -277,6 +279,10 @@ C#은 `ExtensionBlend`만 호출한다. `PallbearerPose.controller`의 Jump 상�
 |------|------|------|
 | `slotBindings[4]` | — | `CoffinDanceSlotBindings` |
 | `mainDurationSeconds` | 60 | 본게임 길이(초). 코드 기본 `DefaultMainDurationSeconds`. **Play 확인**(2026-11-04) |
+| `buildUpRect` | — | 씬 `BuildUp` RectTransform |
+| `buildUpDurationSeconds` | 5 | 빌드업(초). **0**이면 생략 |
+| `buildUpStartX` | 996.78 | BuildUp anchored X 시작 |
+| `buildUpEndX` | −996.5 | BuildUp anchored X 종료(등속) |
 | `mainRoundTimerCentralTop` | — | 중앙 타이머 TMP |
 | `xSeesawNeutral` | 0.5 | 시작·SoftReset 시소 x |
 | `seesawBaseSpeed` | 1.2 | LB/RB 기본 탭 이동 속도 |

@@ -31,6 +31,13 @@ namespace MiniParty.Minigames.CoffinDance
                 return;
             }
 
+            if (_flowState == CdFlowState.BuildUp)
+            {
+                TickBuildUp(dt);
+                FlushAllUi();
+                return;
+            }
+
             _elapsedMainTime += dt;
             _remainingMainTime = Mathf.Max(0f, GetMainDurationSeconds() - _elapsedMainTime);
 

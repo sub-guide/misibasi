@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MiniParty.Minigames;
 using UnityEngine;
 
@@ -22,6 +23,8 @@ namespace MiniParty.Minigames.CoffinDance
         float _remainingMainTime;
         float _endDelayRemain;
         CdFlowState _flowState;
+        float _buildUpElapsed;
+        readonly List<BuildUpUiRestoreEntry> _buildUpUiRestore = new List<BuildUpUiRestoreEntry>(16);
 
         readonly float[] _camRestFov = new float[SlotCount];
         readonly float[] _camRestEulerX = new float[SlotCount];

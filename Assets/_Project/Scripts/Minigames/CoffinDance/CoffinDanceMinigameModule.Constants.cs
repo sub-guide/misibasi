@@ -6,6 +6,10 @@ namespace MiniParty.Minigames.CoffinDance
 
         public const float DefaultMainDurationSeconds = 60f;
 
+        public const float DefaultBuildUpDurationSeconds = 5f;
+        public const float DefaultBuildUpStartX = 996.78f;
+        public const float DefaultBuildUpEndX = -996.5f;
+
         public const float SurvivalScorePerSecond = 100f;
 
         /// <summary>최종 시소 x가 0.5에서 이 값 이내면 정중앙 보너스. 기본 0.05 → 0.45~0.55.</summary>
