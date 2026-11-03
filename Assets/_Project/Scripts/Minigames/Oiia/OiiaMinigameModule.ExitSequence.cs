@@ -38,7 +38,6 @@ namespace MiniParty.Minigames.Oiia
             StopFeverScreamAudio();
             StopFeverChantAudio();
             PlaySessionEndSfx();
-            HideMainTimerImmediate();
 
             ForEachSlot(i => FlushUi(i));
 
@@ -85,12 +84,6 @@ namespace MiniParty.Minigames.Oiia
                 return;
 
             sfxSource.PlayOneShot(sessionEndClip);
-        }
-
-        void HideMainTimerImmediate()
-        {
-            if (mainRoundTimerCentralTop != null)
-                mainRoundTimerCentralTop.gameObject.SetActive(false);
         }
 
         ScreenFader ResolveExitScreenFader()

@@ -24,7 +24,5 @@ namespace MiniParty.Minigames.Oiia
         readonly Color[] _slotPanelBgRestColor = new Color[SlotCount];
 
         AudioSource _tierBgmRuntime;
-
-        bool _warnedTimerMissing;
     }
 }

@@ -168,15 +168,15 @@ EMPTY 슬롯은 무시한다.
 | `Spotlight` / `StageBackground` / `CatAnimator` | 전광판 |
 | `TierBgm` / `PatternAudio` | BGM · 스텝 SFX. T1 길이·본게임 초·BGM 위치 필드 |
 | `Ui` / `SlotPanels` / `SlotEmptyUi` / `SlotHelpers` | HUD · 클리핑 |
-| `Timer` / `Balance` / `Constants` / `Types` / `Config` / `State` / `DevGodMode` | 공통 |
+| `Balance` / `Constants` / `Types` / `Config` / `State` / `DevGodMode` | 공통 |
 
-삭제된 것: 연습 큐 · 3키 · 3초 피버 · `GlobalTier.cs` · `buzzClip` · `OiiaVideoEffectController` · `OiiaUIChromaKey` · `Mat_OiiaChromaKeyVideo` · `PracticeReadyText` · `HudFeverText` · `StageBackgroundChromaKey` · SpinOnce · 관중 퇴장 페이드. 경과는 `02_개발_진행_일지.md`.
+삭제된 것: 연습 큐 · 3키 · 3초 피버 · `GlobalTier.cs` · `buzzClip` · `OiiaVideoEffectController` · `OiiaUIChromaKey` · `Mat_OiiaChromaKeyVideo` · `PracticeReadyText` · `HudFeverText` · `StageBackgroundChromaKey` · SpinOnce · 관중 퇴장 페이드 · 화면 타이머 TMP(`OiiaMinigameModule.Timer`). 경과는 `02_개발_진행_일지.md`.
 
 ---
 
 ## 10. 씬 · Inspector
 
-씬: `Assets/Scenes/Minigame_O.I.I.A..unity`. 루트 `OiiaMinigameModule` + `OiiaSceneBootstrap`. 컨테이너 `Panel_O.I.I.A._4Way`. `FadeOverlay` · `Timer`.
+씬: `Assets/Scenes/Minigame_O.I.I.A..unity`. 루트 `OiiaMinigameModule` + `OiiaSceneBootstrap`. 컨테이너 `Panel_O.I.I.A._4Way`. `FadeOverlay`. 화면 타이머 TMP는 없음.
 
 씬 YAML (2026-10-26 파일 기준):
 

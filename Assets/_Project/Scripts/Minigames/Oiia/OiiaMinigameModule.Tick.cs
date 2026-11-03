@@ -11,7 +11,6 @@ namespace MiniParty.Minigames.Oiia
 
             if (EscapePressed())
             {
-                UpdateMainTimerUi();
                 CompleteSession();
                 return;
             }
@@ -31,7 +30,6 @@ namespace MiniParty.Minigames.Oiia
 
                     if (_remainingMainTime <= 0f)
                     {
-                        UpdateMainTimerUi();
                         CompleteSession();
                         return;
                     }
@@ -53,7 +51,6 @@ namespace MiniParty.Minigames.Oiia
             });
 
             UpdateTierBgm();
-            UpdateMainTimerUi();
         }
 
         public void RequestEarlyExit()

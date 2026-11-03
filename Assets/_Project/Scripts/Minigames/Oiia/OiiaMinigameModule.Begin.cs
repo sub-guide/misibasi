@@ -22,12 +22,6 @@ namespace MiniParty.Minigames.Oiia
 
             _remainingMainTime = Mathf.Max(MainRoundMinSeconds, mainRoundDurationSeconds);
 
-            if (mainRoundTimerCentralTop == null && !_warnedTimerMissing)
-            {
-                _warnedTimerMissing = true;
-                Debug.LogWarning("[OiiaMinigameModule] 본게임 타이머용 TMP(mainRoundTimerCentralTop)가 비었습니다. Inspector에서 연결하세요.", this);
-            }
-
             ForEachSlot(ResetSlotAtBegin);
             ForEachSlot(ApplySlotChrome);
             ResetAllCatAnimatorsToIdle();
@@ -40,7 +34,6 @@ namespace MiniParty.Minigames.Oiia
             if (tier1DurationSeconds <= 0f)
                 EnterTier2();
 
-            UpdateMainTimerUi();
             ForEachSlot(FlushUi);
         }
 
