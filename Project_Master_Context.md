@@ -319,6 +319,7 @@
 | `Minigame_RhythmButtonChallenge` | **1차 완료** · 1P Play 확인 · 유지보수 |
 | `Minigame_CoffinDance` | 시소·어깨 스냅 **Play 검증** · FailFloor·`FailSprite`(2026-11-01) · 바깥 사이드·BGM·쇼케이스(2026-11-02) · 박자·Fail SFX·Fail 카메라·재입장(2026-11-03) · **빌드업·Focus·Phase·제한시간·Fail 점수 정지**(2026-11-04) **Play 확인** |
 | `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. HP 1인 skip · 2인+ 하위 50% |
+| `Minigame_Flounder` | 물 만난 광어(팀원 제작, 2026-11-04 합침). HP는 Pigeon과 동일. **Play 확인** |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
