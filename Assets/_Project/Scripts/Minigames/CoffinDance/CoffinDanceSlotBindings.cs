@@ -40,6 +40,9 @@ namespace MiniParty.Minigames.CoffinDance
         [Tooltip("낙하 연출 스프라이트. 평소 비활성. FailFloor 접촉 중에만 켠다.")]
         public RectTransform FailSprite;
 
+        [Tooltip("정중앙 유지 시 페이드·Focus 애니. 알파는 카메라 줌(CamFovBlend)과 동일. 평소 비활성.")]
+        public RectTransform CenterFocus;
+
         public CoffinDanceCoffinBody ResolveCoffinBody()
         {
             if (CoffinBody != null)

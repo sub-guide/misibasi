@@ -49,6 +49,7 @@ namespace MiniParty.Minigames.CoffinDance
                 sr.CamZ = 0f;
                 sr.CamZVelocity = 0f;
                 cam.fieldOfView = _camRestFov[i];
+                ApplyCenterFocusFx(i, ref sr, bind);
                 return;
             }
 

@@ -1,6 +1,6 @@
 # 05_Coffin_Dance (관짝춤)
 
-> **문서 기준일**: 2026-11-04 — **Phase 제거** · **`mainDurationSeconds`** · **FailFloor 복구 중 점수 정지** **Play 확인**. **슬롯 카메라 박자 XY · FailFloor SFX · FailFloor 전용 카메라(=낙하) · 재입장 조명** **Play 확인**(2026-11-03). **`SetOuterSidesOnly`** · BGM · 빈 슬롯 4/4 쇼케이스 **Play 확인**(2026-11-02). FailFloor 낙하·`FailSprite` **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 **5장**·바닥 **4장** · `scrollSpeed` **1**. 시소 최대 낙하 잠금 · 어깨 2점 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
+> **문서 기준일**: 2026-11-04 — **정중앙 Focus UI**(줌 `CamFovBlend` 동기) · **Phase 제거** · **`mainDurationSeconds`** · **FailFloor 복구 중 점수 정지** **Play 확인**. **슬롯 카메라 박자 XY · FailFloor SFX · FailFloor 전용 카메라(=낙하) · 재입장 조명** **Play 확인**(2026-11-03). **`SetOuterSidesOnly`** · BGM · 빈 슬롯 4/4 쇼케이스 **Play 확인**(2026-11-02). FailFloor 낙하·`FailSprite` **Play 확인**(2026-11-01). 슬롯 UI Overlay **Play 확인**(2026-10-30). 옆 배경 **5장**·바닥 **4장** · `scrollSpeed` **1**. 시소 최대 낙하 잠금 · 어깨 2점 스냅 **Play 검증**. 정중앙 보너스 = 시소 `x` + 어깨 부착.  
 > 씬·프리팹 조립은 에디터 작업(채팅 Step-by-Step). 본 문서에는 에디터 클릭 절차를 두지 않는다.  
 > **과거 Capture/본 Slerp/각도 Stumble/밸런스 게이지/HumanDummy ProtoType/자유 점프/FailFloor 탈락/CoM Y 0.15 오프셋** 는 폐기. 최신 진실은 아래 §0·§3.
 
@@ -174,6 +174,18 @@ extension 범위는 **0(앉음) ~ 1(기립)** · `Y_L + Y_R = 1` 항상 유지.
 | Ending | 기존처럼 게임플레이 Tick이 멈추면 카메라도 그 프레임에 고정 |
 
 구현: `CoffinDanceMinigameModule.CameraFx.cs` · `TickCenterBalanceCameraFx`. 수치는 Module Inspector.
+
+### 정중앙 Focus UI
+
+| 항목 | 동작 |
+|------|------|
+| 대상 | 슬롯 프리팹 `CenterFocus` (`Image` + `Animator` **Focus**). `CoffinDanceSlotBindings.CenterFocus` |
+| 발동 | `IsCenterBalanceActive` — 카메라 줌과 **동일** |
+| 알파 | **`CamFovBlend`와 같음** — 줌인 `camZoomInDuration` · 줌아웃 `camZoomInDuration ÷ camZoomOutSpeedMul` |
+| 애니 | 알파가 올라가 있는 동안 `Focus` 상태 루프. 0이면 GameObject 비활성 |
+| FailFloor | 복구 중 `CamFovBlend`=0 → Focus off |
+
+구현: `CenterFocusFx.cs` · `ApplyCenterFocusFx` (`Gameplay` / Fail 카메라 early-out). **Play 확인**(2026-11-04).
 
 ### FailFloor 전용 카메라 연출 (= 낙하)
 

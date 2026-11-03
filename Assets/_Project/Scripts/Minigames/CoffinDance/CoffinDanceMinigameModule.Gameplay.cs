@@ -25,6 +25,7 @@ namespace MiniParty.Minigames.CoffinDance
             AccruePassiveScore(i, ref sr, dt);
             ApplyShoulderDepenetration(i, ref sr);
             TickCenterBalanceCameraFx(i, ref sr, dt);
+            ApplyCenterFocusFx(i, ref sr, GetBindings(i));
         }
 
         void AccruePassiveScore(int i, ref SlotRuntime sr, float dt)

@@ -1164,6 +1164,7 @@ MonoBehaviour:
   EliminatedText: {fileID: 0}
   PlayerLabelText: {fileID: 936179241830719038}
   FailSprite: {fileID: 8168506470161815841}
+  CenterFocus: {fileID: 8993856137558573144}
 --- !u!114 &5040427378769891138
 MonoBehaviour:
   m_ObjectHideFlags: 0
