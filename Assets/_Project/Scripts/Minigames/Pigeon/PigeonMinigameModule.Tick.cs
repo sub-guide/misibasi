@@ -9,6 +9,12 @@ namespace MiniParty.Minigames.Pigeon
             if (!_running || _completing)
                 return;
 
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+            {
+                CompleteSession();
+                return;
+            }
+
             float dt = Time.deltaTime;
             float speed = Mathf.Max(0f, cursorSpeed);
 

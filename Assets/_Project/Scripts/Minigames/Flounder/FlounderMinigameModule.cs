@@ -43,8 +43,14 @@ namespace MiniParty.Minigames.Flounder
 
         public void Tick()
         {
-            if (!_running || gameManager == null)
+            if (!_running || _completing || gameManager == null)
                 return;
+
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+            {
+                CompleteSession();
+                return;
+            }
 
             gameManager.Tick();
         }
