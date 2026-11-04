@@ -555,16 +555,16 @@ MonoBehaviour:
   - id: pigeon
     title: "\uBE44\uB458\uAE30\uC57C \uBA39\uC790"
     blurb: 
-    icon: {fileID: 21300000, guid: 3dcac36d66df5be40a512834e4d73da3, type: 3}
+    icon: {fileID: 21300000, guid: 5c07d52fa78886348af60e435e910695, type: 3}
     accentColor: {r: 1, g: 1, b: 1, a: 1}
   - id: flounder
     title: "\uBB3C \uB9CC\uB09C \uAD11\uC5B4"
     blurb: 
-    icon: {fileID: 1135384064, guid: d15217905931abd4085ebc63f6580ad9, type: 3}
+    icon: {fileID: 21300000, guid: 4d1d83e6c56ebc747b152d6461ffe2df, type: 3}
     accentColor: {r: 1, g: 1, b: 1, a: 1}
   - id: time_challenge
-    title: 스톱워치
-    blurb:
+    title: "\uC2A4\uD1B1\uC6CC\uCE58"
+    blurb: 
     icon: {fileID: 21300000, guid: c8f3a17b4e9d42f0a6b5c2d8e1f09473, type: 3}
     accentColor: {r: 1, g: 1, b: 1, a: 1}
   menuCanvas: {fileID: 1891348209}

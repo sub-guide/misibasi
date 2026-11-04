@@ -35,7 +35,6 @@ namespace MiniParty.Minigames.TimeChallenge
         readonly int[] _totalScores = new int[SlotCount];
         bool _perfectHitThisResult;
         bool _perfectHitVideoStarted;
-        int _lastHeartbeatSecond;
 
         bool _targetRestCached;
         Vector2 _targetRestPos;

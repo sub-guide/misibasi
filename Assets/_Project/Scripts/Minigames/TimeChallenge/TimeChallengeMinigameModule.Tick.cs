@@ -31,7 +31,6 @@ namespace MiniParty.Minigames.TimeChallenge
                 case Phase.Running:
                     TickInput();
                     TickDebugForce1PRound1Perfect();
-                    TickHeartbeat();
                     TickRunningTimeout();
                     break;
                 case Phase.Result:

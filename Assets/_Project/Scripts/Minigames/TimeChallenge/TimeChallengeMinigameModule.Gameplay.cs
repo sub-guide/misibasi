@@ -77,7 +77,6 @@ namespace MiniParty.Minigames.TimeChallenge
             }
 
             PlayStopwatchClick();
-            _lastHeartbeatSecond = 0;
         }
 
         void TickRunningTimeout()

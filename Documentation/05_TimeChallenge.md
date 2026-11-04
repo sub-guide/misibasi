@@ -59,7 +59,7 @@
 2. Bootstrap이 `PartySession.Slots`로 컨텍스트를 구성하고 모듈 `Begin`·`Tick` 호출.
 3. **Briefing**: 첫 라운드 안내 3.5초, 이후 목표 강조 1.5초. 첫 목표 3초, 2·3라운드 목표 1~7초 중 0.01초 단위 추첨. 직전 목표와 같게 추첨되면 다음 0.01초 값(최댓값에서는 최솟값)으로 이동.
 4. **Countdown**: 3→2→1, 각 1초. 목표 강조 위치는 0.5초 동안 원래 위치로 돌아감.
-5. **Running**: 참가자 시계 동시 시작, GO 0.45초. STOP 입력으로 기록 저장. 심장박동 효과음은 경과 초마다 재생. 전원 STOP 또는 목표+5초가 지나면 라운드 종료.
+5. **Running**: 참가자 시계 동시 시작, GO 0.45초. STOP 입력으로 기록 저장. 전원 STOP 또는 목표+5초가 지나면 라운드 종료.
 6. **Result**: 기록 공개, 점수판 0.85초 상승. 기본 4.5초 유지. 정확 적중자가 있으면 기록 공개 1초 후 해당 슬롯 영상 5초 재생하며 전체 유지시간은 최소 6초.
 7. 1·2라운드 뒤 다음 라운드. 3라운드 뒤 **0.35초 유지 + 1초 공통 페이드** → 리포트 생성 → `OnComplete` → `Results`.
 
@@ -119,7 +119,7 @@ Minigame_TimeChallenge
 | `playerSeatLabels[0..3]` | 원본 Canvas의 1P~4P TMP |
 | `roundSting` / `roundTitle` | `RoundSting` / `RoundSting/Title`. 원본 `subtitle`은 의도적으로 미연결 |
 | `hudCamera` / `targetLabelCanvas` | `Main Camera` / `TargetLabel`에 저장한 Canvas |
-| `stopwatchClickSource` / `heartbeatSource` | `TC_Root`의 별도 AudioSource 2개. Play On Awake 꺼짐 |
+| `stopwatchClickSource` | `TC_Root`의 AudioSource. Play On Awake 꺼짐 |
 | `perfectHitVideos[0..3]` | `PerfectHitVideo_1P`~`4P`. 슬롯마다 전용 720×720 RenderTexture |
 | `exitScreenFader` | `Canvas/FadeOverlay`. 검은 Image, CanvasGroup alpha 0, override sorting 100 |
 
@@ -164,7 +164,7 @@ Minigame_TimeChallenge
 | `scoreCountDuration` | 0.85 | 0.85 |
 | `perfectHitRevealSeconds / perfectHitVideoSeconds` | 1 / 5 | 1 / 5 |
 | `sessionEndHoldSeconds / exitFadeOutSeconds` | 0.35 / 1 | 0.35 / 1 |
-| `stopwatchClickVolume / heartbeatVolume / perfectHitVolume` | 1 / 2.2 / 2.4 | 1 / 2.2 / 2.4 |
+| `stopwatchClickVolume / perfectHitVolume` | 1 / 2.4 | 1 / 2.4 |
 | `debugForce1PRound1Perfect` | false | 0 |
 | 책상 `pressDepth / pressedScaleY` | 22 / 0.86 | 22 / 0.86 |
 | 점수판 `countDuration / punchScale` | 0.85 / 1.16 | 0.85 / 1.16 |
@@ -175,7 +175,7 @@ Minigame_TimeChallenge
 
 | 종류 | 경로 | 사용 | 미사용(보관) |
 |------|------|------|--------------|
-| 음원 | `Assets/Minigames/TimeChallenge/Sounds/` | `StopwatchOn.wav`, `Heartbeat.wav` | `StopwatchOn.mp3` (코드·씬 참조 없음) |
+| 음원 | `Assets/Minigames/TimeChallenge/Sounds/` | `StopwatchOn.wav` | `StopwatchOn.mp3`, `Heartbeat.wav` (코드·씬 참조 없음) |
 | 스프라이트 | `Assets/Minigames/TimeChallenge/Sprites/` | 대칭형 실내 트레이닝 터프 스튜디오, 네온 그린 버튼 테이블, 꺼진 디지털 LED 스코어보드 시계, 스톱워치 가림 물음표 | 없음 |
 | 캐릭터 폴더 | `Sprites/Characters/` | 전용 캐릭터 없음 | 빈 표준 폴더 |
 | 영상 | `Assets/Minigames/TimeChallenge/Videos/` | `perfect_hit.mp4`, `PerfectHit_1P`~`4P.renderTexture` | 없음 |

@@ -9,11 +9,7 @@ namespace MiniParty.Minigames.TimeChallenge
         [Header("스톱워치 효과음")]
         [SerializeField] AudioClip stopwatchClickClip;
         [SerializeField] [Range(0f, 1f)] float stopwatchClickVolume = 1f;
-        [SerializeField] AudioClip heartbeatClip;
-        [SerializeField] [Range(0f, 3f)] float heartbeatVolume = 2.2f;
-
         [SerializeField] AudioSource stopwatchClickSource;
-        [SerializeField] AudioSource heartbeatSource;
 
         void PlayStopwatchClick()
         {
@@ -22,34 +18,6 @@ namespace MiniParty.Minigames.TimeChallenge
 
             if (stopwatchClickSource == null) return;
             stopwatchClickSource.PlayOneShot(stopwatchClickClip, Mathf.Clamp01(stopwatchClickVolume));
-        }
-
-        void PlayHeartbeat()
-        {
-            if (heartbeatClip == null)
-                return;
-
-            if (heartbeatSource == null) return;
-            heartbeatSource.clip = heartbeatClip;
-            heartbeatSource.volume = Mathf.Clamp(heartbeatVolume, 0f, 3f);
-            heartbeatSource.Stop();
-            heartbeatSource.Play();
-        }
-
-        void TickHeartbeat()
-        {
-            if (_phase != Phase.Running || _roundStartRealtime <= 0d)
-                return;
-            if (heartbeatClip == null)
-                return;
-
-            double elapsed = Time.realtimeSinceStartupAsDouble - _roundStartRealtime;
-            int displaySeconds = TimeChallengeLedClock.ToCentiseconds(elapsed) / 100;
-            if (displaySeconds < 1 || displaySeconds <= _lastHeartbeatSecond)
-                return;
-
-            _lastHeartbeatSecond = displaySeconds;
-            PlayHeartbeat();
         }
 
         [Header("목표 시간 적중 영상")]
@@ -84,7 +52,6 @@ namespace MiniParty.Minigames.TimeChallenge
         void StopGameplayAudio()
         {
             if (stopwatchClickSource != null) stopwatchClickSource.Stop();
-            if (heartbeatSource != null) heartbeatSource.Stop();
         }
 
         void OnDisable()
