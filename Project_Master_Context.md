@@ -337,6 +337,7 @@
 | `Documentation/05_Rhythm_Button_Challenge.md` | RBC 기술 문서 | RBC 구현·검증 시 |
 | `Documentation/05_Coffin_Dance.md` | 관짝춤 기술 문서 | 관짝춤 구현·수정 시 |
 | `Documentation/05_Pigeon.md` | 비둘기야 먹자 기술 문서 | Pigeon 씬·규칙·이후 모듈 |
+| `Documentation/05_Flounder.md` | 물 만난 광어 기술 문서 | Flounder 씬·규칙·에셋 정리 |
 
 기술 문서에 **에디터 Step-by-Step·검증 체크리스트 목록을 넣지 않는다** (§2·§3).
 
