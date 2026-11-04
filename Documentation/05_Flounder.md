@@ -47,6 +47,7 @@
 | 위 파닥 | `StickUp` | `W` | 캐릭터 위 동작. 직전과 방향이 다르면 +10점·게이지 +1% |
 | 아래 파닥 | `StickDown` | `S` | 캐릭터 아래 동작. 직전과 방향이 다르면 +10점·게이지 +1% |
 | 시작 | 메인 메뉴 운영자 Enter | — | 씬 로드. 씬 안에서는 참가자 ↑/↓ 1회로 시작 후원창 |
+| 운영자 점수 | 키보드 `1`~`4` / 키패드 `1`~`4` | — | Playing 중 참가 슬롯에 연타 1회분(`scorePerMash`, 기본 10). 게이지·후원은 안 오름. 디버그 ON이면 키패드 4 제외 |
 
 입력은 `FlounderInput` → `BoothUsbSlotInput.WasPathPressed` / `IsPathHeld` (다른 게임과 동일 경로). 슬롯 번호는 `Input_1P`…`Input_4P`의 `playerSlotIndex` **0~3**.
 

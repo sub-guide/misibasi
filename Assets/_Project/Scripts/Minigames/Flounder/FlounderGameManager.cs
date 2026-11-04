@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using MiniParty.Core;
+using MiniParty.Input;
 using MiniParty.Minigames;
 using TMPro;
 using UnityEngine;
@@ -190,6 +191,8 @@ namespace MiniParty.Minigames.Flounder
 
                 if (gauge != null && gauge.IsFull)
                     TriggerGaugeBonus(i);
+
+                TickOperatorScoreGrant(i);
             }
 
             donationUi?.TickGameplayAlerts(dt);
@@ -221,6 +224,17 @@ namespace MiniParty.Minigames.Flounder
             view?.Gauge?.RegisterMash();
             view?.SetScore(p.FinalScore);
             liveUi?.RegisterMash();
+        }
+
+        /// <summary>운영자 부여. 연타 1회분 점수만 더하고 게이지·후원은 올리지 않는다.</summary>
+        void TickOperatorScoreGrant(int slotIndex)
+        {
+            if (!OperatorScoreGrantInput.WasPressed(slotIndex))
+                return;
+
+            FlounderPlayer p = _players[slotIndex];
+            p.MashScore += scorePerMash;
+            GetSlotView(slotIndex)?.SetScore(p.FinalScore);
         }
 
         void TriggerGaugeBonus(int slotIndex)

@@ -155,6 +155,16 @@ namespace MiniParty.Minigames.Pigeon
             SetMouth(slotIndex, true);
         }
 
+        /// <summary>운영자 부여. 면 더미 1개분 점수만 더하고 더미는 지우지 않는다.</summary>
+        void TickOperatorScoreGrant(int slotIndex)
+        {
+            if (!OperatorScoreGrantInput.WasPressed(slotIndex))
+                return;
+
+            _score[slotIndex] += Mathf.Max(0, scorePerPile);
+            RefreshScoreLabel(slotIndex);
+        }
+
         int FindFloorPileIndex(Collider2D col)
         {
             for (var i = 0; i < _floorPiles.Count; i++)

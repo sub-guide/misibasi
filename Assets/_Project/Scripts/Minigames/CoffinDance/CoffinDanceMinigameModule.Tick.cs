@@ -65,6 +65,7 @@ namespace MiniParty.Minigames.CoffinDance
             });
 
             ForEachSlot(i => ApplySlotCameraPoseForNonGameplaySlot(i));
+            TickOperatorScoreGrants();
 
             FlushAllUi();
         }

@@ -43,6 +43,16 @@ namespace MiniParty.Minigames.Oiia
             OnDjHit(slotIndex, firstPressed);
         }
 
+        /// <summary>운영자 부여. 입력 1회분(+100)만 더하고 패턴·콤보·보너스는 진행하지 않는다.</summary>
+        void TickOperatorScoreGrant(int i)
+        {
+            if (!OperatorScoreGrantInput.WasPressed(i))
+                return;
+
+            ref SlotRuntime sr = ref _slots[i];
+            sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, DjHitScore);
+        }
+
         void OnDjHit(int i, int buttonIndex)
         {
             if (buttonIndex < 0 || buttonIndex >= DjPadButtonCount)

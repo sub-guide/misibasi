@@ -305,7 +305,7 @@
 
 - **스크립트 루트**: `Assets/_Project/Scripts/` — 새 미니게임은 `IMinigameModule` + `partial` (OIIA·RBC·Coffin Dance 참고).
 - **플레이어 데이터**는 **플레이어 번호(0~3 = 1P~4P)** 에 귀속. 슬롯 UI는 게임마다 다름(OIIA만 세로 4분할).
-- **입력**: 운영자 `OperatorInputService`(키보드 ↑↓·Enter) · 플레이어 `SlotGamepad` → `Joystick.all[i]` · 개발 `DeveloperKeyboardGamepadDebug`(`Ctrl` 토글 1P).
+- **입력**: 운영자 `OperatorInputService`(키보드 ↑↓·Enter) · 게임 중 점수 `OperatorScoreGrantInput`(숫자 1~4, 성공 1회분) · 플레이어 `SlotGamepad` → `Joystick.all[i]` · 개발 `DeveloperKeyboardGamepadDebug`(`Ctrl` 토글 1P).
 - **부스 USB 버튼**은 반드시 `BoothUsbGamepadLayout` 상수·`03_Booth_USB_Controller_매핑.md` 를 거침.  
   OIIA: SNES **10키**(Face A/B/Y · X=Trigger · L/R · 스틱 4방향) 전부 정답 연타 (`05_OIIA.md` §5).
 - **연습 → 본게임** 경로는 구현된 미니게임에 없다. 메인 Enter → 바로 본게임 (`05_Pigeon.md` · `05_Rhythm_Button_Challenge.md` · `05_OIIA.md` · `05_Coffin_Dance.md`). HP는 **Result 씬에서만** −1.

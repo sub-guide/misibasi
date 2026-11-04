@@ -39,7 +39,10 @@ namespace MiniParty.Minigames.Oiia
             ForEachSlot(i =>
             {
                 if (_aliveMask[i])
+                {
                     TickGameplay(i);
+                    TickOperatorScoreGrant(i);
+                }
 
                 UpdateCatAnimationMode(i);
                 UpdateSlotUiShake(i);

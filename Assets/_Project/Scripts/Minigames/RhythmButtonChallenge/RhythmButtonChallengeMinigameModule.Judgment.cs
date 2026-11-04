@@ -1,3 +1,5 @@
+using MiniParty.Input;
+
 namespace MiniParty.Minigames.RhythmButtonChallenge
 {
     public sealed partial class RhythmButtonChallengeMinigameModule
@@ -41,6 +43,27 @@ namespace MiniParty.Minigames.RhythmButtonChallenge
                 TriggerSlotShakeOnBonus(i);
                 RefreshScoreLabel(i);
             });
+        }
+
+        void TickOperatorScoreGrants()
+        {
+            for (var i = 0; i < SlotCount; i++)
+            {
+                if (!_aliveMask[i] || !OperatorScoreGrantInput.WasPressed(i))
+                    continue;
+
+                GrantOperatorSuccessScore(i);
+            }
+        }
+
+        /// <summary>운영자 부여. 성공 점수만 더하고 박 판정·연속 성공·8박 보너스는 건드리지 않는다.</summary>
+        void GrantOperatorSuccessScore(int slotIndex)
+        {
+            _slots[slotIndex].ScoreSum = ApplyScoreDeltaNonNegative(
+                _slots[slotIndex].ScoreSum,
+                scoreSuccess);
+            PlayScorePopup(slotIndex, ScorePopupKind.Success);
+            RefreshScoreLabel(slotIndex);
         }
 
         void ApplySuccess(int slotIndex)

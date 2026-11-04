@@ -39,6 +39,7 @@ namespace MiniParty.Minigames.TimeChallenge
                     break;
             }
 
+            TickOperatorScoreGrants();
             TickScoreBoards(dt);
             TickTargetLabel(dt);
             RefreshHud();

@@ -1,3 +1,4 @@
+using MiniParty.Input;
 using UnityEngine;
 
 namespace MiniParty.Minigames.CoffinDance
@@ -26,6 +27,23 @@ namespace MiniParty.Minigames.CoffinDance
             ApplyShoulderDepenetration(i, ref sr);
             TickCenterBalanceCameraFx(i, ref sr, dt);
             ApplyCenterFocusFx(i, ref sr, GetBindings(i));
+        }
+
+        /// <summary>운영자 부여. 생존 1초분(100)만 더하고 정중앙 보너스는 포함하지 않는다.</summary>
+        void TickOperatorScoreGrants()
+        {
+            if (_flowState != CdFlowState.Playing)
+                return;
+
+            for (var i = 0; i < SlotCount; i++)
+            {
+                if (!_participatedMask[i] || !_aliveMask[i] || !OperatorScoreGrantInput.WasPressed(i))
+                    continue;
+
+                ref SlotRuntime sr = ref _slots[i];
+                sr.ScoreExact += SurvivalScorePerSecond;
+                sr.ScoreSum = Mathf.Max(0, Mathf.FloorToInt(sr.ScoreExact));
+            }
         }
 
         void AccruePassiveScore(int i, ref SlotRuntime sr, float dt)

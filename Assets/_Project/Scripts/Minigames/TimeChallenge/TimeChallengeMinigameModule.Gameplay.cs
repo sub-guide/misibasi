@@ -1,9 +1,28 @@
+using MiniParty.Input;
 using UnityEngine;
 
 namespace MiniParty.Minigames.TimeChallenge
 {
     public sealed partial class TimeChallengeMinigameModule
     {
+        /// <summary>운영자 부여. 이번 라운드 1위 점수(마지막 라운드는 2배). 정확 적중 2배는 포함하지 않는다.</summary>
+        void TickOperatorScoreGrants()
+        {
+            bool lastRound = _roundIndex >= RoundCount - 1;
+            int grant = TimeChallengeRanking.ScoreForPlace(1, lastRound);
+            if (grant <= 0)
+                return;
+
+            for (var i = 0; i < SlotCount; i++)
+            {
+                if (!_participatedMask[i] || !OperatorScoreGrantInput.WasPressed(i))
+                    continue;
+
+                _totalScores[i] += grant;
+                GetArray(playerScoreBoards, i)?.AnimateTo(_totalScores[i]);
+            }
+        }
+
         void StartRound(int roundIndex)
         {
             _roundIndex = roundIndex;
