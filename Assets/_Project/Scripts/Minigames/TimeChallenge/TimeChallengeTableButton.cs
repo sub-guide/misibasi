@@ -2,9 +2,7 @@ using UnityEngine;
 
 namespace MiniParty.Minigames.TimeChallenge
 {
-    /// <summary>
-    /// 네온 테이블을 물리 버튼처럼 눌렸다 떼는 연출만 담당한다.
-    /// </summary>
+    /// <summary>네온 테이블을 물리 버튼처럼 눌렸다 뗀다.</summary>
     public sealed class TimeChallengeTableButton : MonoBehaviour
     {
         [SerializeField] float pressDepth = 22f;
@@ -48,15 +46,22 @@ namespace MiniParty.Minigames.TimeChallenge
             {
                 transform.localPosition = _restPos + Vector3.down * pressDepth;
                 transform.localScale = new Vector3(_restScale.x, _restScale.y * pressedScaleY, _restScale.z);
-                if (tableRenderer != null)
-                    tableRenderer.color = _restColor * pressedTint;
-                return;
+            }
+            else
+            {
+                transform.localPosition = _restPos;
+                transform.localScale = _restScale;
             }
 
-            transform.localPosition = _restPos;
-            transform.localScale = _restScale;
-            if (tableRenderer != null)
-                tableRenderer.color = _restColor;
+            ApplyPressedColor();
+        }
+
+        void ApplyPressedColor()
+        {
+            if (tableRenderer == null)
+                return;
+
+            tableRenderer.color = _pressed ? _restColor * pressedTint : _restColor;
         }
     }
 }

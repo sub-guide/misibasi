@@ -30,6 +30,7 @@ namespace MiniParty.Minigames.TimeChallenge
                     break;
                 case Phase.Running:
                     TickInput();
+                    TickDebugBackspacePerfect1P();
                     TickDebugForce1PRound1Perfect();
                     TickRunningTimeout();
                     break;

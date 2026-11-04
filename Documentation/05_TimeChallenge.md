@@ -26,7 +26,7 @@
 | 라운드 결과 | 게임 안 기록 공개·점수 상승·적중 영상은 중간 연출. 최종 결과창은 공통 `Results` |
 | 키보드 | 원본 숫자 6~9·숫자패드 6~9 제거. 공통 Ctrl 토글 후 **1P 숫자패드 5** |
 | 참가자 | `PartySession`의 PLAYING 슬롯만 참가. 참가자가 없으면 경고 후 시작하지 않음. 가짜 1P 폴백 제거 |
-| 디버그 | `debugForce1PRound1Perfect = 0`. 단독 가짜 참가 모드는 없음 |
+| 디버그 | `debugForce1PRound1Perfect = 0`. 에디터·Development Build에서 Backspace는 1P 기록을 그 라운드 목표와 같게 만든다. 단독 가짜 참가 모드는 없음 |
 | 영상 | `VideoClip`·`VideoPlayer`·오디오·RenderTexture를 씬에 직접 연결. StreamingAssets URL 폴백 없음 |
 
 ---
@@ -46,6 +46,7 @@
 | 개발 키보드 | 공통 Ctrl 토글 → 1P 숫자패드 5 | Face A와 같은 경로 |
 | 운영자 시작 | MainMenu READY → Enter | `GameFlowDirector`가 새 씬 로드 |
 | 조기 종료 | Escape 또는 `RequestEarlyExit` | 공통 퇴장 후 지금까지 합산한 점수 보고 |
+| 디버그 적중 | Backspace · Editor·Development Build · **1P만** | Running 중 1P 시계가 이미 시작됐으면 그 라운드 기록을 목표 시간과 같게 확정. 이미 STOP했어도 기록을 목표로 덮어쓴다 |
 | 운영자 점수 | 키보드 `1`~`4` / 키패드 `1`~`4` | 참가 슬롯 합산에 이번 라운드 1위 점수(1000, 3라운드 2000). 정확 적중 2배는 없음. 디버그 ON이면 키패드 4 제외 |
 
 `SlotGamepad.Get`은 공통 입력 함수에 장치를 전달할 때만 사용한다. 게임 코드가 장치 버튼을 직접 읽지 않는다.
@@ -61,7 +62,7 @@
 3. **Briefing**: 첫 라운드 안내 3.5초, 이후 목표 강조 1.5초. 첫 목표 3초, 2·3라운드 목표 1~7초 중 0.01초 단위 추첨. 직전 목표와 같게 추첨되면 다음 0.01초 값(최댓값에서는 최솟값)으로 이동.
 4. **Countdown**: 3→2→1, 각 1초. 목표 강조 위치는 0.5초 동안 원래 위치로 돌아감.
 5. **Running**: 참가자 시계 동시 시작, GO 0.45초. STOP 입력으로 기록 저장. 전원 STOP 또는 목표+5초가 지나면 라운드 종료.
-6. **Result**: 기록 공개, 점수판 0.85초 상승. 기본 4.5초 유지. 정확 적중자가 있으면 기록 공개 1초 후 해당 슬롯 영상 5초 재생하며 전체 유지시간은 최소 6초.
+6. **Result**: 기록 공개, 점수판 0.85초 상승. 기본 4.5초 유지. 정확 적중자가 있으면 기록 공개 1초 후 해당 슬롯 영상 5초 재생하며 전체 유지시간은 최소 6초. 영상이 보이기 시작하면 2초 동안 카메라 중앙으로 등속 이동하고, 같은 2초 동안 크기가 1배에서 5배까지 등속 확대된 뒤 재생이 끝날 때까지 그 상태를 유지한다. 끝나면 원래 자리·크기로 되돌린다. 정확 적중으로 책상·시계 색을 바꾸지 않는다.
 7. 1·2라운드 뒤 다음 라운드. 3라운드 뒤 **0.35초 유지 + 1초 공통 페이드** → 리포트 생성 → `OnComplete` → `Results`.
 
 ### 점수
@@ -149,7 +150,7 @@ Minigame_TimeChallenge
 | `TimeChallengeTableButton` | 책상 누름 이동·축소·틴트 |
 | `TimeChallengeScoreBoard` | 점수 카운트업·펀치 연출 |
 | `TimeChallengeRoundSting` | 제목·플래시 연출. ExecuteAlways·OnValidate·에디터 미리보기 제거 |
-| `TimeChallengePerfectVideo` | 연결된 VideoPlayer 재생·정지. 영상 준비 실패 시 경고. URL 폴백 없음 |
+| `TimeChallengePerfectVideo` | 연결된 VideoPlayer 재생·정지. 재생 시작 후 2초 등속 중앙 이동·5배 확대. 영상 준비 실패 시 경고. URL 폴백 없음 |
 
 전용 에디터 메뉴 스크립트는 없다. 미사용 `TimeChallengeReadyPopup`·`TimeChallengeResultMinigameFlavor`는 통합본에서 제외했다. 자동 검색·생성·에디터 미리보기와 사용하지 않는 HUD 바인딩을 제거했다.
 

@@ -53,6 +53,25 @@ namespace MiniParty.Minigames.TimeChallenge
             }
         }
 
+        void TickDebugBackspacePerfect1P()
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (!UnityEngine.Input.GetKeyDown(KeyCode.Backspace))
+                return;
+            if (!_clockStarted[0])
+                return;
+
+            double target = GetRoundTargetSeconds();
+            if (!_stopped[0])
+            {
+                _participatedMask[0] = true;
+                StopSlot(0, _slotStartRealtime[0] + target);
+            }
+
+            _records[0] = target;
+#endif
+        }
+
         void TickDebugForce1PRound1Perfect()
         {
             if (!debugForce1PRound1Perfect)
