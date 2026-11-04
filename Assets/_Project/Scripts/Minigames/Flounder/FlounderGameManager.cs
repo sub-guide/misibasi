@@ -11,7 +11,6 @@ namespace MiniParty.Minigames.Flounder
         public const int SlotCount = 4;
 
         [Header("규칙")]
-        [SerializeField] string gameTitle = "물 만난 광어";
         [SerializeField] float roundDurationSeconds = 25f;
         [SerializeField] int scorePerMash = 10;
         [Tooltip("시작 후 ↑/↓ 입력 후 중앙 후원창을 띄우기 전 대기(초)")]
@@ -22,21 +21,12 @@ namespace MiniParty.Minigames.Flounder
         [SerializeField] FlounderDonationUI donationUi;
         [SerializeField] FlounderCountdown countdown;
         [SerializeField] FlounderLiveUI liveUi;
-        [SerializeField] FlounderResultUI resultUi;
         [SerializeField] FlounderMinigameModule minigameModule;
         [SerializeField] TextMeshProUGUI roundTimerText;
 
         [Header("슬롯")]
         [SerializeField] FlounderPlayerSlotView[] slotViews;
         [SerializeField] FlounderInput[] slotInputs;
-
-        [Header("캐릭터 GIF (1P)")]
-        [SerializeField] bool gifCharacterOnlyOnFirstSlot = true;
-
-        [Tooltip("켜면 Awake에서 GifVisual 스케일·위치를 아래 값으로 덮어씁니다. 씬에서 직접 배치한 경우 끄세요.")]
-        [SerializeField] bool overrideFirstSlotGifTransform;
-        [SerializeField] float firstSlotGifScale = 0.78f;
-        [SerializeField] float firstSlotGifLocalY = 0.42f;
 
         readonly FlounderPlayer[] _players = new FlounderPlayer[SlotCount];
 
@@ -51,21 +41,12 @@ namespace MiniParty.Minigames.Flounder
         bool _startDonationPopupShown;
         float _startDonationPrePopupTimer;
 
-        public FlounderGamePhase CurrentPhase => _phase;
-        public bool IsRunning => _running;
         public IReadOnlyList<FlounderPlayer> Players => _players;
 
         void Awake()
         {
             for (var i = 0; i < SlotCount; i++)
                 _players[i] = new FlounderPlayer { SlotIndex = i };
-
-            if (minigameModule == null)
-                minigameModule = GetComponent<FlounderMinigameModule>();
-
-            ApplyGifCharacterLayout();
-            EnsureStartDonationBgmSource();
-            SyncStartDonationBgmFromScene();
         }
 
         FlounderPlayerSlotView GetSlotView(int slotIndex)
@@ -83,48 +64,6 @@ namespace MiniParty.Minigames.Flounder
             return slotIndex >= 0 && slotIndex < slotViews.Length ? slotViews[slotIndex] : null;
         }
 
-        void ApplyGifCharacterLayout()
-        {
-            if (slotViews == null)
-                return;
-
-            for (var i = 0; i < SlotCount; i++)
-            {
-                FlounderPlayerSlotView view = GetSlotView(i);
-                if (view == null || view.CharacterRoot == null)
-                    continue;
-
-                Transform root = view.CharacterRoot;
-                if (gifCharacterOnlyOnFirstSlot && i != 0)
-                {
-                    Transform extraGif = root.Find("GifVisual");
-                    if (extraGif != null)
-                        Destroy(extraGif.gameObject);
-
-                    var extraDance = root.GetComponent<FlounderDance>();
-                    if (extraDance != null)
-                        Destroy(extraDance);
-
-                    continue;
-                }
-
-                view.ApplyGifCharacterTint();
-
-                if (i != 0)
-                    continue;
-
-                if (!overrideFirstSlotGifTransform)
-                    continue;
-
-                Transform gif = root.Find("GifVisual");
-                if (gif == null)
-                    continue;
-
-                gif.localScale = Vector3.one * firstSlotGifScale;
-                gif.localPosition = new Vector3(0f, firstSlotGifLocalY, 0f);
-            }
-        }
-
         public void Begin(MinigameContext context)
         {
             _running = true;
@@ -134,7 +73,6 @@ namespace MiniParty.Minigames.Flounder
             StopStartDonationBgm();
             donationUi?.ClearFeed();
             countdown?.Cancel();
-            resultUi?.Hide();
             liveUi?.ResetViewers();
 
             _startDonationInputReceived = false;
@@ -211,8 +149,8 @@ namespace MiniParty.Minigames.Flounder
                 if (_startDonationPrePopupTimer < startDonationDelayAfterInputSeconds)
                     return;
 
-                int startAmount = donationManager != null ? donationManager.StartDonationAmount : 50000;
-                donationUi.ShowStartDonationPopup(startAmount, gameTitle);
+                donationUi.ShowStartDonationPopup();
+                PlayStartDonationBgm();
                 _startDonationPopupShown = true;
                 return;
             }
@@ -340,7 +278,7 @@ namespace MiniParty.Minigames.Flounder
             p.TotalDonationWon += roll.AmountWon;
             p.DonationBonusScore += roll.BonusScore;
 
-            var alert = FlounderDonationEventData.Gameplay(roll.DonorName, slotIndex, roll, gameTitle);
+            var alert = new FlounderDonationEventData(roll.DonorName, slotIndex, roll.AmountWon);
             donationUi?.EnqueueGameplayAlert(alert);
             liveUi?.RegisterDonation();
 

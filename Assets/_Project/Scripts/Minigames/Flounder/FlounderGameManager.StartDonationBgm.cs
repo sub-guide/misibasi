@@ -1,8 +1,5 @@
 using System.Collections;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace MiniParty.Minigames.Flounder
 {
@@ -20,103 +17,24 @@ namespace MiniParty.Minigames.Flounder
 
         Coroutine _startDonationBgmRoutine;
 
-        void SyncStartDonationBgmFromScene()
-        {
-            if (startDonationBgmSource == null)
-                startDonationBgmSource = GetComponent<AudioSource>();
-
-            if (startDonationIntroClip == null && startDonationBgmSource != null && startDonationBgmSource.clip != null)
-                startDonationIntroClip = startDonationBgmSource.clip;
-        }
-
-        void EnsureStartDonationSequenceClips()
-        {
-            SyncStartDonationBgmFromScene();
-
-#if UNITY_EDITOR
-            if (startDonationIntroClip == null)
-            {
-                startDonationIntroClip = AssetDatabase.LoadAssetAtPath<AudioClip>(
-                    FlounderDonationUiConstants.StartDonationIntroBgmPath);
-            }
-
-            if (startDonationTtsClip == null)
-            {
-                startDonationTtsClip = AssetDatabase.LoadAssetAtPath<AudioClip>(
-                    FlounderDonationUiConstants.StartDonationTtsPath);
-            }
-
-            if (countdownBgmClip == null)
-            {
-                countdownBgmClip = AssetDatabase.LoadAssetAtPath<AudioClip>(
-                    FlounderDonationUiConstants.CountdownBgmPath);
-            }
-#endif
-        }
-
-        void EnsureCountdownBgmClip()
-        {
-#if UNITY_EDITOR
-            if (countdownBgmClip == null)
-            {
-                countdownBgmClip = AssetDatabase.LoadAssetAtPath<AudioClip>(
-                    FlounderDonationUiConstants.CountdownBgmPath);
-            }
-#endif
-        }
-
         public void PlayCountdownBgm()
         {
-            EnsureCountdownBgmClip();
-            if (countdownBgmClip == null)
+            if (startDonationBgmSource == null || countdownBgmClip == null)
             {
-                Debug.LogWarning("[FlounderGameManager] 카운트다운 BGM 클립이 없습니다.", this);
+                Debug.LogWarning("[FlounderGameManager] startDonationBgmSource / countdownBgmClip 을 Inspector에 연결하세요.", this);
                 return;
             }
 
             PrepareClip(countdownBgmClip);
-            AudioSource source = ResolveStartDonationBgmSource();
-            source.enabled = true;
-            source.mute = false;
-            source.volume = startDonationBgmVolume;
-            source.loop = false;
-            source.clip = countdownBgmClip;
-            source.time = 0f;
-            source.Stop();
-            source.Play();
+            startDonationBgmSource.volume = startDonationBgmVolume;
+            startDonationBgmSource.loop = false;
+            startDonationBgmSource.clip = countdownBgmClip;
+            startDonationBgmSource.time = 0f;
+            startDonationBgmSource.Stop();
+            startDonationBgmSource.Play();
 
-            if (!source.isPlaying)
-                source.PlayOneShot(countdownBgmClip, startDonationBgmVolume);
-        }
-
-        AudioSource ResolveStartDonationBgmSource()
-        {
-            if (startDonationBgmSource == null)
-                startDonationBgmSource = GetComponent<AudioSource>();
-
-            if (startDonationBgmSource == null)
-                startDonationBgmSource = gameObject.AddComponent<AudioSource>();
-
-            ConfigureStartDonationBgmSource(startDonationBgmSource);
-            return startDonationBgmSource;
-        }
-
-        static void ConfigureStartDonationBgmSource(AudioSource source)
-        {
-            if (source == null)
-                return;
-
-            source.playOnAwake = false;
-            source.spatialBlend = 0f;
-            source.bypassEffects = true;
-            source.bypassListenerEffects = true;
-            source.ignoreListenerPause = true;
-        }
-
-        void EnsureStartDonationBgmSource()
-        {
-            ConfigureStartDonationBgmSource(ResolveStartDonationBgmSource());
-            SyncStartDonationBgmFromScene();
+            if (!startDonationBgmSource.isPlaying)
+                startDonationBgmSource.PlayOneShot(countdownBgmClip, startDonationBgmVolume);
         }
 
         public void PlayStartDonationBgm()
@@ -129,38 +47,30 @@ namespace MiniParty.Minigames.Flounder
 
         IEnumerator PlayStartDonationSequenceRoutine()
         {
-            EnsureStartDonationSequenceClips();
-
-            if (startDonationIntroClip == null)
+            if (startDonationBgmSource == null || startDonationIntroClip == null)
             {
-                Debug.LogWarning("[FlounderGameManager] 후원 intro 클립이 없습니다.", this);
+                Debug.LogWarning("[FlounderGameManager] startDonationBgmSource / startDonationIntroClip 을 Inspector에 연결하세요.", this);
                 _startDonationBgmRoutine = null;
                 yield break;
             }
 
-            AudioSource source = ResolveStartDonationBgmSource();
-            source.enabled = true;
-            source.mute = false;
-            source.volume = startDonationBgmVolume;
+            startDonationBgmSource.volume = startDonationBgmVolume;
 
-            yield return PlayClipToEnd(source, startDonationIntroClip);
+            yield return PlayClipToEnd(startDonationBgmSource, startDonationIntroClip);
 
             if (startDonationTtsClip != null)
-                yield return PlayClipToEnd(source, startDonationTtsClip);
+                yield return PlayClipToEnd(startDonationBgmSource, startDonationTtsClip);
 
             _startDonationBgmRoutine = null;
         }
 
         static void PrepareClip(AudioClip clip)
         {
-            if (clip == null)
-                return;
-
             if (clip.loadState == AudioDataLoadState.Unloaded)
                 clip.LoadAudioData();
         }
 
-        IEnumerator PlayClipToEnd(AudioSource source, AudioClip clip)
+        static IEnumerator PlayClipToEnd(AudioSource source, AudioClip clip)
         {
             PrepareClip(clip);
             yield return null;
@@ -195,13 +105,8 @@ namespace MiniParty.Minigames.Flounder
                 _startDonationBgmRoutine = null;
             }
 
-            AudioSource source = startDonationBgmSource != null ? startDonationBgmSource : GetComponent<AudioSource>();
-            if (source == null)
-                return;
-
-            source.loop = false;
-            if (source.isPlaying)
-                source.Stop();
+            if (startDonationBgmSource != null && startDonationBgmSource.isPlaying)
+                startDonationBgmSource.Stop();
         }
     }
 }

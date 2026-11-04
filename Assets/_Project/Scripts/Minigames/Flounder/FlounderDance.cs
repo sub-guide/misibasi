@@ -51,31 +51,6 @@ namespace MiniParty.Minigames.Flounder
 
         public void SetFrozen(bool frozen) => _frozen = frozen;
 
-        public void SetFrames(Sprite[] sequence)
-        {
-            frames = sequence;
-            _mode = MotionMode.Idle;
-            _pathIndex = 0f;
-            _lowerPath = null;
-            ApplyFrameIndex(ResolveRestFrameIndex());
-        }
-
-        public void CopyMotionFrom(FlounderDance source)
-        {
-            if (source == null || source == this)
-                return;
-
-            flapFps = source.flapFps;
-            mashSpeedBoost = source.mashSpeedBoost;
-            mashBoostDecay = source.mashBoostDecay;
-            liftAdvancePerFlap = source.liftAdvancePerFlap;
-            lowerAdvancePerFlap = source.lowerAdvancePerFlap;
-            peakFlutterFps = source.peakFlutterFps;
-            liftFrameIndices = (int[])source.liftFrameIndices?.Clone();
-            lowerFromPeakIndices = (int[])source.lowerFromPeakIndices?.Clone();
-            lowerFromMidIndices = (int[])source.lowerFromMidIndices?.Clone();
-        }
-
         public void FlapUpper()
         {
             _speedBoost = mashSpeedBoost;
@@ -125,13 +100,7 @@ namespace MiniParty.Minigames.Flounder
                 _mode = MotionMode.Idle;
         }
 
-        void Awake()
-        {
-            if (spriteRenderer == null)
-                spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-
-            ApplyFrameIndex(ResolveRestFrameIndex());
-        }
+        void Awake() => ApplyFrameIndex(ResolveRestFrameIndex());
 
         void Update()
         {

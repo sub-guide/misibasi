@@ -38,8 +38,6 @@ namespace MiniParty.Minigames.Flounder
             RefreshView();
         }
 
-        public void ClearAfterDonation() => ResetGauge();
-
         public void Tick(float deltaTime)
         {
             if (_percent <= 0f)

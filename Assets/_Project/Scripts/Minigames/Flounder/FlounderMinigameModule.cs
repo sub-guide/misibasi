@@ -35,9 +35,6 @@ namespace MiniParty.Minigames.Flounder
             _running = true;
             _completing = false;
 
-            if (gameManager == null)
-                gameManager = GetComponent<FlounderGameManager>();
-
             if (exitScreenFader != null)
                 exitScreenFader.SetInstant(0f);
 

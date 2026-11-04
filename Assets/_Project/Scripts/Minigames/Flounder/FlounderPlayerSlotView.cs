@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MiniParty.Minigames.Flounder
 {
@@ -17,34 +16,21 @@ namespace MiniParty.Minigames.Flounder
         [SerializeField] TextMeshProUGUI slotLabel;
         [SerializeField] TextMeshProUGUI scoreLabel;
 
+        [Tooltip("Character_*P / GifVisual 의 SpriteRenderer.")]
+        [SerializeField] SpriteRenderer gifRenderer;
         [Tooltip("GifVisual 전체에 곱해지는 색. (단일 스프라이트라 옷만 분리 색칠은 불가 — 피부·머리도 함께 틴트됨)")]
         [SerializeField] Color gifCharacterTint = Color.white;
 
         public int SlotIndex => slotIndex;
         public RectTransform SlotLabelRect =>
             slotLabel != null ? slotLabel.rectTransform : transform as RectTransform;
-        public Transform CharacterRoot => characterRoot;
         public FlounderGauge Gauge => gauge;
         public FlounderDance Dance => dance;
-        public TMP_FontAsset LabelFont => slotLabel != null ? slotLabel.font : null;
 
-        public void BindDance(FlounderDance value) => dance = value;
-        public float LabelFontSize => slotLabel != null ? slotLabel.fontSize : 60f;
-
-        void Awake() => ApplyGifCharacterTint();
-
-        public void ApplyGifCharacterTint()
+        void Awake()
         {
-            if (characterRoot == null)
-                return;
-
-            Transform visual = characterRoot.Find("GifVisual");
-            if (visual == null)
-                return;
-
-            var renderer = visual.GetComponent<SpriteRenderer>();
-            if (renderer != null)
-                renderer.color = gifCharacterTint;
+            if (gifRenderer != null)
+                gifRenderer.color = gifCharacterTint;
         }
 
         public void SetActiveSlot(bool playerParticipating)

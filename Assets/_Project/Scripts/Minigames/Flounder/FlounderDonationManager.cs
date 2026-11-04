@@ -28,7 +28,6 @@ namespace MiniParty.Minigames.Flounder
     /// <summary>가상 후원 금액·닉네임 결정 (DonationManager).</summary>
     public sealed class FlounderDonationManager : MonoBehaviour
     {
-        [SerializeField] int startDonationAmount = 50000;
         [SerializeField] FlounderDonationTier[] gameplayTiers =
         {
             new() { amountWon = 1000, bonusScore = 100, weightPercent = 35f },
@@ -44,8 +43,6 @@ namespace MiniParty.Minigames.Flounder
             "광어사랑123", "광어찐팬", "파닥파닥장인", "물만난고등어", "별풍선요정",
             "큰손형님", "광어회장님", "지나가던시청자", "춤추는오징어", "오늘도출석", "엑셀방송VIP"
         };
-
-        public int StartDonationAmount => startDonationAmount;
 
         public FlounderDonationRoll RollGameplayDonation()
         {

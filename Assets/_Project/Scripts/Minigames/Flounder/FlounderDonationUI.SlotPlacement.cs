@@ -1,30 +1,21 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MiniParty.Minigames.Flounder
 {
     public sealed partial class FlounderDonationUI
     {
-        void EnsureGameplayHudRects()
+        FlounderPlayerSlotView FindGameplaySlot(int slotIndex)
         {
-            if (gameplayHudCountdown == null)
+            if (gameplaySlotAnchors == null)
+                return null;
+
+            for (var i = 0; i < gameplaySlotAnchors.Length; i++)
             {
-                Transform countdown = transform.Find("Countdown");
-                if (countdown != null)
-                    gameplayHudCountdown = countdown as RectTransform;
+                if (gameplaySlotAnchors[i] != null && gameplaySlotAnchors[i].SlotIndex == slotIndex)
+                    return gameplaySlotAnchors[i];
             }
 
-            if (gameplayHudLiveUi != null)
-                return;
-
-            Transform canvasRoot = transform.parent;
-            if (canvasRoot == null)
-                return;
-
-            Transform live = canvasRoot.Find("LiveUI");
-            if (live != null)
-                gameplayHudLiveUi = live as RectTransform;
+            return null;
         }
 
         void PositionGameplayAlertOverSlot(int slotIndex)
@@ -39,15 +30,10 @@ namespace MiniParty.Minigames.Flounder
             if (labelRect == null || alertRect == null || rootRect == null)
                 return;
 
-            EnsureGameplayHudRects();
             Canvas canvas = GetComponentInParent<Canvas>();
             Camera uiCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
                 ? canvas.worldCamera
                 : null;
-
-            Transform home = _gameplayPanelHomeParent != null ? _gameplayPanelHomeParent : transform;
-            if (alertRect.parent != home)
-                alertRect.SetParent(home, false);
 
             alertRect.anchorMin = alertRect.anchorMax = new Vector2(0.5f, 0.5f);
             alertRect.pivot = new Vector2(0.5f, 0f);

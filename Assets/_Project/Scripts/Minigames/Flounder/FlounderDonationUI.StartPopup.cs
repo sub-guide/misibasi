@@ -1,28 +1,18 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MiniParty.Minigames.Flounder
 {
     public sealed partial class FlounderDonationUI
     {
-        public void ShowStartDonationPopup(int amountPerPlayer, string gameTitle)
+        public void ShowStartDonationPopup()
         {
-            EnsureRootCoversCanvas();
-            EnsureDonationUiDrawsOnTop();
-
             if (centerPopupRoot != null)
                 centerPopupRoot.SetActive(true);
 
-            if (centerCanvasGroup != null)
-                SetCanvasAlpha(centerCanvasGroup, 0f);
+            SetCanvasAlpha(centerCanvasGroup, 0f);
 
             ApplyDonationTypography();
-            ApplyStartDonationVisuals(amountPerPlayer, gameTitle);
-            RestoreCenterPanelSceneLayout();
-
-            FlounderGameManager manager = FindObjectOfType<FlounderGameManager>();
-            manager?.PlayStartDonationBgm();
+            ApplyStartDonationVisuals();
 
             _centerPhase = CenterPhase.FadeIn;
             _centerTimer = 0f;
@@ -91,85 +81,22 @@ namespace MiniParty.Minigames.Flounder
             SetCanvasAlpha(centerCanvasGroup, 0f);
         }
 
-        void ApplyStartDonationVisuals(int amountPerPlayer, string gameTitle)
+        void ApplyStartDonationVisuals()
         {
-            EnsureStartDonationSprite();
-            bool spriteMode = useStartDonationSprite && centerPopupImage != null && centerPopupImage.sprite != null;
-
-            if (spriteMode)
+            if (centerPopupImage != null)
             {
                 centerPopupImage.enabled = true;
-                ApplyCenterPanelLayout();
+                centerPopupImage.preserveAspect = true;
+                centerPopupImage.color = Color.white;
             }
 
-            if (centerSpecialHeaderText != null)
-                centerSpecialHeaderText.gameObject.SetActive(false);
-
-            if (spriteMode)
+            if (centerTitleText != null)
             {
-                if (centerAmountText != null)
-                    centerAmountText.gameObject.SetActive(false);
-
-                ApplyStartDonationTitle();
-                ApplyCenterTaglineLabel(
-                    string.IsNullOrWhiteSpace(centerTaglineText) ? "물 만난 광어 드가자" : centerTaglineText);
-
-                return;
+                centerTitleText.gameObject.SetActive(true);
+                centerTitleText.text = "모든 플레이어에게 후원!";
             }
 
-            ApplyStartDonationTitle();
-
-            if (centerAmountText != null)
-            {
-                centerAmountText.gameObject.SetActive(true);
-                centerAmountText.text = amountPerPlayer.ToString("N0") + "원씩";
-                centerAmountText.color = FlounderDonationUiConstants.CenterAmountGold;
-            }
-
-            ApplyCenterTaglineLabel(string.IsNullOrWhiteSpace(centerTaglineText) ? gameTitle : centerTaglineText);
-        }
-
-        void ApplyStartDonationTitle()
-        {
-            if (centerTitleText == null)
-                return;
-
-            EnsureDonationFontOn(centerTitleText);
-            centerTitleText.gameObject.SetActive(true);
-            centerTitleText.text = "모든 플레이어에게 후원!";
-            centerTitleText.fontSize = centerStartTitleFontSize;
-        }
-
-        void ApplyCenterPanelLayout()
-        {
-            if (centerPopupImage == null)
-                return;
-
-            centerPopupImage.preserveAspect = true;
-            centerPopupImage.color = Color.white;
-
-            if (PreserveCenterDonationLayout)
-                return;
-
-            FitCenterPanelNativeSize();
-        }
-
-        void FitCenterPanelNativeSize()
-        {
-            if (centerPopupRoot == null || centerPopupImage == null || centerPopupImage.sprite == null)
-                return;
-
-            var rt = centerPopupRoot.transform as RectTransform;
-            if (rt == null)
-                return;
-
-            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
-            rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.anchoredPosition = new Vector2(0f, 36f);
-            centerPopupImage.SetNativeSize();
-
-            float scale = Mathf.Clamp(centerStarBalloonScale, 0.35f, 1.35f);
-            rt.sizeDelta *= scale;
+            ApplyStarBalloonCaptionLabel(centerGameTitleText, centerTaglineFont, centerTaglineText, starBalloonTaglineFontSize);
         }
     }
 }

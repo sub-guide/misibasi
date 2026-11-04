@@ -17,8 +17,6 @@ namespace MiniParty.Minigames.Flounder
         float _timer;
         bool _running;
 
-        public bool IsRunning => _running;
-
         public void Begin()
         {
             ApplyStyleFromReference();
