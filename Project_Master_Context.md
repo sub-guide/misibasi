@@ -320,6 +320,7 @@
 | `Minigame_CoffinDance` | 시소·어깨 스냅 **Play 검증** · FailFloor·`FailSprite`(2026-11-01) · 바깥 사이드·BGM·쇼케이스(2026-11-02) · 박자·Fail SFX·Fail 카메라·재입장(2026-11-03) · **빌드업·Focus·Phase·제한시간·Fail 점수 정지**(2026-11-04) **Play 확인** |
 | `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. HP 1인 skip · 2인+ 하위 50% |
 | `Minigame_Flounder` | 물 만난 광어(팀원 제작, 2026-11-04 합침). HP는 Pigeon과 동일. **Play 확인** |
+| `Minigame_TimeChallenge` | 스톱워치. 3라운드 시간 맞추기 · 공통 종료 · HP는 Pigeon과 동일. **Play 확인** |
 | `Results` | 등수·HP·GAME OVER · 복귀 |
 
 ---
@@ -338,6 +339,7 @@
 | `Documentation/05_Coffin_Dance.md` | 관짝춤 기술 문서 | 관짝춤 구현·수정 시 |
 | `Documentation/05_Pigeon.md` | 비둘기야 먹자 기술 문서 | Pigeon 씬·규칙·이후 모듈 |
 | `Documentation/05_Flounder.md` | 물 만난 광어 기술 문서 | Flounder 씬·규칙·에셋 정리 |
+| `Documentation/05_TimeChallenge.md` | 스톱워치 기술 문서 | TimeChallenge 흐름·입력·점수·HP·씬·에셋 |
 
 기술 문서에 **에디터 Step-by-Step·검증 체크리스트 목록을 넣지 않는다** (§2·§3).
 
@@ -345,14 +347,13 @@
 
 ## 6. 지금 포커스 · 열린 결정
 
-> **마지막 갱신**: 2026-11-04  
+> **마지막 갱신**: 2026-11-05
 > 완료 이력·To-Do·최근 완료는 **쓰지 않는다** (§3). 상세는 `02_개발_진행_일지.md`.
 
 ### 지금 포커스
 
-1. **Pigeon** — 1P HP 안 깎임 Play 확인. 2~4P 하위 50% 미검증
-2. **OIIA** — 현재 규칙은 `05_OIIA.md`. 미사용 코드 삭제 후 Play 미검증. 2~4P·다패드 남음
-3. **Flounder** — 카탈로그 아이콘 미지정(릴 UI). 미사용 에셋 파일은 보관·코드 참조 없음
+1. **Pigeon** — 2~4P 하위 50% HP 규칙 Play 확인 대기
+2. **OIIA** — 미사용 코드 삭제 후 Play·2~4P·다패드 확인 대기
 
 ### 열린 결정 / 보류
 

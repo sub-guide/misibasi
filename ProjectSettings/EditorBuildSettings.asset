@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Minigame_Flounder.unity
     guid: dbe9a13b50a9ff64fab20dbd74f3ee5d
+  - enabled: 1
+    path: Assets/Scenes/Minigame_TimeChallenge.unity
+    guid: 5e9a4c18d2b746f0a3e7c1d8b4f60592
   m_configObjects: {}

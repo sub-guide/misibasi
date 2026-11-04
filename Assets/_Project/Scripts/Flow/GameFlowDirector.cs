@@ -4,6 +4,7 @@ using MiniParty.Input;
 using MiniParty.Minigames;
 using MiniParty.Minigames.CoffinDance;
 using MiniParty.Minigames.Flounder;
+using MiniParty.Minigames.TimeChallenge;
 using MiniParty.Minigames.Oiia;
 using MiniParty.Minigames.Pigeon;
 using MiniParty.Minigames.RhythmButtonChallenge;
@@ -38,6 +39,7 @@ namespace MiniParty.Flow
 
         [Tooltip("물 만난 광어 전용 씬 이름. Build Settings 와 동일해야 함.")]
         [SerializeField] string flounderSceneName = "Minigame_Flounder";
+        [SerializeField] string timeChallengeSceneName = "Minigame_TimeChallenge";
 
         [Header("디버그")]
         [Tooltip("체크 시 카탈로그 어떤 항목이든 oiia 씬으로 진입 (MVP 편의).")]
@@ -395,10 +397,11 @@ namespace MiniParty.Flow
             bool runCoffin = string.Equals(entry.id, CoffinDanceMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
             bool runPigeon = string.Equals(entry.id, PigeonMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
             bool runFlounder = string.Equals(entry.id, FlounderMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
+            bool runTimeChallenge = string.Equals(entry.id, TimeChallengeMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
             bool runOiia = debugRouteAllToOiia ||
                 string.Equals(entry.id, OiiaMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
 
-            if (!runRbc && !runCoffin && !runOiia && !runPigeon && !runFlounder)
+            if (!runRbc && !runCoffin && !runOiia && !runPigeon && !runFlounder && !runTimeChallenge)
             {
                 if (detailBody != null)
                     detailBody.text = "This minigame is not available yet.";
@@ -440,6 +443,8 @@ namespace MiniParty.Flow
                 sceneName = pigeonSceneName;
             else if (runFlounder)
                 sceneName = flounderSceneName;
+            else if (runTimeChallenge)
+                sceneName = timeChallengeSceneName;
             else
                 sceneName = oiiaSceneName;
 
@@ -548,7 +553,7 @@ namespace MiniParty.Flow
                     title = "물 만난 광어",
                     blurb = ""
                 },
-                new GameCatalogEntry { id = "placeholder_06", title = "GAME 06 (TBD)", blurb = "Coming soon." },
+                new GameCatalogEntry { id = TimeChallengeMinigameModule.BuiltInId, title = "스톱워치", blurb = "" },
                 new GameCatalogEntry { id = "placeholder_07", title = "GAME 07 (TBD)", blurb = "Coming soon." },
                 new GameCatalogEntry { id = "placeholder_08", title = "GAME 08 (TBD)", blurb = "Coming soon." }
             };

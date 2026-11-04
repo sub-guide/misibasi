@@ -534,6 +534,7 @@ MonoBehaviour:
   coffinDanceSceneName: Minigame_CoffinDance
   pigeonSceneName: Minigame_Pigeon
   flounderSceneName: Minigame_Flounder
+  timeChallengeSceneName: Minigame_TimeChallenge
   debugRouteAllToOiia: 0
   catalog:
   - id: oiia
@@ -560,6 +561,11 @@ MonoBehaviour:
     title: "\uBB3C \uB9CC\uB09C \uAD11\uC5B4"
     blurb: 
     icon: {fileID: 1135384064, guid: d15217905931abd4085ebc63f6580ad9, type: 3}
+    accentColor: {r: 1, g: 1, b: 1, a: 1}
+  - id: time_challenge
+    title: 스톱워치
+    blurb:
+    icon: {fileID: 21300000, guid: c8f3a17b4e9d42f0a6b5c2d8e1f09473, type: 3}
     accentColor: {r: 1, g: 1, b: 1, a: 1}
   menuCanvas: {fileID: 1891348209}
   detailTitle: {fileID: 943456224}
