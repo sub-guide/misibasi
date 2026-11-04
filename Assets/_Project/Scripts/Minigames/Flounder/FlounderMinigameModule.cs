@@ -16,8 +16,8 @@ namespace MiniParty.Minigames.Flounder
         [Tooltip("Canvas FadeOverlay 의 ScreenFader.")]
         [SerializeField] ScreenFader exitScreenFader;
 
-        [Tooltip("라운드 종료 후 화면 정지 유지(초)")]
-        [SerializeField] float sessionEndHoldSeconds = 3f;
+        [Tooltip("라운드 종료 후 화면 정지 유지(초). 0이면 바로 페이드 아웃.")]
+        [SerializeField] float sessionEndHoldSeconds = 0f;
 
         [Tooltip("정지 후 페이드 아웃(초)")]
         [SerializeField] float exitFadeOutSeconds = 0.85f;

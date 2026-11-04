@@ -545,7 +545,7 @@ MonoBehaviour:
   - id: rhythm_button_challenge
     title: "\uB9AC\uB4EC \uCC4C\uB9B0\uC9C0"
     blurb: 
-    icon: {fileID: 744362712, guid: 7b6ee32416da2534f96ca18fd1ad5987, type: 3}
+    icon: {fileID: 21300000, guid: f504e391b64906847be177625efa8b24, type: 3}
     accentColor: {r: 1, g: 1, b: 1, a: 1}
   - id: coffin_dance
     title: "\uAD00\uC9DD\uCDA4"

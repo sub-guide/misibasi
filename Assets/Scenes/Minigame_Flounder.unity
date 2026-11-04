@@ -1294,7 +1294,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1ae188a61603224fbcab57301369875, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roundDurationSeconds: 25
+  roundDurationSeconds: 23
   scorePerMash: 10
   startDonationDelayAfterInputSeconds: 0.65
   donationManager: {fileID: 414779737}
@@ -1333,7 +1333,7 @@ MonoBehaviour:
   displayName: "\uBB3C \uB9CC\uB09C \uAD11\uC5B4"
   gameManager: {fileID: 414779738}
   exitScreenFader: {fileID: 1900000003}
-  sessionEndHoldSeconds: 3
+  sessionEndHoldSeconds: 0
   exitFadeOutSeconds: 0.85
 --- !u!4 &414779740
 Transform:

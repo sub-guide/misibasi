@@ -11,10 +11,8 @@ namespace MiniParty.Minigames.Flounder
         public const int SlotCount = 4;
 
         [Header("규칙")]
-        [SerializeField] float roundDurationSeconds = 25f;
+        [SerializeField] float roundDurationSeconds = 23f;
         [SerializeField] int scorePerMash = 10;
-        [Tooltip("시작 후 ↑/↓ 입력 후 중앙 후원창을 띄우기 전 대기(초)")]
-        [SerializeField] float startDonationDelayAfterInputSeconds = 0.65f;
 
         [Header("시스템")]
         [SerializeField] FlounderDonationManager donationManager;
@@ -37,9 +35,7 @@ namespace MiniParty.Minigames.Flounder
         /// <summary>-1 = 없음, 0 = ↑, 1 = ↓. 같은 방향 연속 연타는 게이지 미증가.</summary>
         readonly int[] _lastFlapDirection = new int[SlotCount];
 
-        bool _startDonationInputReceived;
         bool _startDonationPopupShown;
-        float _startDonationPrePopupTimer;
 
         public IReadOnlyList<FlounderPlayer> Players => _players;
 
@@ -75,9 +71,7 @@ namespace MiniParty.Minigames.Flounder
             countdown?.Cancel();
             liveUi?.ResetViewers();
 
-            _startDonationInputReceived = false;
             _startDonationPopupShown = false;
-            _startDonationPrePopupTimer = 0f;
 
             for (var i = 0; i < SlotCount; i++)
                 _lastFlapDirection[i] = -1;
@@ -137,18 +131,6 @@ namespace MiniParty.Minigames.Flounder
 
             if (!_startDonationPopupShown)
             {
-                if (!_startDonationInputReceived)
-                {
-                    if (AnyActiveSlotFlapPressed())
-                        _startDonationInputReceived = true;
-
-                    return;
-                }
-
-                _startDonationPrePopupTimer += dt;
-                if (_startDonationPrePopupTimer < startDonationDelayAfterInputSeconds)
-                    return;
-
                 donationUi.ShowStartDonationPopup();
                 PlayStartDonationBgm();
                 _startDonationPopupShown = true;
@@ -167,24 +149,6 @@ namespace MiniParty.Minigames.Flounder
             countdown?.Begin();
             PlayCountdownBgm();
             _phase = FlounderGamePhase.Countdown;
-        }
-
-        bool AnyActiveSlotFlapPressed()
-        {
-            for (var i = 0; i < SlotCount; i++)
-            {
-                if (!_players[i].Active)
-                    continue;
-
-                FlounderInput input = GetInput(i);
-                if (input == null)
-                    continue;
-
-                if (input.PollUpperFlap() || input.PollLowerFlap())
-                    return true;
-            }
-
-            return false;
         }
 
         void TickCountdown(float dt)
