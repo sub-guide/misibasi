@@ -66,6 +66,21 @@ namespace MiniParty.Result
         [SerializeField] AnimationCurve readyBannerCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
         Coroutine _readyBannerMoveCo;
+        bool _cardsSuppressed;
+
+        public void SetCardsSuppressed(bool suppressed)
+        {
+            _cardsSuppressed = suppressed;
+            if (suppressed)
+                DeactivateAllCards();
+        }
+
+        public void DeactivateAllCards()
+        {
+            int n = hpCardAnimators != null ? hpCardAnimators.Length : 0;
+            for (var i = 0; i < n; i++)
+                SetCardActive(i, false);
+        }
 
         public void SetupIntro(int slotIndex, bool participated)
         {
@@ -109,6 +124,12 @@ namespace MiniParty.Result
         /// <summary>카드 i: <c>i &gt;= (max - current)</c> 이면 앞면 idle 스냅.</summary>
         public void SetHp(int current, int max)
         {
+            if (_cardsSuppressed)
+            {
+                DeactivateAllCards();
+                return;
+            }
+
             max = Mathf.Max(1, max);
             current = Mathf.Clamp(current, 0, max);
             int lost = max - current;

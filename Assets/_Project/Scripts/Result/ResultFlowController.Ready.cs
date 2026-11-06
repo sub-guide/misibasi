@@ -15,13 +15,16 @@ namespace MiniParty.Result
             for (var i = 0; i < 4; i++)
                 _readyMask[i] = false;
 
-            Debug.Log("[ResultFlowController] Ready: 참가 슬롯 START 토글 → 전원 READY 후 운영자 Enter.");
+            bool sacred = _session != null && _session.SacredMediation;
+            Debug.Log(sacred
+                ? "[ResultFlowController] 신성한 중재: 운영자 Enter 로 메인 복귀."
+                : "[ResultFlowController] Ready: 참가 슬롯 START 토글 → 전원 READY 후 운영자 Enter.");
 
             while (_running && _phase == ResultPhase.Ready)
             {
                 TickReadyInput();
 
-                if (_operatorInput.Confirm && AllParticipatedReady())
+                if (_operatorInput.Confirm && (sacred || AllParticipatedReady()))
                 {
                     yield return CoExitToMainMenu();
                     yield break;

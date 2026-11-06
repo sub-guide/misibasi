@@ -32,6 +32,12 @@ namespace MiniParty.Result
 
             InitHpDisplays(maxHp, models);
 
+            if (_session.SacredMediation)
+            {
+                Debug.Log("[ResultFlowController] 신성한 중재: 체력 감소 없음.");
+                yield break;
+            }
+
             bool anyLost = false;
             for (var i = 0; i < 4; i++)
             {

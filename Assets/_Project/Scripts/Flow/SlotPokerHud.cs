@@ -71,7 +71,7 @@ namespace MiniParty.Flow
             public GameObject back;
         }
 
-        public void Apply(PlayerSlotModel slot, int startingHp)
+        public void Apply(PlayerSlotModel slot, int startingHp, bool suppressCards = false)
         {
             if (slot == null)
                 return;
@@ -85,7 +85,7 @@ namespace MiniParty.Flow
             _lastState = state;
             _hasLastState = true;
 
-            if (hadPrev)
+            if (hadPrev && !suppressCards)
             {
                 if (prev == SlotState.ACTIVE && state == SlotState.READY)
                     PlayCardSfx(cardPlaceClip);
@@ -107,6 +107,12 @@ namespace MiniParty.Flow
             }
 
             ApplyStreakChips(slot.WinStreak);
+
+            if (suppressCards)
+            {
+                HideAllCards();
+                return;
+            }
 
             int lost = startingHp - hp;
             if (lost < 0)

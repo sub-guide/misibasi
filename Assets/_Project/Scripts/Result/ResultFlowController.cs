@@ -55,7 +55,24 @@ namespace MiniParty.Result
                 _willGameOver[i] = false;
 
             ResolveSlotViews();
+            ApplySacredMediationPresentation();
             StartCoroutine(CoRunFlow());
+        }
+
+        void ApplySacredMediationPresentation()
+        {
+            if (_session == null || !_session.SacredMediation)
+                return;
+
+            if (slotViews != null)
+            {
+                for (var i = 0; i < slotViews.Length; i++)
+                    slotViews[i]?.SetCardsSuppressed(true);
+            }
+
+            var canvasGo = GameObject.Find("Result_Canvas");
+            if (canvasGo != null)
+                SacredMediationBanner.Sync(canvasGo.transform, true);
         }
 
         void ResolveSlotViews()

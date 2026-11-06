@@ -230,6 +230,8 @@ namespace MiniParty.Flow
 
             if (_slots != null && enabled && _phase == PartyGamePhase.MainMenu)
                 RefreshSlotHud();
+
+            RefreshSacredLabel();
         }
 
         void OnDestroy()
@@ -257,6 +259,18 @@ namespace MiniParty.Flow
 
         void TickMenuLobby()
         {
+            if (partySession != null && _operatorInput.ShiftPressed)
+            {
+                partySession.ToggleSacredMediation();
+                Debug.Log(
+                    partySession.SacredMediation
+                        ? "[GameFlowDirector] 신성한 중재 ON"
+                        : "[GameFlowDirector] 신성한 중재 OFF",
+                    this);
+                RefreshSlotHud();
+                RefreshSacredLabel();
+            }
+
             if (_waitingSpinEnd && (reel == null || !reel.IsSpinning))
             {
                 _waitingSpinEnd = false;
@@ -359,8 +373,22 @@ namespace MiniParty.Flow
             RefreshMenuUi(forceDetail: true);
         }
 
+        bool SacredMediationOn => partySession != null && partySession.SacredMediation;
+
         bool CanStartFromMenu()
         {
+            if (SacredMediationOn)
+            {
+                for (var i = 0; i < 4; i++)
+                {
+                    SlotState st = _slots[i].State;
+                    if (st == SlotState.ACTIVE || st == SlotState.READY)
+                        return true;
+                }
+
+                return false;
+            }
+
             bool anyReady = false;
             for (var i = 0; i < 4; i++)
             {
@@ -404,7 +432,9 @@ namespace MiniParty.Flow
             for (var i = 0; i < 4; i++)
             {
                 PlayerSlotModel s = _slots[i];
-                if (s.State != SlotState.READY)
+                bool joins = s.State == SlotState.READY ||
+                             (SacredMediationOn && s.State == SlotState.ACTIVE);
+                if (!joins)
                     continue;
 
                 _playedThisSession[i] = true;
@@ -511,7 +541,15 @@ namespace MiniParty.Flow
                 return;
 
             int startHp = partySession != null ? partySession.StartingHp : 3;
-            slotPokerHud[i].Apply(_slots[i], startHp);
+            slotPokerHud[i].Apply(_slots[i], startHp, SacredMediationOn);
+        }
+
+        void RefreshSacredLabel()
+        {
+            if (menuCanvas == null)
+                return;
+
+            SacredMediationBanner.Sync(menuCanvas.transform, SacredMediationOn);
         }
 
         void EnsureCatalogPopulatedFallback()

@@ -36,6 +36,16 @@ namespace MiniParty.Flow
 
         public int StartingHp => startingHp;
 
+        public const string SacredMediationDisplayName = "신성한 중재";
+
+        /// <summary>메인 메뉴 Shift 토글. 레디 없이 운영자 Enter 로 진행하고, 체력은 줄지 않는다.</summary>
+        public bool SacredMediation { get; private set; }
+
+        public void ToggleSacredMediation()
+        {
+            SacredMediation = !SacredMediation;
+        }
+
         bool _lastPractice;
         readonly bool[] _lastPlayed = new bool[4];
 
