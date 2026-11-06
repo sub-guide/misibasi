@@ -16,6 +16,9 @@ namespace MiniParty.Flow
         [Tooltip("중앙 정차 시 아이콘 틴트. 기본 흰색.")]
         public Color accentColor = Color.white;
 
+        [Tooltip("Panel_Right 미리보기 오브젝트. 선택 중일 때만 활성. 비우면 빈 패널.")]
+        public GameObject preview;
+
         public static int WrapIndex(int value, int length)
         {
             if (length <= 0)

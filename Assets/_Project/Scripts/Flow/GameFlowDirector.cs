@@ -8,7 +8,6 @@ using MiniParty.Minigames.TimeChallenge;
 using MiniParty.Minigames.Oiia;
 using MiniParty.Minigames.Pigeon;
 using MiniParty.Minigames.RhythmButtonChallenge;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 namespace MiniParty.Flow
@@ -50,10 +49,8 @@ namespace MiniParty.Flow
 
         [Header("메뉴 UI 전용")]
         [SerializeField] Canvas menuCanvas;
-        [SerializeField] TMP_Text detailTitle;
-        [SerializeField] TMP_Text detailBody;
 
-        [Tooltip("없으면 ↑/↓는 우측 TMP만. Space 스핀도 없음.")]
+        [Tooltip("없으면 ↑/↓는 우측 미리보기만. Space 스핀도 없음.")]
         [SerializeField] MainMenuReelController reel;
 
         [Header("슬롯 HUD (4)")]
@@ -220,11 +217,8 @@ namespace MiniParty.Flow
                     Debug.LogWarning($"[GameFlowDirector] Slot Poker Hud Element {i} 가 비었습니다.", this);
             }
 
-            if (detailTitle == null || detailBody == null)
-                Debug.LogWarning("[GameFlowDirector] Detail Title/Body TMP 가 비어 있을 수 있습니다.", this);
-
             if (reel == null)
-                Debug.LogWarning("[GameFlowDirector] reel 이 비었습니다. ↑/↓는 TMP만 갱신합니다.", this);
+                Debug.LogWarning("[GameFlowDirector] reel 이 비었습니다. ↑/↓는 우측 미리보기만 갱신합니다.", this);
 
             if (menuBgmSource == null || ResolveMenuBgmClip() == null)
                 Debug.LogWarning("[GameFlowDirector] 메뉴 BGM AudioSource 또는 AudioClip 이 비었습니다.", this);
@@ -309,9 +303,7 @@ namespace MiniParty.Flow
                 {
                     if (string.IsNullOrWhiteSpace(oiiaSceneName))
                     {
-                        if (detailBody != null)
-                            detailBody.text = "oiiaSceneName is empty. Set it on GameFlowDirector.";
-
+                        Debug.LogError("[GameFlowDirector] oiiaSceneName 이 비었습니다. GameFlowDirector 에 설정하세요.", this);
                         return;
                     }
 
@@ -346,10 +338,7 @@ namespace MiniParty.Flow
 
             int winner = UnityEngine.Random.Range(0, catalog.Length);
             _selectedCatalogIndex = winner;
-            if (detailTitle != null)
-                detailTitle.text = string.Empty;
-            if (detailBody != null)
-                detailBody.text = string.Empty;
+            HideAllPreviews();
 
             reel.PlaySpin(winner);
             _waitingSpinEnd = true;
@@ -402,12 +391,7 @@ namespace MiniParty.Flow
                 string.Equals(entry.id, OiiaMinigameModule.BuiltInId, StringComparison.OrdinalIgnoreCase);
 
             if (!runRbc && !runCoffin && !runOiia && !runPigeon && !runFlounder && !runTimeChallenge)
-            {
-                if (detailBody != null)
-                    detailBody.text = "This minigame is not available yet.";
-
                 return;
-            }
 
             if (partySession == null)
                 return;
@@ -475,15 +459,29 @@ namespace MiniParty.Flow
 
         void RefreshMenuUi(bool forceDetail)
         {
-            if (!forceDetail || detailTitle == null || detailBody == null)
+            if (!forceDetail)
                 return;
 
             if (catalog == null || catalog.Length == 0)
                 return;
 
+            HideAllPreviews();
+
             GameCatalogEntry e = catalog[GameCatalogEntry.WrapIndex(_selectedCatalogIndex, catalog.Length)];
-            detailTitle.text = e.title;
-            detailBody.text = e.blurb;
+            if (e.preview != null)
+                e.preview.SetActive(true);
+        }
+
+        void HideAllPreviews()
+        {
+            if (catalog == null)
+                return;
+
+            for (var i = 0; i < catalog.Length; i++)
+            {
+                if (catalog[i] != null && catalog[i].preview != null)
+                    catalog[i].preview.SetActive(false);
+            }
         }
 
         void RefreshSlotHud()
