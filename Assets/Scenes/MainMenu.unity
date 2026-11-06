@@ -681,8 +681,6 @@ MonoBehaviour:
     accentColor: {r: 1, g: 1, b: 1, a: 1}
     preview: {fileID: 1249659453}
   menuCanvas: {fileID: 1891348209}
-  detailTitle: {fileID: 0}
-  detailBody: {fileID: 0}
   reel: {fileID: 538125127}
   slotPokerHud:
   - {fileID: 2053135955234551533}
@@ -691,7 +689,7 @@ MonoBehaviour:
   - {fileID: 184836784}
   menuBgmSource: {fileID: 320727197}
   menuBgmClip: {fileID: 8300000, guid: 1faf9f32afada3240883ce218330aedf, type: 3}
-  menuBgmVolume: 1
+  menuBgmVolume: 0.5
 --- !u!4 &320727196
 Transform:
   m_ObjectHideFlags: 0

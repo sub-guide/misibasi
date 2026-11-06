@@ -190,7 +190,7 @@ MonoBehaviour:
   pullCoefficient: 2
   danceSineHz: 2
   noiseAmp: 0.05
-  failFloorPenaltyScore: 500
+  failFloorPenaltyScore: 100
   failFloorRecoverLocalY: 2.2
   failFloorRecoverDuration: 1
   failFloorRecoverReturnPhaseStart: 0.9
