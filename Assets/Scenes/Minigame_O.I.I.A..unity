@@ -1257,6 +1257,8 @@ MonoBehaviour:
   speakerLetterSpawnJitter: 18
   speakerLetterTemplate: {fileID: 594064463}
   speakerLetterOverrideFontSizeFromTier: 1
+  speakerSlideDistance: 400
+  speakerSlideSeconds: 0.2
   speakerTier1:
     WooferPulseScale: 1.2
     WooferPulseSeconds: 0.12

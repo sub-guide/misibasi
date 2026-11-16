@@ -123,7 +123,7 @@ EMPTY 슬롯은 무시한다.
 | 시스템 | 동작 |
 |--------|------|
 | UiShake | 연타 중. 정답 `uiShakeTier1/2/3` + 상시 `uiShakeIdleTier1/2/3`. 티어 1은 진폭 0. 대상은 `DjBox`의 `Gauge_*`가 아닌 직속 자식과 `Mask`의 `Bg*`. `DjBox` 자신·게이지·`StageScreen`·`Mask`는 고정 |
-| Speakers | `SpeakerL/R_1~3`. 티어 n이면 1~n이 같이 켜진다. 패턴 스텝마다 켜진 우퍼 펄스 · O/I/A 글자 · 현재 티어 `speakerTier1/2/3` |
+| Speakers | `SpeakerL/R_1~3`. 티어 n이면 1~n이 제자리로 들어오고, 더 높은 번호는 나간다. 왼쪽은 왼쪽, 오른쪽은 오른쪽. 거리 `speakerSlideDistance`(기본 400) · 시간 `speakerSlideSeconds`(기본 0.4). 패턴 스텝마다 들어와야 하는 우퍼 펄스 · O/I/A 글자 · 현재 티어 `speakerTier1/2/3` |
 | Spotlight | 연타 중 Fixture. Beam 스트로보는 개인 티어 3 |
 | StageBackground | 빌드업 Space. 연타 티어 1은 둘 다 끔(StageScreen 기본). 티어 2 Space. 티어 3 Club |
 | Crowd | 개인 티어 3 진입 시 Rising → Active. 이탈 시 즉시 숨김. 퇴장 페이드 없음 |

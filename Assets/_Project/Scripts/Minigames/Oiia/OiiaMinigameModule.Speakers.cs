@@ -49,6 +49,14 @@ namespace MiniParty.Minigames.Oiia
         [Tooltip("켜면 티어 LetterFontSize로 템플릿 fontSize를 덮어씀. 끄면 템플릿 크기 유지.")]
         [SerializeField] bool speakerLetterOverrideFontSizeFromTier = true;
 
+        [Tooltip("스피커가 제자리까지 들어오는 거리(px). 왼쪽은 왼쪽, 오른쪽은 오른쪽.")]
+        [SerializeField, Min(0f)]
+        float speakerSlideDistance = 400f;
+
+        [Tooltip("들어오거나 나가는 데 걸리는 시간(초). 중간에 티어가 바뀌면 그 자리에서 반대 방향으로 이어간다.")]
+        [SerializeField, Min(0.05f)]
+        float speakerSlideSeconds = 0.4f;
+
         [Header("스피커 연출")]
         [SerializeField] SpeakerTierFxSettings speakerTier1 = new SpeakerTierFxSettings
         {
@@ -119,6 +127,18 @@ namespace MiniParty.Minigames.Oiia
 
         readonly WooferPulseState[][] _speakerWoofers = new WooferPulseState[SlotCount][];
         readonly int[] _speakerShownTier = new int[SlotCount];
+
+        struct SpeakerSlideState
+        {
+            public Vector2 Home;
+            public float Progress;
+            public bool Captured;
+            public float ShakePhaseX;
+            public float ShakePhaseY;
+        }
+
+        /// <summary>0~2 왼쪽, 3~5 오른쪽. Progress 0은 슬롯 밖, 1은 제자리.</summary>
+        readonly SpeakerSlideState[,] _speakerSlides = new SpeakerSlideState[SlotCount, 6];
         readonly SpeakerLetterFx[][] _speakerLetters = new SpeakerLetterFx[SlotCount][];
         readonly Transform[] _speakerLetterParents = new Transform[SlotCount];
 
@@ -138,7 +158,15 @@ namespace MiniParty.Minigames.Oiia
                 RestoreSpeakerWooferScales(i);
 
             _speakerShownTier[i] = int.MinValue;
+            for (var s = 0; s < 6; s++)
+            {
+                SpeakerSlideState slide = _speakerSlides[i, s];
+                slide.Progress = 0f;
+                _speakerSlides[i, s] = slide;
+            }
+
             SyncTierSpeakers(i);
+            TickSpeakerSlides(i);
             DestroySpeakerLetterPool(i);
             EnsureSpeakerLetterPool(i);
             HideAllSpeakerLetters(i);
@@ -156,42 +184,141 @@ namespace MiniParty.Minigames.Oiia
         }
 
         /// <summary>
-        /// 티어 n이면 좌우 스피커 1~n을 켠다. 더 높은 번호는 끈다.
-        /// 켜진 스피커의 우퍼만 펄스 대상이다.
+        /// 티어 n이면 좌우 스피커 1~n이 제자리로 들어오고, 그보다 높은 번호는 밖으로 나간다.
+        /// 왼쪽은 왼쪽, 오른쪽은 오른쪽이다. 우퍼 펄스는 들어와야 하는 스피커만.
         /// </summary>
         void SyncTierSpeakers(int i)
         {
             int tier = _aliveMask[i] ? PlayerTier(i) : 0;
+            CaptureSpeakerHomes(i);
+
             if (_speakerShownTier[i] == tier && _speakerWoofers[i] != null)
                 return;
 
             RestoreSpeakerWooferScales(i);
-
-            if (TryGetBinding(i, out SlotUiBindings b))
-            {
-                SetSpeakerRootsActive(b.SpeakerLeft, tier);
-                SetSpeakerRootsActive(b.SpeakerRight, tier);
-            }
-
             CaptureSpeakerWoofers(i, tier);
             _speakerShownTier[i] = tier;
         }
 
-        static void SetSpeakerRootsActive(RectTransform[] speakers, int tier)
+        void CaptureSpeakerHomes(int i)
+        {
+            if (!TryGetBinding(i, out SlotUiBindings b))
+                return;
+
+            CaptureSpeakerSideHomes(i, b.SpeakerLeft, 0);
+            CaptureSpeakerSideHomes(i, b.SpeakerRight, 3);
+        }
+
+        void CaptureSpeakerSideHomes(int slot, RectTransform[] speakers, int indexOffset)
         {
             if (speakers == null)
                 return;
 
-            for (var n = 0; n < speakers.Length; n++)
+            int count = Mathf.Min(3, speakers.Length);
+            for (var n = 0; n < count; n++)
             {
                 RectTransform speaker = speakers[n];
                 if (speaker == null)
                     continue;
 
-                bool show = n < tier;
-                if (speaker.gameObject.activeSelf != show)
-                    speaker.gameObject.SetActive(show);
+                int index = indexOffset + n;
+                SpeakerSlideState slide = _speakerSlides[slot, index];
+                if (slide.Captured)
+                    continue;
+
+                slide.Home = speaker.anchoredPosition;
+                slide.Captured = true;
+                slide.Progress = 0f;
+                slide.ShakePhaseX = Random.Range(0f, 1000f);
+                slide.ShakePhaseY = Random.Range(0f, 1000f);
+                _speakerSlides[slot, index] = slide;
             }
+        }
+
+        void TickSpeakerSlides(int i)
+        {
+            if (!TryGetBinding(i, out SlotUiBindings b))
+                return;
+
+            int tier = _aliveMask[i] ? PlayerTier(i) : 0;
+            float step = Time.deltaTime / Mathf.Max(0.05f, speakerSlideSeconds);
+            TickSpeakerSide(i, b.SpeakerLeft, 0, tier, step);
+            TickSpeakerSide(i, b.SpeakerRight, 3, tier, step);
+        }
+
+        void TickSpeakerSide(int slot, RectTransform[] speakers, int indexOffset, int tier, float step)
+        {
+            if (speakers == null)
+                return;
+
+            int count = Mathf.Min(3, speakers.Length);
+            for (var n = 0; n < count; n++)
+            {
+                RectTransform speaker = speakers[n];
+                if (speaker == null)
+                    continue;
+
+                int index = indexOffset + n;
+                SpeakerSlideState slide = _speakerSlides[slot, index];
+                if (!slide.Captured)
+                    continue;
+
+                bool want = n < tier;
+                if (want)
+                    slide.Progress = Mathf.MoveTowards(slide.Progress, 1f, step);
+                else
+                    slide.Progress = Mathf.MoveTowards(slide.Progress, 0f, step);
+
+                _speakerSlides[slot, index] = slide;
+                ApplySpeakerSlidePose(slot, index, speaker);
+            }
+        }
+
+        void ApplySpeakerSlidePose(int slot, int index, RectTransform speaker)
+        {
+            SpeakerSlideState slide = _speakerSlides[slot, index];
+            float progress = Mathf.Clamp01(slide.Progress);
+            float eased = progress * progress * (3f - 2f * progress);
+            float sign = index < 3 ? -1f : 1f;
+            Vector2 outside = slide.Home + new Vector2(sign * Mathf.Max(0f, speakerSlideDistance), 0f);
+            Vector2 pos = Vector2.Lerp(outside, slide.Home, eased);
+
+            if (progress > 0f)
+                pos += SpeakerShakeOffset(slot, slide);
+
+            speaker.anchoredPosition = pos;
+
+            bool show = progress > 0.001f;
+            if (speaker.gameObject.activeSelf != show)
+                speaker.gameObject.SetActive(show);
+        }
+
+        Vector2 SpeakerShakeOffset(int slot, SpeakerSlideState slide)
+        {
+            if (!_tier2Active || !_aliveMask[slot])
+                return Vector2.zero;
+
+            Vector2 offset = Vector2.zero;
+            UiShakeIdleTierSettings idle = GetUiShakeIdleTierSettings(slot);
+            float idleAmp = Mathf.Max(0f, idle.Amplitude);
+            if (idleAmp > 0f)
+            {
+                float idleTime = Time.unscaledTime * Mathf.Max(1f, idle.Frequency);
+                offset.x += (Mathf.PerlinNoise(slide.ShakePhaseX, idleTime) - 0.5f) * 2f * idleAmp;
+                offset.y += (Mathf.PerlinNoise(slide.ShakePhaseY, idleTime + 2.7f) - 0.5f) * 2f * idleAmp;
+            }
+
+            if (_uiShakeRemaining[slot] > 0f)
+            {
+                float dur = Mathf.Max(0.0001f, _uiShakeActiveDuration[slot]);
+                float decay = Mathf.Clamp01(_uiShakeRemaining[slot] / dur);
+                float hitAmp = _uiShakeIntensity[slot] * decay;
+                float hitTime = Time.unscaledTime * Mathf.Max(1f, _uiShakeActiveFrequency[slot]);
+                offset.x += (Mathf.PerlinNoise(slide.ShakePhaseX + 10f, hitTime) - 0.5f) * 2f * hitAmp;
+                offset.y += (Mathf.PerlinNoise(slide.ShakePhaseY + 10f, hitTime + 4.1f) - 0.5f) * 2f * hitAmp;
+            }
+
+            return offset;
         }
 
         void CaptureSpeakerWoofers(int i, int tier)
@@ -524,6 +651,7 @@ namespace MiniParty.Minigames.Oiia
         void TickSpeakers(int i)
         {
             SyncTierSpeakers(i);
+            TickSpeakerSlides(i);
             TickSpeakerWooferPulses(i);
             TickSpeakerLetters(i);
         }
