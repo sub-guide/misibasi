@@ -136,13 +136,14 @@ namespace MiniParty.Minigames.Oiia
             if (hud == null)
                 hud = djBox.Find("Hud");
 
-            if (hud != null)
+            HudScoreText = FindTmp(djBox, "Score", "HudScore");
+            if (HudScoreText == null && hud != null)
                 HudScoreText = FindTmp(hud, "Score", "HudScore");
-            else if (HudScoreText == null)
-                HudScoreText = FindTmp(djBox, "Score", "HudScore");
 
-            // Combo: HudDisplay 밖. DjBox 직속 `Combo` 권장.
-            HudComboText = FindTmp(djBox, "Combo", "HudCombo");
+            if (hud != null)
+                HudComboText = FindTmp(hud, "Combo", "HudCombo");
+            if (HudComboText == null)
+                HudComboText = FindTmp(djBox, "Combo", "HudCombo");
             if (HudComboText == null)
                 HudComboText = FindTmp(root, "Combo", "HudCombo");
 

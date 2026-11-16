@@ -86,8 +86,8 @@ BGM은 빌드업을 포함해 라운드가 돌아가는 동안 재생된다. 시
 |------|------|
 | `WaitingText` · `SlotPanelBackgroundImage` · `CatAnimator` | 공통 |
 | `DjBoxRoot` · Face/Dpad/Shoulder · `DjPadButtons[10]` | SNES 10키 |
-| `HudScoreText` | 점수. 항상 표시 |
-| `HudComboText` | `{n}<size=55%> COMBO</size>`. 0이면 숨김 |
+| `HudScoreText` | `DjBox/Score`. 점수. 항상 표시 |
+| `HudComboText` | `HudDisplay/Combo`. `{n}<size=55%> COMBO</size>`. 0이면 숨김 |
 | `TierGaugeLeft[3]` · `TierGaugeRight[3]` | `Gauge_L_1~3` · `Gauge_R_1~3`. 현재 티어 쌍만 켜고 `fillAmount = Gauge / 그 티어 GaugeMax`. 자식 `Frame`은 채우지 않음 |
 | `SubPatternGuideText` | 맞춘 접두만 대문자 |
 | `SpeakerLeft[3]` · `SpeakerRight[3]` | `SpeakerL_1~3` · `SpeakerR_1~3`. 티어 n까지 켜짐 |

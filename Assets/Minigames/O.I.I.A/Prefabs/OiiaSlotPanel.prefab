@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 884684585768796888}
   - component: {fileID: 6865088377595290664}
   m_Layer: 5
-  m_Name: Combo
+  m_Name: Score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -140,17 +140,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 30 COMBO
+  m_text: 10000000
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d474ace274d1b664b93d7d63c4b87933, type: 2}
-  m_sharedMaterial: {fileID: 7357516969491034946, guid: d474ace274d1b664b93d7d63c4b87933, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7a7fa48d55f138f4fba2ecc31e9f2aa1, type: 2}
+  m_sharedMaterial: {fileID: 8685302665304615661, guid: 7a7fa48d55f138f4fba2ecc31e9f2aa1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278255615
-  m_fontColor: {r: 1, g: 1, b: 0, a: 1}
+    rgba: 4294967040
+  m_fontColor: {r: 0, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -167,8 +167,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 80
+  m_fontSizeBase: 80
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -845,7 +845,7 @@ GameObject:
   - component: {fileID: 2793911905802225237}
   - component: {fileID: 9035849469903429924}
   m_Layer: 5
-  m_Name: Score
+  m_Name: Combo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -898,7 +898,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 10000000000
+  m_text: 1000 COMBO
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d474ace274d1b664b93d7d63c4b87933, type: 2}
   m_sharedMaterial: {fileID: 7357516969491034946, guid: d474ace274d1b664b93d7d63c4b87933, type: 2}
@@ -907,8 +907,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4278228224
+  m_fontColor: {r: 0, g: 0.5849056, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -932,7 +932,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 16
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1662,8 +1662,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294901760
+  m_fontColor: {r: 0, g: 0, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3211,8 +3211,8 @@ MonoBehaviour:
   - {fileID: 5932548579905397270}
   - {fileID: 1131547742319207844}
   - {fileID: 4361573051260714709}
-  HudScoreText: {fileID: 9035849469903429924}
-  HudComboText: {fileID: 6865088377595290664}
+  HudScoreText: {fileID: 6865088377595290664}
+  HudComboText: {fileID: 9035849469903429924}
   TierGaugeLeft:
   - {fileID: 8801353835796667289}
   - {fileID: 7864456415249498171}
