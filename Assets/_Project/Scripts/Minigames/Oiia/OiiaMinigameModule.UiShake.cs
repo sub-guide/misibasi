@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace MiniParty.Minigames.Oiia
 {
@@ -30,9 +29,24 @@ namespace MiniParty.Minigames.Oiia
         }
 
         [Header("슬롯 UI 흔들림 — 정답 임펄스")]
-        [Tooltip("T2 정답 시 HUD·DjBox·StageScreen/Mask의 Bg 자식 임펄스. StageScreen과 Mask는 흔들지 않는다.")]
-        [FormerlySerializedAs("uiShakeTier3")]
+        [Tooltip("개인 티어 1. 0이면 정답 흔들림 없음.")]
+        [SerializeField] UiShakeTierSettings uiShakeTier1 = new UiShakeTierSettings
+        {
+            Amplitude = 0f,
+            Duration = 0f,
+            Frequency = 0f
+        };
+
+        [Tooltip("개인 티어 2.")]
         [SerializeField] UiShakeTierSettings uiShakeTier2 = new UiShakeTierSettings
+        {
+            Amplitude = 8f,
+            Duration = 1f,
+            Frequency = 5f
+        };
+
+        [Tooltip("개인 티어 3. 씬 YAML 키는 uiShakeTier3.")]
+        [SerializeField] UiShakeTierSettings uiShakeTier3 = new UiShakeTierSettings
         {
             Amplitude = 20f,
             Duration = 0.25f,
@@ -40,9 +54,22 @@ namespace MiniParty.Minigames.Oiia
         };
 
         [Header("슬롯 UI 흔들림 — 상시 진동")]
-        [Tooltip("T2 상시 진동. 정답 임펄스와 독립·합산.")]
-        [FormerlySerializedAs("uiShakeIdleTier3")]
+        [Tooltip("개인 티어 1 상시 진동.")]
+        [SerializeField] UiShakeIdleTierSettings uiShakeIdleTier1 = new UiShakeIdleTierSettings
+        {
+            Amplitude = 0f,
+            Frequency = 0f
+        };
+
+        [Tooltip("개인 티어 2 상시 진동.")]
         [SerializeField] UiShakeIdleTierSettings uiShakeIdleTier2 = new UiShakeIdleTierSettings
+        {
+            Amplitude = 10f,
+            Frequency = 1f
+        };
+
+        [Tooltip("개인 티어 3 상시 진동. 씬 YAML 키는 uiShakeIdleTier3.")]
+        [SerializeField] UiShakeIdleTierSettings uiShakeIdleTier3 = new UiShakeIdleTierSettings
         {
             Amplitude = 8f,
             Frequency = 32f
@@ -66,9 +93,25 @@ namespace MiniParty.Minigames.Oiia
         readonly float[] _uiShakeActiveDuration = new float[SlotCount];
         readonly float[] _uiShakeActiveFrequency = new float[SlotCount];
 
-        UiShakeTierSettings GetUiShakeTierSettings() => uiShakeTier2;
+        UiShakeTierSettings GetUiShakeTierSettings(int slotIndex)
+        {
+            int tier = PlayerTier(slotIndex);
+            if (tier >= PlayerTierMax)
+                return uiShakeTier3;
+            if (tier >= 2)
+                return uiShakeTier2;
+            return uiShakeTier1;
+        }
 
-        UiShakeIdleTierSettings GetUiShakeIdleTierSettings() => uiShakeIdleTier2;
+        UiShakeIdleTierSettings GetUiShakeIdleTierSettings(int slotIndex)
+        {
+            int tier = PlayerTier(slotIndex);
+            if (tier >= PlayerTierMax)
+                return uiShakeIdleTier3;
+            if (tier >= 2)
+                return uiShakeIdleTier2;
+            return uiShakeIdleTier1;
+        }
 
         void ResetAllSlotUiShake()
         {
@@ -111,17 +154,28 @@ namespace MiniParty.Minigames.Oiia
             if (!TryGetBinding(i, out SlotUiBindings b))
                 return;
 
-            var list = new List<UiShakeTarget>(8);
-            TryAddUiShakeTarget(list, b.HudScoreText);
-            TryAddUiShakeTarget(list, b.HudComboText);
-            TryAddUiShakeTarget(list, b.FeverGaugeImage);
-            TryAddUiShakeTarget(list, b.FeverGaugeImageB);
-            TryAddUiShakeTarget(list, b.SubPatternGuideText);
-            TryAddUiShakeTarget(list, b.DjBoxRoot);
+            var list = new List<UiShakeTarget>(16);
+            AddDjBoxChildShakeTargets(list, b.DjBoxRoot);
             AddStageBackgroundShakeTargets(list, b.StageScreenRoot);
 
             _uiShakeTargets[i] = list.ToArray();
             _uiShakeTargetsCaptured[i] = true;
+        }
+
+        /// <summary>DjBox 자신과 <c>Gauge_*</c>는 고정. 나머지 직속 자식만 흔든다.</summary>
+        static void AddDjBoxChildShakeTargets(List<UiShakeTarget> list, RectTransform djBox)
+        {
+            if (djBox == null)
+                return;
+
+            for (var c = 0; c < djBox.childCount; c++)
+            {
+                Transform child = djBox.GetChild(c);
+                if (child == null || child.name.StartsWith("Gauge"))
+                    continue;
+
+                TryAddUiShakeTarget(list, child);
+            }
         }
 
         static void AddStageBackgroundShakeTargets(List<UiShakeTarget> list, RectTransform stage)
@@ -176,7 +230,7 @@ namespace MiniParty.Minigames.Oiia
 
         void TriggerSlotUiShakeOnCorrect(int i, ref SlotRuntime sr)
         {
-            UiShakeTierSettings fx = GetUiShakeTierSettings();
+            UiShakeTierSettings fx = GetUiShakeTierSettings(i);
             if (fx.Amplitude <= 0f)
                 return;
 
@@ -205,7 +259,7 @@ namespace MiniParty.Minigames.Oiia
                 return;
             }
 
-            UiShakeIdleTierSettings idleFx = GetUiShakeIdleTierSettings();
+            UiShakeIdleTierSettings idleFx = GetUiShakeIdleTierSettings(i);
             float idleAmp = _aliveMask[i] ? Mathf.Max(0f, idleFx.Amplitude) : 0f;
             float idleHz = Mathf.Max(1f, idleFx.Frequency);
 

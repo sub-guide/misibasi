@@ -43,14 +43,14 @@ namespace MiniParty.Minigames.Oiia
             OnDjHit(slotIndex, firstPressed);
         }
 
-        /// <summary>운영자 부여. 입력 1회분(+100)만 더하고 패턴·콤보·보너스는 진행하지 않는다.</summary>
+        /// <summary>운영자 부여. 그 슬롯의 현재 티어 입력 점수만 더하고 패턴·콤보·보너스·게이지는 진행하지 않는다.</summary>
         void TickOperatorScoreGrant(int i)
         {
             if (!OperatorScoreGrantInput.WasPressed(i))
                 return;
 
             ref SlotRuntime sr = ref _slots[i];
-            sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, DjHitScore);
+            sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, HitScoreForTier(PlayerTier(i)));
         }
 
         void OnDjHit(int i, int buttonIndex)
@@ -65,13 +65,17 @@ namespace MiniParty.Minigames.Oiia
                 ActivateAllDjTargets(i);
 
             sr.Combo++;
+            int tierAtHit = PlayerTier(i);
+            AddPlayerTierGaugeOnHit(i);
             int steppedPosition = AdvanceSubPatternOnHit(i, ref sr, out bool patternCompleted);
 
-            sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, DjHitScore);
+            sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, HitScoreForTier(tierAtHit));
             if (patternCompleted)
                 sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, PatternCompleteBonusScore);
 
             TriggerSlotUiShakeOnCorrect(i, ref sr);
+            if (PlayerTier(i) < PlayerTierMax)
+                PlayCatSingleCycleIfIdle(i);
 
             if (steppedPosition > 0 &&
                 patternStepSfx != null &&

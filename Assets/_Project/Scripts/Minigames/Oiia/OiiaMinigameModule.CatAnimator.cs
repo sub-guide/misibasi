@@ -10,6 +10,8 @@ namespace MiniParty.Minigames.Oiia
             "`SpiningCat_UI.anim` / `SpiningCat_UI_Loop.anim`(Image의 m_Sprite)을 컨트롤러에 넣어야 합니다.")]
         [SerializeField] string catAnimatorIdleState = "Idle";
 
+        [SerializeField] string catAnimatorSpinOnceState = "SpinOnce";
+
         [SerializeField] string catAnimatorSpinLoopState = "SpinLoop";
 
         [SerializeField] int catAnimatorLayer = 0;
@@ -44,6 +46,11 @@ namespace MiniParty.Minigames.Oiia
             a.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         }
 
+        bool IsCatSpinOnceStillRunning(AnimatorStateInfo st)
+        {
+            return st.IsName(catAnimatorSpinOnceState) && st.normalizedTime < 0.99f;
+        }
+
         void UpdateCatAnimationMode(int i)
         {
             if (!TryGetBinding(i, out SlotUiBindings b))
@@ -55,9 +62,13 @@ namespace MiniParty.Minigames.Oiia
 
             int layer = catAnimatorLayer;
             AnimatorStateInfo st = a.GetCurrentAnimatorStateInfo(layer);
+            bool tier3 = _aliveMask[i] && _tier2Active && PlayerTier(i) >= PlayerTierMax;
 
-            if (_aliveMask[i])
+            if (tier3)
             {
+                if (IsCatSpinOnceStillRunning(st))
+                    return;
+
                 if (!st.IsName(catAnimatorSpinLoopState))
                     a.Play(CatStateHash(catAnimatorSpinLoopState), layer, 0f);
 
@@ -66,6 +77,30 @@ namespace MiniParty.Minigames.Oiia
 
             if (st.IsName(catAnimatorSpinLoopState))
                 a.Play(CatStateHash(catAnimatorIdleState), layer, 0f);
+        }
+
+        void PlayCatSingleCycleIfIdle(int i)
+        {
+            if (!TryGetBinding(i, out SlotUiBindings b))
+                return;
+
+            Animator a = b.CatAnimator;
+            if (!CanDriveCatAnimator(a))
+                return;
+
+            if (PlayerTier(i) >= PlayerTierMax)
+                return;
+
+            int layer = catAnimatorLayer;
+            AnimatorStateInfo st = a.GetCurrentAnimatorStateInfo(layer);
+
+            if (IsCatSpinOnceStillRunning(st))
+                return;
+
+            if (st.IsName(catAnimatorSpinLoopState))
+                return;
+
+            a.Play(CatStateHash(catAnimatorSpinOnceState), layer, 0f);
         }
     }
 }

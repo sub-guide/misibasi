@@ -16,7 +16,6 @@ namespace MiniParty.Minigames.Oiia
             _running = true;
 
             _slots = new SlotRuntime[SlotCount];
-            ResetGlobalTierFeverMode();
             _roundElapsed = 0f;
             _tier2Active = false;
 
@@ -46,6 +45,7 @@ namespace MiniParty.Minigames.Oiia
             sr.ScoreSum = 0;
             sr.Combo = 0;
             sr.SubPatternMatched = 0;
+            ResetPlayerTier(ref sr);
 
             if (TryGetBinding(i, out SlotUiBindings b))
             {

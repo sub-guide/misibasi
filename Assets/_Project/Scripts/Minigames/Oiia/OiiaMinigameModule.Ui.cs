@@ -65,22 +65,39 @@ namespace MiniParty.Minigames.Oiia
         }
 
         /// <summary>
-        /// DjBox 독립 게이지 ×2 — SubPattern 진행(matched/12). 패턴 완성 시 0으로 돌아간다.
+        /// 현재 티어의 <c>Gauge_L_n</c> · <c>Gauge_R_n</c>만 켜고 채운다. 12글자 가이드와는 별개다.
         /// </summary>
         void FlushFeverGauge(SlotUiBindings ui, ref SlotRuntime sr)
         {
-            int len = SubPatternLower.Length;
-            float fill = len > 0 ? sr.SubPatternMatched / (float)len : 0f;
+            int tier = sr.Tier;
+            if (tier < PlayerTierMin)
+                tier = PlayerTierMin;
+            if (tier > PlayerTierMax)
+                tier = PlayerTierMax;
 
-            fill = Mathf.Clamp01(fill);
-            SetFeverGaugeFill(ui.FeverGaugeImage, fill);
-            SetFeverGaugeFill(ui.FeverGaugeImageB, fill);
+            float fill = Mathf.Clamp01(sr.Gauge / GaugeMaxForTier(tier));
+            ApplyTierGaugePair(ui.TierGaugeLeft, tier, fill);
+            ApplyTierGaugePair(ui.TierGaugeRight, tier, fill);
         }
 
-        static void SetFeverGaugeFill(Image gauge, float fill)
+        static void ApplyTierGaugePair(Image[] gauges, int tier, float fill)
         {
-            if (gauge != null)
-                gauge.fillAmount = fill;
+            if (gauges == null)
+                return;
+
+            for (var i = 0; i < gauges.Length; i++)
+            {
+                Image gauge = gauges[i];
+                if (gauge == null)
+                    continue;
+
+                bool show = i == tier - 1;
+                if (gauge.gameObject.activeSelf != show)
+                    gauge.gameObject.SetActive(show);
+
+                if (show)
+                    gauge.fillAmount = fill;
+            }
         }
 
         void FlushWaitingUi(int i, SlotUiBindings ui)

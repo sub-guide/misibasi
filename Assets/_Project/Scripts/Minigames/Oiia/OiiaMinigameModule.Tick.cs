@@ -42,6 +42,7 @@ namespace MiniParty.Minigames.Oiia
                 {
                     TickGameplay(i);
                     TickOperatorScoreGrant(i);
+                    TickPlayerTierGauge(i);
                 }
 
                 UpdateCatAnimationMode(i);

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace MiniParty.Minigames.Oiia
 {
@@ -52,18 +51,44 @@ namespace MiniParty.Minigames.Oiia
         [SerializeField] bool speakerLetterOverrideFontSizeFromTier = true;
 
         [Header("스피커 연출")]
-        [FormerlySerializedAs("speakerTier3")]
+        [SerializeField] SpeakerTierFxSettings speakerTier1 = new SpeakerTierFxSettings
+        {
+            WooferPulseScale = 1.2f,
+            WooferPulseSeconds = 0.12f,
+            LetterDuration = 0.45f,
+            LetterFontSize = 64f,
+            LetterFlyDistance = 70f,
+            LetterShakeAmplitude = 4f,
+            LetterShakeFrequency = 22f,
+            LetterScaleStart = 0.35f,
+            LetterScalePeak = 1.2f
+        };
+
         [SerializeField] SpeakerTierFxSettings speakerTier2 = new SpeakerTierFxSettings
         {
-            WooferPulseScale = 1.55f,
-            WooferPulseSeconds = 0.14f,
+            WooferPulseScale = 1.35f,
+            WooferPulseSeconds = 0.12f,
+            LetterDuration = 0.45f,
+            LetterFontSize = 80f,
+            LetterFlyDistance = 95f,
+            LetterShakeAmplitude = 8f,
+            LetterShakeFrequency = 28f,
+            LetterScaleStart = 0.35f,
+            LetterScalePeak = 1.4f
+        };
+
+        [Tooltip("개인 티어 3. 씬 YAML 키는 speakerTier3.")]
+        [SerializeField] SpeakerTierFxSettings speakerTier3 = new SpeakerTierFxSettings
+        {
+            WooferPulseScale = 2f,
+            WooferPulseSeconds = 0.1f,
             LetterDuration = 0.5f,
             LetterFontSize = 100f,
-            LetterFlyDistance = 120f,
-            LetterShakeAmplitude = 14f,
-            LetterShakeFrequency = 34f,
-            LetterScaleStart = 0.3f,
-            LetterScalePeak = 1.65f
+            LetterFlyDistance = 200f,
+            LetterShakeAmplitude = 20f,
+            LetterShakeFrequency = 40f,
+            LetterScaleStart = 0f,
+            LetterScalePeak = 2f
         };
 
         struct WooferPulseState
@@ -97,7 +122,15 @@ namespace MiniParty.Minigames.Oiia
         readonly SpeakerLetterFx[][] _speakerLetters = new SpeakerLetterFx[SlotCount][];
         readonly Transform[] _speakerLetterParents = new Transform[SlotCount];
 
-        SpeakerTierFxSettings GetSpeakerTierFx() => speakerTier2;
+        SpeakerTierFxSettings GetSpeakerTierFx(int slotIndex)
+        {
+            int tier = PlayerTier(slotIndex);
+            if (tier >= PlayerTierMax)
+                return speakerTier3;
+            if (tier >= 2)
+                return speakerTier2;
+            return speakerTier1;
+        }
 
         void ResetSpeakersAtBegin(int i)
         {
@@ -230,7 +263,7 @@ namespace MiniParty.Minigames.Oiia
                 tmp = go.AddComponent<TextMeshProUGUI>();
                 tmp.alignment = TextAlignmentOptions.Center;
                 tmp.fontStyle = FontStyles.Bold;
-                tmp.fontSize = Mathf.Max(8f, speakerTier2.LetterFontSize);
+                tmp.fontSize = Mathf.Max(8f, speakerTier1.LetterFontSize);
                 tmp.color = Color.white;
                 tmp.raycastTarget = false;
                 tmp.richText = false;
@@ -312,7 +345,7 @@ namespace MiniParty.Minigames.Oiia
             if (woofers == null)
                 return;
 
-            SpeakerTierFxSettings fx = GetSpeakerTierFx();
+            SpeakerTierFxSettings fx = GetSpeakerTierFx(slotIndex);
             float dur = Mathf.Max(0.02f, fx.WooferPulseSeconds);
             float peak = Mathf.Max(1.01f, fx.WooferPulseScale);
 
@@ -338,7 +371,7 @@ namespace MiniParty.Minigames.Oiia
             if (!TryGetBinding(slotIndex, out SlotUiBindings b) || b.DjBoxRoot == null)
                 return;
 
-            SpeakerTierFxSettings tierFx = GetSpeakerTierFx();
+            SpeakerTierFxSettings tierFx = GetSpeakerTierFx(slotIndex);
 
             char lower = char.ToLowerInvariant(letterUpper);
             char upper = char.ToUpperInvariant(letterUpper);

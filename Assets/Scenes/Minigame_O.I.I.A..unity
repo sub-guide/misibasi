@@ -1187,6 +1187,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   catAnimatorIdleState: Idle
+  catAnimatorSpinOnceState: SpinOnce
   catAnimatorSpinLoopState: SpinLoop
   catAnimatorLayer: 0
   displayName: OIIA
@@ -1205,6 +1206,21 @@ MonoBehaviour:
   sessionEndHoldSeconds: 0.35
   exitFadeOutSeconds: 1
   sessionEndClip: {fileID: 0}
+  playerTier1:
+    GaugeMax: 100
+    GaugePerHit: 5
+    GaugeDrainPerSecond: 30
+    HitScore: 100
+  playerTier2:
+    GaugeMax: 100
+    GaugePerHit: 5
+    GaugeDrainPerSecond: 100
+    HitScore: 200
+  playerTier3:
+    GaugeMax: 100
+    GaugePerHit: 5
+    GaugeDrainPerSecond: 150
+    HitScore: 500
   feverScreamClip: {fileID: 8300000, guid: 1ed6a4c8e5b14364ca3ab6d17ca8e570, type: 3}
   feverScreamSource: {fileID: 0}
   feverChantLayerCount: 12
@@ -1241,7 +1257,27 @@ MonoBehaviour:
   speakerLetterSpawnJitter: 18
   speakerLetterTemplate: {fileID: 594064463}
   speakerLetterOverrideFontSizeFromTier: 1
+  speakerTier1:
+    WooferPulseScale: 1.2
+    WooferPulseSeconds: 0.12
+    LetterDuration: 0.45
+    LetterFontSize: 64
+    LetterFlyDistance: 70
+    LetterShakeAmplitude: 4
+    LetterShakeFrequency: 22
+    LetterScaleStart: 0.35
+    LetterScalePeak: 1.2
   speakerTier2:
+    WooferPulseScale: 1.35
+    WooferPulseSeconds: 0.12
+    LetterDuration: 0.45
+    LetterFontSize: 80
+    LetterFlyDistance: 95
+    LetterShakeAmplitude: 8
+    LetterShakeFrequency: 28
+    LetterScaleStart: 0.35
+    LetterScalePeak: 1.4
+  speakerTier3:
     WooferPulseScale: 2
     WooferPulseSeconds: 0.1
     LetterDuration: 0.5
@@ -1255,11 +1291,25 @@ MonoBehaviour:
   mainRoundDurationSeconds: 26
   tier1DurationSeconds: 6.5
   bgmStartTimeSeconds: 27
+  uiShakeTier1:
+    Amplitude: 0
+    Duration: 0
+    Frequency: 0
   uiShakeTier2:
+    Amplitude: 8
+    Duration: 1
+    Frequency: 5
+  uiShakeTier3:
     Amplitude: 20
     Duration: 0.25
     Frequency: 64
+  uiShakeIdleTier1:
+    Amplitude: 0
+    Frequency: 0
   uiShakeIdleTier2:
+    Amplitude: 10
+    Frequency: 1
+  uiShakeIdleTier3:
     Amplitude: 8
     Frequency: 32
 --- !u!82 &2068533488

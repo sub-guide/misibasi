@@ -30,9 +30,9 @@ namespace MiniParty.Minigames.Oiia
         [Header("콤보 (HudDisplay 밖 · 독립)")]
         public TMP_Text HudComboText;
 
-        [Header("피버 게이지 (DjBox 독립 · Filled Image ×2)")]
-        public Image FeverGaugeImage;
-        public Image FeverGaugeImageB;
+        [Header("티어 게이지 (DjBox 직속 Gauge_L/R_1~3)")]
+        public Image[] TierGaugeLeft;
+        public Image[] TierGaugeRight;
 
         [Header("서브 패턴 가이드")]
         public TMP_Text SubPatternGuideText;
@@ -80,8 +80,8 @@ namespace MiniParty.Minigames.Oiia
                 DjPadButtons = DjPadButtons,
                 HudScoreText = HudScoreText,
                 HudComboText = HudComboText,
-                FeverGaugeImage = FeverGaugeImage,
-                FeverGaugeImageB = FeverGaugeImageB,
+                TierGaugeLeft = TierGaugeLeft,
+                TierGaugeRight = TierGaugeRight,
                 SubPatternGuideText = SubPatternGuideText,
                 SpeakerLRoot = SpeakerLRoot,
                 SpeakerLBody = SpeakerLBody,
@@ -158,16 +158,8 @@ namespace MiniParty.Minigames.Oiia
             if (HudComboText == null)
                 HudComboText = FindTmp(root, "Combo", "HudCombo");
 
-            // FeverGauge ×2: Hud/Combo와 독립. DjBox 직속 `FeverGauge` / `FeverGaugeB` 권장.
-            if (FeverGaugeImage == null)
-                FeverGaugeImage = FindImage(djBox, "FeverGauge", "FeverBar");
-            if (FeverGaugeImage == null)
-                FeverGaugeImage = FindImage(root, "FeverGauge", "FeverBar");
-
-            if (FeverGaugeImageB == null)
-                FeverGaugeImageB = FindImage(djBox, "FeverGaugeB", "FeverGauge2", "FeverBarB");
-            if (FeverGaugeImageB == null)
-                FeverGaugeImageB = FindImage(root, "FeverGaugeB", "FeverGauge2", "FeverBarB");
+            TierGaugeLeft = WireTierGauges(djBox, "Gauge_L_");
+            TierGaugeRight = WireTierGauges(djBox, "Gauge_R_");
 
             if (SubPatternGuideText == null)
                 SubPatternGuideText = FindTmp(djBox, "SubPatternGuide", "SubPattern", "LyricsGuide");
@@ -423,6 +415,15 @@ namespace MiniParty.Minigames.Oiia
             }
 
             return null;
+        }
+
+        static Image[] WireTierGauges(Transform djBox, string prefix)
+        {
+            var gauges = new Image[3];
+            for (var tier = 1; tier <= gauges.Length; tier++)
+                gauges[tier - 1] = FindImage(djBox, prefix + tier);
+
+            return gauges;
         }
 
         static Image FindImage(Transform parent, params string[] names)

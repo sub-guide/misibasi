@@ -36,6 +36,12 @@ namespace MiniParty.Minigames.Oiia
 
             /// <summary>SubPatternGuide 진행도(0~12). 12글자 완성 시 0.</summary>
             public int SubPatternMatched;
+
+            /// <summary>연타 중 개인 티어. 1~3. 빌드업 시작 값은 1.</summary>
+            public int Tier;
+
+            /// <summary>개인 티어 게이지. 0~그 티어의 <c>GaugeMax</c>.</summary>
+            public float Gauge;
         }
 
         [System.Serializable]
@@ -66,9 +72,9 @@ namespace MiniParty.Minigames.Oiia
             [Header("콤보 (HudDisplay 밖 · 독립)")]
             public TMP_Text HudComboText;
 
-            [Header("피버 게이지 (DjBox 독립 · Filled Image ×2)")]
-            public Image FeverGaugeImage;
-            public Image FeverGaugeImageB;
+            [Header("티어 게이지 (DjBox 직속 Gauge_L/R_1~3 · Filled Image)")]
+            public Image[] TierGaugeLeft;
+            public Image[] TierGaugeRight;
 
             [Header("서브 패턴 가이드")]
             public TMP_Text SubPatternGuideText;

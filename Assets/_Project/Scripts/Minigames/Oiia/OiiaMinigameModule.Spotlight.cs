@@ -81,8 +81,9 @@ namespace MiniParty.Minigames.Oiia
             EnsureSlotStageClipMask(ui);
             SetSpotlightRootsActive(ui, active: true);
 
+            bool tier3 = PlayerTier(i) >= PlayerTierMax;
             Color neon = EvaluateSpotlightNeonColor();
-            bool strobeOn = EvaluateStrobeOn(SpotlightStrobeIntervalSeconds);
+            bool strobeOn = tier3 && EvaluateStrobeOn(SpotlightStrobeIntervalSeconds);
             ApplySpotlightVisuals(ui, beamRgb: neon, beamVisible: strobeOn);
         }
 
