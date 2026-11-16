@@ -147,8 +147,8 @@ namespace MiniParty.Minigames.Oiia
             if (HudComboText == null)
                 HudComboText = FindTmp(root, "Combo", "HudCombo");
 
-            TierGaugeLeft = WireTierGauges(djBox, "Gauge_L_");
-            TierGaugeRight = WireTierGauges(djBox, "Gauge_R_");
+            KeepTierGauges(djBox, "Gauge_L_", ref TierGaugeLeft);
+            KeepTierGauges(djBox, "Gauge_R_", ref TierGaugeRight);
 
             if (SubPatternGuideText == null)
                 SubPatternGuideText = FindTmp(djBox, "SubPatternGuide", "SubPattern", "LyricsGuide");
@@ -348,13 +348,21 @@ namespace MiniParty.Minigames.Oiia
             return null;
         }
 
-        static Image[] WireTierGauges(Transform djBox, string prefix)
+        /// <summary>
+        /// 이미 Inspector에 연결된 칸은 유지한다. 빈 칸만 DjBox 직속에서 채운다.
+        /// </summary>
+        static void KeepTierGauges(Transform djBox, string prefix, ref Image[] gauges)
         {
-            var gauges = new Image[3];
-            for (var tier = 1; tier <= gauges.Length; tier++)
-                gauges[tier - 1] = FindImage(djBox, prefix + tier);
+            if (gauges == null || gauges.Length != 3)
+                gauges = new Image[3];
 
-            return gauges;
+            for (var tier = 1; tier <= 3; tier++)
+            {
+                if (gauges[tier - 1] != null)
+                    continue;
+
+                gauges[tier - 1] = FindImage(djBox, prefix + tier);
+            }
         }
 
         static Image FindImage(Transform parent, params string[] names)

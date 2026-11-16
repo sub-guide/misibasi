@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,7 +44,16 @@ namespace MiniParty.Minigames.Oiia
                 return;
 
             ui.HudScoreText.gameObject.SetActive(true);
-            ui.HudScoreText.text = $"{sr.ScoreSum}";
+            string text = $"{sr.ScoreSum}";
+            Transform front = ui.HudScoreText.transform.Find("ScoreFront");
+            if (front != null && front.TryGetComponent(out TMP_Text frontText))
+            {
+                frontText.gameObject.SetActive(true);
+                frontText.text = text;
+                return;
+            }
+
+            ui.HudScoreText.text = text;
         }
 
         /// <summary>

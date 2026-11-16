@@ -1207,19 +1207,19 @@ MonoBehaviour:
   exitFadeOutSeconds: 1
   sessionEndClip: {fileID: 0}
   playerTier1:
-    GaugeMax: 100
-    GaugePerHit: 5
-    GaugeDrainPerSecond: 30
+    GaugeMax: 1000
+    GaugePerHit: 50
+    GaugeDrainPerSecond: 300
     HitScore: 100
   playerTier2:
-    GaugeMax: 100
-    GaugePerHit: 5
-    GaugeDrainPerSecond: 100
+    GaugeMax: 1000
+    GaugePerHit: 50
+    GaugeDrainPerSecond: 1000
     HitScore: 200
   playerTier3:
-    GaugeMax: 100
-    GaugePerHit: 5
-    GaugeDrainPerSecond: 150
+    GaugeMax: 1000
+    GaugePerHit: 50
+    GaugeDrainPerSecond: 1500
     HitScore: 500
   feverScreamClip: {fileID: 8300000, guid: 1ed6a4c8e5b14364ca3ab6d17ca8e570, type: 3}
   feverScreamSource: {fileID: 0}

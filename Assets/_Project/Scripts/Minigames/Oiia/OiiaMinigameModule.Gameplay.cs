@@ -73,6 +73,8 @@ namespace MiniParty.Minigames.Oiia
             if (patternCompleted)
                 sr.ScoreSum = ApplyScoreDeltaNonNegative(sr.ScoreSum, PatternCompleteBonusScore);
 
+            PlayScorePopup(i, tierAtHit);
+
             TriggerSlotUiShakeOnCorrect(i, ref sr);
             if (PlayerTier(i) < PlayerTierMax)
                 PlayCatSingleCycleIfIdle(i);

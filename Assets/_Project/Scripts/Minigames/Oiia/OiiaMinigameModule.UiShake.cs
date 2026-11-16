@@ -163,7 +163,7 @@ namespace MiniParty.Minigames.Oiia
         }
 
         /// <summary>
-        /// DjBox 자신, <c>Gauge_*</c>, <c>Speaker*</c>는 고정.
+        /// DjBox 자신, <c>Gauge*</c>, <c>Guage</c>, <c>Speaker*</c>, <c>Score</c>, <c>HudDisplay</c>, <c>SubPatternGuide</c>는 고정.
         /// 스피커 위치는 슬라이드가 맡고, 그 위에 흔들림을 더한다.
         /// </summary>
         static void AddDjBoxChildShakeTargets(List<UiShakeTarget> list, RectTransform djBox)
@@ -174,7 +174,13 @@ namespace MiniParty.Minigames.Oiia
             for (var c = 0; c < djBox.childCount; c++)
             {
                 Transform child = djBox.GetChild(c);
-                if (child == null || child.name.StartsWith("Gauge") || child.name.StartsWith("Speaker"))
+                if (child == null ||
+                    child.name == "Score" ||
+                    child.name == "HudDisplay" ||
+                    child.name == "SubPatternGuide" ||
+                    child.name.StartsWith("Gauge") ||
+                    child.name.StartsWith("Guage") ||
+                    child.name.StartsWith("Speaker"))
                     continue;
 
                 TryAddUiShakeTarget(list, child);

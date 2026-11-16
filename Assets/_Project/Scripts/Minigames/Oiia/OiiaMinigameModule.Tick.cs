@@ -51,6 +51,7 @@ namespace MiniParty.Minigames.Oiia
                 TickStageBackground(i);
                 TickSpeakers(i);
                 TickCrowd(i);
+                TickScorePopups(i);
                 FlushUi(i);
             });
 

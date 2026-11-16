@@ -64,6 +64,7 @@ namespace MiniParty.Minigames.Oiia
                 ResetStageBackgroundAtBegin(i);
                 ResetSpeakersAtBegin(i);
                 ResetCrowdAtBegin(i);
+                ResetScorePopups(i);
             }
             else
             {

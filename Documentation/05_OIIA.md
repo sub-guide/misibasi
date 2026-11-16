@@ -7,7 +7,7 @@
 
 ## 0. 현재 상태
 
-> **상태**: 개인 티어 게이지, `Gauge_L/R_1~3`, DjBox·게이지 흔들림 제외, `SpeakerL/R_1~3` 누적 **Play 확인**(2026-11-16).
+> **상태**: 개인 티어, 게이지·스피커·점수 이펙트, 흔들림 제외(Score·HudDisplay·SubPatternGuide·Guage) **Play 확인**(2026-11-17).
 
 ### 한 줄 요약
 
@@ -86,7 +86,7 @@ BGM은 빌드업을 포함해 라운드가 돌아가는 동안 재생된다. 시
 |------|------|
 | `WaitingText` · `SlotPanelBackgroundImage` · `CatAnimator` | 공통 |
 | `DjBoxRoot` · Face/Dpad/Shoulder · `DjPadButtons[10]` | SNES 10키 |
-| `HudScoreText` | `DjBox/Score`. 점수. 항상 표시 |
+| `HudScoreText` | `DjBox/Score`. 점수. 항상 표시. 자식 `T1`~`T3` 각 4개는 입력 점수 이펙트 |
 | `HudComboText` | `HudDisplay/Combo`. `{n}<size=55%> COMBO</size>`. 0이면 숨김 |
 | `TierGaugeLeft[3]` · `TierGaugeRight[3]` | `Gauge_L_1~3` · `Gauge_R_1~3`. 현재 티어 쌍만 켜고 `fillAmount = Gauge / 그 티어 GaugeMax`. 자식 `Frame`은 채우지 않음 |
 | `SubPatternGuideText` | 맞춘 접두만 대문자 |
@@ -122,7 +122,7 @@ EMPTY 슬롯은 무시한다.
 
 | 시스템 | 동작 |
 |--------|------|
-| UiShake | 연타 중. 정답 `uiShakeTier1/2/3` + 상시 `uiShakeIdleTier1/2/3`. 티어 1은 진폭 0. 대상은 `DjBox`의 `Gauge_*`가 아닌 직속 자식과 `Mask`의 `Bg*`. `DjBox` 자신·게이지·`StageScreen`·`Mask`는 고정 |
+| UiShake | 연타 중. 정답 `uiShakeTier1/2/3` + 상시 `uiShakeIdleTier1/2/3`. 티어 1은 진폭 0. 대상은 `DjBox` 직속 자식 중 `Score`·`HudDisplay`·`SubPatternGuide`·`Gauge*`·`Guage`·`Speaker*`를 뺀 것과 `Mask`의 `Bg*`. 그 제외 대상과 그 자식, `DjBox`·`StageScreen`·`Mask`는 고정. 스피커 흔들림은 슬라이드 위에 따로 더함 |
 | Speakers | `SpeakerL/R_1~3`. 티어 n이면 1~n이 제자리로 들어오고, 더 높은 번호는 나간다. 왼쪽은 왼쪽, 오른쪽은 오른쪽. 거리 `speakerSlideDistance`(기본 400) · 시간 `speakerSlideSeconds`(기본 0.4). 패턴 스텝마다 들어와야 하는 우퍼 펄스 · O/I/A 글자 · 현재 티어 `speakerTier1/2/3` |
 | Spotlight | 연타 중 Fixture. Beam 스트로보는 개인 티어 3 |
 | StageBackground | 빌드업 Space. 연타 티어 1은 둘 다 끔(StageScreen 기본). 티어 2 Space. 티어 3 Club |
@@ -135,7 +135,7 @@ EMPTY 슬롯은 무시한다.
 
 | 이벤트 | 점수 |
 |--------|------|
-| 입력 1회 | 누르기 전 티어 `HitScore`. 기본 100 |
+| 입력 1회 | 누르기 전 티어 `HitScore`. 기본 100. `Score`의 그 티어 글자 1개가 0.2초 동안 y +40, 알파 0으로 꺼짐 |
 | 12글자 완성 | 추가 +500 (`PatternCompleteBonusScore`). 티어와 무관. 진행도 0 |
 
 상수: `PatternCompleteBonusScore` 500 · `HpLowScoreThreshold` 8000. 입력 점수는 `playerTier1/2/3.HitScore`.  
