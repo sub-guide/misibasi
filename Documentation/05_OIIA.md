@@ -7,7 +7,7 @@
 
 ## 0. 현재 상태
 
-> **상태**: 개인 티어 게이지, `Gauge_L/R_1~3` 표시, DjBox·게이지 흔들림 제외 **Play 확인**(2026-11-16).
+> **상태**: 개인 티어 게이지, `Gauge_L/R_1~3`, DjBox·게이지 흔들림 제외, `SpeakerL/R_1~3` 누적 **Play 확인**(2026-11-16).
 
 ### 한 줄 요약
 
@@ -70,7 +70,7 @@ BGM은 빌드업을 포함해 라운드가 돌아가는 동안 재생된다. 시
 |------|------|
 | `StageScreen` | 전광판. 자식 `Mask` 안에 `Bg_Space` / `Bg_Club`. Cat · SpotlightL/R |
 | `DjBox` | Score · Combo · `Gauge_L/R_1~3` · SubPatternGuide · Speakers. 자신은 흔들리지 않음 |
-| `SpeakerL` / `SpeakerR` | Body · WooferTop · WooferBottom |
+| `SpeakerL_1~3` / `SpeakerR_1~3` | 티어까지 누적. 각 Body · WooferTop · WooferBottom |
 | `Crowd` | 개인 티어 3에 상승. 내려가면 즉시 숨김 |
 | `Waiting` | 비참가 |
 
@@ -90,7 +90,7 @@ BGM은 빌드업을 포함해 라운드가 돌아가는 동안 재생된다. 시
 | `HudComboText` | `{n}<size=55%> COMBO</size>`. 0이면 숨김 |
 | `TierGaugeLeft[3]` · `TierGaugeRight[3]` | `Gauge_L_1~3` · `Gauge_R_1~3`. 현재 티어 쌍만 켜고 `fillAmount = Gauge / 그 티어 GaugeMax`. 자식 `Frame`은 채우지 않음 |
 | `SubPatternGuideText` | 맞춘 접두만 대문자 |
-| `SpeakerL/R` Root·Body·WooferTop·WooferBottom | 스피커 |
+| `SpeakerLeft[3]` · `SpeakerRight[3]` | `SpeakerL_1~3` · `SpeakerR_1~3`. 티어 n까지 켜짐 |
 | `StageScreenRoot` · `StageBackgroundSpace` · `StageBackgroundClub` | 배경은 `Mask` 아래에서 찾음 |
 | `CrowdRoot` · `CrowdImage` | 관중 |
 | `SpotlightL/R` Root·Fixture·Beam | 연타 중 Fixture. Beam은 개인 티어 3만 |
@@ -123,7 +123,7 @@ EMPTY 슬롯은 무시한다.
 | 시스템 | 동작 |
 |--------|------|
 | UiShake | 연타 중. 정답 `uiShakeTier1/2/3` + 상시 `uiShakeIdleTier1/2/3`. 티어 1은 진폭 0. 대상은 `DjBox`의 `Gauge_*`가 아닌 직속 자식과 `Mask`의 `Bg*`. `DjBox` 자신·게이지·`StageScreen`·`Mask`는 고정 |
-| Speakers | 패턴 스텝마다 우퍼 펄스 · O/I/A 글자 · `speakerTier1/2/3` |
+| Speakers | `SpeakerL/R_1~3`. 티어 n이면 1~n이 같이 켜진다. 패턴 스텝마다 켜진 우퍼 펄스 · O/I/A 글자 · 현재 티어 `speakerTier1/2/3` |
 | Spotlight | 연타 중 Fixture. Beam 스트로보는 개인 티어 3 |
 | StageBackground | 빌드업 Space. 연타 티어 1은 둘 다 끔(StageScreen 기본). 티어 2 Space. 티어 3 Club |
 | Crowd | 개인 티어 3 진입 시 Rising → Active. 이탈 시 즉시 숨김. 퇴장 페이드 없음 |

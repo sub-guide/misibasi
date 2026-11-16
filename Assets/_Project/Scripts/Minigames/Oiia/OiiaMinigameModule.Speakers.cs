@@ -6,8 +6,7 @@ namespace MiniParty.Minigames.Oiia
 {
     public sealed partial class OiiaMinigameModule
     {
-        const int SpeakerWoofersPerSlot = 4;
-        const int SpeakerLetterPoolPerSlot = 24;
+        const int SpeakerLetterPoolPerSlot = 48;
 
         [System.Serializable]
         struct SpeakerTierFxSettings
@@ -119,6 +118,7 @@ namespace MiniParty.Minigames.Oiia
         }
 
         readonly WooferPulseState[][] _speakerWoofers = new WooferPulseState[SlotCount][];
+        readonly int[] _speakerShownTier = new int[SlotCount];
         readonly SpeakerLetterFx[][] _speakerLetters = new SpeakerLetterFx[SlotCount][];
         readonly Transform[] _speakerLetterParents = new Transform[SlotCount];
 
@@ -137,7 +137,8 @@ namespace MiniParty.Minigames.Oiia
             if (_speakerWoofers[i] != null)
                 RestoreSpeakerWooferScales(i);
 
-            CaptureSpeakerWoofers(i);
+            _speakerShownTier[i] = int.MinValue;
+            SyncTierSpeakers(i);
             DestroySpeakerLetterPool(i);
             EnsureSpeakerLetterPool(i);
             HideAllSpeakerLetters(i);
@@ -154,7 +155,46 @@ namespace MiniParty.Minigames.Oiia
             _speakerLetters[i] = null;
         }
 
-        void CaptureSpeakerWoofers(int i)
+        /// <summary>
+        /// 티어 n이면 좌우 스피커 1~n을 켠다. 더 높은 번호는 끈다.
+        /// 켜진 스피커의 우퍼만 펄스 대상이다.
+        /// </summary>
+        void SyncTierSpeakers(int i)
+        {
+            int tier = _aliveMask[i] ? PlayerTier(i) : 0;
+            if (_speakerShownTier[i] == tier && _speakerWoofers[i] != null)
+                return;
+
+            RestoreSpeakerWooferScales(i);
+
+            if (TryGetBinding(i, out SlotUiBindings b))
+            {
+                SetSpeakerRootsActive(b.SpeakerLeft, tier);
+                SetSpeakerRootsActive(b.SpeakerRight, tier);
+            }
+
+            CaptureSpeakerWoofers(i, tier);
+            _speakerShownTier[i] = tier;
+        }
+
+        static void SetSpeakerRootsActive(RectTransform[] speakers, int tier)
+        {
+            if (speakers == null)
+                return;
+
+            for (var n = 0; n < speakers.Length; n++)
+            {
+                RectTransform speaker = speakers[n];
+                if (speaker == null)
+                    continue;
+
+                bool show = n < tier;
+                if (speaker.gameObject.activeSelf != show)
+                    speaker.gameObject.SetActive(show);
+            }
+        }
+
+        void CaptureSpeakerWoofers(int i, int tier)
         {
             if (!TryGetBinding(i, out SlotUiBindings b))
             {
@@ -162,12 +202,39 @@ namespace MiniParty.Minigames.Oiia
                 return;
             }
 
-            var list = new List<WooferPulseState>(SpeakerWoofersPerSlot);
-            TryAddWoofer(list, b.SpeakerLWooferTop);
-            TryAddWoofer(list, b.SpeakerLWooferBottom);
-            TryAddWoofer(list, b.SpeakerRWooferTop);
-            TryAddWoofer(list, b.SpeakerRWooferBottom);
+            var list = new List<WooferPulseState>(12);
+            AddVisibleSpeakerWoofers(list, b.SpeakerLeft, tier);
+            AddVisibleSpeakerWoofers(list, b.SpeakerRight, tier);
             _speakerWoofers[i] = list.ToArray();
+        }
+
+        static void AddVisibleSpeakerWoofers(List<WooferPulseState> list, RectTransform[] speakers, int tier)
+        {
+            if (speakers == null)
+                return;
+
+            int count = Mathf.Min(tier, speakers.Length);
+            for (var n = 0; n < count; n++)
+            {
+                RectTransform speaker = speakers[n];
+                if (speaker == null)
+                    continue;
+
+                TryAddWoofer(list, FindSpeakerChild(speaker, "WooferTop", "Woofer_Top", "WooferUp"));
+                TryAddWoofer(list, FindSpeakerChild(speaker, "WooferBottom", "Woofer_Bottom", "WooferDown"));
+            }
+        }
+
+        static RectTransform FindSpeakerChild(Transform speaker, params string[] names)
+        {
+            for (var i = 0; i < names.Length; i++)
+            {
+                Transform child = speaker.Find(names[i]);
+                if (child is RectTransform rt)
+                    return rt;
+            }
+
+            return null;
         }
 
         static void TryAddWoofer(List<WooferPulseState> list, RectTransform rt)
@@ -320,8 +387,7 @@ namespace MiniParty.Minigames.Oiia
             if (slotIndex < 0 || slotIndex >= SlotCount)
                 return;
 
-            if (_speakerWoofers[slotIndex] == null)
-                CaptureSpeakerWoofers(slotIndex);
+            SyncTierSpeakers(slotIndex);
 
             EnsureSpeakerLetterPool(slotIndex);
             PulseAllSpeakerWoofers(slotIndex);
@@ -457,6 +523,7 @@ namespace MiniParty.Minigames.Oiia
 
         void TickSpeakers(int i)
         {
+            SyncTierSpeakers(i);
             TickSpeakerWooferPulses(i);
             TickSpeakerLetters(i);
         }

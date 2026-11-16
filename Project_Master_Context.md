@@ -315,7 +315,7 @@
 | 씬 | 상태 (한 줄) |
 |----|----------------|
 | `MainMenu` | 로비·카탈로그·시작 |
-| `Minigame_O.I.I.A.` | 개인 티어 게이지 · `Gauge_L/R_*` · DjBox·게이지 흔들림 제외 **Play 확인**(2026-11-16) |
+| `Minigame_O.I.I.A.` | 개인 티어 게이지 · `Gauge_L/R_*` · 스피커 누적 **Play 확인**(2026-11-16) |
 | `Minigame_RhythmButtonChallenge` | **1차 완료** · 1P Play 확인 · 유지보수 |
 | `Minigame_CoffinDance` | 시소·어깨 스냅 **Play 검증** · FailFloor·`FailSprite`(2026-11-01) · 바깥 사이드·BGM·쇼케이스(2026-11-02) · 박자·Fail SFX·Fail 카메라·재입장(2026-11-03) · **빌드업·Focus·Phase·제한시간·Fail 점수 정지**(2026-11-04) **Play 확인** |
 | `Minigame_Pigeon` | 비둘기야 먹자. **1P Play 확인**. HP 1인 skip · 2인+ 하위 50% |
