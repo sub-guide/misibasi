@@ -37,7 +37,7 @@ namespace MiniParty.Minigames.Oiia
 
         /// <summary>
         /// 빌드업은 Space. 연타 중 티어 1은 StageScreen 기본 이미지(둘 다 끔),
-        /// 티어 2는 Club, 티어 3은 Space.
+        /// 티어 2는 Space, 티어 3은 Club.
         /// </summary>
         void ResolveStageBackground(int i, out float space, out float club)
         {
@@ -51,15 +51,15 @@ namespace MiniParty.Minigames.Oiia
             int tier = PlayerTier(i);
             if (tier >= PlayerTierMax)
             {
-                space = 1f;
-                club = 0f;
+                space = 0f;
+                club = 1f;
                 return;
             }
 
             if (tier >= 2)
             {
-                space = 0f;
-                club = 1f;
+                space = 1f;
+                club = 0f;
                 return;
             }
 

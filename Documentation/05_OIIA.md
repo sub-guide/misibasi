@@ -19,8 +19,8 @@
 | 연타 | `mainRoundDurationSeconds`. 씬 **26**. 10키 Highlight · 전부 정답. 티어는 슬롯마다 따로 |
 | 게이지 | 티어별 `playerTier1/2/3`. 기본 최대 **100** · 입력 **+8** · 초당 **20** 감소. 그 티어 최대를 넘긴 양만 다음 티어로 이월. 0이면 한 단계 하락 후 **아래 티어** 최대에서 다시 감소. 3도 하락. 1에서 0이면 1에 머무름. 하락으로 채운 최대는 승급이 아님. 막대는 `Gauge / 그 티어 GaugeMax` |
 | 개인 티어 1 | `StageScreen` 기본 이미지. Space·Club 끔. 빔·관중·Scream 없음. 입력마다 `SpinOnce`. 흔들림 없음 |
-| 개인 티어 2 | `Bg_Club`. 빔·관중·Scream 없음. `SpinOnce`. 흔들림·스피커는 티어 2 수치 |
-| 개인 티어 3 | `Bg_Space`. 네온 Beam · 관중 상승 · Scream · `SpinLoop`. 씬에 저장된 강한 흔들림·스피커. 0이면 티어 2로 내려가고 관중은 즉시 숨김 |
+| 개인 티어 2 | `Bg_Space`. 빔·관중·Scream 없음. `SpinOnce`. 흔들림·스피커는 티어 2 수치 |
+| 개인 티어 3 | `Bg_Club`. 네온 Beam · 관중 상승 · Scream · `SpinLoop`. 씬에 저장된 강한 흔들림·스피커. 0이면 티어 2로 내려가고 관중은 즉시 숨김 |
 | BGM | 라운드 시작과 함께 `mainBgmClip` 루프. 씬 `bgmStartTimeSeconds` **27** (코드 기본 0). 한 바퀴 뒤 곡의 처음으로 복귀 |
 | 입력 | 10키 아무거나. 한 프레임에 여러 키가 눌려도 **1회** |
 | 점수 | 누르기 전 티어의 `HitScore`. 세 티어 기본 **100**. 12글자 완성 추가 +500은 티어와 무관. 그 입력으로 티어가 올라도 점수는 누르기 전 티어. 운영자 점수는 현재 티어 `HitScore`만. 게이지·패턴은 올리지 않음 |
@@ -125,7 +125,7 @@ EMPTY 슬롯은 무시한다.
 | UiShake | 연타 중. 정답 `uiShakeTier1/2/3` + 상시 `uiShakeIdleTier1/2/3`. 티어 1은 진폭 0. 대상은 `DjBox`의 `Gauge_*`가 아닌 직속 자식과 `Mask`의 `Bg*`. `DjBox` 자신·게이지·`StageScreen`·`Mask`는 고정 |
 | Speakers | 패턴 스텝마다 우퍼 펄스 · O/I/A 글자 · `speakerTier1/2/3` |
 | Spotlight | 연타 중 Fixture. Beam 스트로보는 개인 티어 3 |
-| StageBackground | 빌드업 Space. 연타 티어 1은 둘 다 끔(StageScreen 기본). 티어 2 Club. 티어 3 Space |
+| StageBackground | 빌드업 Space. 연타 티어 1은 둘 다 끔(StageScreen 기본). 티어 2 Space. 티어 3 Club |
 | Crowd | 개인 티어 3 진입 시 Rising → Active. 이탈 시 즉시 숨김. 퇴장 페이드 없음 |
 | CatAnimator | 빌드업 숨김. 연타 티어 1·2는 입력마다 `SpinOnce`. 티어 3은 `SpinLoop` |
 
